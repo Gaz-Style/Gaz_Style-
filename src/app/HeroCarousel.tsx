@@ -7,8 +7,8 @@ const heroImages = [
     "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=2000&q=80",
     // Montaña épica que tenías
     "https://images.unsplash.com/photo-1522163182402-834f871fd851?q=80&w=2803&auto=format&fit=crop",
-    // Zapatos con barro reales (Goretex/Trail)
-    "https://images.unsplash.com/photo-1518774843924-4f3640b3c66f?q=80&w=2800&auto=format&fit=crop",
+    // MTB en la roca (silueta)
+    "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2000&q=80",
 ];
 
 export default function HeroCarousel() {
