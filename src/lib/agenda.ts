@@ -1,0 +1,623 @@
+import { createClient } from '@supabase/supabase-js';
+import nodemailer from 'nodemailer';
+import { toSantiagoISO } from './timezone';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com', // Assuming gmail based on SMTP_USER ending in @gmail.com or Google Workspace
+    port: 465,
+    secure: true,
+    auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD,
+    },
+});
+
+export async function consultar_disponibilidad(fecha_inicial: string) {
+    try {
+        const slotsEncontrados = [];
+        const maxDiasBusqueda = 4;
+        let fechaActual = new Date(toSantiagoISO(fecha_inicial, '12:00:00'));
+
+        const { data: configs } = await supabase.from('configuracion_horarios').select('*').eq('activo', true);
+        if (!configs || configs.length === 0) return "El campamento_base no tiene horarios configurados.";
+
+        const startOfSearch = new Date(toSantiagoISO(fecha_inicial, '00:00:00'));
+        const endOfSearch = new Date(startOfSearch);
+        endOfSearch.setDate(endOfSearch.getDate() + maxDiasBusqueda);
+
+        const { data: eventos, error } = await supabase
+            .from('agendamientos')
+            .select('fecha_hora')
+            .gte('fecha_hora', startOfSearch.toISOString())
+            .lte('fecha_hora', endOfSearch.toISOString())
+            .neq('estado', 'cancelado');
+            
+        if (error) throw error;
+
+        const { data: milestones } = await supabase
+            .from('bridal_milestones')
+            .select('scheduled_date')
+            .gte('scheduled_date', startOfSearch.toISOString())
+            .lte('scheduled_date', endOfSearch.toISOString())
+            .neq('status', 'completed')
+            .not('scheduled_date', 'is', null);
+
+        const horasOcupadas = [
+            ...(eventos ? eventos.map((e) => new Date(e.fecha_hora).toISOString()) : []),
+            ...(milestones ? milestones.map((m) => new Date(m.scheduled_date).toISOString()) : [])
+        ];
+
+        let lineasDisponibilidad: string[] = [];
+
+        for (let i = 0; i < maxDiasBusqueda; i++) {
+            const dayOfWeek = fechaActual.getDay();
+            const configDia = configs.find(c => c.dia_semana === dayOfWeek);
+
+            const fechaStr = fechaActual.toISOString().split('T')[0];
+            const diaLegible = fechaActual.toLocaleDateString('es-CL', { weekday: 'long', timeZone: 'America/Santiago' });
+
+            if (configDia) {
+                const startHour = parseInt(configDia.hora_inicio.split(':')[0]);
+                const endHour = parseInt(configDia.hora_fin.split(':')[0]);
+                const horasLibresDia: string[] = [];
+
+                for (let h = startHour; h < endHour; h++) {
+                    if (h === 13) continue; // Colación
+
+                    const horaStr = h.toString().padStart(2, '0');
+                    const bloqueISO = toSantiagoISO(fechaStr, `${horaStr}:00:00`);
+                    const bloqueDate = new Date(bloqueISO);
+
+                    if (bloqueDate > new Date()) {
+                        if (!horasOcupadas.includes(bloqueDate.toISOString())) {
+                            horasLibresDia.push(`${horaStr}:00`);
+                            slotsEncontrados.push({ fecha: fechaStr, diaLegible, hora: `${horaStr}:00` });
+                        }
+                    }
+                }
+
+                if (horasLibresDia.length > 0) {
+                    lineasDisponibilidad.push(`- ${diaLegible} ${fechaStr}: Horas disponibles -> ${horasLibresDia.join(', ')}`);
+                } else {
+                    lineasDisponibilidad.push(`- ${diaLegible} ${fechaStr}: Sin disponibilidad (Agenda llena).`);
+                }
+            } else {
+                lineasDisponibilidad.push(`- ${diaLegible} ${fechaStr}: Campamento Base cerrado.`);
+            }
+            
+            fechaActual.setDate(fechaActual.getDate() + 1);
+        }
+
+        if (slotsEncontrados.length === 0) {
+            return `No hay horas disponibles en la agenda para los próximos días a partir de ${fecha_inicial}.`;
+        }
+
+        return `Disponibilidad real de la agenda (Supabase):\n${lineasDisponibilidad.join('\n')}`;
+
+    } catch (err: any) {
+        console.error('Error consultar_disponibilidad:', err);
+        return `Hubo un error al consultar la disponibilidad real de la agenda.`;
+    }
+}
+
+import fs from 'fs';
+import path from 'path';
+
+export async function enviar_correo_confirmacion(nombre: string, apellido: string, celular: string, correo: string, fechaAjustada: string) {
+    if (!correo) return;
+    
+    const dateObj = new Date(fechaAjustada);
+    const horaLegible = dateObj.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Santiago' });
+    const fechaLegible = dateObj.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Santiago' });
+
+    const smtpUser = process.env.SMTP_USER || '';
+    const fromAddress = smtpUser.includes('gmail.com') ? 'contacto@elenalaguía.cl' : smtpUser;
+
+    const attachments = [];
+    let cardBgUrl = '';
+
+    const filePath = path.join(process.cwd(), 'public', 'trabajos', 'model_desnuda_bw.png');
+    if (fs.existsSync(filePath)) {
+        attachments.push({
+            filename: 'model_desnuda_bw.png',
+            path: filePath,
+            cid: 'luxuryPassBg'
+        });
+        cardBgUrl = 'cid:luxuryPassBg';
+    } else {
+        cardBgUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGUlEQVR4nO3BMQEAAADCoPVPbQ0PoAAAAAAAAAAA8F8bGgABxZqVdgAAAABJRU5ErkJggg==';
+    }
+
+    const promises = [];
+
+    // 1. Correo al cliente
+    promises.push(
+        transporter.sendMail({
+            from: `"ELENA La Guía" <${fromAddress}>`,
+            to: correo,
+            subject: 'Confirmación de Cita — ELENA La Guía',
+            attachments: attachments,
+            html: `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gaz La Guía — Luxury Pass</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,700;1,300&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background-color: #F0EDE8; margin: 0; padding: 24px; -webkit-font-smoothing: antialiased;">
+  <!-- Card Container -->
+  <div style="max-width: 360px; margin: 0 auto; background-color: #1A1A1A; background-image: linear-gradient(to bottom, rgba(26, 26, 26, 0.25) 0%, rgba(26, 26, 26, 0.85) 60%, #1A1A1A 100%), url('${cardBgUrl}'); background-size: cover; background-position: center; border-radius: 24px; box-shadow: 0 25px 50px rgba(0,0,0,0.2); border: 1px solid rgba(245, 242, 235, 0.15); overflow: hidden; color: #F5F5F0;">
+    
+    <!-- Tag Hole -->
+    <div style="width: 12px; height: 12px; background-color: #F0EDE8; border-radius: 50%; margin: 28px auto 0 auto; opacity: 0.9;"></div>
+    
+    <!-- Header -->
+    <div style="text-align: center; padding: 28px 20px 24px 20px;">
+      <table align="center" border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto; width: 130px; border-collapse: collapse;">
+        <tr>
+          <td>
+            <table border="0" cellpadding="0" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td align="left" style="font-family:'Playfair Display', Georgia, serif; font-size: 24px; font-weight: 900; color: #FFFFFF; line-height: 1; padding: 0;">E</td>
+                <td align="center" style="font-family:'Playfair Display', Georgia, serif; font-size: 24px; font-weight: 900; color: #FFFFFF; line-height: 1; padding: 0;">L</td>
+                <td align="center" style="font-family:'Playfair Display', Georgia, serif; font-size: 24px; font-weight: 900; color: #FFFFFF; line-height: 1; padding: 0;">E</td>
+                <td align="center" style="font-family:'Playfair Display', Georgia, serif; font-size: 24px; font-weight: 900; color: #FFFFFF; line-height: 1; padding: 0;">N</td>
+                <td align="right" style="font-family:'Playfair Display', Georgia, serif; font-size: 24px; font-weight: 900; color: #FFFFFF; line-height: 1; padding: 0;">A</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding-top: 8px; line-height: 1; font-size: 1px;">&nbsp;</td>
+        </tr>
+        <tr>
+          <td>
+            <table border="0" cellpadding="0" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td align="left" style="font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 7.5px; font-weight: 700; color: #FFFFFF; line-height: 1; padding: 0;">L</td>
+                <td align="center" style="font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 7.5px; font-weight: 700; color: #FFFFFF; line-height: 1; padding: 0;">A</td>
+                <td align="center" style="font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 7.5px; font-weight: 700; color: #FFFFFF; line-height: 1; padding: 0; width: 6px;">&nbsp;</td>
+                <td align="center" style="font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 7.5px; font-weight: 700; color: #FFFFFF; line-height: 1; padding: 0;">C</td>
+                <td align="center" style="font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 7.5px; font-weight: 700; color: #FFFFFF; line-height: 1; padding: 0;">O</td>
+                <td align="center" style="font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 7.5px; font-weight: 700; color: #FFFFFF; line-height: 1; padding: 0;">S</td>
+                <td align="center" style="font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 7.5px; font-weight: 700; color: #FFFFFF; line-height: 1; padding: 0;">T</td>
+                <td align="center" style="font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 7.5px; font-weight: 700; color: #FFFFFF; line-height: 1; padding: 0;">U</td>
+                <td align="center" style="font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 7.5px; font-weight: 700; color: #FFFFFF; line-height: 1; padding: 0;">R</td>
+                <td align="center" style="font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 7.5px; font-weight: 700; color: #FFFFFF; line-height: 1; padding: 0;">E</td>
+                <td align="center" style="font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 7.5px; font-weight: 700; color: #FFFFFF; line-height: 1; padding: 0;">R</td>
+                <td align="right" style="font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 7.5px; font-weight: 700; color: #FFFFFF; line-height: 1; padding: 0;">A</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+    
+    <!-- Table-based Ticket Divider -->
+    <table border="0" cellpadding="0" cellspacing="0" style="width: 100%; margin: 0; border-collapse: collapse;">
+      <tr>
+        <td style="width: 8px; height: 16px; background-color: #F0EDE8; border-radius: 0 8px 8px 0;"></td>
+        <td style="border-bottom: 1px dashed rgba(245, 242, 235, 0.12); vertical-align: middle; height: 8px; line-height: 1px; font-size: 1px;">&nbsp;</td>
+        <td style="width: 8px; height: 16px; background-color: #F0EDE8; border-radius: 8px 0 0 8px;"></td>
+      </tr>
+    </table>
+    
+    <!-- Body -->
+    <div style="padding: 36px 30px 40px 30px; text-align: center;">
+      <p style="font-size: 8px; font-weight: 600; color: #C17F5F; letter-spacing: 5px; text-transform: uppercase; margin: 0 0 4px 0; font-family: 'Inter', sans-serif;">Confirmación Cita</p>
+      
+      <p style="font-family: 'Playfair Display', Georgia, serif; font-size: 24px; font-style: italic; font-weight: 400; color: #F5F5F0; margin: 0 0 36px 0; letter-spacing: 0.5px;">¡Hola ${nombre}!</p>
+      
+      <div style="margin-bottom: 30px;">
+        <p style="color: #F5F5F0; font-size: 13px; line-height: 1.6; font-weight: 300; margin-bottom: 30px; opacity: 0.9;">
+          Nos emociona recibirte. Tu cita para Premium Custom Upcycling & Alta Costura ha sido confirmada en nuestro sistema.
+        </p>
+        
+        <div style="border: 1px solid rgba(245, 242, 235, 0.15); border-radius: 4px; display: inline-block; padding: 16px 24px; background-color: rgba(255, 255, 255, 0.03); margin-bottom: 20px; text-align: center; width: 85%;">
+          <p style="font-size: 8px; font-weight: 600; color: #C17F5F; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 6px 0; font-family: 'Inter', sans-serif;">LUXURY PASS & RESERVA</p>
+          <hr style="border: 0; border-top: 1px solid rgba(245, 242, 235, 0.1); margin: 8px 0 12px 0;">
+          <span style="font-size: 8px; text-transform: uppercase; color: #8A857D; letter-spacing: 1px;">Fecha de Visita</span><br>
+          <strong style="font-size: 14px; color: #FFFFFF; font-family: 'Playfair Display', Georgia, serif; display: inline-block; margin-top: 4px; margin-bottom: 12px;">${fechaLegible}</strong><br>
+          <span style="font-size: 8px; text-transform: uppercase; color: #8A857D; letter-spacing: 1px;">Horario Exclusivo</span><br>
+          <strong style="font-size: 12px; color: #C17F5F; font-family: 'Inter', sans-serif; display: inline-block; margin-top: 4px;">${horaLegible} hrs</strong>
+          <p style="font-size: 8px; color: #8A857D; font-style: italic; margin-top: 12px; line-height: 1.4; margin-bottom: 0;">
+            *Si asistes por Upcycling Fit & Repair, recuerda traer tus prendas. Te esperamos en Av. Tabancura 1091, Of. 319, Vitacura.
+          </p>
+        </div>
+      </div>
+      
+      <!-- Barcode -->
+      <div style="margin: 36px 0 12px 0; text-align: center; opacity: 0.7;">
+        <span style="display: inline-block; width: 1px; height: 24px; background-color: #F5F5F0; margin: 0 1px;"></span>
+        <span style="display: inline-block; width: 2px; height: 24px; background-color: #F5F5F0; margin: 0 1px;"></span>
+        <span style="display: inline-block; width: 1px; height: 24px; background-color: #F5F5F0; margin: 0 1px;"></span>
+        <span style="display: inline-block; width: 3px; height: 24px; background-color: #F5F5F0; margin: 0 1px;"></span>
+        <span style="display: inline-block; width: 1px; height: 24px; background-color: #F5F5F0; margin: 0 1px;"></span>
+        <span style="display: inline-block; width: 2px; height: 24px; background-color: #F5F5F0; margin: 0 1px;"></span>
+        <span style="display: inline-block; width: 1px; height: 24px; background-color: #F5F5F0; margin: 0 1px;"></span>
+        <span style="display: inline-block; width: 4px; height: 24px; background-color: #F5F5F0; margin: 0 1px;"></span>
+        <span style="display: inline-block; width: 1.5px; height: 24px; background-color: #F5F5F0; margin: 0 1px;"></span>
+        <span style="display: inline-block; width: 1px; height: 24px; background-color: #F5F5F0; margin: 0 1px;"></span>
+        <div style="font-size: 7.5px; color: #8A857D; letter-spacing: 4px; margin-top: 6px; text-transform: uppercase; font-family: 'Inter', sans-serif;">ELENA*CITA*LA*COSTURERA</div>
+      </div>
+      
+      <p style="font-size: 8px; color: #8A857D; letter-spacing: 2.5px; margin-top: 28px; font-weight: 400; font-family: 'Inter', sans-serif;">Av. Tabancura 1091, Of. 319 · Vitacura</p>
+    </div>
+  </div>
+</body>
+</html>`
+        }).then(info => {
+            console.log('Correo cliente enviado exitosamente:', info.messageId);
+        }).catch(err => {
+            console.error('Error al enviar correo de confirmación de cita al cliente:', err);
+        })
+    );
+    
+    // 2. Notificación interna a Gaz
+    promises.push(
+        transporter.sendMail({
+            from: `"Atelier Bot" <${process.env.SMTP_USER}>`,
+            to: process.env.SMTP_USER,
+            subject: `NUEVA CITA: ${nombre} ${apellido} - ${fechaLegible} ${horaLegible}`,
+            text: `Se ha agendado una nueva cita:\nNombre: ${nombre} ${apellido}\nCelular: ${celular}\nCorreo: ${correo}\nFecha: ${fechaLegible} a las ${horaLegible}`
+        }).then(info => {
+            console.log('Correo interno de alerta enviado exitosamente:', info.messageId);
+        }).catch(err => {
+            console.error('Error al enviar correo interno de alerta:', err);
+        })
+    );
+
+    // 3. Notificaciones por WhatsApp
+    const WHATSAPP_PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID;
+    const WHATSAPP_API_TOKEN = process.env.WHATSAPP_API_TOKEN;
+    if (WHATSAPP_PHONE_NUMBER_ID && WHATSAPP_API_TOKEN) {
+        const numerosEncargados = ['56984021940', '56937667709'];
+        const mensajeWsp = `🔔 *Nueva Cita Agendada*\n\n*Cliente:* ${nombre} ${apellido}\n*Fecha:* ${fechaLegible}\n*Hora:* ${horaLegible}\n*Tel:* ${celular}`;
+        
+        for (const numeroEncargado of numerosEncargados) {
+            promises.push(
+                fetch(`https://graph.facebook.com/v21.0/${WHATSAPP_PHONE_NUMBER_ID}/messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${WHATSAPP_API_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        messaging_product: 'whatsapp',
+                        to: numeroEncargado,
+                        type: 'template',
+                        template: {
+                            name: 'alerta_nueva_cita',
+                            language: { code: 'es_CL' },
+                            components: [{
+                                type: 'body',
+                                parameters: [
+                                    { type: 'text', text: `${nombre} ${apellido}` },
+                                    { type: 'text', text: fechaLegible },
+                                    { type: 'text', text: horaLegible },
+                                    { type: 'text', text: celular }
+                                ]
+                            }]
+                        }
+                    })
+                }).then(async (resp) => {
+                    const data = await resp.json();
+                    console.log(`WhatsApp Encargado (${numeroEncargado}):`, data);
+                }).catch(err => {
+                    console.error(`Error al enviar WhatsApp de alerta a encargado (${numeroEncargado}):`, err);
+                })
+            );
+        }
+        
+        // Notificación por WhatsApp al CLIENTE
+        if (celular) {
+            const cleanPhone = celular.replace(/\D/g, '');
+            const finalPhone = cleanPhone.startsWith('56') ? cleanPhone : `56${cleanPhone}`;
+            promises.push(
+                fetch(`https://graph.facebook.com/v21.0/${WHATSAPP_PHONE_NUMBER_ID}/messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${WHATSAPP_API_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        messaging_product: 'whatsapp',
+                        to: finalPhone,
+                        type: 'template',
+                        template: {
+                            name: 'cita_confirmada_cliente',
+                            language: { code: 'es_CL' },
+                            components: [{
+                                type: 'body',
+                                parameters: [
+                                    { type: 'text', text: `${nombre} ${apellido}` },
+                                    { type: 'text', text: fechaLegible },
+                                    { type: 'text', text: horaLegible }
+                                ]
+                            }]
+                        }
+                    })
+                }).then(async (resp) => {
+                    const dataClient = await resp.json();
+                    console.log(`WhatsApp Cliente (${finalPhone}):`, dataClient);
+                    
+                    // Registrar el mensaje en LiveChat
+                    try {
+                        const fullName = `${nombre} ${apellido}`.trim();
+                        const msgContent = `📅 *Confirmación de Cita*\n\n¡Hola ${fullName}! Tu cita ha sido agendada con éxito para el *${fechaLegible}* a las *${horaLegible} hrs*. ¡Te esperamos en Gaz Style!`;
+                        await registrarMensajeSalienteLiveChat(finalPhone, fullName, msgContent);
+                    } catch (chatErr) {
+                        console.error('Error registrando mensaje de confirmación en LiveChat:', chatErr);
+                    }
+                }).catch(err => {
+                    console.error(`Error al enviar WhatsApp de confirmación al cliente (${finalPhone}):`, err);
+                })
+            );
+        }
+    }
+
+    try {
+        await Promise.allSettled(promises);
+    } catch (mailError) {
+        console.error('Error enviando notificaciones en paralelo:', mailError);
+    }
+}
+
+export async function registrarMensajeSalienteLiveChat(
+    finalPhone: string, 
+    nombreCliente: string, 
+    textoMensaje: string, 
+    timestamp?: string
+) {
+    try {
+        const { createClient: createAdminClient } = await import('@supabase/supabase-js');
+        const adminClient = createAdminClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+
+        const cleanDigits = (n: string) => n ? n.replace(/\D/g, '') : '';
+        const phoneDigits = cleanDigits(finalPhone);
+        if (!phoneDigits) return;
+
+        const formattedPhone = phoneDigits.startsWith('56') ? phoneDigits : `56${phoneDigits}`;
+
+        // 1. Buscar si ya existe la sesión de chat por el número
+        const { data: existingChats } = await adminClient
+            .from('crm_whatsapp_chats')
+            .select('id, phone_number, customer_id')
+            .order('last_interaction', { ascending: false });
+
+        let chat = existingChats?.find(c => {
+            const cd = cleanDigits(c.phone_number);
+            return cd && cd.slice(-9) === phoneDigits.slice(-9);
+        });
+
+        let chatId = chat?.id;
+        const msgTime = timestamp || new Date().toISOString();
+
+        if (!chatId) {
+            // Buscar customer_id en la tabla adventurers
+            const { data: adventurers } = await adminClient
+                .from('adventurers')
+                .select('id, phone')
+                .not('phone', 'is', null);
+
+            let matchedCustomerId = null;
+            if (adventurers) {
+                const match = adventurers.find(c => {
+                    const custDigits = cleanDigits(c.phone);
+                    return custDigits && (custDigits.slice(-9) === phoneDigits.slice(-9));
+                });
+                if (match) matchedCustomerId = match.id;
+            }
+
+            // Si no existe el cliente en adventurers y tenemos su nombre, crearlo
+            if (!matchedCustomerId && nombreCliente) {
+                const { data: newCust } = await adminClient
+                    .from('adventurers')
+                    .insert([{
+                        full_name: nombreCliente,
+                        phone: formattedPhone
+                    }])
+                    .select('id')
+                    .single();
+                if (newCust) matchedCustomerId = newCust.id;
+            }
+
+            // Crear nuevo chat
+            const { data: newChat, error: newChatErr } = await adminClient
+                .from('crm_whatsapp_chats')
+                .insert([{
+                    phone_number: formattedPhone,
+                    session_status: 'bot',
+                    customer_id: matchedCustomerId,
+                    last_interaction: msgTime
+                }])
+                .select('id')
+                .single();
+
+            if (newChatErr) {
+                console.error('Error al crear chat en LiveChat:', newChatErr);
+                return;
+            }
+            chatId = newChat.id;
+        } else {
+            // Si el chat existía pero no estaba enrolado a un customer, intentar vincularlo
+            if (!chat?.customer_id && nombreCliente) {
+                const { data: adventurers } = await adminClient
+                    .from('adventurers')
+                    .select('id, phone')
+                    .not('phone', 'is', null);
+                let matchedCustomerId = adventurers?.find(c => {
+                    const custDigits = cleanDigits(c.phone);
+                    return custDigits && (custDigits.slice(-9) === phoneDigits.slice(-9));
+                })?.id;
+
+                if (!matchedCustomerId) {
+                    const { data: newCust } = await adminClient
+                        .from('adventurers')
+                        .insert([{ full_name: nombreCliente, phone: formattedPhone }])
+                        .select('id')
+                        .single();
+                    if (newCust) matchedCustomerId = newCust.id;
+                }
+
+                if (matchedCustomerId) {
+                    await adminClient
+                        .from('crm_whatsapp_chats')
+                        .update({ customer_id: matchedCustomerId, last_interaction: msgTime })
+                        .eq('id', chatId);
+                } else {
+                    await adminClient
+                        .from('crm_whatsapp_chats')
+                        .update({ last_interaction: msgTime })
+                        .eq('id', chatId);
+                }
+            } else {
+                await adminClient
+                    .from('crm_whatsapp_chats')
+                    .update({ last_interaction: msgTime })
+                    .eq('id', chatId);
+            }
+        }
+
+        // 2. Insertar el mensaje en crm_whatsapp_messages si no existe uno idéntico en esa hora
+        await adminClient
+            .from('crm_whatsapp_messages')
+            .insert([{
+                chat_id: chatId,
+                sender_type: 'bot',
+                message_type: 'text',
+                content: textoMensaje,
+                created_at: msgTime
+            }]);
+
+        console.log(`[LiveChat] Notificación registrada para ${formattedPhone}`);
+    } catch (err) {
+        console.error('Error en registrarMensajeSalienteLiveChat:', err);
+    }
+}
+
+export async function agendar_visita(nombre: string, apellido: string, celular: string, correo: string, fecha_hora: string, origen: string = 'whatsapp') {
+    try {
+        // Extraer fecha (YYYY-MM-DD) y hora (HH:mm) expresadas en hora local de Santiago
+        const parts = fecha_hora.split('T');
+        const fechaStr = parts[0];
+        let horaStr = parts[1] ? parts[1].substring(0, 5) : '12:00';
+        if (horaStr.length === 5) horaStr = `${horaStr}:00`;
+
+        const fechaAjustada = toSantiagoISO(fechaStr, horaStr);
+        const dateObj = new Date(fechaAjustada);
+
+        // Obtener el día de la semana en hora local de Santiago
+        const dayOfWeekStr = dateObj.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'America/Santiago' });
+        const dayMap: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+        const dayOfWeek = dayMap[dayOfWeekStr] ?? dateObj.getDay();
+
+        // 1. Validar horario
+        const { data: config, error: configError } = await supabase
+            .from('configuracion_horarios')
+            .select('*')
+            .eq('dia_semana', dayOfWeek)
+            .single();
+
+        if (configError || !config || !config.activo) {
+            return `El campamento_base no atiende los días ${dateObj.toLocaleDateString('es-CL', { weekday: 'long', timeZone: 'America/Santiago' })}.`;
+        }
+
+        const requestedHourNum = parseInt(horaStr.split(':')[0], 10);
+        const startHourNum = parseInt(config.hora_inicio.split(':')[0], 10);
+        const endHourNum = parseInt(config.hora_fin.split(':')[0], 10);
+
+        if (requestedHourNum < startHourNum || requestedHourNum >= endHourNum) {
+            return `El horario de atención para los ${dateObj.toLocaleDateString('es-CL', { weekday: 'long', timeZone: 'America/Santiago' })} es de ${config.hora_inicio.substring(0, 5)} a ${config.hora_fin.substring(0, 5)}.`;
+        }
+        
+        if (requestedHourNum === 13) {
+            return "Las 13:00 está reservado para colación del campamento_base. Por favor escoge otra hora.";
+        }
+
+        // Verificar de nuevo que no esté ocupada
+        const { data: existente } = await supabase
+            .from('agendamientos')
+            .select('id')
+            .eq('fecha_hora', fechaAjustada)
+            .neq('estado', 'cancelado');
+
+        const { data: hitoExistente } = await supabase
+            .from('bridal_milestones')
+            .select('id')
+            .eq('scheduled_date', fechaAjustada)
+            .neq('status', 'completed');
+
+        if ((existente && existente.length > 0) || (hitoExistente && hitoExistente.length > 0)) {
+            return `Lo siento, el bloque de las ${dateObj.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Santiago' })} acaba de ser ocupado. Por favor, elige otra hora.`;
+        }
+
+        // REGISTRO DE CLIENTE: Asegurarnos de que el cliente quede guardado oficialmente en el sistema
+        const cleanPhone = celular ? celular.replace(/\D/g, '') : '';
+        const formattedPhone = cleanPhone.startsWith('56') ? cleanPhone : (cleanPhone ? `56${cleanPhone}` : null);
+        const fullName = `${nombre} ${apellido}`.trim();
+        
+        if (formattedPhone || correo) {
+            let query = supabase.from('adventurers').select('id');
+            if (formattedPhone) {
+                query = query.eq('phone', formattedPhone);
+            } else if (correo) {
+                query = query.eq('email', correo);
+            }
+            
+            const { data: existingCustomer } = await query.maybeSingle();
+
+            if (!existingCustomer) {
+                // Es un cliente nuevo: Lo registramos formalmente
+                await supabase.from('adventurers').insert([{
+                    full_name: fullName,
+                    email: correo || null,
+                    phone: formattedPhone || null
+                }]);
+            } else {
+                // El cliente ya existe: Actualizamos sus datos (ej. si antes no teníamos su email o nombre completo)
+                await supabase.from('adventurers').update({ 
+                    full_name: fullName,
+                    email: correo || null,
+                    phone: formattedPhone || null
+                }).eq('id', existingCustomer.id);
+            }
+        }
+
+        // Insertar en Supabase la Cita/Agendamiento
+        const { data, error } = await supabase
+            .from('agendamientos')
+            .insert([{
+                nombre,
+                apellido,
+                celular,
+                correo,
+                fecha_hora: fechaAjustada,
+                origen: origen,
+                tipo_evento: 'cita_cliente',
+                estado: 'confirmado'
+            }])
+            .select();
+
+        if (error) throw error;
+
+        // Enviar Correo Electrónico
+        await enviar_correo_confirmacion(nombre, apellido, celular, correo, fechaAjustada);
+
+        const horaLegible = dateObj.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Santiago' });
+        const fechaLegible = dateObj.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Santiago' });
+        return `¡Reserva confirmada con éxito! Quedaste agendad@ para el ${fechaLegible} a las ${horaLegible}. Te hemos enviado un correo de respaldo a ${correo}.`;
+
+    } catch (err: any) {
+        console.error('Error agendar_visita:', err);
+        return `Hubo un error interno al intentar guardar tu cita. Por favor, inténtalo más tarde.`;
+    }
+}

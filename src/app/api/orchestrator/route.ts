@@ -1,0 +1,667 @@
+import { NextResponse } from 'next/server';
+import { createClient as createAdminClient } from '@supabase/supabase-js';
+import { generateDeepSeekCompletion } from '@/lib/ai/deepseek';
+import { ATELIER_TOOLS, executeAtelierTool } from '@/lib/ai/tools';
+import { retrieveContext, saveClientMemory } from '@/lib/ai/rag';
+import { consultar_disponibilidad, agendar_visita } from '@/lib/agenda';
+
+export const maxDuration = 60; // Max execution time for Vercel
+
+export async function POST(req: Request) {
+    try {
+        const authHeader = req.headers.get('authorization');
+        // Simple security: Check a custom cron secret (you should set this in env)
+        if (authHeader !== `Bearer ${process.env.CRON_SECRET || 'antigravity-secret'}`) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const supabase = createAdminClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+
+        let body: any = {};
+        try { body = await req.json(); } catch(e) {}
+
+        // Si QStash envía un task_id programado, lo pasamos a pending para que sea procesado
+        if (body.scheduled_task_id) {
+            await supabase.from('ai_agent_tasks').update({ status: 'pending' }).eq('id', body.scheduled_task_id);
+        }
+
+        const results = await processAITasks(supabase);
+        return NextResponse.json({ message: 'Processed tasks', results });
+    } catch (error: any) {
+        console.error('Orchestrator error:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
+
+export async function processAITasks(supabase: any, specificTaskIds?: string[]) {
+    // 1. Fetch pending tasks from the queue (FIFO)
+    let query = supabase
+        .from('ai_agent_tasks')
+        .select('*')
+        .eq('status', 'pending')
+        .order('created_at', { ascending: true });
+
+    if (specificTaskIds && specificTaskIds.length > 0) {
+        query = query.in('id', specificTaskIds);
+    } else {
+        query = query.limit(5); // Solo limitar a 5 si es un barrido general
+    }
+
+    const { data: tasks, error: fetchError } = await query;
+
+    if (fetchError) {
+        console.error('Error fetching tasks:', fetchError);
+        throw new Error(fetchError.message);
+    }
+
+    if (!tasks || tasks.length === 0) {
+        return [];
+    }
+
+    // 2. Mark tasks as processing
+    const taskIds = tasks.map((t: any) => t.id);
+    await supabase
+        .from('ai_agent_tasks')
+        .update({ status: 'processing' })
+        .in('id', taskIds);
+
+    const results = [];
+
+    // 3. Process each task based on agent_role
+    for (const task of tasks) {
+        try {
+            let resultPayload = null;
+
+                switch (task.agent_role) {
+                    case 'whatsapp_closer':
+                        const deepseekKey = process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY;
+                        if (!deepseekKey) throw new Error("DeepSeek API Key not found");
+                        
+                        let userMessage = task.payload.content || "Hola";
+
+                        // Verificación de seguridad: comprobar si el chat sigue con el bot activo ('bot')
+                        let recipientPhone = task.payload.phone_number;
+                        if (task.payload.chat_id) {
+                            const { data: currentChat } = await supabase
+                                .from('crm_whatsapp_chats')
+                                .select('session_status, phone_number')
+                                .eq('id', task.payload.chat_id)
+                                .single();
+
+                            if (currentChat && currentChat.session_status !== 'bot') {
+                                console.log(`Chat ${task.payload.chat_id} está en modo humano (${currentChat.session_status}). Omitiendo respuesta automática.`);
+                                // Marcar tarea como completada sin responder
+                                await supabase
+                                    .from('ai_agent_tasks')
+                                    .update({
+                                        status: 'completed',
+                                        result: { action: 'skipped', reason: 'human_takeover' },
+                                        processed_at: new Date().toISOString()
+                                    })
+                                    .eq('id', task.id);
+                                results.push({ id: task.id, status: 'skipped', reason: 'human_takeover' });
+                                continue;
+                            }
+                            
+                            if (currentChat?.phone_number) {
+                                recipientPhone = currentChat.phone_number;
+                            }
+                        }
+
+                        // El catálogo de precios ahora se consulta dinámicamente vía tool (consultar_precio)
+                        // Ya no se inyecta todo el bloque duro en la memoria.
+                        let catalogContext = '';
+
+                        // Obtener historial reciente del chat (últimos 6 mensajes) para darle contexto completo a la IA
+                        let conversationHistory: any[] = [];
+                        if (task.payload.chat_id) {
+                            const { data: pastMsgs } = await supabase
+                                .from('crm_whatsapp_messages')
+                                .select('sender_type, content')
+                                .eq('chat_id', task.payload.chat_id)
+                                .order('created_at', { ascending: false })
+                                .limit(15);
+                            
+                            if (pastMsgs && pastMsgs.length > 0) {
+                                // Invertir para orden cronológico
+                                conversationHistory = pastMsgs.reverse().map((m: any) => ({
+                                    role: m.sender_type === 'customer' ? 'user' : 'assistant',
+                                    content: m.content || ''
+                                }));
+                            }
+                        }
+
+                        // Si por alguna razón el historial no trajo el último mensaje de la tarea, asegurarlo
+                        if (conversationHistory.length === 0 || conversationHistory[conversationHistory.length - 1].content !== userMessage) {
+                            conversationHistory.push({ role: 'user', content: userMessage });
+                        }
+                        
+                        // Evaluar si hay foto o audio en el mensaje original (fase Gemini)
+                        const isImage = task.payload.message_type === 'image';
+                        const isAudio = task.payload.message_type === 'audio';
+                        
+                        if (isImage || isAudio) {
+                            let geminiAnalysisLocal = task.payload.gemini_analysis || null;
+                            const mediaUrl = task.payload.media_url;
+                            if (!geminiAnalysisLocal && mediaUrl) {
+                                // Procesar la foto o audio aquí asíncronamente
+                                const metaToken = process.env.WHATSAPP_API_TOKEN;
+                                const geminiKey = process.env.GEMINI_API_KEY;
+                                if (metaToken && geminiKey) {
+                                    try {
+                                        const mediaRes = await fetch(`https://graph.facebook.com/v21.0/${mediaUrl}`, { headers: { 'Authorization': `Bearer ${metaToken}` }});
+                                        const mediaData = await mediaRes.json();
+                                        if (mediaData.url) {
+                                            const fileRes = await fetch(mediaData.url, { headers: { 'Authorization': `Bearer ${metaToken}` }});
+                                            if (fileRes.ok) {
+                                                const arrayBuffer = await fileRes.arrayBuffer();
+                                                const buffer = Buffer.from(arrayBuffer);
+                                                const base64Data = buffer.toString('base64');
+                                                const mimeType = mediaData.mime_type || (isImage ? 'image/jpeg' : 'audio/ogg');
+                                                
+                                                const promptText = isImage 
+                                                    ? "Actúa como experta modista. Describe brevemente qué prenda es y qué tipo de arreglo o confección parece necesitar según la foto (máximo 2 líneas)." 
+                                                    : "Transcribe exactamente lo que el usuario dice en este audio. Solo devuelve la transcripción literal en texto, sin agregar comentarios adicionales.";
+
+                                                const payload = {
+                                                    contents: [{ role: 'user', parts: [{ text: promptText }, { inlineData: { mimeType, data: base64Data } }] }],
+                                                    generationConfig: { maxOutputTokens: isImage ? 150 : 500 }
+                                                };
+                                                
+                                                const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${geminiKey}`, {
+                                                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+                                                });
+                                                
+                                                if (geminiRes.ok) {
+                                                    const geminiData = await geminiRes.json();
+                                                    geminiAnalysisLocal = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || null;
+                                                } else {
+                                                    throw new Error(`Gemini API Error: ${geminiRes.status} ${await geminiRes.text()}`);
+                                                }
+                                            } else {
+                                                throw new Error(`Meta Media Download Error: ${fileRes.status} ${await fileRes.text()}`);
+                                            }
+                                        } else {
+                                            throw new Error(`Meta API Media URL Missing: ${JSON.stringify(mediaData)}`);
+                                        }
+                                    } catch (e: any) {
+                                        console.error('Error visual/audio:', e);
+                                        const errPrefix = isImage ? 'FOTO' : 'AUDIO';
+                                        await supabase.from('crm_whatsapp_messages')
+                                            .update({ content: `[EL USUARIO ENVIÓ UN(A) ${errPrefix}. Error del sistema: ${e.message}]` })
+                                            .eq('chat_id', task.payload.chat_id)
+                                            .eq('media_url', mediaUrl);
+                                        geminiAnalysisLocal = `ERROR: ${e.message}`;
+                                    }
+                                }
+                            }
+                            
+                            if (geminiAnalysisLocal && !geminiAnalysisLocal.startsWith('ERROR:')) {
+                               const logPrefix = isImage ? '[EL USUARIO ENVIÓ UNA FOTO. Análisis visual:' : '[EL USUARIO ENVIÓ UN AUDIO. Transcripción:';
+                               const internalPrefix = isImage ? 'FOTO ENVIADA. Análisis visual:' : 'AUDIO ENVIADO. Transcripción:';
+                               
+                               await supabase.from('crm_whatsapp_messages')
+                                   .update({ content: `${logPrefix} ${geminiAnalysisLocal}]` })
+                                   .eq('chat_id', task.payload.chat_id)
+                                   .eq('media_url', mediaUrl);
+                               
+                               const lastUserMsgIndex = conversationHistory.findLastIndex((msg: any) => msg.role === 'user');
+                               if (lastUserMsgIndex !== -1) {
+                                   conversationHistory[lastUserMsgIndex].content = `${logPrefix} ${geminiAnalysisLocal}] ${conversationHistory[lastUserMsgIndex].content}`;
+                               }
+                               userMessage = `${internalPrefix} ${geminiAnalysisLocal}. ` + userMessage; 
+
+                            } else if (!geminiAnalysisLocal || geminiAnalysisLocal.startsWith('ERROR:')) {
+                               const errPrefix2 = isImage ? 'UNA FOTO' : 'UN AUDIO';
+                               const errDesc = isImage ? 'visual' : 'de transcripción de audio';
+                               const errAction = isImage ? 'la foto' : 'el audio';
+                               const errFall = isImage ? 'te describa la prenda o el arreglo' : 'te escriba su consulta por texto';
+                               
+                               await supabase.from('crm_whatsapp_messages')
+                                   .update({ content: `[EL USUARIO ENVIÓ ${errPrefix2}. Error del sistema al procesar: ${geminiAnalysisLocal}]` })
+                                   .eq('chat_id', task.payload.chat_id)
+                                   .eq('media_url', mediaUrl);
+
+                               const lastUserMsgIndex = conversationHistory.findLastIndex((msg: any) => msg.role === 'user');
+                               if (lastUserMsgIndex !== -1) {
+                                   conversationHistory[lastUserMsgIndex].content = `[EL USUARIO ENVIÓ ${errPrefix2}, pero hubo un error en el sistema ${errDesc} de la IA. Dile amablemente que no pudiste cargar ${errAction} por un problema temporal y pídele que ${errFall}.] ${conversationHistory[lastUserMsgIndex].content}`;
+                               }
+                            }
+                        }
+
+                        // Recuperar RAG context
+                        let ragContext = await retrieveContext(userMessage, recipientPhone);
+
+                        // Inyectar datos del cliente desde CRM usando el customer_id asociado al chat
+                        let cName = '';
+                        let cEmail = '';
+                        let customerFound = false;
+
+                        if (task.payload.chat_id) {
+                            const { data: chatData } = await supabase
+                                .from('crm_whatsapp_chats')
+                                .select('customer_id')
+                                .eq('id', task.payload.chat_id)
+                                .single();
+                                
+                            if (chatData && chatData.customer_id) {
+                                const { data: exactCustomer } = await supabase
+                                    .from('adventurers')
+                                    .select('full_name, email')
+                                    .eq('id', chatData.customer_id)
+                                    .single();
+                                    
+                                if (exactCustomer) {
+                                    cName = exactCustomer.full_name || '';
+                                    cEmail = exactCustomer.email || '';
+                                    customerFound = true;
+                                }
+                            }
+                        }
+
+                        if (!customerFound) {
+                            // Fallback para clientes antiguos sin customer_id en el chat
+                            let searchPhone1 = recipientPhone;
+                            let searchPhone2 = recipientPhone.startsWith('56') ? recipientPhone.substring(2) : `56${recipientPhone}`;
+                            const { data: customerData } = await supabase
+                                .from('adventurers')
+                                .select('full_name, email')
+                                .or(`phone.eq.${searchPhone1},phone.eq.${searchPhone2}`)
+                                .limit(1);
+                            
+                            if (customerData && customerData.length > 0) {
+                                cName = customerData[0].full_name || '';
+                                cEmail = customerData[0].email || '';
+                                customerFound = true;
+                            }
+                        }
+                        
+                        if (customerFound) {
+                            const [nombre, ...apellidos] = cName.split(' ');
+                            const apellido = apellidos.join(' ');
+                            ragContext += `\n[CRM DATA]: Este cliente ya está registrado en tu base de datos. Su celular es ${recipientPhone}. Su nombre es "${nombre}", su apellido es "${apellido}" y su correo es "${cEmail}". NO le pidas nombre ni correo para agendar, ya los tienes, úsalos automáticamente al invocar la herramienta de agendar.`;
+                        } else {
+                            ragContext += `\n[CRM DATA]: Este es un cliente NUEVO. Recuerda entregarle la dirección física del campamento_base (Av Tabancura 1091 Of 319 Vitacura) en un mensaje aparte después de agendar.`;
+                        }
+
+                        // Obtener fecha actual en Santiago
+                        const now = new Date();
+                        const santiagoTime = new Intl.DateTimeFormat('es-CL', {
+                            timeZone: 'America/Santiago',
+                            dateStyle: 'full',
+                            timeStyle: 'short'
+                        }).format(now);
+                        const currentDateISO = now.toISOString().split('T')[0];
+
+                        // Inyectar disponibilidad real en vivo desde la base de datos
+                        let liveAgendaText = "No fue posible obtener la agenda en vivo.";
+                        try {
+                            liveAgendaText = await consultar_disponibilidad(currentDateISO);
+                        } catch (agendaErr) {
+                            console.error("Error consultando disponibilidad en vivo:", agendaErr);
+                        }
+
+                        ragContext += `\n\n[CALENDARIO DE DISPONIBILIDAD REAL EN VIVO (DESDE BASE DE DATOS SUPABASE)]:
+${liveAgendaText}
+
+REGLAS ABSOLUTAS DE DISPONIBILIDAD Y AGENDA:
+1. NUNCA INVENTES NINGUNA HORA. Si el cliente pregunta qué horas hay disponibles o pide una hora específica (ej. 16:00), REVISA ESTRICTAMENTE la lista real de arriba.
+2. Si el cliente pide una hora que NO ESTÁ en la lista de arriba (por ejemplo pide las 16:00 y no aparece como libre), DILE EXPLÍCITAMENTE que esa hora no está disponible y entrega ÚNICAMENTE las horas que figuran como libres en la lista real superior.
+3. DEFINICIÓN DE MAÑANA Y TARDE:
+   - MAÑANA: Horas entre 09:00 y 12:00.
+   - TARDE: Horas entre 14:00 y 19:00 (ej: 14:00, 15:00, 16:00, 17:00, 18:00).
+   - Si el cliente pide hora "en la tarde", REVISA la lista real superior y dale las horas disponibles en el bloque de la tarde (>= 14:00). ¡PROHIBIDO decir que no hay en la tarde si en la lista real superior sí figuran horas como las 14:00, 15:00 o 18:00!
+4. Si el cliente te pide un día distinto a los que están en la lista superior, ejecuta la herramienta 'consultar_disponibilidad' indicando la fecha deseada.`;
+
+                        const systemPrompt = `Eres Gaz, la asesora personal de Alta Costura del exclusivo "Gaz Style". NUNCA te presentes como "bot".
+Tratamiento: Tu trato debe ser EXTREMADAMENTE ELEGANTE, educado y refinado. Dirígete de "Tú" pero manteniendo una distinción de boutique premium (nuestro público incluye mujeres de la política, doctoras y abogadas). NO suenes deslenguada, seca, ni confianzuda.
+
+REGLA DE SALUDO INICIAL Y ADAPTACIÓN:
+Los clientes pueden llegar con mensajes pre-cargados. Adáptate con elegancia al contexto de lo que piden.
+Si solo dicen "Hola", tu respuesta debe ser cálida pero profesional: "¡Hola! ¿Cómo estas? Soy Gaz. ¿En qué te puedo ayudar?".
+
+INFORMACIÓN DEL TALLER Y DIRECCIÓN:
+- Dirección: "Estamos ubicados en Av Tabancura 1091 Of 319 Vitacura".
+- REGLA DE DIRECCIÓN: Entrega la dirección SOLO a clientes NUEVOS. Si el cliente ya está registrado en el CRM, asume que ya la sabe y dásela solo si la pide explícitamente. Cuando entregues la dirección, siempre debe ir en un mensaje/línea aparte, no mezclada en el párrafo.
+
+REGLA DE URGENCIA (45 DÍAS):
+- Si el cliente menciona una fecha de evento que está a menos de 45 días, ES URGENTE. No digas "estamos a buen tiempo". Usa un enfoque como: "Un desafío, estamos con el tiempo en contra, busquemos una fecha para una cita en el campamento_base y así te entrego una cotización exacta. ¿Cuándo podríamos agendar?"
+
+FECHA ACTUAL: Hoy es ${santiagoTime}.
+¡NUNCA sugieras fechas u horas de tu propia mente! Usa los datos del CALENDARIO EN VIVO adjuntos arriba en tu contexto. Prohibido agendar a las 13:00 (hora de colación).
+
+REGLAS DE ORO OBLIGATORIAS (PERSONALIDAD Y AGENDAMIENTO):
+1. ELEGANCIA EN LAS PREGUNTAS: Reemplaza frases directas como "¿Qué hora te sirve?" por fórmulas sutiles como: "¿Podríamos agendar una cita para revisarlo en detalle, ¿te parece bien?".
+2. CUÁNDO Y CÓMO OFRECER HORARIOS (CRÍTICO - LEE CON ATENCIÓN):
+   - PASO 1: Primero entiende la necesidad del cliente (qué prenda, qué arreglo). NO ofrezcas horarios todavía.
+   - PASO 2: Invita sutilmente al campamento_base. Espera confirmación del cliente: "Para revisarlo en detalle, podríamos agendar una cita. ¿Te parece bien?".
+   - PASO 3: SOLO CUANDO EL CLIENTE ACEPTA VENIR, ofrece disponibilidad con UNA opción mañana y UNA tarde. NUNCA listes todos los horarios.
+   - **PROHIBIDO**: Ofrecer horarios específicos como "jueves a las 11:00 o la tarde a las 15:00" si el cliente NO ha confirmado que quiere venir.
+3. BREVEDAD ABSOLUTA: Responde en MÁXIMO 2 líneas por mensaje. Un solo pensamiento por mensaje. Prohibido mezclar precio + invitación + horarios en el mismo mensaje.
+4. PREGUNTA GUÍA: Termina con UNA sola pregunta suave. La pregunta debe ser sobre lo que el cliente necesita (ej: "¿Qué prenda necesitas arreglar?"), NO sobre horarios si el cliente aún no ha dicho que quiere venir.
+5. VOCABULARIO CHILENO: Prohibido decir "bastilla" (usa "basta"), "cremallera" (usa "cierre"). Usa lenguaje natural de Chile.
+6. PRECIOS Y AGENDAMIENTO: ¡NO TIENES PRECIOS MEMORIZADOS! Si el cliente pregunta por el valor de CUALQUIER servicio (bastas, expedicións, despacho a domicilio), ESTÁS OBLIGADA a usar la herramienta 'consultar_precio'. Al entregar un precio devuelto por la herramienta, usa siempre la palabra "desde".
+7. TOMA DE DATOS Y AGENDA: Revisa las horas disponibles reales arriba. Si el cliente acepta una fecha y hora disponible, revisa tu Contexto (CRM). Si ya tienes su Nombre y Correo, NO se los pidas de nuevo; avanza directo a agendar. Si no los tienes, pídeselos. SI EL CLIENTE ENVÍA NOMBRE Y APELLIDO JUNTO CON O SIN CORREO (ej: "Gaz Rojas, nenitadesign@gmail.com" o "Gaz Rojas"), TOMA EL PRIMER NOMBRE COMO "Gaz" Y EL SEGUNDO COMO "Rojas". ¡PROHIBIDO PREGUNTAR NUEVAMENTE POR EL APELLIDO! CUANDO TENGAS EL NOMBRE, APELLIDO, CORREO Y HORA, ESTÁS OBLIGADO a ejecutar la herramienta 'agendar_visita'. Si la herramienta devuelve un error, DEBES decirle al cliente que hubo un problema y NO confirmar la cita. NUNCA confirmes una cita si no ejecutaste la herramienta EXITOSAMENTE. Tras agendar exitosamente, NUNCA entregues la dirección si es cliente antiguo (a menos que te la pida). SÓLO entrega la dirección si es cliente nuevo. NO pidas el celular.
+8. DERIVACIÓN: Si el cliente muestra confusión, enojo, pide hablar con un humano o menciona la palabra "problema", usa la herramienta 'solicitar_asistencia_humana'.
+9. CONTACTO POSTERIOR (RECORDATORIO): Si te piden que les hables más tarde, usa de inmediato la herramienta 'programar_seguimiento_automatico' con los minutos indicados. Si están dentro de tu horario hábil (09:00 a 21:00), diles "¡Claro! Te escribo en un ratito.". PERO si te piden hablarles a una hora que cae fuera de ese horario (ej: de madrugada), diles "¡Claro! Te escribiré mañana a primera hora para que lo veamos." (EXCEPCIÓN: Si te piden esperar 15 minutos o menos, permítelo y diles "¡Claro! Te espero").
+10. FOTOS Y VISIÓN (¡MUY IMPORTANTE!): ¡TÚ SÍ PUEDES VER FOTOS! Estás conectada a un motor de visión. Si el cliente te pregunta si puede enviar fotos, dile con entusiasmo "¡Sí, claro! Envíame la foto y la reviso de inmediato.". ¡NUNCA digas que no puedes ver imágenes!
+11. SERVICIO A DOMICILIO: La guía va a domicilio SOLO a tomar medidas y probar prendas (con alfileres). ¡NUNCA COSE NI ARREGLA ROPA EN LA CASA DEL CLIENTE! Las prendas siempre se llevan de vuelta al campamento_base para ser arregladas en las máquinas.
+
+ACCIONES PROHIBIDAS (NUNCA LAS HAGAS):
+- NUNCA escribas datos bancarios, números de cuenta ni RUT en el chat.
+- NUNCA envíes links de pago. Los pagos se gestionan por correo desde el campamento_base.
+- NUNCA borres datos de clientes. Si piden borrar sus datos, di que un asesor gestionará la solicitud.
+- NUNCA des un precio final exacto. Siempre usa "desde $X" y deriva al campamento_base.
+- NUNCA confirmes una cita verbalmente (ej: "Te agendé", "Listo") sin haber ejecutado la herramienta 'agendar_visita'. ESTÁ ESTRICTAMENTE PROHIBIDO.
+- NUNCA respondas con bloques de código XML ni etiquetas DSML.
+- ALUCINACIÓN PROHIBIDA: Tienes PROHIBIDO decir "Tengo disponible a las 09:00, 10:00 u 11:00" u ofrecer CUALQUIER hora que no esté en los datos de disponibilidad real de Supabase adjuntos arriba.
+
+CATÁLOGO VIGENTE Y CONTEXTO RAG (USAR COMO REFERENCIA):
+${catalogContext}
+${ragContext}`;
+
+                        // PRIMERA LLAMADA A DEEPSEEK (CON TOOLS)
+                        let aiReply = "Disculpe, en este momento el atelier está con alta demanda. Un asesor humano le atenderá a la brevedad.";
+                        let isHandoffTriggered = false;
+                        let isScheduledTask = false;
+                        let handoffUrgency = 'normal';
+                        let handoffMotivo = 'El cliente solicitó atención personalizada.';
+
+                        try {
+                            const dsMessages = [{ role: 'system', content: systemPrompt } as any, ...conversationHistory.map((m: any) => ({
+                                role: m.role,
+                                content: m.content
+                            }))];
+
+                            const dsTools = [...ATELIER_TOOLS, {
+                                type: 'function',
+                                function: {
+                                    name: 'consultar_precio',
+                                    description: 'Busca el precio de un servicio o prenda en la base de datos del Atelier.',
+                                    parameters: { type: "object", properties: { servicio: { type: "string", description: "Término de búsqueda, ej: basta, cierre, expedición de aventurero, entalle" } }, required: ["servicio"], additionalProperties: false },
+                                    strict: true
+                                }
+                            }];
+
+                            let res = await generateDeepSeekCompletion({ messages: dsMessages, tools: dsTools, temperature: 0.2 });
+                            let wasAgendarExecuted = false;
+
+                            if (res.toolCalls && res.toolCalls.length > 0) {
+                                const toolCall = res.toolCalls[0];
+                                const funcName = toolCall.function.name;
+                                const funcArgs = JSON.parse(toolCall.function.arguments);
+                                
+                                if (funcName === 'agendar_visita') {
+                                    wasAgendarExecuted = true;
+                                }
+                                
+                                let toolResult: any = undefined;
+                                
+                                if (funcName === 'solicitar_asistencia_humana') {
+                                    isHandoffTriggered = true;
+                                    handoffUrgency = funcArgs.urgencia || 'normal';
+                                    handoffMotivo = funcArgs.motivo || 'Atención humana requerida.';
+                                    toolResult = await executeAtelierTool(funcName, funcArgs, { celular: recipientPhone });
+                                } else if (funcName === 'programar_seguimiento_automatico') {
+                                    isScheduledTask = true;
+                                    let delayMinutes = funcArgs.minutos || 5;
+                                    
+                                    const nowInStgo = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Santiago", hour12: false }));
+                                    const targetDateObj = new Date(nowInStgo.getTime() + delayMinutes * 60000);
+                                    const targetHour = targetDateObj.getHours();
+
+                                    if ((targetHour < 9 || targetHour >= 21) && delayMinutes > 15) {
+                                        const next9AM = new Date(targetDateObj);
+                                        if (targetHour >= 21) next9AM.setDate(next9AM.getDate() + 1);
+                                        next9AM.setHours(9, 0, 0, 0);
+                                        delayMinutes = Math.floor((next9AM.getTime() - nowInStgo.getTime()) / 60000);
+                                        if (delayMinutes < 1) delayMinutes = 1;
+                                    }
+                                    
+                                    const { data: newTask } = await supabase.from('ai_agent_tasks').insert([{
+                                        agent_role: 'whatsapp_closer', status: 'scheduled', error_log: 'Programado por IA',
+                                        payload: { chat_id: task.payload.chat_id, phone_number: recipientPhone, content: `[SISTEMA - RECORDATORIO AUTOMÁTICO] Acaban de pasar los minutos que el cliente pidió esperar. Retoma la conversación amigablemente de forma proactiva. Motivo: ${funcArgs.motivo}`, message_type: 'text' }
+                                    }]).select().single();
+
+                                    if (newTask && process.env.QSTASH_TOKEN) {
+                                        const qstashUrl = process.env.QSTASH_URL || 'https://qstash.upstash.io';
+                                        const baseUrl = qstashUrl.endsWith('/') ? qstashUrl.slice(0, -1) : qstashUrl;
+                                        await fetch(`${baseUrl}/v2/publish/https://www.elenalaguía.cl/api/orchestrator`, {
+                                            method: 'POST',
+                                            headers: { 'Authorization': `Bearer ${process.env.QSTASH_TOKEN}`, 'Content-Type': 'application/json', 'Upstash-Forward-Authorization': `Bearer ${process.env.CRON_SECRET || 'antigravity-secret'}`, 'Upstash-Delay': `${delayMinutes}m` },
+                                            body: JSON.stringify({ scheduled_task_id: newTask.id })
+                                        });
+                                    }
+                                    toolResult = JSON.stringify({ status: 'scheduled', message: `Recordatorio configurado para en ${delayMinutes} minutos.` });
+                                } else if (funcName === 'consultar_precio') {
+                                    const searchTerm = funcArgs.servicio || '';
+                                    const { data: catalogData } = await supabase.from('catalog').select('*').eq('active', true);
+                                    let found = [];
+                                    if (catalogData) {
+                                        found = catalogData.filter((i: any) => i.name.toLowerCase().includes(searchTerm.toLowerCase()) || i.category.toLowerCase().includes(searchTerm.toLowerCase()));
+                                    }
+                                    if (found.length > 0) {
+                                        toolResult = JSON.stringify({ status: 'success', precios_referenciales: found.map((i: any) => `${i.name}: desde ${i.price}`) });
+                                    } else {
+                                        toolResult = JSON.stringify({ status: 'not_found', message: 'No hay un precio estandarizado para esto. Indica al cliente que esto se evalúa en el campamento_base y requiere cita.' });
+                                    }
+                                } else {
+                                    toolResult = await executeAtelierTool(funcName, funcArgs, { celular: recipientPhone });
+                                }
+                                
+                                dsMessages.push({ role: 'assistant', content: res.content || '', tool_calls: res.toolCalls } as any);
+                                dsMessages.push({ role: 'tool', tool_call_id: toolCall.id, name: funcName, content: String(toolResult) } as any);
+                                
+                                let res2 = await generateDeepSeekCompletion({ messages: dsMessages, tools: dsTools, temperature: 0.2 });
+                                aiReply = res2.content;
+                            } else {
+                                aiReply = res.content;
+                            }
+
+                            // SALVAGUARDA DE SEGURIDAD PARA AGENDAMIENTO:
+                            const isVerbalConfirmation = /te agendé|quedaste agendad|cita confirmada|te dejé agendad/i.test(aiReply);
+
+                            if (!wasAgendarExecuted && isVerbalConfirmation) {
+                                console.warn('[FAIL-SAFE AGENDA] El bot confirmó verbalmente la cita pero no ejecutó la tool. Ejecutando salvaguarda...');
+                                try {
+                                    const allText = conversationHistory.map((m: any) => m.content).join(' ') + ' ' + userMessage;
+                                    const emailMatch = allText.match(/[\w.-]+@[\w.-]+\.\w+/);
+                                    const targetEmail = emailMatch ? emailMatch[0] : cEmail;
+
+                                    let targetNombre = 'Cliente';
+                                    let targetApellido = 'Atelier';
+
+                                    if (cName) {
+                                        const parts = cName.split(' ');
+                                        targetNombre = parts[0];
+                                        targetApellido = parts.slice(1).join(' ') || 'Atelier';
+                                    } else {
+                                        const userMsgs = conversationHistory.filter((m: any) => m.role === 'user').map((m: any) => m.content);
+                                        for (const msg of userMsgs.reverse()) {
+                                            const clean = msg.replace(/[\w.-]+@[\w.-]+\.\w+/, '').replace(/,/g, '').trim();
+                                            const words = clean.split(/\s+/).filter((w: string) => w.length > 1 && !/^(hola|si|sí|a|las|el|miércoles|jueves|viernes|sábado|mañana|tarde)$/i.test(w));
+                                            if (words.length >= 2) {
+                                                targetNombre = words[0];
+                                                targetApellido = words.slice(1).join(' ');
+                                                break;
+                                            } else if (words.length === 1 && targetNombre === 'Cliente') {
+                                                targetNombre = words[0];
+                                            }
+                                        }
+                                    }
+
+                                    let targetHora = '18:00';
+                                    const horaMatch = aiReply.match(/(\d{1,2}):(\d{2})/) || userMessage.match(/(\d{1,2}):(\d{2})/);
+                                    if (horaMatch) {
+                                        targetHora = `${horaMatch[1].padStart(2, '0')}:${horaMatch[2]}`;
+                                    } else {
+                                        const horaSimple = aiReply.match(/a las (\d{1,2})/i) || userMessage.match(/a las (\d{1,2})/i);
+                                        if (horaSimple) {
+                                            targetHora = `${horaSimple[1].padStart(2, '0')}:00`;
+                                        }
+                                    }
+
+                                    let targetFecha = currentDateISO;
+                                    const diaMatch = aiReply.match(/(\d{1,2})\s+de\s+(\w+)|día\s+(\d{1,2})|miércoles\s+(\d{1,2})|jueves\s+(\d{1,2})|viernes\s+(\d{1,2})|sábado\s+(\d{1,2})/i);
+                                    if (diaMatch) {
+                                        const numDia = (diaMatch[1] || diaMatch[3] || diaMatch[4] || diaMatch[5] || diaMatch[6] || diaMatch[7]).padStart(2, '0');
+                                        const nowObj = new Date();
+                                        targetFecha = `${nowObj.getFullYear()}-${(nowObj.getMonth() + 1).toString().padStart(2, '0')}-${numDia}`;
+                                    }
+
+                                    if (targetEmail) {
+                                        const fechaHoraISO = `${targetFecha}T${targetHora}:00`;
+                                        console.log(`[FAIL-SAFE AGENDA] Ejecutando agendar_visita automático: ${targetNombre} ${targetApellido}, ${targetEmail}, ${fechaHoraISO}`);
+                                        await agendar_visita(targetNombre, targetApellido, recipientPhone, targetEmail, fechaHoraISO, 'whatsapp');
+                                    }
+                                } catch (fsErr) {
+                                    console.error('[FAIL-SAFE AGENDA] Error en salvaguarda:', fsErr);
+                                }
+                            }
+                            
+                            // Evaluar Handoff Automático (Backup por Regex)
+                            const handoffRegexUser = /humano|asesor|reclamo|problema|inconveniente|queja|devolución|datos bancarios|transferencia/i;
+                            const handoffRegexBot = /asesora humana|transferir|un momento.*por favor|inconveniente|problema/i;
+                            
+                            if (!isHandoffTriggered && !isScheduledTask && (handoffRegexUser.test(userMessage) || handoffRegexBot.test(aiReply))) {
+                                isHandoffTriggered = true;
+                                handoffUrgency = /reclamo|problema|inconveniente|queja|devolución/i.test(userMessage) ? 'alta' : 'normal';
+                                handoffMotivo = 'Detectado por filtro de seguridad (Regex).';
+                                aiReply = "Entendido. Para atenderte de forma más personalizada, te voy a transferir directamente con nuestro equipo. Un momento por favor.";
+                            }
+
+                        } catch (error) {
+                            console.log("GEMINI CATCH ERROR:", error);
+                        }
+
+                        // Guardar respuesta del bot en el historial de mensajes
+                        if (task.payload.chat_id) {
+                            await supabase
+                                .from('crm_whatsapp_messages')
+                                .insert([{
+                                    chat_id: task.payload.chat_id,
+                                    sender_type: 'bot',
+                                    message_type: 'text',
+                                    content: aiReply
+                                }]);
+                                
+                            if (isHandoffTriggered) {
+                                await supabase
+                                    .from('crm_whatsapp_chats')
+                                    .update({ session_status: 'human_handoff' })
+                                    .eq('id', task.payload.chat_id);
+                            }
+                        }
+
+                        const token = process.env.WHATSAPP_API_TOKEN;
+                        const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+
+                        // ENVIAR MENSAJE A WHATSAPP
+                        if (recipientPhone && token && phoneId) {
+                            try {
+                                const waRes = await fetch(`https://graph.facebook.com/v21.0/${phoneId}/messages`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Authorization': `Bearer ${token}`,
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        messaging_product: 'whatsapp',
+                                        to: recipientPhone,
+                                        type: 'text',
+                                        text: { body: aiReply }
+                                    })
+                                });
+
+                                const waResData = await waRes.json();
+                                if (!waRes.ok) {
+                                    console.error('Error enviando mensaje a WhatsApp Meta API:', waResData);
+                                } else {
+                                    console.log('Mensaje enviado exitosamente a WhatsApp Meta API:', waResData);
+                                    
+                                    // Si hubo handoff, notificar al admin
+                                    if (isHandoffTriggered) {
+                                        const adminPhones = ['56984021940', '56937667709'];
+                                        
+                                        let iconoAlerta = handoffUrgency === 'alta' ? '🚨' : '⚠️';
+                                        let tituloAlerta = handoffUrgency === 'alta' ? '*URGENCIA: RECLAMO O PROBLEMA*' : '*Atención Humana Requerida*';
+                                        
+                                        const adminMessage = `${iconoAlerta} ${tituloAlerta}\n\nEl cliente (${recipientPhone}) ha sido transferido a un humano.\n\n*Motivo de la IA:* ${handoffMotivo}\n\n👉 Responder aquí: https://elenalaguía.cl/admin/livechat`;
+                                        
+                                        for (const adminPhone of adminPhones) {
+                                            await fetch(`https://graph.facebook.com/v21.0/${phoneId}/messages`, {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Authorization': `Bearer ${token}`,
+                                                    'Content-Type': 'application/json'
+                                                },
+                                                body: JSON.stringify({
+                                                    messaging_product: 'whatsapp',
+                                                    to: adminPhone,
+                                                    type: 'text',
+                                                    text: { body: adminMessage }
+                                                })
+                                            });
+                                        }
+                                    }
+                                }
+                            } catch (waErr) {
+                                console.error('Excepción al enviar a WhatsApp Meta API:', waErr);
+                            }
+                        } else {
+                            console.warn('Faltan credenciales o teléfono para enviar mensaje a Meta API:', {
+                                hasPhone: !!recipientPhone,
+                                hasToken: !!token,
+                                hasPhoneId: !!phoneId
+                            });
+                        }
+
+                        resultPayload = { 
+                            action: 'reply', 
+                            message: aiReply,
+                            handoff: isHandoffTriggered,
+                            original_payload: task.payload 
+                        };
+                        break;
+                    case 'hr_manager':
+                        resultPayload = { action: 'review_payroll', status: 'ok' };
+                        break;
+                    case 'erp_analyst':
+                        resultPayload = { action: 'alert', message: 'Falta stock de seda italiana' };
+                        break;
+                    default:
+                        throw new Error(`Unknown agent_role: ${task.agent_role}`);
+                }
+
+                // Update task as completed
+                await supabase
+                    .from('ai_agent_tasks')
+                    .update({
+                        status: 'completed',
+                        result: resultPayload,
+                        processed_at: new Date().toISOString()
+                    })
+                    .eq('id', task.id);
+
+                results.push({ id: task.id, status: 'completed' });
+
+            } catch (err: any) {
+                console.error(`Task ${task.id} failed:`, err);
+                // Mark task as failed
+                await supabase
+                    .from('ai_agent_tasks')
+                    .update({
+                        status: 'failed',
+                        error_log: err.message,
+                        processed_at: new Date().toISOString()
+                    })
+                    .eq('id', task.id);
+                results.push({ id: task.id, status: 'failed', error: err.message });
+            }
+    }
+
+    return results;
+}

@@ -1,48 +1,23 @@
-"use client";
-
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
-import { 
-  ArrowLeft, Mountain, Coffee, ShieldCheck, MapPin, Clock, Camera, 
-  CarFront, Check, ChevronDown, Ticket, HeartPulse, Compass, Home, Map as MapIcon, Calendar
-} from "lucide-react";
+import HeroCarousel from "./HeroCarousel";
+import { ArrowLeft, Mountain, ShieldCheck, Clock, HeartPulse, Compass, Download, MessageCircle, Camera, Tent, ArrowRight, CheckCircle2 } from "lucide-react";
+import { createClient } from '@supabase/supabase-js';
 
-export default function ExperienciaMontanaPage() {
-  const [selectedRoute, setSelectedRoute] = useState("sunset");
-  const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    rut: "",
-    experience: "principiante"
-  });
+async function getPublicData() {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+  const [{ data: routes }, { data: departures }] = await Promise.all([
+    supabase.from('adventures_catalog').select('*').eq('is_active', true).order('created_at', { ascending: false }),
+    supabase.from('agenda_departures').select('*, adventures_catalog(title, base_price, max_pax)').in('status', ['scheduled', 'confirmed']).gte('start_date', new Date().toISOString().split('T')[0]).order('start_date', { ascending: true }).limit(6),
+  ]);
+  return { routes: routes || [], departures: departures || [] };
+}
 
-  const [currentImage, setCurrentImage] = useState(0);
-  const heroImages = [
-    "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=2000&q=80",
-    "https://images.unsplash.com/photo-1522163182402-834f871fd851?q=80&w=2803&auto=format&fit=crop"
-  ];
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentImage((prev) => (prev + 1) % heroImages.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const handleCheckout = (e: React.FormEvent) => {
-    e.preventDefault();
-    setShowModal(true);
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+export default async function ExperienciaMontanaPage() {
+  const { routes, departures } = await getPublicData();
 
   return (
     <>
@@ -51,7 +26,7 @@ export default function ExperienciaMontanaPage() {
           @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
           
           .gaz-premium-body {
-            background-color: #050505;
+            background-color: transparent;
             color: #f8fafc;
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
@@ -89,388 +64,265 @@ export default function ExperienciaMontanaPage() {
               </span>
             </div>
 
-            <a href="#reservar" className="hidden md:inline-flex bg-white hover:bg-slate-200 text-black px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-colors">
-              Reservar Aventura
+            <a href="#rutas" className="hidden md:inline-flex bg-white hover:bg-slate-200 text-black px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-colors">
+              Ven al cerro
             </a>
           </div>
         </header>
 
-        {/* HERO SECTION */}
-        <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-          {/* Background Image Carousel / Overlay */}
-          <div className="absolute inset-0 z-0 bg-stone-950">
-            {heroImages.map((src, idx) => (
-              <img 
-                key={src}
-                src={src} 
-                alt="Aventura en la cordillera" 
-                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[2000ms] ease-in-out scale-105 ${
-                  idx === currentImage ? 'opacity-80' : 'opacity-0'
-                }`}
-              />
-            ))}
-            <div className="absolute inset-0 bg-gradient-to-b from-stone-950/40 via-transparent to-stone-950"></div>
-          </div>
+        {/* HERO SECTION: MARCA PERSONAL */}
+        <section className="relative min-h-screen flex items-center justify-center pt-20">
+          <HeroCarousel />
 
-          <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
+          <div className="relative z-10 max-w-5xl mx-auto px-6 text-center mt-10">
             <div className="inline-flex items-center gap-2 border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 rounded-full mb-8">
               <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-              <span className="text-xs font-medium tracking-widest uppercase text-amber-400">Turismo de Montaña Premium</span>
+              <span className="text-xs font-medium tracking-widest uppercase text-amber-400">Guía & Creador de Contenido</span>
             </div>
             
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-editorial font-bold text-white leading-tight mb-6">
-              La montaña, <br />
-              <span className="italic font-light text-slate-300">vivida con </span>
-              <span className="gold-gradient-text">estilo.</span>
+              Soy Gaz y te ayudo a <br />
+              <span className="italic font-light text-slate-300">descubrir la montaña a </span>
+              <span className="gold-gradient-text">tu estilo.</span>
             </h1>
             
-            <p className="text-base md:text-xl text-slate-400 max-w-2xl mx-auto font-light leading-relaxed mb-12">
-              Aventura, desconexión y vitalidad en la montaña. 
-              Un liderazgo enérgico que te empuja a salir de la rutina, combinando lo salvaje de la naturaleza con una mentalidad de excelencia.
+            <p className="text-base md:text-xl text-slate-300 max-w-2xl mx-auto font-light leading-relaxed mb-12">
+              No soy una agencia de turismo tradicional. Soy tu compañero de ruta. Te muestro la realidad del trekking sin filtros: el barro, el cansancio y la comida en la cima.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a href="#rutas" className="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-black px-8 py-4 rounded-full text-sm font-bold uppercase tracking-widest transition-all hover:scale-105">
-                Explorar Rutas
+                Acompáñame a una ruta
               </a>
-              <a href="#filosofia" className="w-full sm:w-auto glass-panel hover:bg-white/10 text-white px-8 py-4 rounded-full text-sm font-bold uppercase tracking-widest transition-all">
-                Nuestra Filosofía
+              <a href="#comunidad" className="w-full sm:w-auto glass-panel hover:bg-white/10 text-white px-8 py-4 rounded-full text-sm font-bold uppercase tracking-widest transition-all">
+                Únete a la Tribu
               </a>
             </div>
           </div>
         </section>
 
-        {/* VALUE PROPOSITION: LA FILOSOFÍA GAZ_STYLE */}
-        <section id="filosofia" className="py-24 bg-stone-950 relative z-20">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-20">
-              <h2 className="font-editorial text-4xl md:text-5xl font-bold text-white mb-6">Aventura y Desconexión Real.</h2>
-              <p className="text-slate-400 max-w-2xl mx-auto font-light">
-                No vendemos tours, compartimos un estilo de vida. Creemos en el magnetismo orgánico: si nuestra vitalidad y mentalidad de superación te inspiran, sentirás la necesidad genuina de vivirlo.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Prop 1 */}
-              <div className="glass-panel p-8 rounded-3xl hover:-translate-y-2 transition-transform duration-300">
-                <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center mb-6">
-                  <HeartPulse className="w-6 h-6 text-amber-500" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">Liderazgo Inspirador</h3>
-                <p className="text-sm text-slate-400 font-light leading-relaxed">
-                  Un guiado enérgico, directo y motivador. No solo caminamos, te impulsamos a salir de tu zona de confort fomentando una mentalidad de excelencia y superación personal.
-                </p>
+        {/* LEAD MAGNET / FREEBIE */}
+        <section className="py-16 bg-black/30 relative z-20">
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="glass-panel border-amber-500/20 rounded-[2rem] p-8 md:p-12 flex flex-col md:flex-row items-center gap-10">
+              <div className="w-24 h-24 bg-amber-500/10 rounded-full flex items-center justify-center flex-shrink-0">
+                <Download className="w-10 h-10 text-amber-500" />
               </div>
-
-              {/* Prop 2 */}
-              <div className="glass-panel p-8 rounded-3xl hover:-translate-y-2 transition-transform duration-300">
-                <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center mb-6">
-                  <Compass className="w-6 h-6 text-amber-500" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">El Toque "Style"</h3>
-                <p className="text-sm text-slate-400 font-light leading-relaxed">
-                  El contraste perfecto entre lo salvaje de la naturaleza y el cuidado minucioso de los detalles. Desde la calidad del trato hasta los pequeños elementos de la experiencia.
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-2xl font-bold text-white mb-2">Descarga gratis mi Checklist Definitiva 🎒</h3>
+                <p className="text-slate-400 font-light text-sm md:text-base mb-6">
+                  ¿No sabes qué meter en la mochila para ir al Cajón del Maipo por el día? He preparado un PDF con todo mi equipo esencial, paso a paso, para que nunca te falte (ni te sobre) nada.
                 </p>
-              </div>
-
-              {/* Prop 3 */}
-              <div className="glass-panel p-8 rounded-3xl hover:-translate-y-2 transition-transform duration-300">
-                <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center mb-6">
-                  <Mountain className="w-6 h-6 text-amber-500" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">Aventura Segura</h3>
-                <p className="text-sm text-slate-400 font-light leading-relaxed">
-                  La montaña es el escenario para desconectar de la rutina. Entregamos un desafío físico real pero respaldado con certificación WFR, para que la aventura fluya con total seguridad.
-                </p>
+                <form className="flex flex-col sm:flex-row gap-3">
+                  <input type="email" placeholder="Tu mejor correo electrónico" className="bg-black/50 border border-slate-700 rounded-full px-6 py-3 text-sm text-white focus:outline-none focus:border-amber-500 flex-1" required />
+                  <button type="button" className="bg-white hover:bg-slate-200 text-black font-bold uppercase tracking-widest text-xs px-8 py-3 rounded-full transition-colors whitespace-nowrap">
+                    Enviarme PDF
+                  </button>
+                </form>
               </div>
             </div>
           </div>
         </section>
 
-        {/* CATALOGO DE RUTAS */}
-        <section id="rutas" className="py-24 bg-stone-900 relative z-20 border-t border-white/5">
+        {/* STORYTELLING / BLOG TEASER */}
+        <section className="py-24 bg-black/30 relative z-20">
           <div className="max-w-7xl mx-auto px-6">
             <div className="mb-16 md:flex justify-between items-end">
               <div>
-                <span className="text-amber-500 font-bold tracking-widest uppercase text-xs mb-3 block">El Catálogo</span>
-                <h2 className="font-editorial text-4xl md:text-5xl font-bold text-white">Micro-aventuras a tu medida.</h2>
+                <span className="text-amber-500 font-bold tracking-widest uppercase text-xs mb-3 block">El Blog / Vlog</span>
+                <h2 className="font-editorial text-4xl md:text-5xl font-bold text-white">La montaña sin filtros.</h2>
               </div>
               <p className="text-slate-400 mt-4 md:mt-0 max-w-sm text-sm font-light">
-                Selecciona la experiencia que mejor se adapte a tu nivel y tiempo disponible.
+                Mis diarios de ruta, reviews de equipo y consejos para los que recién empiezan.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              
-              {/* RUTA 1 */}
-              <div className="group relative rounded-3xl overflow-hidden glass-panel flex flex-col">
-                <div className="aspect-[4/3] relative overflow-hidden">
-                  <img 
-                    src="https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80" 
-                    alt="Sunset Trek" 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] to-transparent"></div>
-                  <span className="absolute top-4 right-4 bg-white/10 backdrop-blur px-3 py-1 text-[10px] uppercase tracking-widest font-bold rounded-full">After Office</span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Fake Blog Post 1 */}
+              <div className="glass-panel rounded-3xl overflow-hidden hover:-translate-y-2 transition-transform cursor-pointer">
+                <div className="aspect-video bg-stone-800 relative">
+                  <img src="https://images.unsplash.com/photo-1522163182402-834f871fd851?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover opacity-80" alt="Blog 1" />
+                  <span className="absolute top-4 left-4 bg-black/60 backdrop-blur text-white text-[10px] font-bold uppercase px-3 py-1 rounded-full">Principiantes</span>
                 </div>
-                <div className="p-8 flex-1 flex flex-col justify-between relative z-10 -mt-10">
-                  <div>
-                    <h3 className="font-editorial text-2xl font-bold text-white mb-2">Sunset Treks</h3>
-                    <p className="text-sm text-slate-400 mb-6 font-light">Ascenso al Manquehuito o Pochoco para ver el atardecer cayendo sobre Santiago. Ideal para liberar el estrés laboral.</p>
-                    <ul className="space-y-3 mb-8">
-                      <li className="flex items-center text-xs text-slate-300"><Clock className="w-4 h-4 mr-3 text-amber-500" /> 3-4 horas totales</li>
-                      <li className="flex items-center text-xs text-slate-300"><HeartPulse className="w-4 h-4 mr-3 text-amber-500" /> Nivel: Principiante / Medio</li>
-                      <li className="flex items-center text-xs text-slate-300"><Compass className="w-4 h-4 mr-3 text-amber-500" /> Ración de marcha local al atardecer</li>
-                    </ul>
-                  </div>
-                  <div className="flex items-center justify-between mt-auto border-t border-white/10 pt-6">
-                    <div>
-                      <span className="text-[10px] text-slate-500 uppercase tracking-widest block mb-1">Desde</span>
-                      <span className="text-lg font-bold text-white">$25.000</span>
-                    </div>
-                    <button onClick={() => { setSelectedRoute("sunset"); document.getElementById('reservar')?.scrollIntoView({behavior: "smooth"})}} className="text-xs font-bold uppercase tracking-widest text-amber-500 hover:text-amber-400 transition-colors">
-                      Reservar &rarr;
-                    </button>
-                  </div>
+                <div className="p-6">
+                  <h3 className="text-lg font-bold text-white mb-2">5 Cerros fáciles en Santiago si no tienes experiencia</h3>
+                  <p className="text-sm text-slate-400 font-light line-clamp-2">Deja de mirar fotos en Instagram y sal de tu casa. Aquí tienes la lista de cerros que cualquiera puede subir.</p>
                 </div>
               </div>
 
-              {/* RUTA 2 */}
-              <div className="group relative rounded-3xl overflow-hidden glass-panel border-amber-500/30 flex flex-col">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-amber-500 text-black text-[10px] font-bold uppercase tracking-widest px-4 py-1 rounded-b-lg z-20">
-                  La Más Solicitada
+              {/* Fake Blog Post 2 */}
+              <div className="glass-panel rounded-3xl overflow-hidden hover:-translate-y-2 transition-transform cursor-pointer">
+                <div className="aspect-video bg-stone-800 relative">
+                  <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80" className="w-full h-full object-cover opacity-80" alt="Blog 2" />
+                  <span className="absolute top-4 left-4 bg-black/60 backdrop-blur text-white text-[10px] font-bold uppercase px-3 py-1 rounded-full">Gear Review</span>
                 </div>
-                <div className="aspect-[4/3] relative overflow-hidden">
-                  <img 
-                    src="https://images.unsplash.com/photo-1522163723043-478ef79a5bb4?auto=format&fit=crop&w=800&q=80" 
-                    alt="Full Day Escapade" 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] to-transparent"></div>
-                  <span className="absolute top-4 right-4 bg-white/10 backdrop-blur px-3 py-1 text-[10px] uppercase tracking-widest font-bold rounded-full">Fin de Semana</span>
-                </div>
-                <div className="p-8 flex-1 flex flex-col justify-between relative z-10 -mt-10">
-                  <div>
-                    <h3 className="font-editorial text-2xl font-bold text-white mb-2">Full Day Escapades</h3>
-                    <p className="text-sm text-slate-400 mb-6 font-light">Exploración profunda en Cajón del Maipo (Ej: Mirador de Cóndores). Foco en wellness, respiración y educación ambiental.</p>
-                    <ul className="space-y-3 mb-8">
-                      <li className="flex items-center text-xs text-slate-300"><Clock className="w-4 h-4 mr-3 text-amber-500" /> 6-8 horas totales</li>
-                      <li className="flex items-center text-xs text-slate-300"><HeartPulse className="w-4 h-4 mr-3 text-amber-500" /> Nivel: Medio</li>
-                      <li className="flex items-center text-xs text-slate-300"><Ticket className="w-4 h-4 mr-3 text-amber-500" /> Cierre gastronómico local</li>
-                    </ul>
-                  </div>
-                  <div className="flex items-center justify-between mt-auto border-t border-white/10 pt-6">
-                    <div>
-                      <span className="text-[10px] text-slate-500 uppercase tracking-widest block mb-1">Desde</span>
-                      <span className="text-lg font-bold text-white">$45.000</span>
-                    </div>
-                    <button onClick={() => { setSelectedRoute("fullday"); document.getElementById('reservar')?.scrollIntoView({behavior: "smooth"})}} className="text-xs font-bold uppercase tracking-widest text-amber-500 hover:text-amber-400 transition-colors">
-                      Reservar &rarr;
-                    </button>
-                  </div>
+                <div className="p-6">
+                  <h3 className="text-lg font-bold text-white mb-2">Mi equipo: ¿Qué zapatillas de trekking realmente recomiendo?</h3>
+                  <p className="text-sm text-slate-400 font-light line-clamp-2">He destruido más de 10 pares en el último año. Estas son las únicas que me volvería a comprar a ojos cerrados.</p>
                 </div>
               </div>
 
-              {/* RUTA 3 */}
-              <div className="group relative rounded-3xl overflow-hidden glass-panel flex flex-col">
-                <div className="aspect-[4/3] relative overflow-hidden">
-                  <img 
-                    src="https://images.unsplash.com/photo-1546850259-219597a701fa?auto=format&fit=crop&w=800&q=80" 
-                    alt="Private VIP Hikes" 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] to-transparent"></div>
-                  <span className="absolute top-4 right-4 bg-white/10 backdrop-blur px-3 py-1 text-[10px] uppercase tracking-widest font-bold rounded-full">Exclusivo</span>
+              {/* Fake Blog Post 3 */}
+              <div className="glass-panel rounded-3xl overflow-hidden hover:-translate-y-2 transition-transform cursor-pointer">
+                <div className="aspect-video bg-stone-800 relative">
+                  <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80" className="w-full h-full object-cover opacity-80" alt="Blog 3" />
+                  <span className="absolute top-4 left-4 bg-black/60 backdrop-blur text-white text-[10px] font-bold uppercase px-3 py-1 rounded-full">Diario de Ruta</span>
                 </div>
-                <div className="p-8 flex-1 flex flex-col justify-between relative z-10 -mt-10">
-                  <div>
-                    <h3 className="font-editorial text-2xl font-bold text-white mb-2">Private VIP Hikes</h3>
-                    <p className="text-sm text-slate-400 mb-6 font-light">Diseñado para grupos cerrados, turistas internacionales o dinámicas corporativas (Team Building) de alto estándar.</p>
-                    <ul className="space-y-3 mb-8">
-                      <li className="flex items-center text-xs text-slate-300"><Clock className="w-4 h-4 mr-3 text-amber-500" /> Horario a convenir</li>
-                      <li className="flex items-center text-xs text-slate-300"><MapPin className="w-4 h-4 mr-3 text-amber-500" /> Ruta personalizada</li>
-                      <li className="flex items-center text-xs text-slate-300"><Compass className="w-4 h-4 mr-3 text-amber-500" /> Ritmo y enfoque exclusivo para tu grupo</li>
-                    </ul>
-                  </div>
-                  <div className="flex items-center justify-between mt-auto border-t border-white/10 pt-6">
-                    <div>
-                      <span className="text-[10px] text-slate-500 uppercase tracking-widest block mb-1">A cotizar</span>
-                      <span className="text-lg font-bold text-white">Custom</span>
-                    </div>
-                    <button onClick={() => { setSelectedRoute("vip"); document.getElementById('reservar')?.scrollIntoView({behavior: "smooth"})}} className="text-xs font-bold uppercase tracking-widest text-amber-500 hover:text-amber-400 transition-colors">
-                      Cotizar &rarr;
-                    </button>
-                  </div>
+                <div className="p-6">
+                  <h3 className="text-lg font-bold text-white mb-2">Mi experiencia en el Cerro Pintor: Lo que salió mal.</h3>
+                  <p className="text-sm text-slate-400 font-light line-clamp-2">No todo es éxito y fotos bonitas. Así fue como el clima nos jugó en contra y tuvimos que abortar la cumbre.</p>
                 </div>
               </div>
-
             </div>
           </div>
         </section>
 
-        {/* RESERVATION / CHECKOUT SECTION */}
-        <section id="reservar" className="py-24 bg-stone-950 relative z-20">
-          <div className="max-w-4xl mx-auto px-6">
-            <div className="glass-panel rounded-[2.5rem] p-8 md:p-14 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-[80px] pointer-events-none"></div>
-              
-              <div className="text-center mb-12">
-                <h2 className="font-editorial text-4xl font-bold text-white mb-4">Asegura tu lugar en la montaña.</h2>
-                <p className="text-slate-400 text-sm font-light">Completa tu perfil para que podamos personalizar la experiencia. Transacción segura 100% digital.</p>
+        {/* CATALOGO DE RUTAS — "Ven conmigo al cerro" */}
+        <section id="rutas" className="py-24 bg-black/80 backdrop-blur-lg relative z-20 border-t border-white/5">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="mb-16 md:flex justify-between items-end">
+              <div>
+                <span className="text-amber-500 font-bold tracking-widest uppercase text-xs mb-3 block">Expediciones 1 a 1</span>
+                <h2 className="font-editorial text-4xl md:text-5xl font-bold text-white">Ven conmigo al cerro.</h2>
               </div>
-
-              <form onSubmit={handleCheckout} className="space-y-6 relative z-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Select Route */}
-                  <div className="md:col-span-2">
-                    <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Experiencia Seleccionada</label>
-                    <div className="relative">
-                      <select 
-                        value={selectedRoute}
-                        onChange={(e) => setSelectedRoute(e.target.value)}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white appearance-none focus:outline-none focus:border-amber-500 transition-colors cursor-pointer"
-                      >
-                        <option value="sunset">Sunset Treks (After Office) - $25.000 CLP</option>
-                        <option value="fullday">Full Day Escapades (Fin de Semana) - $45.000 CLP</option>
-                        <option value="vip">Private VIP Hikes (A Cotizar)</option>
-                      </select>
-                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Nombre Completo</label>
-                    <input
-                      type="text"
-                      name="name"
-                      required
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      placeholder="Ej: Laura Silva"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-amber-500 transition-colors placeholder:text-slate-600"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">RUT (Seguro Obligatorio)</label>
-                    <input
-                      type="text"
-                      name="rut"
-                      required
-                      value={formData.rut}
-                      onChange={handleInputChange}
-                      placeholder="12.345.678-9"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-amber-500 transition-colors placeholder:text-slate-600"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Correo Electrónico</label>
-                    <input
-                      type="email"
-                      name="email"
-                      required
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      placeholder="laura@ejemplo.cl"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-amber-500 transition-colors placeholder:text-slate-600"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Teléfono / WhatsApp</label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      required
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      placeholder="+56 9 1234 5678"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-amber-500 transition-colors placeholder:text-slate-600"
-                    />
-                  </div>
-                  
-                  {/* Perfilamiento */}
-                  <div className="md:col-span-2">
-                    <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Nivel de Experiencia Física</label>
-                    <div className="relative">
-                      <select 
-                        name="experience"
-                        value={formData.experience}
-                        onChange={handleInputChange}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white appearance-none focus:outline-none focus:border-amber-500 transition-colors cursor-pointer"
-                      >
-                        <option value="principiante">Primera vez / Principiante (Quiero ir a mi ritmo)</option>
-                        <option value="medio">Medio (Hago deporte ocasionalmente)</option>
-                        <option value="avanzado">Avanzado (Subo cerros regularmente)</option>
-                      </select>
-                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
-                    </div>
-                    <p className="text-[10px] text-slate-500 mt-2 italic">* Utilizamos este dato para perfilar los grupos y asegurar que nadie se sienta presionado.</p>
-                  </div>
-                </div>
-
-                <div className="pt-6">
-                  <button type="submit" className="w-full bg-white hover:bg-slate-200 text-black font-bold uppercase tracking-widest text-sm py-5 rounded-xl transition-all hover:scale-[1.02] shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)]">
-                    Proceder al Pago Seguro
-                  </button>
-                  <p className="text-center text-[11px] text-slate-500 mt-4 flex items-center justify-center gap-1">
-                    <ShieldCheck className="w-3 h-3" /> Transacción encriptada. Próximamente integración directa con Webpay/Stripe.
-                  </p>
-                </div>
-              </form>
+              <p className="text-slate-400 mt-4 md:mt-0 max-w-sm text-sm font-light">
+                Yo armo la ruta, yo te guío y yo me aseguro de que volvamos sanos, salvos y con las mejores fotos.
+              </p>
             </div>
+
+            {routes.length === 0 ? (
+              <div className="py-16 text-center border border-dashed border-white/10 rounded-3xl">
+                <Tent className="w-12 h-12 text-amber-500/30 mx-auto mb-4" />
+                <p className="text-slate-500">Próximamente abriré mis rutas privadas.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {routes.map((route: any, i: number) => (
+                  <div key={route.id} className={`group relative rounded-3xl overflow-hidden glass-panel flex flex-col ${i === 1 ? 'border-amber-500/30' : ''}`}>
+                    {i === 1 && (
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-amber-500 text-black text-[10px] font-bold uppercase tracking-widest px-4 py-1 rounded-b-lg z-20">
+                        Mi Favorita
+                      </div>
+                    )}
+                    <div className="aspect-[4/3] relative overflow-hidden bg-stone-800 flex items-center justify-center">
+                      {route.image_url ? (
+                        <img
+                          src={route.image_url}
+                          alt={route.title}
+                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        />
+                      ) : (
+                        <Mountain className="w-16 h-16 text-amber-500/20" />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] to-transparent"></div>
+                      <span className="absolute top-4 right-4 bg-white/10 backdrop-blur px-3 py-1 text-[10px] uppercase tracking-widest font-bold rounded-full">{route.category}</span>
+                    </div>
+                    <div className="p-8 flex-1 flex flex-col justify-between relative z-10 -mt-10">
+                      <div>
+                        <h3 className="font-editorial text-2xl font-bold text-white mb-2">{route.title}</h3>
+                        <p className="text-sm text-slate-400 mb-6 font-light line-clamp-3">{route.description || 'Te acompaño paso a paso en esta aventura.'}</p>
+                        <ul className="space-y-3 mb-8">
+                          <li className="flex items-center text-xs text-slate-300"><Clock className="w-4 h-4 mr-3 text-amber-500" /> {route.duration_text || `${route.duration_days} día${route.duration_days > 1 ? 's' : ''}`}</li>
+                          <li className="flex items-center text-xs text-slate-300"><HeartPulse className="w-4 h-4 mr-3 text-amber-500" /> Nivel: {route.difficulty_level}</li>
+                          <li className="flex items-center text-xs text-slate-300"><CheckCircle2 className="w-4 h-4 mr-3 text-amber-500" /> Máx. {route.max_pax} personas</li>
+                        </ul>
+                      </div>
+                      <div className="flex items-center justify-between mt-auto border-t border-white/10 pt-6">
+                        <div>
+                          <span className="text-[10px] text-slate-500 uppercase tracking-widest block mb-1">Desde</span>
+                          <span className="text-lg font-bold text-white">${Number(route.base_price).toLocaleString('es-CL')}</span>
+                        </div>
+                        <Link href={`/reservar?route=${route.id}`} className="text-xs font-bold uppercase tracking-widest text-amber-500 hover:text-amber-400 transition-colors flex items-center gap-1">
+                          Reservar <ArrowRight className="w-3 h-3" />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* COMUNIDAD Y PRÓXIMAS SALIDAS GRUPALES */}
+        <section id="comunidad" className="py-24 bg-transparent relative z-20 border-t border-white/5">
+          <div className="max-w-5xl mx-auto px-6">
+            
+            <div className="glass-panel border-blue-500/20 rounded-[2.5rem] p-8 md:p-14 relative overflow-hidden mb-16">
+              <div className="absolute top-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+              
+              <div className="text-center relative z-10">
+                <h2 className="font-editorial text-4xl font-bold text-white mb-4">Únete a la Tribu.</h2>
+                <p className="text-slate-300 text-base font-light mb-8 max-w-xl mx-auto">
+                  La montaña no se sube solo. Tenemos un grupo de WhatsApp gratuito donde organizamos salidas exprés, resolvemos dudas de equipo y compartimos fotos. ¡Todos son bienvenidos!
+                </p>
+                <div className="flex flex-col sm:flex-row justify-center gap-4">
+                  <a href="#" className="inline-flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1ebd5a] text-white font-bold uppercase tracking-widest text-xs px-8 py-4 rounded-full transition-all hover:scale-[1.02] shadow-lg shadow-[#25D366]/20">
+                    <MessageCircle className="w-5 h-5" /> Entrar al WhatsApp
+                  </a>
+                  <a href="https://instagram.com/" target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-3 glass-panel hover:bg-white/10 text-white font-bold uppercase tracking-widest text-xs px-8 py-4 rounded-full transition-all">
+                    <Camera className="w-5 h-5" /> Ver mi día a día
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* AGENDA - SALIDAS GRUPALES */}
+            <div className="text-center mb-12">
+              <span className="text-amber-500 font-bold tracking-widest uppercase text-xs mb-3 block">Comunidad en Terreno</span>
+              <h3 className="font-editorial text-3xl font-bold text-white mb-4">Próximas Salidas Grupales</h3>
+            </div>
+
+            {departures.length === 0 ? (
+              <div className="py-12 text-center border border-dashed border-white/10 rounded-3xl mb-10">
+                <p className="text-slate-500">No hay salidas grupales programadas por ahora. Entra al WhatsApp para enterarte antes que nadie.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+                {departures.map((dep: any) => {
+                  const adv = dep.adventures_catalog;
+                  const spots = (adv?.max_pax || 0) - (dep.current_pax || 0);
+                  return (
+                    <div key={dep.id} className="glass-panel rounded-2xl p-6 flex items-center gap-5 hover:border-amber-500/30 transition-all">
+                      <div className="text-center min-w-[56px]">
+                        <p className="text-2xl font-black text-white">{new Date(dep.start_date).getDate()}</p>
+                        <p className="text-[10px] font-bold text-amber-500 uppercase">
+                          {new Date(dep.start_date).toLocaleString('es-ES', { month: 'short' })}
+                        </p>
+                      </div>
+                      <div className="flex-grow">
+                        <p className="font-bold text-white">{adv?.title || 'Expedición'}</p>
+                        <p className="text-xs text-slate-400 mt-0.5">{spots} cupo{spots !== 1 ? 's' : ''} disponible{spots !== 1 ? 's' : ''}</p>
+                      </div>
+                      <div className="text-right flex flex-col justify-between items-end h-full">
+                        <div>
+                          <p className="font-black text-white">${Number(adv?.base_price).toLocaleString('es-CL')}</p>
+                          <p className="text-[10px] text-slate-500 mb-2">por persona</p>
+                        </div>
+                        <Link href="/reservar" className="text-[10px] font-bold uppercase tracking-widest text-amber-500 hover:text-white bg-amber-500/10 hover:bg-amber-500 px-3 py-1.5 rounded-md transition-colors">
+                          Anotarme
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </section>
 
         {/* FOOTER */}
-        <footer className="py-12 bg-[#050505] border-t border-white/5 text-center relative z-20">
+        <footer className="py-12 bg-black/90 backdrop-blur-xl border-t border-white/5 text-center relative z-20">
           <div className="flex justify-center mb-6">
              <span className="font-editorial font-bold text-xl text-white">
                 GAZ<span className="text-amber-500 italic">_Style</span>
               </span>
           </div>
-          <p className="text-slate-500 text-xs font-light mb-2">La experiencia outdoor enfocada en la desconexión real, seguridad y bienestar.</p>
+          <p className="text-slate-500 text-xs font-light mb-2">Tu compañero de ruta. Creador de contenido y guía de montaña.</p>
           <p className="text-slate-600 text-[10px] tracking-widest uppercase">
-            &copy; 2026 Gaz_Style Turismo Spa.
+            &copy; 2026 Gaz_Style. Todos los derechos reservados.
           </p>
         </footer>
-
-        {/* MOCKUP MODAL */}
-        {showModal && (
-          <div className="fixed inset-0 bg-black/90 backdrop-blur-md z-[100] flex items-center justify-center p-6">
-            <div className="glass-panel border-amber-500/50 p-10 rounded-3xl max-w-md w-full text-center relative">
-              <div className="w-16 h-16 bg-amber-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Check className="w-8 h-8 text-black" />
-              </div>
-              <h3 className="font-editorial text-3xl font-bold text-white mb-2">Reserva Iniciada</h3>
-              <p className="text-sm text-slate-300 font-light mb-8">
-                Hola {formData.name.split(' ')[0] || 'Aventurero'}, hemos registrado tus datos. En la versión final, esto te redigirá a Webpay/Stripe para completar el pago de tu {selectedRoute === 'sunset' ? 'Sunset Trek' : selectedRoute === 'fullday' ? 'Full Day' : 'VIP Hike'}.
-              </p>
-              <button onClick={closeModal} className="bg-white/10 hover:bg-white/20 text-white w-full py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-colors">
-                Cerrar Prueba
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* APP BOTTOM NAVIGATION (MOBILE ONLY) */}
-        <nav className="fixed bottom-0 left-0 right-0 w-full glass-panel border-t border-white/10 z-50 md:hidden bg-stone-950/95 pb-safe">
-          <div className="flex justify-around items-center h-16 px-4">
-            <a href="#" className="flex flex-col items-center justify-center w-full text-amber-500">
-              <Home className="w-5 h-5 mb-1" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Inicio</span>
-            </a>
-            <a href="#rutas" className="flex flex-col items-center justify-center w-full text-slate-400 hover:text-amber-500 transition-colors">
-              <MapIcon className="w-5 h-5 mb-1" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Rutas</span>
-            </a>
-            <a href="#reservar" className="flex flex-col items-center justify-center w-full text-slate-400 hover:text-amber-500 transition-colors">
-              <Calendar className="w-5 h-5 mb-1" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Reservar</span>
-            </a>
-          </div>
-        </nav>
 
       </div>
     </>
