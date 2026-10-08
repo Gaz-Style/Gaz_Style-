@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 
+import Image from 'next/image';
+
 const heroImages = [
     // La carrera épica desde el piso que ya tenías
     "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=2000&q=80",
@@ -24,11 +26,14 @@ export default function HeroCarousel() {
     return (
         <div className="fixed inset-0 z-0 bg-stone-950 w-full h-full">
             {heroImages.map((src, idx) => (
-                <img
+                <Image
                     key={src}
                     src={src}
                     alt="Aventura en la cordillera"
-                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[2000ms] ease-in-out scale-105 ${
+                    fill
+                    priority={idx === 0}
+                    sizes="100vw"
+                    className={`object-cover transition-opacity duration-[2000ms] ease-in-out scale-105 ${
                         idx === current ? 'opacity-80' : 'opacity-0'
                     }`}
                 />

@@ -5,6 +5,7 @@ import {
     Mountain, Calendar, Users, CreditCard, ChevronRight,
     Clock, Star, MapPin, Shield, ArrowRight, Loader2, CheckCircle2
 } from 'lucide-react';
+import Image from 'next/image';
 import { createBookingWithMercadoPago } from './actions';
 
 function getDifficultyColor(level: string) {
@@ -120,10 +121,12 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
                                             {/* Card image / header */}
                                             <div className="relative h-32 overflow-hidden bg-slate-800 flex items-center justify-center">
                                                 {adv?.image_url ? (
-                                                    <img
+                                                    <Image
                                                         src={adv.image_url}
                                                         alt={adv.title}
-                                                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                                        fill
+                                                        sizes="(max-width: 768px) 100vw, 33vw"
+                                                        className="object-cover group-hover:scale-110 transition-transform duration-700"
                                                     />
                                                 ) : (
                                                     <Mountain className="w-10 h-10 text-slate-700" />

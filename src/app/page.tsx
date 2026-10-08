@@ -142,7 +142,7 @@ export default async function ExperienciaMontanaPage() {
               {/* Fase 1 */}
               <div className="glass-panel rounded-3xl overflow-hidden hover:-translate-y-2 transition-transform cursor-pointer border border-white/5">
                 <div className="aspect-video bg-stone-800 relative">
-                  <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover opacity-80" alt="Reserva Digital" />
+                  <Image src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=800&auto=format&fit=crop" fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover opacity-80" alt="Reserva Digital" />
                   <span className="absolute top-4 left-4 bg-amber-500 text-black text-[10px] font-bold uppercase px-3 py-1 rounded-full">Fase 1</span>
                 </div>
                 <div className="p-6">
