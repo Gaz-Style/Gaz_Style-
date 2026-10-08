@@ -54,10 +54,8 @@ export default async function ExperienciaMontanaPage() {
         {/* HEADER */}
         <header className="fixed w-full top-0 z-50 glass-panel border-b-0 border-white/10 transition-all duration-300">
           <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
-            <Link href="/" className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white uppercase tracking-widest transition-colors">
-              <ArrowLeft className="w-4 h-4" />
-              <span>Volver</span>
-            </Link>
+            {/* Espaciador invisible para centrar el logo con flex-between */}
+            <div className="w-24 hidden md:block"></div>
             
             <div className="flex items-center gap-3">
               <Compass className="w-6 h-6 text-amber-500" />
