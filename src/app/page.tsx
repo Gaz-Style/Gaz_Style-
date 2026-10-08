@@ -4,6 +4,8 @@ import HeroCarousel from "./HeroCarousel";
 import { ArrowLeft, Mountain, ShieldCheck, Clock, HeartPulse, Compass, Download, MessageCircle, Camera, Tent, ArrowRight, CheckCircle2 } from "lucide-react";
 import { createClient } from '@supabase/supabase-js';
 
+export const dynamic = 'force-dynamic';
+
 async function getPublicData() {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
