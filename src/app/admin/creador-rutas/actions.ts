@@ -56,6 +56,16 @@ export async function createAdventureWithCosts(formData: FormData, costs: Advent
     const description = formData.get('description') as string;
     const duration_text = formData.get('duration_text') as string;
     const image_url = (formData.get('image_url') as string) || null;
+    const elevation_gain = (formData.get('elevation_gain') as string) || '';
+    
+    const itineraryStr = formData.get('itinerary') as string || '';
+    const itinerary = itineraryStr ? itineraryStr.split('\n').filter(s=>s.trim()).map(s=>({time: 'XX:XX', title: s.trim(), desc: ''})) : [];
+    
+    const includedStr = formData.get('included') as string || '';
+    const included = includedStr ? includedStr.split('\n').filter(s=>s.trim()) : [];
+
+    const not_includedStr = formData.get('not_included') as string || '';
+    const not_included = not_includedStr ? not_includedStr.split('\n').filter(s=>s.trim()) : [];
 
     // 1. Insertamos la Aventura (El Molde)
     const { data: adventure, error: adventureError } = await supabase
@@ -71,6 +81,10 @@ export async function createAdventureWithCosts(formData: FormData, costs: Advent
             description,
             duration_text,
             image_url,
+            elevation_gain,
+            itinerary,
+            included,
+            not_included,
             is_active: true
         })
         .select('id')
@@ -163,6 +177,16 @@ export async function updateAdventureWithCosts(id: string, formData: FormData, c
     const description = formData.get('description') as string;
     const duration_text = formData.get('duration_text') as string;
     const image_url = (formData.get('image_url') as string) || null;
+    const elevation_gain = (formData.get('elevation_gain') as string) || '';
+    
+    const itineraryStr = formData.get('itinerary') as string || '';
+    const itinerary = itineraryStr ? itineraryStr.split('\n').filter(s=>s.trim()).map(s=>({time: 'XX:XX', title: s.trim(), desc: ''})) : [];
+    
+    const includedStr = formData.get('included') as string || '';
+    const included = includedStr ? includedStr.split('\n').filter(s=>s.trim()) : [];
+
+    const not_includedStr = formData.get('not_included') as string || '';
+    const not_included = not_includedStr ? not_includedStr.split('\n').filter(s=>s.trim()) : [];
 
     // 1. Update Adventure
     const { error: adventureError } = await supabase
@@ -177,7 +201,11 @@ export async function updateAdventureWithCosts(id: string, formData: FormData, c
             max_pax,
             description,
             duration_text,
-            image_url
+            image_url,
+            elevation_gain,
+            itinerary,
+            included,
+            not_included
         })
         .eq('id', id);
 

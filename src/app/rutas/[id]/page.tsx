@@ -29,24 +29,23 @@ export default async function RouteDetailPage({ params }: { params: { id: string
         notFound();
     }
 
-    // Datos simulados para enriquecer el SEO y la UX (Próximamente irán en la Base de Datos)
-    const mockElevation = route.difficulty_level === 'Alta' ? '+1.200m' : '+600m';
-    const mockItinerary = [
-        { time: '07:00', title: 'Punto de Encuentro', desc: 'Nos juntamos en el punto acordado en Lo Barnechea. Chequeo de equipo.' },
+    // Datos reales de la Base de Datos con fallbacks
+    const elevation = route.elevation_gain || (route.difficulty_level === 'Alta' ? '+1.200m' : '+600m');
+    const itinerary = route.itinerary && route.itinerary.length > 0 ? route.itinerary : [
+        { time: '07:00', title: 'Punto de Encuentro', desc: 'Nos juntamos en el punto acordado en Lo Barnechea.' },
         { time: '08:30', title: 'Inicio del Trekking', desc: 'Comenzamos la caminata a ritmo suave para aclimatar.' },
-        { time: '12:30', title: 'Cumbre y Descanso', desc: 'Llegamos al punto más alto. Tiempo para fotos y la ración de marcha.' },
-        { time: '16:00', title: 'Regreso y Gastronomía', desc: 'Bajamos a la comuna para recargar energías en nuestro restaurante aliado.' }
+        { time: '12:30', title: 'Cumbre y Descanso', desc: 'Llegamos al punto más alto.' },
+        { time: '16:00', title: 'Regreso y Gastronomía', desc: 'Bajamos a la comuna para recargar energías en local aliado.' }
     ];
 
-    const mockIncluded = [
+    const included = route.included && route.included.length > 0 ? route.included : [
         'Guía profesional WFR certificado',
         'Botiquín de primeros auxilios completo',
         'Radios VHF y comunicación satelital',
-        'Ración de marcha premium local',
-        'Gestión de permisos de acceso'
+        'Ración de marcha premium local'
     ];
 
-    const mockNotIncluded = [
+    const notIncluded = route.not_included && route.not_included.length > 0 ? route.not_included : [
         'Transporte hasta el punto de encuentro',
         'Zapatos y ropa técnica personal',
         'Seguro de accidentes personales'
@@ -143,7 +142,7 @@ export default async function RouteDetailPage({ params }: { params: { id: string
                                 <Mountain className="w-8 h-8 text-amber-500" />
                                 <div>
                                     <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Desnivel</p>
-                                    <p className="text-white font-medium">{mockElevation}</p>
+                                    <p className="text-white font-medium">{elevation}</p>
                                 </div>
                             </div>
                         </div>
@@ -160,14 +159,14 @@ export default async function RouteDetailPage({ params }: { params: { id: string
                                 <Map className="text-amber-500" /> Itinerario de la Expedición
                             </h2>
                             <div className="space-y-6">
-                                {mockItinerary.map((item, idx) => (
+                                {itinerary.map((item: any, idx: number) => (
                                     <div key={idx} className="flex gap-6">
                                         <div className="w-16 text-right pt-1 shrink-0">
                                             <span className="text-amber-500 font-mono font-bold">{item.time}</span>
                                         </div>
                                         <div className="relative pb-6">
                                             {/* Linea vertical */}
-                                            {idx !== mockItinerary.length - 1 && (
+                                            {idx !== itinerary.length - 1 && (
                                                 <div className="absolute top-8 bottom-0 left-[11px] w-px bg-white/10" />
                                             )}
                                             <div className="w-6 h-6 rounded-full bg-stone-900 border-2 border-amber-500 absolute -left-3 top-0 flex items-center justify-center">
@@ -190,7 +189,7 @@ export default async function RouteDetailPage({ params }: { params: { id: string
                                     <CheckCircle2 className="text-emerald-500" /> Qué Incluye
                                 </h3>
                                 <ul className="space-y-4">
-                                    {mockIncluded.map((item, i) => (
+                                    {included.map((item: string, i: number) => (
                                         <li key={i} className="flex items-start gap-3 text-sm text-slate-300">
                                             <span className="text-emerald-500 mt-0.5">✓</span> {item}
                                         </li>
@@ -202,7 +201,7 @@ export default async function RouteDetailPage({ params }: { params: { id: string
                                     <XCircle className="text-rose-500" /> No Incluye
                                 </h3>
                                 <ul className="space-y-4">
-                                    {mockNotIncluded.map((item, i) => (
+                                    {notIncluded.map((item: string, i: number) => (
                                         <li key={i} className="flex items-start gap-3 text-sm text-slate-300">
                                             <span className="text-rose-500 mt-0.5">✕</span> {item}
                                         </li>
