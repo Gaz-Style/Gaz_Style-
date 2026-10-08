@@ -290,9 +290,19 @@ export default function RoutesClient({ initialRoutes }: { initialRoutes: any[] }
                   <p className="text-[10px] text-slate-600">Aparece en las tarjetas del sitio web público.</p>
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-400 uppercase">Desnivel (Elevation Gain)</label>
-                  <input name="elevation_gain" type="text" defaultValue={editingRoute?.elevation_gain || ''} placeholder="Ej: +1.200m" className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors" />
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-400 uppercase">Desnivel</label>
+                    <input name="elevation_gain" type="text" defaultValue={editingRoute?.elevation_gain || ''} placeholder="Ej: +1.200m" className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-400 uppercase">Altitud Máx</label>
+                    <input name="max_altitude" type="text" defaultValue={editingRoute?.max_altitude || ''} placeholder="Ej: 3.200m" className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-400 uppercase">Distancia</label>
+                    <input name="distance" type="text" defaultValue={editingRoute?.distance || ''} placeholder="Ej: 12 km" className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors" />
+                  </div>
                 </div>
 
                 <div className="space-y-1.5">

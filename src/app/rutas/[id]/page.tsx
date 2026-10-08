@@ -139,10 +139,17 @@ export default async function RouteDetailPage({ params }: { params: { id: string
                                 </div>
                             </div>
                             <div className="glass-panel px-6 py-4 rounded-2xl flex items-center gap-4">
+                                <Map className="w-8 h-8 text-amber-500" />
+                                <div>
+                                    <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Distancia</p>
+                                    <p className="text-white font-medium">{route.distance || '12 km'}</p>
+                                </div>
+                            </div>
+                            <div className="glass-panel px-6 py-4 rounded-2xl flex items-center gap-4">
                                 <Mountain className="w-8 h-8 text-amber-500" />
                                 <div>
-                                    <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Desnivel</p>
-                                    <p className="text-white font-medium">{elevation}</p>
+                                    <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Desnivel / Altitud</p>
+                                    <p className="text-white font-medium">{elevation} <span className="text-slate-400 text-xs">({route.max_altitude || '3.200m'})</span></p>
                                 </div>
                             </div>
                         </div>

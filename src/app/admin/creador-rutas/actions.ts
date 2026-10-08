@@ -57,6 +57,8 @@ export async function createAdventureWithCosts(formData: FormData, costs: Advent
     const duration_text = formData.get('duration_text') as string;
     const image_url = (formData.get('image_url') as string) || null;
     const elevation_gain = (formData.get('elevation_gain') as string) || '';
+    const max_altitude = (formData.get('max_altitude') as string) || '';
+    const distance = (formData.get('distance') as string) || '';
     
     const itineraryStr = formData.get('itinerary') as string || '';
     const itinerary = itineraryStr ? itineraryStr.split('\n').filter(s=>s.trim()).map(s=>({time: 'XX:XX', title: s.trim(), desc: ''})) : [];
@@ -82,6 +84,8 @@ export async function createAdventureWithCosts(formData: FormData, costs: Advent
             duration_text,
             image_url,
             elevation_gain,
+            max_altitude,
+            distance,
             itinerary,
             included,
             not_included,
@@ -178,6 +182,8 @@ export async function updateAdventureWithCosts(id: string, formData: FormData, c
     const duration_text = formData.get('duration_text') as string;
     const image_url = (formData.get('image_url') as string) || null;
     const elevation_gain = (formData.get('elevation_gain') as string) || '';
+    const max_altitude = (formData.get('max_altitude') as string) || '';
+    const distance = (formData.get('distance') as string) || '';
     
     const itineraryStr = formData.get('itinerary') as string || '';
     const itinerary = itineraryStr ? itineraryStr.split('\n').filter(s=>s.trim()).map(s=>({time: 'XX:XX', title: s.trim(), desc: ''})) : [];
@@ -203,6 +209,8 @@ export async function updateAdventureWithCosts(id: string, formData: FormData, c
             duration_text,
             image_url,
             elevation_gain,
+            max_altitude,
+            distance,
             itinerary,
             included,
             not_included
