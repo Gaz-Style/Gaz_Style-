@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import HeroCarousel from "./HeroCarousel";
 import { ArrowLeft, Mountain, ShieldCheck, Clock, HeartPulse, Compass, Download, MessageCircle, Camera, Tent, ArrowRight, CheckCircle2 } from "lucide-react";
 import { createClient } from '@supabase/supabase-js';
@@ -153,7 +154,7 @@ export default async function ExperienciaMontanaPage() {
               {/* Fase 2 */}
               <div className="glass-panel rounded-3xl overflow-hidden hover:-translate-y-2 transition-transform cursor-pointer border border-white/5">
                 <div className="aspect-video bg-stone-800 relative">
-                  <img src="https://images.unsplash.com/photo-1522163182402-834f871fd851?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover opacity-80" alt="Cerro" />
+                  <Image src="https://images.unsplash.com/photo-1522163182402-834f871fd851?q=80&w=800&auto=format&fit=crop" fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover opacity-80" alt="Cerro" />
                   <span className="absolute top-4 left-4 bg-amber-500 text-black text-[10px] font-bold uppercase px-3 py-1 rounded-full">Fase 2</span>
                 </div>
                 <div className="p-6">
@@ -165,7 +166,7 @@ export default async function ExperienciaMontanaPage() {
               {/* Fase 3 */}
               <div className="glass-panel rounded-3xl overflow-hidden hover:-translate-y-2 transition-transform cursor-pointer border border-white/5">
                 <div className="aspect-video bg-stone-800 relative">
-                  <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover opacity-80" alt="Comida" />
+                  <Image src="https://images.unsplash.com/photo-1551632811-561732d1e306?q=80&w=800&auto=format&fit=crop" fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover opacity-80" alt="Comida" />
                   <span className="absolute top-4 left-4 bg-amber-500 text-black text-[10px] font-bold uppercase px-3 py-1 rounded-full">Fase 3</span>
                 </div>
                 <div className="p-6">
@@ -206,10 +207,12 @@ export default async function ExperienciaMontanaPage() {
                     )}
                     <div className="aspect-[4/3] relative overflow-hidden bg-stone-800 flex items-center justify-center">
                       {route.image_url ? (
-                        <img
+                        <Image
                           src={route.image_url}
                           alt={route.title}
-                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                          fill
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                          className="object-cover group-hover:scale-110 transition-transform duration-700"
                         />
                       ) : (
                         <Mountain className="w-16 h-16 text-amber-500/20" />

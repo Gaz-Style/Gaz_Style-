@@ -4,6 +4,8 @@ import { createClient } from '@supabase/supabase-js';
 import { ArrowLeft, Map, Clock, Users, HeartPulse, Mountain, CheckCircle2, XCircle, Tent, Backpack } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
+import Image from 'next/image';
+
 export const dynamic = 'force-dynamic';
 
 async function getRouteData(id: string) {
@@ -104,10 +106,13 @@ export default async function RouteDetailPage({ params }: { params: { id: string
                 {/* Hero Header */}
                 <header className="relative pt-32 pb-24 px-6 border-b border-white/10">
                     <div className="absolute inset-0 z-0">
-                        <img 
+                        <Image 
                             src={route.image_url || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b"} 
                             alt={route.title} 
-                            className="w-full h-full object-cover opacity-30"
+                            fill
+                            priority
+                            sizes="100vw"
+                            className="object-cover opacity-30"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent" />
                     </div>
