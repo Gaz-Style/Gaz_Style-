@@ -193,11 +193,11 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
                                 <div className="space-y-5">
                                     <h2 className="text-xl font-semibold text-white">Tus datos de contacto</h2>
                                     <div className="grid grid-cols-2 gap-4">
-                                        <Field label="Nombre" name="first_name" value={form.first_name} onChange={v => setForm(f => ({...f, first_name: v}))} placeholder="Juan" />
-                                        <Field label="Apellido" name="last_name" value={form.last_name} onChange={v => setForm(f => ({...f, last_name: v}))} placeholder="Pérez" />
+                                        <Field label="Nombre" name="first_name" value={form.first_name} onChange={(v: string) => setForm(f => ({...f, first_name: v}))} placeholder="Juan" />
+                                        <Field label="Apellido" name="last_name" value={form.last_name} onChange={(v: string) => setForm(f => ({...f, last_name: v}))} placeholder="Pérez" />
                                     </div>
-                                    <Field label="Correo electrónico" name="email" type="email" value={form.email} onChange={v => setForm(f => ({...f, email: v}))} placeholder="juan@mail.com" />
-                                    <Field label="Teléfono" name="phone" value={form.phone} onChange={v => setForm(f => ({...f, phone: v}))} placeholder="+56 9 1234 5678" />
+                                    <Field label="Correo electrónico" name="email" type="email" value={form.email} onChange={(v: string) => setForm(f => ({...f, email: v}))} placeholder="juan@mail.com" />
+                                    <Field label="Teléfono" name="phone" value={form.phone} onChange={(v: string) => setForm(f => ({...f, phone: v}))} placeholder="+56 9 1234 5678" />
 
                                 </div>
 

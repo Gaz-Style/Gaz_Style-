@@ -109,7 +109,7 @@ export default async function ExperienciaMontanaPage() {
                 <Download className="w-10 h-10 text-amber-500" />
               </div>
               <div className="flex-1 text-center md:text-left">
-                <h3 className="text-2xl font-bold text-white mb-2">Descarga gratis mi Checklist Definitiva 🎒</h3>
+                <h3 className="text-2xl font-bold text-white mb-2">Descarga gratis mi Checklist Definitiva</h3>
                 <p className="text-slate-400 font-light text-sm md:text-base mb-6">
                   ¿No sabes qué meter en la mochila para ir al Cajón del Maipo por el día? He preparado un PDF con todo mi equipo esencial, paso a paso, para que nunca te falte (ni te sobre) nada.
                 </p>
