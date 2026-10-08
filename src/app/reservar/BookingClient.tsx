@@ -29,8 +29,10 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
     const [step, setStep] = useState<'select' | 'form' | 'processing'>(initialStep);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [form, setForm] = useState({
-        first_name: '', last_name: '', email: '', phone: ''
+        first_name: '', last_name: '', email: '', phone: '',
+        emergency_contact: '', medical_info: ''
     });
+    const [acceptsWaiver, setAcceptsWaiver] = useState(false);
 
     const total = selected ? (selected.adventures_catalog?.base_price || 0) * paxCount : 0;
     const availableSpots = selected
@@ -39,6 +41,10 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
 
     async function handlePay() {
         if (!selected) return;
+        if (!acceptsWaiver) {
+            alert('Debes aceptar el descargo de responsabilidad médico para continuar.');
+            return;
+        }
         setIsSubmitting(true);
         try {
             const result = await createBookingWithMercadoPago({
@@ -46,6 +52,9 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
                 last_name: form.last_name,
                 email: form.email,
                 phone: form.phone,
+                emergency_contact: form.emergency_contact,
+                medical_info: form.medical_info,
+                accepts_waiver: acceptsWaiver,
                 departure_id: selected.id,
                 pax_count: paxCount,
                 adventure_title: selected.adventures_catalog?.title,
@@ -204,6 +213,25 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
 
                                 </div>
 
+                                {/* Ficha Médica Básica */}
+                                <div className="space-y-5 border-t border-slate-800 pt-8">
+                                    <h2 className="text-xl font-semibold text-white">Ficha Médica y Check-in</h2>
+                                    <p className="text-sm text-slate-400 font-light">Para tu seguridad en el cerro, necesitamos esta información clave antes de confirmar tu cupo.</p>
+                                    
+                                    <Field label="Contacto de Emergencia (Nombre y Teléfono)" name="emergency_contact" value={form.emergency_contact} onChange={(v: string) => setForm(f => ({...f, emergency_contact: v}))} placeholder="Ej: María Pérez, +569 8765 4321" />
+                                    
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-semibold text-slate-400 uppercase">Alergias o condiciones médicas (Opcional)</label>
+                                        <textarea
+                                            value={form.medical_info}
+                                            onChange={e => setForm(f => ({ ...f, medical_info: e.target.value }))}
+                                            placeholder="Asma, alergia a picaduras, lesiones previas, etc."
+                                            className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors resize-none"
+                                            rows={2}
+                                        />
+                                    </div>
+                                </div>
+
                                 {/* Selección de Cupos y Total */}
                                 <div className="border-t border-slate-800 pt-8 space-y-6">
                                     <div className="flex justify-between items-center">
@@ -232,11 +260,20 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
                                         <span className="text-3xl font-black text-white">${total.toLocaleString('es-CL')} <span className="text-sm font-normal text-slate-500">CLP</span></span>
                                     </div>
 
+                                    {/* Check-in y Waiver */}
                                     <div className="flex items-start gap-3 pt-6 border-t border-slate-800">
-                                        <Shield className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
-                                        <p className="text-xs text-slate-500">
-                                            Al reservar aceptas las condiciones de la expedición. Recibirás un correo con los detalles y el formulario médico para completar antes de la salida.
-                                        </p>
+                                        <div className="mt-0.5">
+                                            <input 
+                                                type="checkbox" 
+                                                id="waiver" 
+                                                checked={acceptsWaiver}
+                                                onChange={(e) => setAcceptsWaiver(e.target.checked)}
+                                                className="w-5 h-5 rounded border-slate-700 bg-slate-950 text-blue-500 focus:ring-blue-500/20 cursor-pointer"
+                                            />
+                                        </div>
+                                        <label htmlFor="waiver" className="text-xs text-slate-400 cursor-pointer select-none">
+                                            He leído y acepto el <span className="text-blue-400 underline">Descargo de Responsabilidad Médico</span>. Declaro tener salud compatible con la actividad, asumo los riesgos inherentes al montañismo y autorizo el protocolo WFR en caso de emergencia.
+                                        </label>
                                     </div>
                                 </div>
                             </div>

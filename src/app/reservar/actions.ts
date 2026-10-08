@@ -32,6 +32,9 @@ export async function createBookingWithMercadoPago(formData: {
     last_name: string;
     email: string;
     phone: string;
+    emergency_contact?: string;
+    medical_info?: string;
+    accepts_waiver?: boolean;
     departure_id: string;
     pax_count: number;
     adventure_title: string;
@@ -54,18 +57,26 @@ export async function createBookingWithMercadoPago(formData: {
         .eq('email', formData.email)
         .single();
 
+    const adventurerData = {
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        email: formData.email,
+        phone: formData.phone,
+        emergency_contact_name: formData.emergency_contact,
+        medical_conditions: formData.medical_info,
+        waiver_signed: formData.accepts_waiver || false,
+        waiver_date: formData.accepts_waiver ? new Date().toISOString() : null,
+    };
+
     if (existing) {
         adventurerId = existing.id;
+        await supabase.from('crm_adventurers').update(adventurerData).eq('id', adventurerId);
     } else {
         const { data: newAdv, error } = await supabase
             .from('crm_adventurers')
             .insert({
-                first_name: formData.first_name,
-                last_name: formData.last_name,
-                email: formData.email,
-                phone: formData.phone,
+                ...adventurerData,
                 mountain_experience_level: 'Principiante',
-                waiver_signed: false,
             })
             .select('id')
             .single();
