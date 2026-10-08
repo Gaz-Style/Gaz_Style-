@@ -77,25 +77,25 @@ export default async function ExperienciaMontanaPage() {
           <div className="relative z-10 max-w-5xl mx-auto px-6 text-center mt-10">
             <div className="inline-flex items-center gap-2 border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 rounded-full mb-8">
               <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-              <span className="text-xs font-medium tracking-widest uppercase text-amber-400">Guía & Creador de Contenido</span>
+              <span className="text-xs font-medium tracking-widest uppercase text-amber-400">Vitalidad & Desconexión Urbana</span>
             </div>
             
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-editorial font-bold text-white leading-tight mb-6">
-              Soy Gaz y te ayudo a <br />
-              <span className="italic font-light text-slate-300">descubrir la montaña a </span>
-              <span className="gold-gradient-text">tu estilo.</span>
+              Escapa de la ciudad. <br />
+              <span className="italic font-light text-slate-300">Encuentra la montaña </span>
+              <span className="gold-gradient-text">sin filtros.</span>
             </h1>
             
             <p className="text-base md:text-xl text-slate-300 max-w-2xl mx-auto font-light leading-relaxed mb-12">
-              No soy una agencia de turismo tradicional. Soy tu compañero de ruta. Te muestro la realidad del trekking sin filtros: el barro, el cansancio y la comida en la cima.
+              Te ofrezco una desconexión real. Nada de tours aburridos ni logística complicada. Solo tú, el barro en las zapatillas, el cerro exigente, y terminar celebrando en el mejor spot gastronómico de Lo Barnechea.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <a href="#rutas" className="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-black px-8 py-4 rounded-full text-sm font-bold uppercase tracking-widest transition-all hover:scale-105">
-                Acompáñame a una ruta
+              <a href="#rutas" className="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-black px-8 py-4 rounded-full text-sm font-bold uppercase tracking-widest transition-all hover:scale-105 shadow-[0_0_20px_rgba(245,158,11,0.3)]">
+                Ver Sunset Treks & Pilotos
               </a>
               <a href="#comunidad" className="w-full sm:w-auto glass-panel hover:bg-white/10 text-white px-8 py-4 rounded-full text-sm font-bold uppercase tracking-widest transition-all">
-                Únete a la Tribu
+                Conoce el Método
               </a>
             </div>
           </div>
@@ -129,48 +129,48 @@ export default async function ExperienciaMontanaPage() {
           <div className="max-w-7xl mx-auto px-6">
             <div className="mb-16 md:flex justify-between items-end">
               <div>
-                <span className="text-amber-500 font-bold tracking-widest uppercase text-xs mb-3 block">El Blog / Vlog</span>
-                <h2 className="font-editorial text-4xl md:text-5xl font-bold text-white">La montaña sin filtros.</h2>
+                <span className="text-amber-500 font-bold tracking-widest uppercase text-xs mb-3 block">El Método Gaz_Style</span>
+                <h2 className="font-editorial text-4xl md:text-5xl font-bold text-white">Logística de Cero Fricción.</h2>
               </div>
               <p className="text-slate-400 mt-4 md:mt-0 max-w-sm text-sm font-light">
-                Mis diarios de ruta, reviews de equipo y consejos para los que recién empiezan.
+                Diseñamos una experiencia en 3 fases para garantizar tu seguridad física, tu descarga mental y el apoyo a la economía local.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Fake Blog Post 1 */}
-              <div className="glass-panel rounded-3xl overflow-hidden hover:-translate-y-2 transition-transform cursor-pointer">
+              {/* Fase 1 */}
+              <div className="glass-panel rounded-3xl overflow-hidden hover:-translate-y-2 transition-transform cursor-pointer border border-white/5">
                 <div className="aspect-video bg-stone-800 relative">
-                  <img src="https://images.unsplash.com/photo-1522163182402-834f871fd851?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover opacity-80" alt="Blog 1" />
-                  <span className="absolute top-4 left-4 bg-black/60 backdrop-blur text-white text-[10px] font-bold uppercase px-3 py-1 rounded-full">Principiantes</span>
+                  <img src="https://images.unsplash.com/photo-1542385151-efd9000785a0?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover opacity-80" alt="Reserva Digital" />
+                  <span className="absolute top-4 left-4 bg-amber-500 text-black text-[10px] font-bold uppercase px-3 py-1 rounded-full">Fase 1</span>
                 </div>
                 <div className="p-6">
-                  <h3 className="text-lg font-bold text-white mb-2">5 Cerros fáciles en Santiago si no tienes experiencia</h3>
-                  <p className="text-sm text-slate-400 font-light line-clamp-2">Deja de mirar fotos en Instagram y sal de tu casa. Aquí tienes la lista de cerros que cualquiera puede subir.</p>
+                  <h3 className="text-lg font-bold text-white mb-2">Atracción & Reserva Digital</h3>
+                  <p className="text-sm text-slate-400 font-light line-clamp-3">Reservas en 2 clics. Check-in médico online y perfilamiento físico previo para asegurar que el grupo sea homogéneo y seguro.</p>
                 </div>
               </div>
 
-              {/* Fake Blog Post 2 */}
-              <div className="glass-panel rounded-3xl overflow-hidden hover:-translate-y-2 transition-transform cursor-pointer">
+              {/* Fase 2 */}
+              <div className="glass-panel rounded-3xl overflow-hidden hover:-translate-y-2 transition-transform cursor-pointer border border-white/5">
                 <div className="aspect-video bg-stone-800 relative">
-                  <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80" className="w-full h-full object-cover opacity-80" alt="Blog 2" />
-                  <span className="absolute top-4 left-4 bg-black/60 backdrop-blur text-white text-[10px] font-bold uppercase px-3 py-1 rounded-full">Gear Review</span>
+                  <img src="https://images.unsplash.com/photo-1522163182402-834f871fd851?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover opacity-80" alt="Cerro" />
+                  <span className="absolute top-4 left-4 bg-amber-500 text-black text-[10px] font-bold uppercase px-3 py-1 rounded-full">Fase 2</span>
                 </div>
                 <div className="p-6">
-                  <h3 className="text-lg font-bold text-white mb-2">Mi equipo: ¿Qué zapatillas de trekking realmente recomiendo?</h3>
-                  <p className="text-sm text-slate-400 font-light line-clamp-2">He destruido más de 10 pares en el último año. Estas son las únicas que me volvería a comprar a ojos cerrados.</p>
+                  <h3 className="text-lg font-bold text-white mb-2">La Ruta: Barro y Desconexión</h3>
+                  <p className="text-sm text-slate-400 font-light line-clamp-3">Guiado premium WFR (Wilderness First Responder). Exigencia física real para botar el estrés, contención grupal y seguridad en cada paso.</p>
                 </div>
               </div>
 
-              {/* Fake Blog Post 3 */}
-              <div className="glass-panel rounded-3xl overflow-hidden hover:-translate-y-2 transition-transform cursor-pointer">
+              {/* Fase 3 */}
+              <div className="glass-panel rounded-3xl overflow-hidden hover:-translate-y-2 transition-transform cursor-pointer border border-white/5">
                 <div className="aspect-video bg-stone-800 relative">
-                  <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80" className="w-full h-full object-cover opacity-80" alt="Blog 3" />
-                  <span className="absolute top-4 left-4 bg-black/60 backdrop-blur text-white text-[10px] font-bold uppercase px-3 py-1 rounded-full">Diario de Ruta</span>
+                  <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover opacity-80" alt="Comida" />
+                  <span className="absolute top-4 left-4 bg-amber-500 text-black text-[10px] font-bold uppercase px-3 py-1 rounded-full">Fase 3</span>
                 </div>
                 <div className="p-6">
-                  <h3 className="text-lg font-bold text-white mb-2">Mi experiencia en el Cerro Pintor: Lo que salió mal.</h3>
-                  <p className="text-sm text-slate-400 font-light line-clamp-2">No todo es éxito y fotos bonitas. Así fue como el clima nos jugó en contra y tuvimos que abortar la cumbre.</p>
+                  <h3 className="text-lg font-bold text-white mb-2">Gastronomía en Lo Barnechea</h3>
+                  <p className="text-sm text-slate-400 font-light line-clamp-3">Bajamos del cerro directo a recargar energías en locales aliados. Tú comes increíble, y juntos inyectamos valor directo a la comuna.</p>
                 </div>
               </div>
             </div>
