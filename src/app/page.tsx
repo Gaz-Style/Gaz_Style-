@@ -232,8 +232,8 @@ export default async function ExperienciaMontanaPage() {
                           <span className="text-[10px] text-slate-500 uppercase tracking-widest block mb-1">Desde</span>
                           <span className="text-lg font-bold text-white">${Number(route.base_price).toLocaleString('es-CL')}</span>
                         </div>
-                        <Link href={`/reservar?route=${route.id}`} className="text-xs font-bold uppercase tracking-widest text-amber-500 hover:text-amber-400 transition-colors flex items-center gap-1">
-                          Reservar <ArrowRight className="w-3 h-3" />
+                        <Link href={`/rutas/${route.id}`} className="text-xs font-bold uppercase tracking-widest text-amber-500 hover:text-amber-400 transition-colors flex items-center gap-1">
+                          Ver Itinerario <ArrowRight className="w-3 h-3" />
                         </Link>
                       </div>
                     </div>
