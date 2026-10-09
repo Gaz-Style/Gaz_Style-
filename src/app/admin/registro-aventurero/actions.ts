@@ -15,7 +15,20 @@ export async function getAdventurers() {
     const supabase = getAdminClient();
     const { data, error } = await supabase
         .from('crm_adventurers')
-        .select('*')
+        .select(`
+            *,
+            bookings (
+                id,
+                payment_status,
+                total_price,
+                created_at,
+                agenda_departures (
+                    adventures_catalog (
+                        title
+                    )
+                )
+            )
+        `)
         .order('created_at', { ascending: false });
     if (error) { console.error(error); return []; }
     return data;

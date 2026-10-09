@@ -59,7 +59,7 @@ export default async function ExperienciaMontanaPage() {
             <div className="w-24 hidden md:block"></div>
             
             <div className="flex items-center gap-3">
-              <Image src="/icon.png" alt="Gaz Style Logo" width={28} height={28} className="object-contain drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
+              <Image src="/logo.png" alt="Gaz Style Logo" width={28} height={28} className="object-contain drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
               <span className="font-editorial font-bold text-2xl tracking-wider text-white">
                 GAZ<span className="text-amber-500 italic">_Style</span>
               </span>
@@ -81,22 +81,23 @@ export default async function ExperienciaMontanaPage() {
               <span className="text-xs font-medium tracking-widest uppercase text-amber-400">Vitalidad & Desconexión Urbana</span>
             </div>
             
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-editorial font-bold text-white leading-tight mb-6">
-              Escapa de la ciudad. <br />
-              <span className="italic font-light text-slate-300">Encuentra la montaña </span>
-              <span className="gold-gradient-text">sin filtros.</span>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-editorial font-bold text-white leading-tight mb-6">
+              Creando experiencias y recargando la <br />
+              <span className="italic font-light text-slate-300">fucking </span>
+              <span className="gold-gradient-text">vibra. ⚡</span>
             </h1>
             
-            <p className="text-base md:text-xl text-slate-300 max-w-2xl mx-auto font-light leading-relaxed mb-12">
-              Te ofrezco una desconexión real. Nada de tours aburridos ni logística complicada. Solo tú, el barro en las zapatillas, el cerro exigente, y terminar celebrando en el mejor spot gastronómico de Lo Barnechea.
+            <p className="text-xl md:text-2xl text-slate-300 max-w-2xl mx-auto font-light leading-relaxed mb-12">
+              Mentalidad, conexión y aventura. <br />
+              <strong>Vamos a la montaña.</strong>
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
               <a href="#rutas" className="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-black px-8 py-4 rounded-full text-sm font-bold uppercase tracking-widest transition-all hover:scale-105 shadow-[0_0_20px_rgba(245,158,11,0.3)]">
-                Ver Sunset Treks & Pilotos
+                Explorar Rutas
               </a>
               <a href="#comunidad" className="w-full sm:w-auto glass-panel hover:bg-white/10 text-white px-8 py-4 rounded-full text-sm font-bold uppercase tracking-widest transition-all">
-                Conoce el Método
+                Nuestra Comunidad
               </a>
             </div>
           </div>

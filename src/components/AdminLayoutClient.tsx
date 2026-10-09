@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import Sidebar from './Sidebar';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -58,7 +59,7 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
           )}
           <div className="flex flex-col">
             <span className="text-[10px] uppercase text-primary font-black tracking-widest flex items-center gap-1.5">
-              <Mountain className="w-3 h-3" />
+              <Image src="/logo.png" alt="Gaz" width={12} height={12} className="object-contain" />
               Gaz Style
             </span>
             <span className="text-xs font-bold text-slate-300 tracking-wide mt-0.5">{currentModuleName}</span>

@@ -114,114 +114,145 @@ export default function CalendarClient({
 
         {/* Agenda List */}
         <div className="space-y-4 pt-4">
-          {departures.length === 0 ? (
+          {departures.length === 0 && adventuresCatalog.length === 0 ? (
             <div className="py-20 text-center border border-dashed border-slate-700 rounded-xl bg-slate-900/50">
               <Clock className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-slate-300">No hay salidas programadas</h3>
-              <p className="text-slate-500 text-sm mt-1">Programa una fecha específica para una ruta de tu catálogo DMC.</p>
+              <h3 className="text-lg font-semibold text-slate-300">No hay salidas ni rutas disponibles</h3>
+              <p className="text-slate-500 text-sm mt-1">Crea una ruta en tu catálogo DMC primero para poder programarla.</p>
             </div>
           ) : (
-            departures.map(dep => {
-              const adv = dep.adventures_catalog;
-              if (!adv) return null; // Fallback si la ruta base fue borrada (Cascade delete debería prevenirlo en BD real)
+            <>
+              {departures.map(dep => {
+                const adv = dep.adventures_catalog;
+                if (!adv) return null; // Fallback si la ruta base fue borrada (Cascade delete debería prevenirlo en BD real)
 
-              const capacityPct = adv.max_pax > 0 ? (dep.current_pax / adv.max_pax) * 100 : 0;
-              
-              return (
-                <div key={dep.id} className="group bg-slate-900 border border-slate-800 hover:border-blue-500/30 rounded-xl overflow-hidden transition-all flex flex-col md:flex-row items-stretch">
-                  
-                  {/* Date Block */}
-                  <div className="bg-slate-950 p-6 flex flex-col justify-center items-center min-w-[140px] border-b md:border-b-0 md:border-r border-slate-800">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Inicio</span>
-                    <span className="text-3xl font-black text-white">{new Date(dep.start_date).getDate()}</span>
-                    <span className="text-sm font-semibold text-blue-500 uppercase">
-                      {new Date(dep.start_date).toLocaleString('es-ES', { month: 'short' })} {new Date(dep.start_date).getFullYear()}
-                    </span>
-                  </div>
-
-                  {/* Info Block */}
-                  <div className="flex-grow p-6">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">{adv.category} • {adv.duration_days} Días</span>
-                        <h3 className="text-xl font-bold text-white line-clamp-1">{adv.title}</h3>
-                      </div>
-                      <span className={`px-3 py-1 rounded-full border text-xs font-bold ${getStatusColor(dep.status)}`}>
-                        {getStatusText(dep.status)}
+                const capacityPct = adv.max_pax > 0 ? (dep.current_pax / adv.max_pax) * 100 : 0;
+                
+                return (
+                  <div key={dep.id} className="group bg-slate-900 border border-slate-800 hover:border-blue-500/30 rounded-xl overflow-hidden transition-all flex flex-col md:flex-row items-stretch">
+                    
+                    {/* Date Block */}
+                    <div className="bg-slate-950 p-6 flex flex-col justify-center items-center min-w-[140px] border-b md:border-b-0 md:border-r border-slate-800">
+                      <span className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Inicio</span>
+                      <span className="text-3xl font-black text-white">{new Date(dep.start_date).toLocaleDateString('es-ES', { timeZone: 'UTC', day: 'numeric' })}</span>
+                      <span className="text-sm font-semibold text-blue-500 uppercase">
+                        {new Date(dep.start_date).toLocaleDateString('es-ES', { timeZone: 'UTC', month: 'short' })} {new Date(dep.start_date).getFullYear()}
                       </span>
                     </div>
 
-                    <div className="flex flex-wrap gap-6 mt-6">
-                      <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-slate-500" />
+                    {/* Info Block */}
+                    <div className="flex-grow p-6">
+                      <div className="flex justify-between items-start mb-2">
                         <div>
-                          <p className="text-[10px] text-slate-500 uppercase font-semibold">Ocupación</p>
-                          <p className="text-sm font-bold text-slate-200">{dep.current_pax} / {adv.max_pax} Pax</p>
+                          <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">{adv.category} • {adv.duration_days} Días</span>
+                          <h3 className="text-xl font-bold text-white line-clamp-1">{adv.title}</h3>
                         </div>
+                        <span className={`px-3 py-1 rounded-full border text-xs font-bold ${getStatusColor(dep.status)}`}>
+                          {getStatusText(dep.status)}
+                        </span>
                       </div>
-                      
-                      <div className="flex items-center gap-2">
-                        <Flag className="w-4 h-4 text-slate-500" />
-                        <div>
-                          <p className="text-[10px] text-slate-500 uppercase font-semibold">Término</p>
-                          <p className="text-sm font-bold text-slate-200">{new Date(dep.end_date).toLocaleDateString('es-ES')}</p>
+
+                      <div className="flex flex-wrap gap-6 mt-6">
+                        <div className="flex items-center gap-2">
+                          <Users className="w-4 h-4 text-slate-500" />
+                          <div>
+                            <p className="text-[10px] text-slate-500 uppercase font-semibold">Ocupación</p>
+                            <p className="text-sm font-bold text-slate-200">{dep.current_pax} / {adv.max_pax} Pax</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-2">
+                          <Flag className="w-4 h-4 text-slate-500" />
+                          <div>
+                            <p className="text-[10px] text-slate-500 uppercase font-semibold">Término</p>
+                            <p className="text-sm font-bold text-slate-200">{new Date(dep.end_date).toLocaleDateString('es-ES', { timeZone: 'UTC' })}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <UserSquare2 className="w-4 h-4 text-slate-500" />
+                          <div>
+                            <p className="text-[10px] text-slate-500 uppercase font-semibold">Guía Lead</p>
+                            <p className="text-sm font-bold text-slate-400 italic">No Asignado</p>
+                          </div>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <UserSquare2 className="w-4 h-4 text-slate-500" />
-                        <div>
-                          <p className="text-[10px] text-slate-500 uppercase font-semibold">Guía Lead</p>
-                          <p className="text-sm font-bold text-slate-400 italic">No Asignado</p>
-                        </div>
+                      {/* Progress Bar */}
+                      <div className="mt-5 w-full bg-slate-950 rounded-full h-1.5 border border-slate-800 overflow-hidden">
+                        <div 
+                          className={`h-1.5 rounded-full ${capacityPct >= 100 ? 'bg-red-500' : capacityPct > 0 ? 'bg-blue-500' : 'bg-slate-700'}`} 
+                          style={{ width: `${Math.min(capacityPct, 100)}%` }}
+                        ></div>
                       </div>
                     </div>
 
-                    {/* Progress Bar */}
-                    <div className="mt-5 w-full bg-slate-950 rounded-full h-1.5 border border-slate-800 overflow-hidden">
-                      <div 
-                        className={`h-1.5 rounded-full ${capacityPct >= 100 ? 'bg-red-500' : capacityPct > 0 ? 'bg-blue-500' : 'bg-slate-700'}`} 
-                        style={{ width: `${Math.min(capacityPct, 100)}%` }}
-                      ></div>
+                    {/* Actions Block */}
+                    <div className="p-4 bg-slate-900/50 flex flex-row md:flex-col justify-end gap-2 border-t md:border-t-0 md:border-l border-slate-800">
+                      {dep.status === 'scheduled' && (
+                        <button 
+                          onClick={async () => { await updateDepartureStatus(dep.id, 'confirmed'); window.location.reload(); }}
+                          className="px-4 py-2 bg-green-500/10 text-green-500 hover:bg-green-500/20 text-xs font-bold rounded-lg border border-green-500/20 transition-colors flex items-center gap-2"
+                        >
+                          <CheckCircle className="w-4 h-4" /> Go
+                        </button>
+                      )}
+                      {(dep.status === 'confirmed' || dep.status === 'scheduled') && (
+                        <button 
+                          onClick={() => { setExpenseDepId(dep.id); setExpenseDesc(''); setExpenseAmt(''); }}
+                          className="px-4 py-2 bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 text-xs font-bold rounded-lg border border-orange-500/20 transition-colors flex items-center gap-2"
+                        >
+                          + Gasto
+                        </button>
+                      )}
+                      {dep.status !== 'cancelled' && dep.status !== 'completed' && (
+                        <button 
+                          onClick={async () => {
+                            if(confirm('¿Seguro que deseas cancelar esta salida?')) {
+                              await updateDepartureStatus(dep.id, 'cancelled');
+                              window.location.reload();
+                            }
+                          }}
+                          className="px-4 py-2 bg-slate-800 text-slate-400 hover:bg-red-900/40 hover:text-red-400 text-xs font-bold rounded-lg transition-colors flex items-center gap-2"
+                        >
+                          <Trash2 className="w-4 h-4" /> Cancelar
+                        </button>
+                      )}
+                    </div>
+
+                  </div>
+                );
+              })}
+              
+              {/* Unscheduled Adventures */}
+              {adventuresCatalog.filter(adv => !departures.some(d => d.adventure_id === adv.id && (d.status === 'scheduled' || d.status === 'confirmed'))).map(adv => (
+                  <div key={adv.id} className="group bg-slate-950/50 border border-slate-800 border-dashed rounded-xl overflow-hidden flex flex-col md:flex-row items-stretch opacity-80 hover:opacity-100 transition-opacity">
+                    <div className="bg-slate-900/30 p-6 flex flex-col justify-center items-center min-w-[140px] border-b md:border-b-0 md:border-r border-slate-800 border-dashed">
+                      <span className="text-3xl font-black text-slate-700">--</span>
+                      <span className="text-xs font-bold text-slate-600 uppercase tracking-widest mt-1">Sin Fecha</span>
+                    </div>
+                    <div className="flex-grow p-6">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <span className="text-[10px] font-semibold text-slate-600 uppercase tracking-wider">{adv.category} • {adv.duration_days} Días</span>
+                          <h3 className="text-xl font-bold text-slate-400 line-clamp-1">{adv.title}</h3>
+                        </div>
+                        <span className="px-3 py-1 rounded-full border border-slate-700 bg-slate-800/50 text-slate-500 text-xs font-bold">
+                          No Programada
+                        </span>
+                      </div>
+                    </div>
+                    <div className="p-4 bg-slate-900/30 flex flex-col justify-center items-center border-t md:border-t-0 md:border-l border-slate-800 border-dashed">
+                        <button 
+                          onClick={() => { setSelectedAdventureId(adv.id); setIsModalOpen(true); }}
+                          className="px-4 py-2 bg-blue-600/10 text-blue-500 hover:bg-blue-600/20 text-xs font-bold rounded-lg border border-blue-500/20 transition-colors w-full flex items-center justify-center gap-2"
+                        >
+                          <Plus className="w-4 h-4" /> Programar
+                        </button>
                     </div>
                   </div>
-
-                  {/* Actions Block */}
-                  <div className="p-4 bg-slate-900/50 flex flex-row md:flex-col justify-end gap-2 border-t md:border-t-0 md:border-l border-slate-800">
-                    {dep.status === 'scheduled' && (
-                      <button 
-                        onClick={async () => { await updateDepartureStatus(dep.id, 'confirmed'); window.location.reload(); }}
-                        className="px-4 py-2 bg-green-500/10 text-green-500 hover:bg-green-500/20 text-xs font-bold rounded-lg border border-green-500/20 transition-colors flex items-center gap-2"
-                      >
-                        <CheckCircle className="w-4 h-4" /> Go
-                      </button>
-                    )}
-                    {(dep.status === 'confirmed' || dep.status === 'scheduled') && (
-                      <button 
-                        onClick={() => { setExpenseDepId(dep.id); setExpenseDesc(''); setExpenseAmt(''); }}
-                        className="px-4 py-2 bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 text-xs font-bold rounded-lg border border-orange-500/20 transition-colors flex items-center gap-2"
-                      >
-                        + Gasto
-                      </button>
-                    )}
-                    {dep.status !== 'cancelled' && dep.status !== 'completed' && (
-                      <button 
-                        onClick={async () => {
-                          if(confirm('¿Seguro que deseas cancelar esta salida?')) {
-                            await updateDepartureStatus(dep.id, 'cancelled');
-                            window.location.reload();
-                          }
-                        }}
-                        className="px-4 py-2 bg-slate-800 text-slate-400 hover:bg-red-900/40 hover:text-red-400 text-xs font-bold rounded-lg transition-colors flex items-center gap-2"
-                      >
-                        <Trash2 className="w-4 h-4" /> Cancelar
-                      </button>
-                    )}
-                  </div>
-
-                </div>
-              );
-            })
+              ))}
+            </>
           )}
         </div>
 

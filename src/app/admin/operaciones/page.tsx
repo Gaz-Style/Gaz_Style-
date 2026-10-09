@@ -56,7 +56,7 @@ export default async function OperacionesPage() {
                             <div key={dep.id} className="glass-panel border-white/5 rounded-2xl p-6 relative overflow-hidden group hover:border-amber-500/30 transition-colors">
                                 <h3 className="text-xl font-bold text-white mb-1">{dep.adventures_catalog?.title}</h3>
                                 <p className="text-xs text-amber-500 font-bold uppercase tracking-wider mb-6">
-                                    {new Date(dep.start_date).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
+                                    {new Date(dep.start_date).toLocaleDateString('es-ES', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' })}
                                 </p>
                                 
                                 <div className="flex items-center justify-between p-4 bg-black/50 rounded-xl border border-white/5 mb-6">

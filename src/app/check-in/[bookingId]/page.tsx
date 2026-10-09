@@ -3,8 +3,9 @@ import CheckInClient from "./CheckInClient";
 import { Mountain } from "lucide-react";
 import Link from "next/link";
 
-export default async function CheckInPage({ params }: { params: { bookingId: string } }) {
-    const booking = await getBookingForCheckIn(params.bookingId);
+export default async function CheckInPage({ params }: { params: Promise<{ bookingId: string }> }) {
+    const { bookingId } = await params;
+    const booking = await getBookingForCheckIn(bookingId);
 
     if (!booking) {
         return (

@@ -9,7 +9,7 @@ import Image from 'next/image';
 import { createBookingWithMercadoPago } from './actions';
 
 function getDifficultyColor(level: string) {
-    if (!level) return 'text-slate-400 bg-slate-800';
+    if (!level) return 'text-slate-400 bg-white/5';
     if (level.toLowerCase().includes('alta') || level.toLowerCase().includes('experto')) return 'text-red-400 bg-red-500/10 border border-red-500/20';
     if (level.toLowerCase().includes('media')) return 'text-orange-400 bg-orange-500/10 border border-orange-500/20';
     return 'text-green-400 bg-green-500/10 border border-green-500/20';
@@ -21,8 +21,8 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
         ? departures.filter(dep => dep.adventures_catalog?.id === initialAdventureId)
         : departures;
 
-    const initialSelected = filteredDepartures.length === 1 ? filteredDepartures[0] : null;
-    const initialStep = filteredDepartures.length === 1 ? 'form' : 'select';
+    const initialSelected = null;
+    const initialStep = 'select';
 
     const [selected, setSelected] = useState<any | null>(initialSelected);
     const [paxCount, setPaxCount] = useState(1);
@@ -69,13 +69,13 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
     }
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-200 font-sans">
+        <div className="min-h-screen bg-[#0a0a0a] text-slate-200 font-sans">
 
             {/* Hero Banner */}
-            <div className="relative bg-gradient-to-b from-slate-900 to-slate-950 border-b border-slate-800 px-6 py-16 text-center overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent pointer-events-none" />
-                <p className="text-blue-400 text-xs font-bold tracking-[0.3em] uppercase mb-4">Gaz Style Expeditions</p>
-                <h1 className="text-4xl md:text-6xl font-extralight tracking-tight text-white mb-4">
+            <div className="relative glass-panel border-b border-white/5 px-6 py-16 text-center overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-500/10 via-transparent to-transparent pointer-events-none" />
+                <p className="text-amber-500 text-xs font-bold tracking-[0.3em] uppercase mb-4">Gaz Style Expeditions</p>
+                <h1 className="text-4xl md:text-6xl font-editorial font-bold tracking-tight text-white mb-4">
                     Reserva tu <span className="font-bold">Expedición</span>
                 </h1>
                 <p className="text-slate-400 max-w-xl mx-auto text-lg">
@@ -92,8 +92,8 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
                         const currentStep = step === 'select' ? 1 : step === 'form' ? 2 : 3;
                         return (
                             <React.Fragment key={s}>
-                                <div className={`flex items-center gap-2 text-sm font-semibold ${currentStep >= stepNum ? 'text-blue-400' : 'text-slate-600'}`}>
-                                    <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 ${currentStep > stepNum ? 'bg-blue-500 border-blue-500 text-white' : currentStep === stepNum ? 'border-blue-500 text-blue-400' : 'border-slate-700 text-slate-600'}`}>
+                                <div className={`flex items-center gap-2 text-sm font-semibold ${currentStep >= stepNum ? 'text-amber-500' : 'text-slate-600'}`}>
+                                    <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 ${currentStep > stepNum ? 'bg-amber-500 border-amber-500 text-white' : currentStep === stepNum ? 'border-amber-500 text-amber-500' : 'border-slate-700 text-slate-600'}`}>
                                         {currentStep > stepNum ? '✓' : stepNum}
                                     </span>
                                     <span className="hidden md:block">{s}</span>
@@ -109,7 +109,7 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
                     <div className="space-y-6">
                         <h2 className="text-2xl font-semibold text-white text-center mb-8">Salidas Disponibles</h2>
                         {filteredDepartures.length === 0 ? (
-                            <div className="py-20 text-center border border-dashed border-slate-800 rounded-2xl">
+                            <div className="py-20 text-center border border-dashed border-white/5 rounded-2xl">
                                 <Mountain className="w-12 h-12 text-slate-700 mx-auto mb-4" />
                                 <p className="text-slate-500">No hay salidas disponibles en este momento. Vuelve pronto.</p>
                             </div>
@@ -123,12 +123,12 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
                                         <div
                                             key={dep.id}
                                             onClick={() => { if (!isFull) { setSelected(dep); setPaxCount(1); setStep('form'); } }}
-                                            className={`bg-slate-900 border rounded-2xl overflow-hidden transition-all cursor-pointer group
-                                                ${isFull ? 'opacity-50 cursor-not-allowed border-slate-800' : 'border-slate-800 hover:border-blue-500/60 hover:shadow-[0_0_30px_rgba(59,130,246,0.1)]'}
+                                            className={`glass-panel bg-black/30 border rounded-2xl overflow-hidden transition-all cursor-pointer group
+                                                ${isFull ? 'opacity-50 cursor-not-allowed border-white/5' : 'border-white/5 hover:border-amber-500/60 hover:shadow-[0_0_30px_rgba(59,130,246,0.1)]'}
                                             `}
                                         >
                                             {/* Card image / header */}
-                                            <div className="relative h-32 overflow-hidden bg-slate-800 flex items-center justify-center">
+                                            <div className="relative h-32 overflow-hidden bg-white/5 flex items-center justify-center">
                                                 {adv?.image_url ? (
                                                     <Image
                                                         src={adv.image_url}
@@ -148,31 +148,31 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
                                                         </span>
                                                     </div>
                                                     {isFull && <span className="px-2 py-0.5 bg-red-500/20 text-red-400 text-[10px] font-bold rounded-full">LLENO</span>}
-                                                    {selected?.id === dep.id && <span className="px-2 py-0.5 bg-blue-500 text-white text-[10px] font-bold rounded-full">✓ Seleccionada</span>}
+                                                    {selected?.id === dep.id && <span className="px-2 py-0.5 bg-amber-500 text-white text-[10px] font-bold rounded-full">✓ Seleccionada</span>}
                                                 </div>
                                             </div>
                                             <div className="p-5">
                                                 <h3 className="text-lg font-bold text-white mb-1">{adv?.title}</h3>
                                                 <p className="text-xs text-slate-500 uppercase tracking-wider mb-3">{adv?.category}</p>
                                                 <div className="flex items-center gap-2 text-sm text-slate-400">
-                                                    <Calendar className="w-4 h-4 text-blue-500" />
-                                                    <span>{new Date(dep.start_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                                                    <Calendar className="w-4 h-4 text-amber-500" />
+                                                    <span>{new Date(dep.start_date).toLocaleDateString('es-ES', { timeZone: 'UTC', day: 'numeric', month: 'long', year: 'numeric' })}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2 text-sm text-slate-400">
-                                                    <Clock className="w-4 h-4 text-blue-500" />
+                                                    <Clock className="w-4 h-4 text-amber-500" />
                                                     <span>{adv?.duration_text || `${adv?.duration_days} día${adv?.duration_days > 1 ? 's' : ''}`}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2 text-sm text-slate-400">
-                                                    <Users className="w-4 h-4 text-blue-500" />
+                                                    <Users className="w-4 h-4 text-amber-500" />
                                                     <span>{spots} cupo{spots !== 1 ? 's' : ''} disponible{spots !== 1 ? 's' : ''}</span>
                                                 </div>
-                                                <div className="pt-3 border-t border-slate-800 flex justify-between items-end">
+                                                <div className="pt-3 border-t border-white/5 flex justify-between items-end">
                                                     <div>
                                                         <p className="text-[10px] text-slate-500 uppercase">Precio por persona</p>
                                                         <p className="text-2xl font-black text-white">${Number(adv?.base_price).toLocaleString('es-CL')}</p>
                                                     </div>
                                                     {!isFull && (
-                                                        <div className={`p-2 rounded-lg transition-all ${selected?.id === dep.id ? 'bg-blue-500 text-white' : 'bg-slate-800 text-slate-400 group-hover:bg-blue-500/20 group-hover:text-blue-400'}`}>
+                                                        <div className={`p-2 rounded-lg transition-all ${selected?.id === dep.id ? 'bg-amber-500 text-white' : 'bg-white/5 text-slate-400 group-hover:bg-amber-500/20 group-hover:text-amber-500'}`}>
                                                             <CheckCircle2 className="w-5 h-5" />
                                                         </div>
                                                     )}
@@ -184,19 +184,33 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
                             </div>
                         )}
 
+                    <div className="flex justify-center mt-10">
+                        <button 
+                            onClick={() => {
+                                if (initialAdventureId) {
+                                    window.location.href = `/rutas/${initialAdventureId}`;
+                                } else {
+                                    window.location.href = `/#rutas`;
+                                }
+                            }} 
+                            className="px-8 py-3 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-xl transition-colors border border-white/10"
+                        >
+                            Volver al Catálogo
+                        </button>
                     </div>
-                )}
+                </div>
+            )}
 
                 {/* STEP 2: Form */}
                 {step === 'form' && selected && (
                     <div className="max-w-2xl mx-auto space-y-8">
-                        <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
+                        <div className="glass-panel bg-black/30 border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
                             {/* Resumen Superior */}
-                            <div className="bg-blue-600/10 border-b border-blue-500/20 p-6 md:p-8">
-                                <p className="text-xs text-blue-400 font-bold uppercase tracking-widest mb-1">Tu reserva</p>
+                            <div className="bg-amber-600/10 border-b border-amber-500/20 p-6 md:p-8">
+                                <p className="text-xs text-amber-500 font-bold uppercase tracking-widest mb-1">Tu reserva</p>
                                 <h3 className="text-2xl font-bold text-white mb-2">{selected.adventures_catalog?.title}</h3>
-                                <p className="text-blue-200 text-sm">
-                                    {new Date(selected.start_date).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                                <p className="text-amber-200 text-sm">
+                                    {new Date(selected.start_date).toLocaleDateString('es-ES', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                                 </p>
                             </div>
 
@@ -214,7 +228,7 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
                                 </div>
 
                                 {/* Ficha Médica Básica */}
-                                <div className="space-y-5 border-t border-slate-800 pt-8">
+                                <div className="space-y-5 border-t border-white/5 pt-8">
                                     <h2 className="text-xl font-semibold text-white">Ficha Médica y Check-in</h2>
                                     <p className="text-sm text-slate-400 font-light">Para tu seguridad en el cerro, necesitamos esta información clave antes de confirmar tu cupo.</p>
                                     
@@ -226,14 +240,14 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
                                             value={form.medical_info}
                                             onChange={e => setForm(f => ({ ...f, medical_info: e.target.value }))}
                                             placeholder="Asma, alergia a picaduras, lesiones previas, etc."
-                                            className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors resize-none"
+                                            className="w-full bg-[#0a0a0a] border border-white/5 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500 transition-colors resize-none"
                                             rows={2}
                                         />
                                     </div>
                                 </div>
 
                                 {/* Selección de Cupos y Total */}
-                                <div className="border-t border-slate-800 pt-8 space-y-6">
+                                <div className="border-t border-white/5 pt-8 space-y-6">
                                     <div className="flex justify-between items-center">
                                         <div>
                                             <span className="text-white font-semibold block">Cantidad de cupos</span>
@@ -248,10 +262,10 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
                                                 </span>
                                             )}
                                         </div>
-                                        <div className="flex items-center gap-1 border border-slate-700 bg-slate-950 rounded-xl p-1">
-                                            <button onClick={() => setPaxCount(p => Math.max(1, p - 1))} className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">−</button>
+                                        <div className="flex items-center gap-1 border border-slate-700 bg-[#0a0a0a] rounded-xl p-1">
+                                            <button onClick={() => setPaxCount(p => Math.max(1, p - 1))} className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors">−</button>
                                             <span className="font-bold text-white w-8 text-center">{paxCount}</span>
-                                            <button onClick={() => setPaxCount(p => Math.min(availableSpots, p + 1))} className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">+</button>
+                                            <button onClick={() => setPaxCount(p => Math.min(availableSpots, p + 1))} className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors">+</button>
                                         </div>
                                     </div>
                                     
@@ -261,18 +275,18 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
                                     </div>
 
                                     {/* Check-in y Waiver */}
-                                    <div className="flex items-start gap-3 pt-6 border-t border-slate-800">
+                                    <div className="flex items-start gap-3 pt-6 border-t border-white/5">
                                         <div className="mt-0.5">
                                             <input 
                                                 type="checkbox" 
                                                 id="waiver" 
                                                 checked={acceptsWaiver}
                                                 onChange={(e) => setAcceptsWaiver(e.target.checked)}
-                                                className="w-5 h-5 rounded border-slate-700 bg-slate-950 text-blue-500 focus:ring-blue-500/20 cursor-pointer"
+                                                className="w-5 h-5 rounded border-slate-700 bg-[#0a0a0a] text-amber-500 focus:ring-blue-500/20 cursor-pointer"
                                             />
                                         </div>
                                         <label htmlFor="waiver" className="text-xs text-slate-400 cursor-pointer select-none">
-                                            He leído y acepto el <span className="text-blue-400 underline">Descargo de Responsabilidad Médico</span>. Declaro tener salud compatible con la actividad, asumo los riesgos inherentes al montañismo y autorizo el protocolo WFR en caso de emergencia.
+                                            He leído y acepto el <span className="text-amber-500 underline">Descargo de Responsabilidad Médico</span>. Declaro tener salud compatible con la actividad, asumo los riesgos inherentes al montañismo y autorizo el protocolo WFR en caso de emergencia.
                                         </label>
                                     </div>
                                 </div>
@@ -280,13 +294,16 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
                         </div>
 
                         <div className="flex gap-4">
-                            <button onClick={() => setStep('select')} className="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl transition-colors">
+                            <button 
+                                onClick={() => setStep('select')} 
+                                className="flex-1 py-3 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-xl transition-colors border border-white/10"
+                            >
                                 Volver
                             </button>
                             <button
                                 onClick={handlePay}
                                 disabled={isSubmitting || !form.first_name || !form.last_name || !form.email}
-                                className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold rounded-xl flex items-center justify-center gap-3 transition-colors"
+                                className="flex-1 py-3 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-black font-bold rounded-xl flex items-center justify-center gap-3 transition-colors"
                             >
                                 {isSubmitting ? (
                                     <><Loader2 className="w-5 h-5 animate-spin" /> Procesando...</>
@@ -312,8 +329,9 @@ function Field({ label, name, value, onChange, placeholder, type = 'text' }: any
                 value={value}
                 onChange={e => onChange(e.target.value)}
                 placeholder={placeholder}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+                className="w-full bg-[#0a0a0a] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-500 transition-colors"
             />
         </div>
     );
 }
+

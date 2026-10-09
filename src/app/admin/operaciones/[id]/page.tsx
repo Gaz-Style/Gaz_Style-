@@ -12,14 +12,15 @@ function getAdminClient() {
     );
 }
 
-export default async function ManifiestoPage({ params }: { params: { id: string } }) {
+export default async function ManifiestoPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const supabase = getAdminClient();
     
     // 1. Obtener los datos de la salida
     const { data: departure } = await supabase
         .from('agenda_departures')
         .select('*, adventures_catalog(title)')
-        .eq('id', params.id)
+        .eq('id', id)
         .single();
 
     if (!departure) {
@@ -41,10 +42,10 @@ export default async function ManifiestoPage({ params }: { params: { id: string 
                 allergies, blood_type, emergency_contact_name, emergency_contact_phone
             )
         `)
-        .eq('departure_id', params.id)
+        .eq('departure_id', id)
         .in('payment_status', ['paid', 'pending', 'approved']); // Mostramos incluso los pendientes por si pagan en efectivo.
 
-    const dateStr = new Date(departure.start_date).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+    const dateStr = new Date(departure.start_date).toLocaleDateString('es-ES', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' });
     const passengers = bookings || [];
     
     // Stats

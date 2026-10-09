@@ -7,7 +7,7 @@ import { saveCheckInDetails } from '../actions';
 export default function CheckInClient({ booking }: { booking: any }) {
     const adv = booking.crm_adventurers;
     const title = booking.agenda_departures?.adventures_catalog?.title;
-    const date = new Date(booking.agenda_departures?.start_date).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+    const date = new Date(booking.agenda_departures?.start_date).toLocaleDateString('es-ES', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' });
 
     const [form, setForm] = useState({
         emergency_contact_name: adv.emergency_contact_name || '',

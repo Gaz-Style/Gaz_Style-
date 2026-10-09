@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -47,7 +48,7 @@ export const sidebarSections = [
             { name: 'Dashboard Central', href: '/admin', icon: LayoutDashboard },
             { name: 'Calendario de Salidas', href: '/admin/calendario', icon: CalendarDays },
             { name: 'Manifiestos & Operaciones', href: '/admin/operaciones', icon: ClipboardList },
-            { name: 'Inventario (Gear Room)', href: '/admin/inventory', icon: Tent },
+            { name: 'Diseñador de Rutas', href: '/admin/creador-rutas', icon: Map },
         ]
     },
     {
@@ -60,7 +61,7 @@ export const sidebarSections = [
     {
         title: 'PRODUCTO & FINANZAS',
         items: [
-            { name: 'Diseñador de Rutas', href: '/admin/creador-rutas', icon: Map },
+            { name: 'Inventario (Gear Room)', href: '/admin/inventory', icon: Tent },
             { name: 'Control de Pagos', href: '/admin/finance', icon: Wallet },
         ]
     },
@@ -137,8 +138,8 @@ export default function Sidebar({
                                 exit={{ opacity: 0, x: -10 }}
                                 className="flex items-center gap-3 relative z-10"
                             >
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center shadow-lg shadow-primary/30">
-                                    <Mountain className="text-white w-6 h-6" />
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/10 border border-amber-500/20 flex items-center justify-center shadow-lg shadow-primary/30">
+                                    <Image src="/logo.png" alt="Gaz Style" width={24} height={24} className="object-contain" />
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="font-heading text-lg text-white font-black tracking-wide">GAZ STYLE</span>

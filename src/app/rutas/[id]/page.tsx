@@ -24,8 +24,9 @@ async function getRouteData(id: string) {
     return data;
 }
 
-export default async function RouteDetailPage({ params }: { params: { id: string } }) {
-    const route = await getRouteData(params.id);
+export default async function RouteDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const route = await getRouteData(id);
 
     if (!route) {
         notFound();
@@ -98,7 +99,7 @@ export default async function RouteDetailPage({ params }: { params: { id: string
                             <ArrowLeft className="w-4 h-4" /> Volver
                         </Link>
                         <div className="flex items-center gap-3">
-                            <Image src="/icon.png" alt="Gaz Style Logo" width={24} height={24} className="object-contain drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
+                            <Image src="/logo.png" alt="Gaz Style Logo" width={24} height={24} className="object-contain drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
                             <div className="font-serif font-bold text-xl tracking-wider text-white">
                                 GAZ<span className="text-amber-500 italic">_Style</span>
                             </div>

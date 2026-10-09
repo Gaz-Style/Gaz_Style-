@@ -84,8 +84,8 @@ export default function CRMClient({ adventurers: initial }: { adventurers: any[]
               <tr className="bg-slate-950 text-slate-400 text-[10px] uppercase tracking-widest border-b border-slate-800">
                 <th className="p-4 font-semibold">Pasajero</th>
                 <th className="p-4 font-semibold">Contacto</th>
+                <th className="p-4 font-semibold">Intención (Última)</th>
                 <th className="p-4 font-semibold">Perfil Médico</th>
-                <th className="p-4 font-semibold">Contacto Emergencia</th>
                 <th className="p-4 font-semibold">Legal</th>
                 <th className="p-4 font-semibold text-right">Acción</th>
               </tr>
@@ -95,7 +95,13 @@ export default function CRMClient({ adventurers: initial }: { adventurers: any[]
                 <tr><td colSpan={6} className="p-10 text-center text-slate-500">
                   {adventurers.length === 0 ? 'Sin aventureros registrados. Agrega el primero.' : 'No hay resultados para esta búsqueda.'}
                 </td></tr>
-              ) : filtered.map(a => (
+              ) : filtered.map(a => {
+                const latestBooking = a.bookings && a.bookings.length > 0 ? a.bookings[0] : null;
+                const routeName = latestBooking?.agenda_departures?.adventures_catalog?.title || 'Sin Reserva';
+                const paymentStatus = latestBooking?.payment_status === 'pending' ? 'Carro Abandonado' : latestBooking?.payment_status === 'paid' ? 'Pagado' : 'N/A';
+                const statusColor = latestBooking?.payment_status === 'pending' ? 'text-orange-400 bg-orange-500/10 border-orange-500/20' : latestBooking?.payment_status === 'paid' ? 'text-green-400 bg-green-500/10 border-green-500/20' : 'text-slate-400 bg-slate-800 border-slate-700';
+
+                return (
                 <tr key={a.id} className="border-b border-slate-800/50 hover:bg-slate-800/20 transition-colors cursor-pointer" onClick={() => setSelected(a)}>
                   <td className="p-4">
                     <div className="flex items-center gap-3">
@@ -113,6 +119,18 @@ export default function CRMClient({ adventurers: initial }: { adventurers: any[]
                     <p>{a.phone}</p>
                   </td>
                   <td className="p-4">
+                    {latestBooking ? (
+                      <div>
+                        <p className="text-xs font-semibold text-white truncate max-w-[200px]">{routeName}</p>
+                        <span className={`inline-block mt-1 px-2 py-0.5 text-[9px] font-bold uppercase rounded-full border ${statusColor}`}>
+                          {paymentStatus}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-xs text-slate-500 italic">Capturado (No Checkout)</span>
+                    )}
+                  </td>
+                  <td className="p-4">
                     <div className="flex flex-wrap gap-1.5">
                       <span className="px-2 py-0.5 bg-red-500/10 text-red-400 text-[10px] font-bold rounded-full border border-red-500/20">
                         {a.blood_type || 'N/D'}
@@ -128,10 +146,6 @@ export default function CRMClient({ adventurers: initial }: { adventurers: any[]
                         </span>
                       )}
                     </div>
-                  </td>
-                  <td className="p-4 text-sm">
-                    <p className="text-slate-300 font-medium">{a.emergency_contact_name || '—'}</p>
-                    <p className="text-slate-500">{a.emergency_contact_phone || ''}</p>
                   </td>
                   <td className="p-4">
                     {a.waiver_signed ? (
@@ -162,7 +176,8 @@ export default function CRMClient({ adventurers: initial }: { adventurers: any[]
                     </button>
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
