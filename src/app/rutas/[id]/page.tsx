@@ -97,8 +97,11 @@ export default async function RouteDetailPage({ params }: { params: { id: string
                         <Link href="/" className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white uppercase tracking-widest transition-colors">
                             <ArrowLeft className="w-4 h-4" /> Volver
                         </Link>
-                        <div className="font-serif font-bold text-xl tracking-wider text-white">
-                            GAZ<span className="text-amber-500 italic">_Style</span>
+                        <div className="flex items-center gap-3">
+                            <Image src="/icon.png" alt="Gaz Style Logo" width={24} height={24} className="object-contain drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
+                            <div className="font-serif font-bold text-xl tracking-wider text-white">
+                                GAZ<span className="text-amber-500 italic">_Style</span>
+                            </div>
                         </div>
                     </div>
                 </nav>

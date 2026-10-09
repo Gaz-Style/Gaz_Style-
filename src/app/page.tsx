@@ -59,7 +59,7 @@ export default async function ExperienciaMontanaPage() {
             <div className="w-24 hidden md:block"></div>
             
             <div className="flex items-center gap-3">
-              <Compass className="w-6 h-6 text-amber-500" />
+              <Image src="/icon.png" alt="Gaz Style Logo" width={28} height={28} className="object-contain drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
               <span className="font-editorial font-bold text-2xl tracking-wider text-white">
                 GAZ<span className="text-amber-500 italic">_Style</span>
               </span>
