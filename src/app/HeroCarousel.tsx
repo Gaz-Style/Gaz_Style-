@@ -1,15 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-
 import Image from 'next/image';
 
 const heroImages = [
-    // La carrera épica desde el piso que ya tenías
     "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=2000&q=80",
-    // Montaña épica que tenías
     "https://images.unsplash.com/photo-1522163182402-834f871fd851?q=80&w=2803&auto=format&fit=crop",
-    // MTB en la roca (silueta) - Enlace nuevo y verificado
     "https://images.unsplash.com/photo-1544198365-f5d60b6d8190?auto=format&fit=crop&w=2800&q=80",
 ];
 

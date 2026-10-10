@@ -59,7 +59,7 @@ export default function DashboardClient({ data }: { data: any }) {
           <h1 className="text-4xl md:text-5xl font-light tracking-tight text-white">
             Dashboard <span className="font-bold">Central</span>
           </h1>
-          <p className="text-slate-400 font-medium mt-2">
+          <p suppressHydrationWarning className="text-slate-400 font-medium mt-2">
             Estado operativo en tiempo real. {new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}.
           </p>
         </header>
@@ -102,8 +102,8 @@ export default function DashboardClient({ data }: { data: any }) {
                 return (
                   <div key={dep.id} className="bg-slate-900 border border-slate-800 rounded-xl p-5 flex items-center gap-6 hover:border-slate-700 transition-colors">
                     <div className="text-center min-w-[60px]">
-                      <p className="text-2xl font-black text-white">{new Date(dep.start_date).getDate()}</p>
-                      <p className="text-[10px] font-semibold text-blue-500 uppercase">
+                      <p suppressHydrationWarning className="text-2xl font-black text-white">{new Date(dep.start_date).getDate()}</p>
+                      <p suppressHydrationWarning className="text-[10px] font-semibold text-blue-500 uppercase">
                         {new Date(dep.start_date).toLocaleString('es-ES', { month: 'short' })}
                       </p>
                     </div>

@@ -134,8 +134,8 @@ export default function CalendarClient({
                     {/* Date Block */}
                     <div className="bg-slate-950 p-6 flex flex-col justify-center items-center min-w-[140px] border-b md:border-b-0 md:border-r border-slate-800">
                       <span className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Inicio</span>
-                      <span className="text-3xl font-black text-white">{new Date(dep.start_date).toLocaleDateString('es-ES', { timeZone: 'UTC', day: 'numeric' })}</span>
-                      <span className="text-sm font-semibold text-blue-500 uppercase">
+                      <span suppressHydrationWarning className="text-3xl font-black text-white">{new Date(dep.start_date).toLocaleDateString('es-ES', { timeZone: 'UTC', day: 'numeric' })}</span>
+                      <span suppressHydrationWarning className="text-sm font-semibold text-blue-500 uppercase">
                         {new Date(dep.start_date).toLocaleDateString('es-ES', { timeZone: 'UTC', month: 'short' })} {new Date(dep.start_date).getFullYear()}
                       </span>
                     </div>
@@ -165,7 +165,7 @@ export default function CalendarClient({
                           <Flag className="w-4 h-4 text-slate-500" />
                           <div>
                             <p className="text-[10px] text-slate-500 uppercase font-semibold">Término</p>
-                            <p className="text-sm font-bold text-slate-200">{new Date(dep.end_date).toLocaleDateString('es-ES', { timeZone: 'UTC' })}</p>
+                            <p suppressHydrationWarning className="text-sm font-bold text-slate-200">{new Date(dep.end_date).toLocaleDateString('es-ES', { timeZone: 'UTC' })}</p>
                           </div>
                         </div>
 

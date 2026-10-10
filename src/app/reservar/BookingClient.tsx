@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import {
     Mountain, Calendar, Users, CreditCard, ChevronRight,
-    Clock, Star, MapPin, Shield, ArrowRight, Loader2, CheckCircle2
+    Clock, Star, MapPin, Shield, ArrowLeft, Loader2, CheckCircle2
 } from 'lucide-react';
 import Image from 'next/image';
 import { createBookingWithMercadoPago } from './actions';
@@ -70,6 +70,26 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
 
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-slate-200 font-sans">
+
+            {/* Navbar / Top Back Button */}
+            <div className="absolute top-0 w-full z-50 p-6 flex justify-between items-center">
+                <button 
+                    onClick={() => {
+                        if (step === 'select') {
+                            if (initialAdventureId) {
+                                window.location.href = `/rutas/${initialAdventureId}`;
+                            } else {
+                                window.location.href = `/`;
+                            }
+                        } else {
+                            setStep('select');
+                        }
+                    }}
+                    className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white uppercase tracking-widest transition-colors z-50 relative"
+                >
+                    <ArrowLeft className="w-4 h-4" /> Volver
+                </button>
+            </div>
 
             {/* Hero Banner */}
             <div className="relative glass-panel border-b border-white/5 px-6 py-16 text-center overflow-hidden">
@@ -164,7 +184,11 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
                                                 </div>
                                                 <div className="flex items-center gap-2 text-sm text-slate-400">
                                                     <Users className="w-4 h-4 text-amber-500" />
-                                                    <span>{spots} cupo{spots !== 1 ? 's' : ''} disponible{spots !== 1 ? 's' : ''}</span>
+                                                    {spots <= 5 ? (
+                                                        <span className="text-amber-500 font-bold animate-pulse">¡Últimos {spots} cupo{spots !== 1 ? 's' : ''}!</span>
+                                                    ) : (
+                                                        <span>Cupos Abiertos</span>
+                                                    )}
                                                 </div>
                                                 <div className="pt-3 border-t border-white/5 flex justify-between items-end">
                                                     <div>
@@ -184,22 +208,8 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
                             </div>
                         )}
 
-                    <div className="flex justify-center mt-10">
-                        <button 
-                            onClick={() => {
-                                if (initialAdventureId) {
-                                    window.location.href = `/rutas/${initialAdventureId}`;
-                                } else {
-                                    window.location.href = `/#rutas`;
-                                }
-                            }} 
-                            className="px-8 py-3 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-xl transition-colors border border-white/10"
-                        >
-                            Volver al Catálogo
-                        </button>
                     </div>
-                </div>
-            )}
+                )}
 
                 {/* STEP 2: Form */}
                 {step === 'form' && selected && (

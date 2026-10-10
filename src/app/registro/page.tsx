@@ -2,7 +2,7 @@
 
 import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle2, Loader2, Mail, User, Phone, Sparkles, Heart } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Loader2, Mail, User, Phone, Sparkles, Heart, Mountain, Compass } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { publicRegisterCustomer } from './actions';
 import BackLink from '@/components/BackLink';
@@ -45,15 +45,15 @@ function RegistrationContent() {
     if (isSuccess) {
         return (
             <div className="min-h-screen bg-brand-charcoal flex items-center justify-center p-4 font-sans relative overflow-hidden">
-                <div className="absolute inset-0 bg-[url('/elena-brazos-cruzados.png')] bg-cover bg-center opacity-10 blur-sm scale-105"></div>
+                <div className="absolute inset-0 bg-black opacity-10 blur-sm scale-105"></div>
                 <div className="max-w-md w-full bg-white/10 backdrop-blur-2xl p-12 text-center space-y-8 shadow-2xl border border-white/10 relative z-10 animate-in fade-in zoom-in duration-500 rounded-sm">
-                    <div className="w-24 h-24 bg-brand-sand/10 rounded-full flex items-center justify-center mx-auto border border-brand-sand/20">
-                        <CheckCircle2 className="w-12 h-12 text-brand-sand" />
+                    <div className="w-24 h-24 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto border border-amber-500/20">
+                        <CheckCircle2 className="w-12 h-12 text-amber-500" />
                     </div>
                     <div className="space-y-4">
-                        <h1 className="font-serif text-4xl text-brand-sand leading-tight">Bienvenida al <br/>Círculo Atelier</h1>
-                        <p className="text-brand-sand/60 text-sm leading-relaxed">
-                            Tu perfil ha sido integrado. Gaz y su equipo ahora tienen tu historial listo para tu próxima visita.
+                        <h1 className="font-editorial text-4xl text-amber-500 leading-tight">Bienvenido al <br/>Círculo Gaz_Style</h1>
+                        <p className="text-amber-500/60 text-sm leading-relaxed">
+                            Tu perfil ha sido integrado. Gaz y su equipo ahora tienen tu historial listo para tu próxima cumbre.
                         </p>
                     </div>
                     <Link 
@@ -83,29 +83,29 @@ function RegistrationContent() {
                 <div className="flex flex-col lg:flex-row gap-16 items-center">
                     {/* Branding Side */}
                     <div className="lg:w-1/2 space-y-8 text-center lg:text-left">
-                        <span className="text-brand-sand/60 text-[10px] uppercase tracking-[0.6em] font-semibold block">Exclusive Membership</span>
-                        <h1 className="font-serif text-5xl md:text-7xl text-white leading-[1.1]">
-                            Eleva tu <br/>
-                            <span className="italic text-brand-sand">Experiencia</span>
+                        <span className="text-amber-500/60 text-[10px] uppercase tracking-[0.6em] font-bold block">Exclusive Membership</span>
+                        <h1 className="font-editorial text-5xl md:text-7xl text-white leading-[1.1]">
+                            Únete al <br/>
+                            <span className="italic text-amber-500">Círculo Gaz_Style</span>
                         </h1>
                         <p className="text-white/60 text-base md:text-lg max-w-md leading-relaxed">
-                            Al unirte, digitalizas tus medidas y preferencias para una atención artesanal sin fricciones en nuestro campamento_base de Tabancura.
+                            Al unirte, registrarás tu nivel técnico y preferencias para vivir expediciones exclusivas en la montaña, sin fricciones y con logística de primer nivel.
                         </p>
                         
                         <div className="grid grid-cols-2 gap-8 pt-8">
                             <div className="space-y-2">
                                 <span className="flex items-center justify-center lg:justify-start">
-                                    <Sparkles className="w-6 h-6 text-brand-sand" />
+                                    <Mountain className="w-6 h-6 text-amber-500" />
                                 </span>
-                                <h4 className="text-brand-sand text-[10px] uppercase tracking-widest font-bold pt-2">Atención VIP</h4>
-                                <p className="text-white/40 text-[9px] leading-tight">Acceso prioritario a pruebas y entregas.</p>
+                                <h4 className="text-amber-500 text-[10px] uppercase tracking-widest font-bold pt-2">Expediciones VIP</h4>
+                                <p className="text-white/40 text-[9px] leading-tight">Acceso prioritario a rutas y cumbres.</p>
                             </div>
                             <div className="space-y-2">
                                 <span className="flex items-center justify-center lg:justify-start">
-                                    <Heart className="w-6 h-6 text-brand-sand" />
+                                    <Compass className="w-6 h-6 text-amber-500" />
                                 </span>
-                                <h4 className="text-brand-sand text-[10px] uppercase tracking-widest font-bold pt-2">Marketing de Lujo</h4>
-                                <p className="text-white/40 text-[9px] leading-tight">Promociones personalizadas según tu estilo.</p>
+                                <h4 className="text-amber-500 text-[10px] uppercase tracking-widest font-bold pt-2">Rutas Exclusivas</h4>
+                                <p className="text-white/40 text-[9px] leading-tight">Misiones personalizadas según tu nivel.</p>
                             </div>
                         </div>
                     </div>
@@ -165,31 +165,30 @@ function RegistrationContent() {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <label className="text-[9px] uppercase tracking-widest font-bold text-brand-sand/50 ml-1">Estilo Favorito</label>
+                                    <label className="text-[9px] uppercase tracking-widest font-bold text-amber-500/50 ml-1">Nivel de Experiencia</label>
                                     <select 
                                         name="style_preference" 
                                         value={stylePreference}
                                         onChange={(e) => setStylePreference(e.target.value)}
-                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-[10px] font-bold uppercase tracking-widest text-white outline-none focus:border-brand-sand focus:bg-white/10 shadow-sm appearance-none cursor-pointer"
+                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-[10px] font-bold uppercase tracking-widest text-white outline-none focus:border-amber-500 focus:bg-white/10 shadow-sm appearance-none cursor-pointer"
                                     >
-                                        <option value="Minimalista" className="bg-brand-charcoal text-white">Minimalista</option>
-                                        <option value="Clásico" className="bg-brand-charcoal text-white">Clásico</option>
-                                        <option value="Moderno" className="bg-brand-charcoal text-white">Moderno</option>
-                                        <option value="Bohemio" className="bg-brand-charcoal text-white">Bohemio</option>
+                                        <option value="Principiante" className="bg-black text-white">Principiante</option>
+                                        <option value="Intermedio" className="bg-black text-white">Intermedio</option>
+                                        <option value="Avanzado" className="bg-black text-white">Avanzado</option>
+                                        <option value="Experto" className="bg-black text-white">Experto</option>
                                     </select>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[9px] uppercase tracking-widest font-bold text-brand-sand/50 ml-1">Ocasión Principal</label>
+                                    <label className="text-[9px] uppercase tracking-widest font-bold text-amber-500/50 ml-1">Interés Principal</label>
                                     <select 
                                         name="typical_occasion" 
                                         value={typicalOccasion}
                                         onChange={(e) => setTypicalOccasion(e.target.value)}
-                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-[10px] font-bold uppercase tracking-widest text-white outline-none focus:border-brand-sand focus:bg-white/10 shadow-sm appearance-none cursor-pointer"
+                                        className="w-full p-4 bg-white/5 border border-white/10 rounded-sm text-[10px] font-bold uppercase tracking-widest text-white outline-none focus:border-amber-500 focus:bg-white/10 shadow-sm appearance-none cursor-pointer"
                                     >
-                                        <option value="Daily" className="bg-brand-charcoal text-white">Daily Wear</option>
-                                        <option value="Gala" className="bg-brand-charcoal text-white">Gala / Fiesta</option>
-                                        <option value="Aventurero" className="bg-brand-charcoal text-white">Aventurero</option>
-                                        <option value="Ejecutiva" className="bg-brand-charcoal text-white">Ejecutiva</option>
+                                        <option value="Trekking de día" className="bg-black text-white">Trekking de día</option>
+                                        <option value="Alta Montaña" className="bg-black text-white">Alta Montaña</option>
+                                        <option value="Networking" className="bg-black text-white">Networking en el Cerro</option>
                                     </select>
                                 </div>
                             </div>
@@ -201,14 +200,14 @@ function RegistrationContent() {
                             >
                                 {isSaving ? <Loader2 className="w-4 h-4 animate-spin text-white" /> : (
                                     <span className="glass-text relative z-10 flex items-center justify-center gap-3 text-white group-hover:text-[#121212] transition-colors duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)]">
-                                        Unirse al Atelier
+                                        Ingresar al Círculo
                                         <ArrowRight className="w-4 h-4 flex-shrink-0 transition-transform duration-[600ms] group-hover:translate-x-1" />
                                     </span>
                                 )}
                             </button>
                         </form>
 
-                        <p className="mt-8 text-[9px] text-white/30 text-center uppercase tracking-widest">Atelier Gaz Rojas &copy; 2026</p>
+                        <p className="mt-8 text-[9px] text-white/30 text-center uppercase tracking-widest">Gaz_Style Expeditions &copy; 2026</p>
                     </div>
                 </div>
             </div>
