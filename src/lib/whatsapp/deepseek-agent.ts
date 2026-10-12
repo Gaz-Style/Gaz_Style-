@@ -71,21 +71,25 @@ REGLAS DE ORO OBLIGATORIAS:
         });
 
         const responseData = await response.json();
-        const aiReply = responseData.choices?.[0]?.message?.content || "Disculpe, en este momento el atelier está con alta demanda. Un asesor humano le atenderá a la brevedad.";
+        const aiReply = responseData.choices?.[0]?.message?.content || "¡Hola! En este momento estamos en ruta de montaña 🏔️. Un guía de Santiago Hiking te responderá a la brevedad.";
 
-        // Guardar respuesta del bot en el CRM
-        await supabase
-            .from('crm_whatsapp_messages')
-            .insert([{
-                chat_id: chatId,
-                sender_type: 'bot',
-                message_type: 'text',
-                content: aiReply
-            }]);
+        // Guardar respuesta del bot en el CRM (sin bloquear si la tabla aún no se migra)
+        try {
+            await supabase
+                .from('crm_whatsapp_messages')
+                .insert([{
+                    chat_id: chatId,
+                    sender_type: 'bot',
+                    message_type: 'text',
+                    content: aiReply
+                }]);
+        } catch (crmErr) {
+            console.warn('Could not save bot reply to CRM:', crmErr);
+        }
 
         // Enviar a la API de WhatsApp de Meta
-        const metaToken = process.env.WHATSAPP_API_TOKEN;
-        const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+        const metaToken = process.env.WHATSAPP_API_TOKEN || process.env.WHATSAPP_TOKEN;
+        const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID || process.env.WHATSAPP_PHONE_ID;
         
         if (metaToken && phoneId) {
             await fetch(`https://graph.facebook.com/v21.0/${phoneId}/messages`, {

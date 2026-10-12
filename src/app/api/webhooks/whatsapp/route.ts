@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { processDirectWhatsAppMessage } from '@/lib/whatsapp/deepseek-agent';
 
 function getSupabaseClient() {
     return createClient(
@@ -132,137 +133,39 @@ export async function POST(req: Request) {
                         content = `[Formato de archivo o mensaje no soportado: ${message.type}]`;
                     }
 
-                    // 3. Save user message to database
-                    const { error: msgError } = await supabase
-                        .from('crm_whatsapp_messages')
-                        .insert([{
-                            chat_id: chatData.id,
-                            sender_type: 'customer',
-                            message_type: messageType,
-                            content: content,
-                            media_url: mediaUrl
-                        }]);
-
-                    if (msgError) {
-                        console.error('Error saving message:', msgError);
-                        continue;
+                    // 3. Save user message to datab                    // 3. Save user message to database (safe, does not block execution)
+                    try {
+                        await supabase
+                            .from('crm_whatsapp_messages')
+                            .insert([{
+                                chat_id: chatData.id,
+                                sender_type: 'customer',
+                                message_type: messageType,
+                                content: content,
+                                media_url: mediaUrl
+                            }]);
+                    } catch (msgError) {
+                        console.warn('[Webhook] Could not save message to crm_whatsapp_messages:', msgError);
                     }
 
                     // Update last_interaction timestamp on chat session
-                    await supabase
-                        .from('crm_whatsapp_chats')
-                        .update({ last_interaction: new Date().toISOString() })
-                        .eq('id', chatData.id);
+                    try {
+                        await supabase
+                            .from('crm_whatsapp_chats')
+                            .update({ last_interaction: new Date().toISOString() })
+                            .eq('id', chatData.id);
+                    } catch (updateErr) {
+                        console.warn('[Webhook] Could not update chat interaction:', updateErr);
+                    }
 
-                    // 4. Trigger AI Processing Task if session is 'bot'
-                    if (chatData.session_status === 'bot' && (content || messageType === 'image' || messageType === 'audio')) {
+                    // 4. Trigger AI Processing immediately if session is 'bot'
+                    if (chatData.session_status === 'bot' && content) {
                         try {
-                            // Auto-limpiar tareas atascadas (>3 min) para este chat antes de verificar debounce
-                            const threeMinAgo = new Date(Date.now() - 3 * 60 * 1000).toISOString();
-                            await supabase
-                                .from('ai_agent_tasks')
-                                .update({ status: 'failed', error_log: 'Auto-limpieza: tarea excedió 3min timeout', processed_at: new Date().toISOString() })
-                                .eq('agent_role', 'whatsapp_closer')
-                                .in('status', ['pending', 'processing'])
-                                .filter('payload->>chat_id', 'eq', chatData.id)
-                                .lt('created_at', threeMinAgo);
-
-                            // Verificar si hay tareas recientes activas para evitar ráfagas duplicadas
-                            const { data: existingTasks } = await supabase
-                                .from('ai_agent_tasks')
-                                .select('id')
-                                .eq('agent_role', 'whatsapp_closer')
-                                .in('status', ['pending', 'processing'])
-                                .filter('payload->>chat_id', 'eq', chatData.id);
-
-                            let shouldEnqueue = true;
-
-                            if (existingTasks && existingTasks.length > 0) {
-                                if (messageType === 'image' || messageType === 'audio') {
-                                    // IMAGEN/AUDIO: Esperar a que la tarea activa termine (máx 8 segundos) y luego encolar
-                                    console.log(`[Webhook] Multimedia (img/audio) recibida con tarea activa. Esperando hasta 8s...`);
-                                    let waited = 0;
-                                    while (waited < 8000) {
-                                        await new Promise(r => setTimeout(r, 1500));
-                                        waited += 1500;
-                                        const { data: checkTasks } = await supabase
-                                            .from('ai_agent_tasks')
-                                            .select('id')
-                                            .eq('agent_role', 'whatsapp_closer')
-                                            .in('status', ['pending', 'processing'])
-                                            .filter('payload->>chat_id', 'eq', chatData.id);
-                                        if (!checkTasks || checkTasks.length === 0) break;
-                                    }
-                                    // Siempre encolar la imagen después de esperar
-                                    shouldEnqueue = true;
-                                } else {
-                                    // Texto duplicado: ignorar
-                                    console.log(`[Webhook] Tarea activa para chat ${chatData.id}. Texto duplicado omitido.`);
-                                    shouldEnqueue = false;
-                                }
-                            }
-
-                            if (shouldEnqueue) {
-                                // Encolar tarea asíncrona para que la procese el worker de IA
-                                const { data: newTask, error: insertError } = await supabase
-                                    .from('ai_agent_tasks')
-                                    .insert([{
-                                        agent_role: 'whatsapp_closer',
-                                        status: 'pending',
-                                        error_log: (process.env.QSTASH_TOKEN ? 'HAS_TOKEN' : 'NO_TOKEN') + ' | URL: ' + (process.env.QSTASH_URL || 'empty'),
-                                        payload: {
-                                            chat_id: chatData.id,
-                                            phone_number: phoneNumber,
-                                            content: content,
-                                            message_type: messageType,
-                                            media_url: mediaUrl,
-                                            message_id: messageId,
-                                            gemini_analysis: geminiAnalysis
-                                        }
-                                    }]).select().single();
-
-                                if (insertError || !newTask) {
-                                    console.error('Error inserting task:', insertError);
-                                    return NextResponse.json({ status: 'success' }, { status: 200 }); // Retornamos OK a Meta para evitar reintentos
-                                }
-
-                                // Utilizar QStash para disparar el Orquestador usando fetch nativo
-                                try {
-                                    if (process.env.QSTASH_TOKEN) {
-                                        const qstashUrl = process.env.QSTASH_URL || 'https://qstash.upstash.io';
-                                        // Limpiar la URL base por si tiene un slash final
-                                        const baseUrl = qstashUrl.endsWith('/') ? qstashUrl.slice(0, -1) : qstashUrl;
-                                        
-                                        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.santiagohiking.com';
-                                        const res = await fetch(`${baseUrl}/v2/publish/${siteUrl}/api/orchestrator`, {
-                                            method: 'POST',
-                                            headers: {
-                                                'Authorization': `Bearer ${process.env.QSTASH_TOKEN}`,
-                                                'Content-Type': 'application/json',
-                                                'Upstash-Forward-Authorization': `Bearer ${process.env.CRON_SECRET || 'antigravity-secret'}`
-                                            },
-                                            body: JSON.stringify({ ping: 'webhook' })
-                                        });
-
-                                        if (!res.ok) {
-                                            const errorText = await res.text();
-                                            console.error(`[QStash Error] Fallo al publicar: ${res.status} - ${errorText}`);
-                                            await supabase.from('ai_agent_tasks').update({ error_log: `QStash Error: ${res.status} - ${errorText}` }).eq('id', newTask.id);
-                                        } else {
-                                            console.log(`[QStash] Ping exitoso al orquestador.`);
-                                        }
-                                    } else {
-                                        console.warn("QSTASH_TOKEN no está configurado en .env.local.");
-                                        await supabase.from('ai_agent_tasks').update({ error_log: `QSTASH_TOKEN missing in Vercel env vars` }).eq('id', newTask.id);
-                                    }
-                                } catch (e: any) {
-                                    console.error('Error de red disparando QStash:', e);
-                                    await supabase.from('ai_agent_tasks').update({ error_log: `Fetch Exception: ${e.message}` }).eq('id', newTask.id);
-                                }
-                            }
-
-                        } catch (botErr) {
-                            console.error('Error encolando tarea de IA:', botErr);
+                            console.log(`[Webhook] Generando respuesta con DeepSeek para ${phoneNumber}: "${content}"`);
+                            await processDirectWhatsAppMessage(chatData.id, phoneNumber, content);
+                            console.log(`[Webhook] Respuesta enviada con éxito a ${phoneNumber}`);
+                        } catch (aiErr) {
+                            console.error('[Webhook] Error invocando DeepSeek bot:', aiErr);
                         }
                     }
                 }
