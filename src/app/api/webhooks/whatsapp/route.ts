@@ -52,42 +52,26 @@ export async function POST(req: Request) {
                         .single();
 
                     if (!chatData) {
-                        const { data: newChat, error: chatError } = await supabase
-                            .from('crm_whatsapp_chats')
-                            .insert([{
-                                phone_number: phoneNumber,
-                                session_status: 'bot',
-                                last_interaction: new Date().toISOString()
-                            }])
-                            .select()
-                            .single();
+                        try {
+                            const { data: newChat, error: chatError } = await supabase
+                                .from('crm_whatsapp_chats')
+                                .insert([{
+                                    phone_number: phoneNumber,
+                                    session_status: 'bot',
+                                    last_message_at: new Date().toISOString()
+                                }])
+                                .select()
+                                .single();
 
-                        if (chatError || !newChat) {
-                            console.error('Error creating chat session:', chatError);
-                            continue;
-                        }
-                        chatData = newChat;
-
-                        // Try to link to existing customer
-                        const { data: adventurers } = await supabase
-                            .from('adventurers')
-                            .select('id, phone')
-                            .not('phone', 'is', null);
-                        
-                        const cleanDigits = (n: string) => n ? n.replace(/\D/g, '') : '';
-                        const chatDigits = cleanDigits(phoneNumber);
-                        
-                        if (adventurers) {
-                            const match = adventurers.find(c => {
-                                const custDigits = cleanDigits(c.phone);
-                                return custDigits && (custDigits.slice(-9) === chatDigits.slice(-9));
-                            });
-                            if (match) {
-                                await supabase
-                                    .from('crm_whatsapp_chats')
-                                    .update({ customer_id: match.id })
-                                    .eq('id', chatData.id);
+                            if (newChat) {
+                                chatData = newChat;
+                            } else {
+                                console.warn('[Webhook] Note creating chat:', chatError);
+                                chatData = { id: phoneNumber, session_status: 'bot' };
                             }
+                        } catch (err) {
+                            console.warn('[Webhook] Exception in chat creation:', err);
+                            chatData = { id: phoneNumber, session_status: 'bot' };
                         }
                     }
 
@@ -148,12 +132,12 @@ export async function POST(req: Request) {
                         console.warn('[Webhook] Could not save message to crm_whatsapp_messages:', msgError);
                     }
 
-                    // Update last_interaction timestamp on chat session
+                    // Update last_message_at timestamp on chat session
                     try {
                         await supabase
                             .from('crm_whatsapp_chats')
-                            .update({ last_interaction: new Date().toISOString() })
-                            .eq('id', chatData.id);
+                            .update({ last_message_at: new Date().toISOString() })
+                            .eq('phone_number', phoneNumber);
                     } catch (updateErr) {
                         console.warn('[Webhook] Could not update chat interaction:', updateErr);
                     }
