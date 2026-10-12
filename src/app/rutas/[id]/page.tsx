@@ -65,7 +65,7 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
             "price": route.base_price,
             "priceCurrency": "CLP",
             "availability": "https://schema.org/InStock",
-            "url": `https://gaz-style.vercel.app/reservar?route=${route.id}`
+            "url": `https://www.santiagohiking.com/reservar?route=${route.id}`
         }
     };
 

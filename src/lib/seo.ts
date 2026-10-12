@@ -8,7 +8,7 @@ export const SantiagoHikingSchema = {
       'url': 'https://www.santiagohiking.com',
       'logo': 'https://www.santiagohiking.com/santiago-hiking-10.png',
       'image': 'https://www.santiagohiking.com/santiago-hiking-10.png',
-      'telephone': '+56972812907',
+      'telephone': '+56957958467',
       'priceRange': '$$',
       'description': 'Operador outdoor y de montaña líder en Santiago de Chile. Especialistas en senderismo técnico, trekking guiado con certificación WFR, expediciones privadas 1 a 1 y comunidad outdoor en la Cordillera de los Andes.',
       'address': {

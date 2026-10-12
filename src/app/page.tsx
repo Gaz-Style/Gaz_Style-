@@ -558,7 +558,7 @@ export default async function ExperienciaMontanaPage(props: { searchParams: Prom
               </div>
               <div className="relative z-10 flex-shrink-0">
                 <a
-                  href={`https://wa.me/56972812907?text=${encodeURIComponent(
+                  href={`https://wa.me/56957958467?text=${encodeURIComponent(
                     lang === 'en'
                       ? 'Hello Gaz! I would like to book or quote a private 1-on-1 expedition with Santiago Hiking.'
                       : lang === 'pt'
@@ -590,7 +590,7 @@ export default async function ExperienciaMontanaPage(props: { searchParams: Prom
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center gap-4">
                   <a
-                    href={`https://wa.me/56972812907?text=${encodeURIComponent(
+                    href={`https://wa.me/56957958467?text=${encodeURIComponent(
                       lang === 'en'
                         ? 'Hello Gaz! I want to join the Santiago Hiking outdoor community.'
                         : lang === 'pt'

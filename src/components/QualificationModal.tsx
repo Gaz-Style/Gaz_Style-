@@ -16,10 +16,10 @@ export default function QualificationModal({ isOpen, onClose }: QualificationMod
   const [commune, setCommune] = useState('');
 
   const services = [
-    'Expedición de Aventurero / Alta Costura',
-    'Arreglo o Sastrería (Bastas, Cierres, etc.)',
-    'Expedición de Graduación / Fiesta',
-    'B2B / Producción de Marca'
+    'Sunset Treks (Cerro Manquehuito)',
+    'WildTrek (Cardio & Desconexión)',
+    'Networking Manquehuito (Emprendedores)',
+    'Expedición Privada 1 a 1 / Empresas'
   ];
 
   const communes = [
@@ -47,8 +47,8 @@ export default function QualificationModal({ isOpen, onClose }: QualificationMod
         (window as any).fbq('track', 'Lead');
     }
 
-    const text = `Hola Gaz, me interesa cotizar un servicio de *${service}*. Soy de *${commune}*.`;
-    const url = `https://wa.me/56972812907?text=${encodeURIComponent(text)}`;
+    const text = `Hola Gaz, me interesa cotizar una expedición de *${service}*. Soy de *${commune}*.`;
+    const url = `https://wa.me/56957958467?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
     onClose();
     // Reset state after closing

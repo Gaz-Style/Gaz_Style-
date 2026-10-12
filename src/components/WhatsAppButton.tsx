@@ -9,8 +9,8 @@ import { trackGAEvent } from '@/components/GoogleAnalytics';
 
 export default function WhatsAppButton() {
     const pathname = usePathname();
-    const phoneNumber = '56972812907';
-    const message = 'Hola, me gustaría agendar una cita o hacer una consulta.';
+    const phoneNumber = '56957958467';
+    const message = 'Hola Gaz! Me gustaría consultar por las próximas salidas o rutas de Santiago Hiking.';
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     
     const handleClick = () => {
@@ -130,9 +130,9 @@ export default function WhatsAppButton() {
                     letterSpacing: '0.15em'
                 }}
             >
-                {pathname.includes('aventureros') ? '¿Buscando tu expedición soñado? Hablemos.' 
-                 : pathname.includes('graduacion') ? '¿Lista para tu graduación? Hablemos.'
-                 : '¡Hola! ¿En qué podemos ayudarte?'}
+                {pathname.includes('rutas') ? '¿Dudas sobre esta ruta? ¡Hablemos!' 
+                 : pathname.includes('reservar') ? '¿Necesitas ayuda con tu reserva? Escríbenos.'
+                 : '¡Hola! ¿Vamos a la montaña? Escríbenos.'}
             </span>
 
         

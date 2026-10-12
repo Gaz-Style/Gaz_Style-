@@ -56,7 +56,7 @@ function ConfirmadaContent() {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
-            href={`https://wa.me/56972812907?text=${encodeURIComponent(`¡Hola Gaz! Acabo de pagar mi reserva (ID: ${paymentId}). Quiero confirmar mi participación en la expedición.`)}`}
+            href={`https://wa.me/56957958467?text=${encodeURIComponent(`¡Hola Gaz! Acabo de pagar mi reserva (ID: ${paymentId}). Quiero confirmar mi participación en la expedición.`)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="w-full sm:w-auto bg-[#25D366] hover:bg-[#1ebd5a] text-white px-8 py-4 rounded-full font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#25D366]/20"

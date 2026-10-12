@@ -174,7 +174,9 @@ MERCADOPAGO_ACCESS_TOKEN=TEST-...
 - [x] Lead Magnet interactivo con almacenamiento en base de datos.
 - [x] Sitemap y robots.txt listos para indexación en Google y bots de IA.
 - [x] FAQ estructurado con Schema JSON-LD.
-- [x] Motor analítico centralizado (`analytics.ts`).
-- [ ] Pegar IDs reales de GA4 / Meta Pixel en `.env.local`.
-- [ ] Vincular el número de WhatsApp oficial en la Meta Cloud API.
-- [ ] Subir fotos reales de salidas en lugar de avatares de librería en testimonios.
+- [x] Motor analítico centralizado (`analytics.ts`) con GA4, GTM, Meta Pixel, Clarity, TikTok y LinkedIn.
+- [x] Pegar IDs reales de analítica en `.env.local` (GA4 `G-BPRY7P4YPL`, Meta `1772258644467735`, Clarity `ywf770g6y5`, TikTok `DB6827BC77UDJT301L90`, LinkedIn `11063657`).
+- [x] Vincular número oficial de WhatsApp Cloud API (`+56 9 5795 8467` / ID `1417024801484792`) y webhook con IA DeepSeek.
+- [x] Unificación de todos los botones web hacia el número oficial del bot (`56957958467`).
+- [ ] Cargar fotos reales de salidas en lugar de avatares de librería en testimonios (`TestimonialsCarousel.tsx`).
+- [ ] Sincronizar variables de entorno en el panel de Vercel para producción.
