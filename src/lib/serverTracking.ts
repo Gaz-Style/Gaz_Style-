@@ -28,9 +28,9 @@ export async function sendServerEvent(
   userData: TrackingUserData,
   customData: TrackingCustomData = {}
 ) {
-  const metaPixelId = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID || process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID;
-  const metaAccessToken = process.env.FACEBOOK_ACCESS_TOKEN || process.env.TOKEN_DE_ACCESO_A_FACEBOOK;
-  const tiktokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID || process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID;
+  const metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID || process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID;
+  const metaAccessToken = process.env.FACEBOOK_ACCESS_TOKEN || process.env.WHATSAPP_API_TOKEN || process.env.TOKEN_DE_ACCESO_A_FACEBOOK;
+  const tiktokPixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID;
   const tiktokAccessToken = process.env.TIKTOK_ACCESS_TOKEN || process.env.TOKEN_DE_ACCESO_DE_TIKTOK;
 
   const eventTime = Math.floor(Date.now() / 1000);
@@ -38,7 +38,7 @@ export async function sendServerEvent(
   const hashedPhone = hashSHA256(userData.phone);
   const clientIp = userData.ip || '127.0.0.1';
   const clientUserAgent = userData.userAgent || 'unknown';
-  const pageUrl = userData.url || 'https://www.elenalaguía.cl/';
+  const pageUrl = userData.url || 'https://www.santiagohiking.com/';
 
   const promises: Promise<any>[] = [];
 
