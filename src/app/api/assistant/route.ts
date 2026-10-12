@@ -46,10 +46,38 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Mensaje requerido' }, { status: 400 });
     }
 
+    const deepseekKey = process.env.DEEPSEEK_API_KEY;
     const openAiKey = process.env.OPENAI_API_KEY;
     const geminiKey = process.env.GEMINI_API_KEY;
 
-    // 1. Si hay clave de OpenAI configurada
+    // 1. Si hay clave de DeepSeek configurada (Prioritaria)
+    if (deepseekKey) {
+      const response = await fetch('https://api.deepseek.com/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${deepseekKey}`,
+        },
+        body: JSON.stringify({
+          model: 'deepseek-chat',
+          messages: [
+            { role: 'system', content: SANTIAGO_HIKING_SYSTEM_PROMPT },
+            { role: 'user', content: `[Idioma de respuesta: ${lang}] ${message}` },
+          ],
+          temperature: 0.5,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return NextResponse.json({
+          reply: data.choices[0]?.message?.content,
+          provider: 'deepseek',
+        });
+      }
+    }
+
+    // 2. Si hay clave de OpenAI configurada
     if (openAiKey) {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
