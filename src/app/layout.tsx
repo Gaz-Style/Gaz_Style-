@@ -63,6 +63,9 @@ export const metadata: Metadata = {
     description: "Mentalidad, conexión y aventura. Vamos a la montaña.",
     images: ["/santiago-hiking-10.png"],
   },
+  verification: {
+    google: "google42ee4234a9dc3e43",
+  },
 };
 
 export default function RootLayout({
