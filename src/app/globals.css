@@ -88,3 +88,59 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Arc'teryx & Roark Functional Minimalism */
+.topographic-pattern {
+  background-color: #08090c;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.05) 0%, transparent 70%),
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 64px 64px, 64px 64px;
+}
+
+.topographic-contours {
+  background-image: url("data:image/svg+xml,%3Csvg width='800' height='800' viewBox='0 0 800 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 400 C 150 370, 300 430, 450 400 C 600 370, 750 430, 800 400 M0 340 C 160 300, 310 380, 460 340 C 610 300, 760 380, 800 340 M0 280 C 180 230, 330 320, 480 270 C 630 220, 770 310, 800 270 M0 460 C 140 500, 290 440, 440 480 C 590 520, 740 460, 800 480 M0 520 C 130 570, 280 500, 430 550 C 580 600, 730 530, 800 550 M0 220 C 200 160, 350 260, 500 200 C 650 140, 780 240, 800 200 M0 580 C 120 640, 270 560, 420 620 C 570 680, 720 600, 800 620' fill='none' stroke='rgba(255,255,255,0.04)' stroke-width='1.2' /%3E%3Ccircle cx='400' cy='400' r='180' fill='none' stroke='rgba(255,255,255,0.03)' stroke-width='1' stroke-dasharray='3,6' /%3E%3Ccircle cx='400' cy='400' r='300' fill='none' stroke='rgba(255,255,255,0.025)' stroke-width='1' /%3E%3C/svg%3E");
+  background-size: 800px 800px;
+}
+
+.btn-arcteryx {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background-color: transparent;
+  color: #ffffff;
+  padding: 0.875rem 2rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transition: all 0.2s ease-in-out;
+}
+.btn-arcteryx:hover {
+  background-color: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+}
+
+.btn-arcteryx-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #f59e0b;
+  background-color: #f59e0b;
+  color: #000000;
+  padding: 0.875rem 2rem;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transition: all 0.2s ease-in-out;
+}
+.btn-arcteryx-primary:hover {
+  background-color: #fbbf24;
+  border-color: #fbbf24;
+  color: #000000;
+}
+
