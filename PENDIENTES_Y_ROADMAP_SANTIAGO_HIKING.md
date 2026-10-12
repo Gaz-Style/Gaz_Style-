@@ -77,6 +77,20 @@ Las dos mayores plataformas globales donde las agencias de viaje y turistas rese
 
 ---
 
+### C. Bookatrekking.com (Marketplace Europeo Especializado)
+Plataforma holandesa de nicho enfocada 100% en senderismo, trekking y expediciones de montaña con alta demanda en Europa (Alemania, Países Bajos, Reino Unido).
+
+* **Enfoque Estratégico:**
+  - Actualmente en Chile solo ofrecen Patagonia (Torres del Paine). No tienen operador local para la Cordillera Central de Santiago.
+  - Oportunidad para que Santiago Hiking sea su **operador oficial exclusivo** en la zona central.
+* **Productos para postular:**
+  1. *Ascenso a Cerro Pintor (4.180m)* — Día completo.
+  2. *Expedición Cerro El Plomo (5.424m)* — 2 a 3 días con campamento base.
+* **Modelo de Alianza:**
+  - Contacto directo B2B con sus Trekking Experts para homologación como operador local certificado (WFR, seguros y guianza profesional). Pagos en Euros (€) y USD.
+
+---
+
 ## 🎯 4. Estrategia de Contenidos & Redes (GazStyle ➔ Santiago Hiking)
 
 Para mantener sincronizada la marca personal con el negocio:
