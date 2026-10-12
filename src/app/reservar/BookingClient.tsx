@@ -3,31 +3,51 @@
 import React, { useState } from 'react';
 import {
     Mountain, Calendar, Users, CreditCard, ChevronRight,
-    Clock, Star, MapPin, Shield, ArrowLeft, Loader2, CheckCircle2
+    Clock, Star, MapPin, Shield, ArrowLeft, Loader2, CheckCircle2,
+    Lock, ShieldCheck
 } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { createBookingWithMercadoPago } from './actions';
 import { trackBeginCheckout } from '@/lib/analytics';
+import { challengesData } from '../desafios/data';
 
-function getDifficultyColor(level: string) {
-    if (!level) return 'text-slate-400 bg-white/5';
-    if (level.toLowerCase().includes('alta') || level.toLowerCase().includes('experto')) return 'text-red-400 bg-red-500/10 border border-red-500/20';
-    if (level.toLowerCase().includes('media')) return 'text-orange-400 bg-orange-500/10 border border-orange-500/20';
-    return 'text-green-400 bg-green-500/10 border border-green-500/20';
-}
+export default function BookingClient({ 
+    departures, 
+    initialAdventureId,
+    initialFechaId 
+}: { 
+    departures: any[]; 
+    initialAdventureId?: string;
+    initialFechaId?: string;
+}) {
+    // Si viene de uno de los Desafíos Andinos
+    const challenge = initialAdventureId ? challengesData[initialAdventureId] : null;
 
-export default function BookingClient({ departures, initialAdventureId }: { departures: any[], initialAdventureId?: string }) {
-    // If a route was passed from the homepage, filter the departures to show only those for that route
-    const filteredDepartures = initialAdventureId 
-        ? departures.filter(dep => dep.adventures_catalog?.id === initialAdventureId)
-        : departures;
+    let preSelectedDeparture: any = null;
+    if (challenge) {
+        const targetFecha = challenge.fechasDisponibles.find(f => f.id === initialFechaId) || challenge.fechasDisponibles[0];
+        preSelectedDeparture = {
+            id: targetFecha ? targetFecha.id : `challenge-${challenge.slug}`,
+            start_date: targetFecha?.fecha || 'Próxima salida confirmada',
+            hora: targetFecha?.hora || '08:00 AM',
+            current_pax: targetFecha ? (targetFecha.cuposTotales - targetFecha.cuposDisponibles) : 0,
+            adventures_catalog: {
+                id: challenge.slug,
+                title: challenge.title,
+                base_price: challenge.precioCLP,
+                max_pax: targetFecha ? targetFecha.cuposTotales : 10,
+                duration_text: challenge.metrics.tiempo,
+                difficulty_level: challenge.metrics.dificultad,
+                category: challenge.badge,
+                image_url: challenge.coverImage,
+            }
+        };
+    }
 
-    const initialSelected = null;
-    const initialStep = 'select';
-
-    const [selected, setSelected] = useState<any | null>(initialSelected);
+    const [selected, setSelected] = useState<any | null>(preSelectedDeparture);
     const [paxCount, setPaxCount] = useState(1);
-    const [step, setStep] = useState<'select' | 'form' | 'processing'>(initialStep);
+    const [step, setStep] = useState<'select' | 'form' | 'processing'>(preSelectedDeparture ? 'form' : 'select');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [form, setForm] = useState({
         first_name: '', last_name: '', email: '', phone: '',
@@ -37,11 +57,15 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
 
     const total = selected ? (selected.adventures_catalog?.base_price || 0) * paxCount : 0;
     const availableSpots = selected
-        ? (selected.adventures_catalog?.max_pax || 0) - (selected.current_pax || 0)
-        : 0;
+        ? Math.max(1, (selected.adventures_catalog?.max_pax || 10) - (selected.current_pax || 0))
+        : 10;
 
     async function handlePay() {
         if (!selected) return;
+        if (!form.first_name || !form.last_name || !form.email || !form.phone) {
+            alert('Por favor completa todos tus datos personales para continuar.');
+            return;
+        }
         if (!acceptsWaiver) {
             alert('Debes aceptar el descargo de responsabilidad médico para continuar.');
             return;
@@ -63,273 +87,315 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
                 accepts_waiver: acceptsWaiver,
                 departure_id: selected.id,
                 pax_count: paxCount,
-                adventure_title: selected.adventures_catalog?.title,
+                adventure_title: selected.adventures_catalog?.title || 'Expedición Andes',
                 unit_price: selected.adventures_catalog?.base_price || 0,
             });
-            // Redirect to MercadoPago payment page
-            window.location.href = result.payment_url!;
+            // Redirigir directamente a la página de pago de MercadoPago
+            if (result.payment_url) {
+                window.location.href = result.payment_url;
+            } else {
+                throw new Error('No se generó el enlace de pago de MercadoPago');
+            }
         } catch (err: any) {
-            alert('Error al procesar el pago: ' + err.message);
+            alert('Error al conectar con la pasarela de pago: ' + err.message);
             setIsSubmitting(false);
         }
     }
 
+    const backUrl = challenge ? `/desafios/${challenge.slug}` : (initialAdventureId ? `/rutas/${initialAdventureId}` : '/');
+
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-slate-200 font-sans">
+        <div className="min-h-screen bg-stone-50 text-stone-900 font-sans selection:bg-amber-500/30">
 
-            {/* Navbar / Top Back Button */}
-            <div className="absolute top-0 w-full z-50 p-6 flex justify-between items-center">
-                <button 
-                    onClick={() => {
-                        if (step === 'select') {
-                            if (initialAdventureId) {
-                                window.location.href = `/rutas/${initialAdventureId}`;
+            {/* Navbar Minimalista Limpio */}
+            <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200">
+                <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+                    <button 
+                        onClick={() => {
+                            if (step === 'form' && !challenge) {
+                                setStep('select');
                             } else {
-                                window.location.href = `/`;
+                                window.location.href = backUrl;
                             }
-                        } else {
-                            setStep('select');
-                        }
-                    }}
-                    className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white uppercase tracking-widest transition-colors z-50 relative"
-                >
-                    <ArrowLeft className="w-4 h-4" /> Volver
-                </button>
-            </div>
+                        }}
+                        className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-stone-600 hover:text-stone-950 transition-colors cursor-pointer"
+                    >
+                        <ArrowLeft className="w-4 h-4" /> {challenge ? `Volver a ${challenge.title}` : `Volver`}
+                    </button>
 
-            {/* Hero Banner */}
-            <div className="relative glass-panel border-b border-white/5 px-6 py-16 text-center overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-500/10 via-transparent to-transparent pointer-events-none" />
-                <p className="text-amber-500 text-xs font-bold tracking-[0.3em] uppercase mb-4">Gaz Style Expeditions</p>
-                <h1 className="text-4xl md:text-6xl font-editorial font-bold tracking-tight text-white mb-4">
-                    Reserva tu <span className="font-bold">Expedición</span>
+                    <Link href="/" className="flex items-center gap-2.5">
+                        <Image
+                            src="/logo sh.png"
+                            alt="Santiago Hiking"
+                            width={32}
+                            height={32}
+                            className="w-7 h-7 object-contain"
+                        />
+                        {/* Logotipo Oficial 20 (SANTIAGO en negro + HIKING en ámbar) */}
+                        <Image
+                            src="/logo-text-black.png"
+                            alt="Santiago Hiking"
+                            width={200}
+                            height={28}
+                            className="h-5 sm:h-6 w-auto object-contain"
+                            priority
+                        />
+                    </Link>
+                </div>
+            </header>
+
+            {/* Hero Banner Limpio */}
+            <div className="bg-white border-b border-stone-200 py-10 px-6 text-center">
+                <span className="text-amber-600 font-mono text-[10px] uppercase tracking-[0.25em] font-bold block mb-2">
+                    Pasarela de Reserva Oficial
+                </span>
+                <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-stone-950 mb-2">
+                    Reserva y Pago Seguro
                 </h1>
-                <p className="text-slate-400 max-w-xl mx-auto text-lg">
-                    Selecciona una salida disponible, completa tus datos y paga de forma segura con MercadoPago.
+                <p className="text-stone-600 text-xs sm:text-sm font-light max-w-lg mx-auto">
+                    Completa tus datos personales para asegurar tu cupo y pagar de forma segura vía MercadoPago o Webpay.
                 </p>
             </div>
 
-            <div className="max-w-6xl mx-auto px-4 py-12">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
 
-                {/* Progress Steps */}
-                <div className="flex items-center justify-center gap-4 mb-12">
-                    {['Elige tu salida', 'Tus datos', 'Pago'].map((s, i) => {
-                        const stepNum = i + 1;
-                        const currentStep = step === 'select' ? 1 : step === 'form' ? 2 : 3;
-                        return (
-                            <React.Fragment key={s}>
-                                <div className={`flex items-center gap-2 text-sm font-semibold ${currentStep >= stepNum ? 'text-amber-500' : 'text-slate-600'}`}>
-                                    <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 ${currentStep > stepNum ? 'bg-amber-500 border-amber-500 text-white' : currentStep === stepNum ? 'border-amber-500 text-amber-500' : 'border-slate-700 text-slate-600'}`}>
-                                        {currentStep > stepNum ? '✓' : stepNum}
-                                    </span>
-                                    <span className="hidden md:block">{s}</span>
-                                </div>
-                                {i < 2 && <ChevronRight className="w-4 h-4 text-slate-700" />}
-                            </React.Fragment>
-                        );
-                    })}
+                {/* Indicador de Pasos */}
+                <div className="flex items-center justify-center gap-3 sm:gap-6 mb-10 text-xs font-mono">
+                    <div className="flex items-center gap-2 text-stone-500">
+                        <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-stone-200 text-stone-800">
+                            ✓
+                        </span>
+                        <span className="hidden sm:inline">1. Salida</span>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-stone-300" />
+                    <div className="flex items-center gap-2 text-stone-950 font-bold">
+                        <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-stone-950 text-white">
+                            2
+                        </span>
+                        <span>Tus Datos y Cupos</span>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-stone-300" />
+                    <div className="flex items-center gap-2 text-stone-400">
+                        <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border border-stone-300 text-stone-400 bg-white">
+                            3
+                        </span>
+                        <span className="hidden sm:inline">Pago Seguro</span>
+                    </div>
                 </div>
 
-                {/* STEP 1: Select Departure */}
-                {step === 'select' && (
-                    <div className="space-y-6">
-                        <h2 className="text-2xl font-semibold text-white text-center mb-8">Salidas Disponibles</h2>
-                        {filteredDepartures.length === 0 ? (
-                            <div className="py-20 text-center border border-dashed border-white/5 rounded-2xl">
-                                <Mountain className="w-12 h-12 text-slate-700 mx-auto mb-4" />
-                                <p className="text-slate-500">No hay salidas disponibles en este momento. Vuelve pronto.</p>
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {filteredDepartures.map(dep => {
-                                    const adv = dep.adventures_catalog;
-                                    const spots = (adv?.max_pax || 0) - (dep.current_pax || 0);
-                                    const isFull = spots <= 0;
-                                    return (
-                                        <div
-                                            key={dep.id}
-                                            onClick={() => { if (!isFull) { setSelected(dep); setPaxCount(1); setStep('form'); } }}
-                                            className={`glass-panel bg-black/30 border rounded-2xl overflow-hidden transition-all cursor-pointer group
-                                                ${isFull ? 'opacity-50 cursor-not-allowed border-white/5' : 'border-white/5 hover:border-amber-500/60 hover:shadow-[0_0_30px_rgba(59,130,246,0.1)]'}
-                                            `}
-                                        >
-                                            {/* Card image / header */}
-                                            <div className="relative h-32 overflow-hidden bg-white/5 flex items-center justify-center">
-                                                {adv?.image_url ? (
-                                                    <Image
-                                                        src={adv.image_url}
-                                                        alt={adv.title}
-                                                        fill
-                                                        sizes="(max-width: 768px) 100vw, 33vw"
-                                                        className="object-cover group-hover:scale-110 transition-transform duration-700"
-                                                    />
-                                                ) : (
-                                                    <Mountain className="w-10 h-10 text-slate-700" />
-                                                )}
-                                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent" />
-                                                <div className="absolute bottom-3 left-4 right-4 flex justify-between items-end">
-                                                    <div>
-                                                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${getDifficultyColor(adv?.difficulty_level)}`}>
-                                                            {adv?.difficulty_level || 'N/A'}
-                                                        </span>
-                                                    </div>
-                                                    {isFull && <span className="px-2 py-0.5 bg-red-500/20 text-red-400 text-[10px] font-bold rounded-full">LLENO</span>}
-                                                    {selected?.id === dep.id && <span className="px-2 py-0.5 bg-amber-500 text-white text-[10px] font-bold rounded-full">✓ Seleccionada</span>}
-                                                </div>
-                                            </div>
-                                            <div className="p-5">
-                                                <h3 className="text-lg font-bold text-white mb-1">{adv?.title}</h3>
-                                                <p className="text-xs text-slate-500 uppercase tracking-wider mb-3">{adv?.category}</p>
-                                                <div className="flex items-center gap-2 text-sm text-slate-400">
-                                                    <Calendar className="w-4 h-4 text-amber-500" />
-                                                    <span>{new Date(dep.start_date).toLocaleDateString('es-ES', { timeZone: 'UTC', day: 'numeric', month: 'long', year: 'numeric' })}</span>
-                                                </div>
-                                                <div className="flex items-center gap-2 text-sm text-slate-400">
-                                                    <Clock className="w-4 h-4 text-amber-500" />
-                                                    <span>{adv?.duration_text || `${adv?.duration_days} día${adv?.duration_days > 1 ? 's' : ''}`}</span>
-                                                </div>
-                                                <div className="flex items-center gap-2 text-sm text-slate-400">
-                                                    <Users className="w-4 h-4 text-amber-500" />
-                                                    {spots <= 5 ? (
-                                                        <span className="text-amber-500 font-bold animate-pulse">¡Últimos {spots} cupo{spots !== 1 ? 's' : ''}!</span>
-                                                    ) : (
-                                                        <span>Cupos Abiertos</span>
-                                                    )}
-                                                </div>
-                                                <div className="pt-3 border-t border-white/5 flex justify-between items-end">
-                                                    <div>
-                                                        <p className="text-[10px] text-slate-500 uppercase">Precio por persona</p>
-                                                        <p className="text-2xl font-black text-white">${Number(adv?.base_price).toLocaleString('es-CL')}</p>
-                                                    </div>
-                                                    {!isFull && (
-                                                        <div className={`p-2 rounded-lg transition-all ${selected?.id === dep.id ? 'bg-amber-500 text-white' : 'bg-white/5 text-slate-400 group-hover:bg-amber-500/20 group-hover:text-amber-500'}`}>
-                                                            <CheckCircle2 className="w-5 h-5" />
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        )}
-
-                    </div>
-                )}
-
-                {/* STEP 2: Form */}
-                {step === 'form' && selected && (
+                {/* FORMULARIO DE RESERVA (PASO 2) */}
+                {selected && (
                     <div className="max-w-2xl mx-auto space-y-8">
-                        <div className="glass-panel bg-black/30 border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
-                            {/* Resumen Superior */}
-                            <div className="bg-amber-600/10 border-b border-amber-500/20 p-6 md:p-8">
-                                <p className="text-xs text-amber-500 font-bold uppercase tracking-widest mb-1">Tu reserva</p>
-                                <h3 className="text-2xl font-bold text-white mb-2">{selected.adventures_catalog?.title}</h3>
-                                <p className="text-amber-200 text-sm">
-                                    {new Date(selected.start_date).toLocaleDateString('es-ES', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-                                </p>
-                            </div>
-
-                            <div className="p-6 md:p-8 space-y-8">
-                                {/* Datos de Contacto */}
-                                <div className="space-y-5">
-                                    <h2 className="text-xl font-semibold text-white">Tus datos de contacto</h2>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <Field label="Nombre" name="first_name" value={form.first_name} onChange={(v: string) => setForm(f => ({...f, first_name: v}))} placeholder="Juan" />
-                                        <Field label="Apellido" name="last_name" value={form.last_name} onChange={(v: string) => setForm(f => ({...f, last_name: v}))} placeholder="Pérez" />
+                        
+                        {/* Resumen de la Expedición Seleccionada */}
+                        <div className="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-xs">
+                            <div className="p-6 sm:p-7 border-b border-stone-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-stone-50/60">
+                                <div>
+                                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-600 block mb-1">
+                                        Expedición Seleccionada
+                                    </span>
+                                    <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-stone-950 mb-1">
+                                        {selected.adventures_catalog?.title}
+                                    </h3>
+                                    <div className="flex flex-wrap items-center gap-3 text-xs text-stone-600 font-mono mt-2">
+                                        <span className="inline-flex items-center gap-1.5">
+                                            <Calendar className="w-3.5 h-3.5 text-stone-400" />
+                                            {selected.start_date}
+                                        </span>
+                                        {selected.hora && (
+                                            <span className="inline-flex items-center gap-1.5">
+                                                <Clock className="w-3.5 h-3.5 text-stone-400" />
+                                                {selected.hora}
+                                            </span>
+                                        )}
                                     </div>
-                                    <Field label="Correo electrónico" name="email" type="email" value={form.email} onChange={(v: string) => setForm(f => ({...f, email: v}))} placeholder="juan@mail.com" />
-                                    <Field label="Teléfono" name="phone" value={form.phone} onChange={(v: string) => setForm(f => ({...f, phone: v}))} placeholder="+56 9 1234 5678" />
-
                                 </div>
 
-                                {/* Ficha Médica Básica */}
-                                <div className="space-y-5 border-t border-white/5 pt-8">
-                                    <h2 className="text-xl font-semibold text-white">Ficha Médica y Check-in</h2>
-                                    <p className="text-sm text-slate-400 font-light">Para tu seguridad en el cerro, necesitamos esta información clave antes de confirmar tu cupo.</p>
+                                <div className="text-left sm:text-right pt-3 sm:pt-0 border-t sm:border-t-0 border-stone-200">
+                                    <span className="text-[10px] font-mono uppercase tracking-wider text-stone-500 block">
+                                        Tarifa por persona
+                                    </span>
+                                    <span className="text-xl font-black font-mono text-stone-950">
+                                        ${Number(selected.adventures_catalog?.base_price || 0).toLocaleString('es-CL')}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="p-6 sm:p-8 space-y-7">
+                                
+                                {/* 1. Datos de Contacto */}
+                                <div className="space-y-4">
+                                    <h4 className="text-xs font-bold uppercase tracking-wider text-stone-900 font-mono">
+                                        1. Datos de Contacto del Titular
+                                    </h4>
                                     
-                                    <Field label="Contacto de Emergencia (Nombre y Teléfono)" name="emergency_contact" value={form.emergency_contact} onChange={(v: string) => setForm(f => ({...f, emergency_contact: v}))} placeholder="Ej: María Pérez, +569 8765 4321" />
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <Field 
+                                            label="Nombre" 
+                                            name="first_name" 
+                                            value={form.first_name} 
+                                            onChange={(v: string) => setForm(f => ({...f, first_name: v}))} 
+                                            placeholder="Ej. Juan" 
+                                        />
+                                        <Field 
+                                            label="Apellido" 
+                                            name="last_name" 
+                                            value={form.last_name} 
+                                            onChange={(v: string) => setForm(f => ({...f, last_name: v}))} 
+                                            placeholder="Ej. Pérez" 
+                                        />
+                                    </div>
+
+                                    <Field 
+                                        label="Correo electrónico (donde recibirás el voucher)" 
+                                        name="email" 
+                                        type="email" 
+                                        value={form.email} 
+                                        onChange={(v: string) => setForm(f => ({...f, email: v}))} 
+                                        placeholder="juan.perez@email.com" 
+                                    />
                                     
+                                    <Field 
+                                        label="Teléfono / WhatsApp (para coordinación del ascenso)" 
+                                        name="phone" 
+                                        value={form.phone} 
+                                        onChange={(v: string) => setForm(f => ({...f, phone: v}))} 
+                                        placeholder="+56 9 1234 5678" 
+                                    />
+                                </div>
+
+                                {/* 2. Ficha Médica y Contacto de Emergencia */}
+                                <div className="space-y-4 pt-6 border-t border-stone-100">
+                                    <h4 className="text-xs font-bold uppercase tracking-wider text-stone-900 font-mono">
+                                        2. Contacto de Emergencia & Seguridad WFR
+                                    </h4>
+                                    
+                                    <Field 
+                                        label="Nombre y teléfono de contacto de emergencia" 
+                                        name="emergency_contact" 
+                                        value={form.emergency_contact} 
+                                        onChange={(v: string) => setForm(f => ({...f, emergency_contact: v}))} 
+                                        placeholder="Ej. María Pérez · +56 9 8765 4321" 
+                                    />
+
                                     <div className="space-y-1.5">
-                                        <label className="text-xs font-semibold text-slate-400 uppercase">Alergias o condiciones médicas (Opcional)</label>
+                                        <label className="text-xs font-semibold text-stone-700 uppercase tracking-wider block font-mono text-[11px]">
+                                            Alergias o condiciones médicas relevantes (Opcional)
+                                        </label>
                                         <textarea
                                             value={form.medical_info}
                                             onChange={e => setForm(f => ({ ...f, medical_info: e.target.value }))}
-                                            placeholder="Asma, alergia a picaduras, lesiones previas, etc."
-                                            className="w-full bg-[#0a0a0a] border border-white/5 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500 transition-colors resize-none"
+                                            placeholder="Asma, alergia a picaduras, lesiones previas, medicamentos, etc."
+                                            className="w-full bg-white border border-stone-300 rounded-lg px-4 py-2.5 text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 transition-colors resize-none"
                                             rows={2}
                                         />
                                     </div>
                                 </div>
 
-                                {/* Selección de Cupos y Total */}
-                                <div className="border-t border-white/5 pt-8 space-y-6">
-                                    <div className="flex justify-between items-center">
+                                {/* 3. Selección de Cupos y Cálculo de Total */}
+                                <div className="space-y-4 pt-6 border-t border-stone-100">
+                                    <div className="flex items-center justify-between">
                                         <div>
-                                            <span className="text-white font-semibold block">Cantidad de cupos</span>
-                                            {availableSpots <= 5 ? (
-                                                <span className="text-amber-500 text-xs mt-1 font-bold flex items-center gap-1.5">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                                                    ¡Alta demanda! Últimos {availableSpots} cupos
-                                                </span>
-                                            ) : (
-                                                <span className="text-slate-400 text-xs mt-1 block">
-                                                    Quedan {availableSpots} cupos disponibles
-                                                </span>
-                                            )}
+                                            <span className="text-xs font-bold uppercase tracking-wider text-stone-900 font-mono block">
+                                                3. Cantidad de Cupos
+                                            </span>
+                                            <span className="text-xs text-stone-500 font-light mt-0.5 block">
+                                                Quedan {availableSpots} cupos disponibles para esta fecha
+                                            </span>
                                         </div>
-                                        <div className="flex items-center gap-1 border border-slate-700 bg-[#0a0a0a] rounded-xl p-1">
-                                            <button onClick={() => setPaxCount(p => Math.max(1, p - 1))} className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors">−</button>
-                                            <span className="font-bold text-white w-8 text-center">{paxCount}</span>
-                                            <button onClick={() => setPaxCount(p => Math.min(availableSpots, p + 1))} className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors">+</button>
+
+                                        <div className="flex items-center border border-stone-300 rounded-lg overflow-hidden bg-white">
+                                            <button 
+                                                type="button"
+                                                onClick={() => setPaxCount(p => Math.max(1, p - 1))} 
+                                                className="w-10 h-10 flex items-center justify-center text-stone-700 hover:bg-stone-100 font-bold transition-colors cursor-pointer"
+                                            >
+                                                −
+                                            </button>
+                                            <span className="w-10 text-center font-bold font-mono text-stone-950">
+                                                {paxCount}
+                                            </span>
+                                            <button 
+                                                type="button"
+                                                onClick={() => setPaxCount(p => Math.min(availableSpots, p + 1))} 
+                                                className="w-10 h-10 flex items-center justify-center text-stone-700 hover:bg-stone-100 font-bold transition-colors cursor-pointer"
+                                            >
+                                                +
+                                            </button>
                                         </div>
-                                    </div>
-                                    
-                                    <div className="flex justify-between items-center pt-2">
-                                        <span className="text-slate-400 uppercase text-xs font-bold tracking-widest">Total a pagar</span>
-                                        <span className="text-3xl font-black text-white">${total.toLocaleString('es-CL')} <span className="text-sm font-normal text-slate-500">CLP</span></span>
                                     </div>
 
-                                    {/* Check-in y Waiver */}
-                                    <div className="flex items-start gap-3 pt-6 border-t border-white/5">
-                                        <div className="mt-0.5">
-                                            <input 
-                                                type="checkbox" 
-                                                id="waiver" 
-                                                checked={acceptsWaiver}
-                                                onChange={(e) => setAcceptsWaiver(e.target.checked)}
-                                                className="w-5 h-5 rounded border-slate-700 bg-[#0a0a0a] text-amber-500 focus:ring-blue-500/20 cursor-pointer"
-                                            />
+                                    {/* Resumen de Precio Final */}
+                                    <div className="bg-stone-50 p-4 rounded-xl border border-stone-200 flex items-center justify-between mt-4">
+                                        <div>
+                                            <span className="text-xs font-mono uppercase text-stone-500 block">
+                                                Total a Pagar ({paxCount} {paxCount === 1 ? 'cupo' : 'cupos'})
+                                            </span>
+                                            <span className="text-[11px] text-stone-400 font-light">
+                                                Sin comisiones adicionales · Boleta incluida
+                                            </span>
                                         </div>
-                                        <label htmlFor="waiver" className="text-xs text-slate-400 cursor-pointer select-none">
-                                            He leído y acepto el <span className="text-amber-500 underline">Descargo de Responsabilidad Médico</span>. Declaro tener salud compatible con la actividad, asumo los riesgos inherentes al montañismo y autorizo el protocolo WFR en caso de emergencia.
+                                        <span className="text-2xl font-black font-mono text-stone-950">
+                                            ${total.toLocaleString('es-CL')} <span className="text-xs font-normal text-stone-500">CLP</span>
+                                        </span>
+                                    </div>
+
+                                    {/* Waiver & Descargo de Responsabilidad */}
+                                    <div className="flex items-start gap-3 pt-4">
+                                        <input 
+                                            type="checkbox" 
+                                            id="waiver" 
+                                            checked={acceptsWaiver}
+                                            onChange={(e) => setAcceptsWaiver(e.target.checked)}
+                                            className="mt-0.5 w-4 h-4 rounded border-stone-300 text-stone-950 focus:ring-stone-900 cursor-pointer"
+                                        />
+                                        <label htmlFor="waiver" className="text-xs text-stone-600 leading-relaxed cursor-pointer select-none">
+                                            He leído y acepto los términos de participación y descargo de responsabilidad médico. Declaro tener salud compatible con la actividad física en montaña y autorizo la atención del guía certificado WFR en caso de emergencia.
                                         </label>
                                     </div>
                                 </div>
+
+                                {/* Botón de Pago con MercadoPago */}
+                                <div className="pt-6 border-t border-stone-200 space-y-3">
+                                    <button
+                                        type="button"
+                                        onClick={handlePay}
+                                        disabled={isSubmitting || !form.first_name || !form.last_name || !form.email || !form.phone || !acceptsWaiver}
+                                        className="w-full bg-stone-950 hover:bg-stone-800 disabled:opacity-40 disabled:cursor-not-allowed text-white font-mono font-bold text-xs uppercase tracking-wider py-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2.5 cursor-pointer"
+                                    >
+                                        {isSubmitting ? (
+                                            <>
+                                                <Loader2 className="w-4 h-4 animate-spin text-amber-400" />
+                                                <span>Conectando con MercadoPago...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <CreditCard className="w-4 h-4 text-amber-400" />
+                                                <span>PAGAR ${total.toLocaleString('es-CL')} CLP CON MERCADOPAGO →</span>
+                                            </>
+                                        )}
+                                    </button>
+
+                                    {/* Sellos de Seguridad */}
+                                    <div className="flex flex-wrap items-center justify-center gap-4 text-[11px] font-mono text-stone-500 pt-2">
+                                        <span className="flex items-center gap-1.5">
+                                            <Lock className="w-3.5 h-3.5 text-emerald-600" /> Pago seguro cifrado SSL
+                                        </span>
+                                        <span>·</span>
+                                        <span>Débito, Crédito y Webpay</span>
+                                        <span>·</span>
+                                        <span className="flex items-center gap-1.5">
+                                            <ShieldCheck className="w-3.5 h-3.5 text-stone-500" /> Garantía de reprogramación
+                                        </span>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
 
-                        <div className="flex gap-4">
-                            <button 
-                                onClick={() => setStep('select')} 
-                                className="flex-1 py-3 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-xl transition-colors border border-white/10"
-                            >
-                                Volver
-                            </button>
-                            <button
-                                onClick={handlePay}
-                                disabled={isSubmitting || !form.first_name || !form.last_name || !form.email}
-                                className="flex-1 py-3 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-black font-bold rounded-xl flex items-center justify-center gap-3 transition-colors"
-                            >
-                                {isSubmitting ? (
-                                    <><Loader2 className="w-5 h-5 animate-spin" /> Procesando...</>
-                                ) : (
-                                    <><CreditCard className="w-5 h-5" /> Pagar con MercadoPago</>
-                                )}
-                            </button>
-                        </div>
                     </div>
                 )}
+
             </div>
         </div>
     );
@@ -338,16 +404,17 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
 function Field({ label, name, value, onChange, placeholder, type = 'text' }: any) {
     return (
         <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{label}</label>
+            <label className="text-xs font-semibold text-stone-700 uppercase tracking-wider block font-mono text-[11px]">
+                {label}
+            </label>
             <input
                 type={type}
                 name={name}
                 value={value}
                 onChange={e => onChange(e.target.value)}
                 placeholder={placeholder}
-                className="w-full bg-[#0a0a0a] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-500 transition-colors"
+                className="w-full bg-white border border-stone-300 rounded-lg px-4 py-2.5 text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 transition-colors"
             />
         </div>
     );
 }
-

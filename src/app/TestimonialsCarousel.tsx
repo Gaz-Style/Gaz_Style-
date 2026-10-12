@@ -63,7 +63,7 @@ export default function TestimonialsCarousel() {
   return (
     <>
       {/* Mobile Auto-Fading Carousel */}
-      <div className="md:hidden relative min-h-[300px] mb-8 glass-panel rounded-3xl border border-white/5 overflow-hidden">
+      <div className="md:hidden relative min-h-[300px] mb-8 bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
         {testimonials.map((t, i) => (
           <div 
             key={i} 
@@ -71,27 +71,27 @@ export default function TestimonialsCarousel() {
           >
             <div>
               <div className="flex items-center justify-between mb-3">
-                <div className="text-amber-400 flex gap-1">
+                <div className="text-amber-500 flex gap-1">
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
                 </div>
-                <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                   <CheckCircle2 className="w-3 h-3" /> {t.tag}
                 </span>
               </div>
-              <p className="text-slate-200 font-light text-sm italic leading-relaxed mb-4">"{t.text}"</p>
+              <p className="text-stone-700 font-light text-sm italic leading-relaxed mb-4">"{t.text}"</p>
             </div>
             
-            <div className="flex items-center gap-3 pt-4 border-t border-white/5">
-              <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-xs uppercase bg-gradient-to-br ${t.color} border shadow-lg shrink-0`}>
+            <div className="flex items-center gap-3 pt-4 border-t border-stone-100">
+              <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-xs uppercase bg-stone-100 text-stone-800 border border-stone-200 shadow-sm shrink-0`}>
                 {t.initials}
               </div>
               <div>
-                <p className="text-white text-sm font-bold">{t.name}</p>
-                <p className="text-slate-400 text-xs">{t.origin} · <span className="text-amber-400 font-medium">{t.route}</span></p>
+                <p className="text-stone-900 text-sm font-bold">{t.name}</p>
+                <p className="text-stone-500 text-xs">{t.origin} · <span className="text-amber-600 font-medium">{t.route}</span></p>
               </div>
             </div>
           </div>
@@ -99,7 +99,7 @@ export default function TestimonialsCarousel() {
         {/* Paginators */}
         <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2 z-20">
           {testimonials.map((_, i) => (
-            <div key={i} className={`h-1.5 rounded-full transition-all duration-500 ${i === current ? 'bg-amber-500 w-6' : 'bg-slate-700 w-1.5'}`} />
+            <div key={i} className={`h-1.5 rounded-full transition-all duration-500 ${i === current ? 'bg-amber-500 w-6' : 'bg-stone-300 w-1.5'}`} />
           ))}
         </div>
       </div>
@@ -107,31 +107,31 @@ export default function TestimonialsCarousel() {
       {/* Desktop Grid */}
       <div className="hidden md:grid md:grid-cols-3 gap-6">
         {testimonials.slice(0, 3).map((t, i) => (
-          <div key={i} className="glass-panel p-8 rounded-3xl relative flex flex-col justify-between border border-white/5 hover:border-amber-500/30 transition-all duration-300 group">
+          <div key={i} className="bg-white p-8 rounded-2xl relative flex flex-col justify-between border border-stone-200 shadow-sm hover:shadow-md hover:border-amber-500/40 transition-all duration-300 group">
             <div>
               <div className="flex items-center justify-between mb-4">
-                <div className="text-amber-400 flex gap-1">
+                <div className="text-amber-500 flex gap-1">
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
                 </div>
-                <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                   <CheckCircle2 className="w-3 h-3" /> {t.tag}
                 </span>
               </div>
-              <p className="text-slate-300 font-light text-sm italic mb-6 leading-relaxed">"{t.text}"</p>
+              <p className="text-stone-700 font-light text-sm italic mb-6 leading-relaxed">"{t.text}"</p>
             </div>
 
-            <div className="flex items-center gap-3 pt-4 border-t border-white/5">
-              <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-xs uppercase bg-gradient-to-br ${t.color} border shadow-lg shrink-0 group-hover:scale-105 transition-transform`}>
+            <div className="flex items-center gap-3 pt-4 border-t border-stone-100">
+              <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-xs uppercase bg-stone-100 text-stone-800 border border-stone-200 shadow-sm shrink-0 group-hover:scale-105 transition-transform`}>
                 {t.initials}
               </div>
               <div>
-                <p className="text-white text-sm font-bold">{t.name}</p>
-                <p className="text-slate-400 text-xs">{t.origin}</p>
-                <p className="text-amber-400 text-[10px] uppercase tracking-wider font-medium mt-0.5">{t.route}</p>
+                <p className="text-stone-900 text-sm font-bold">{t.name}</p>
+                <p className="text-stone-500 text-xs">{t.origin}</p>
+                <p className="text-amber-600 text-[10px] uppercase tracking-wider font-semibold mt-0.5">{t.route}</p>
               </div>
             </div>
           </div>

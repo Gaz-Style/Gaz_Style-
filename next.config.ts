@@ -22,6 +22,30 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  async redirects() {
+    return [
+      {
+        source: '/rutas/desafio-5am',
+        destination: '/desafios/desafio-5am',
+        permanent: true,
+      },
+      {
+        source: '/rutas/triple-corona',
+        destination: '/desafios/triple-corona',
+        permanent: true,
+      },
+      {
+        source: '/rutas/sierra-de-ramon',
+        destination: '/desafios/sierra-de-ramon',
+        permanent: true,
+      },
+      {
+        source: '/rutas/desbloqueando-santiago',
+        destination: '/desafios/desbloqueando-santiago',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

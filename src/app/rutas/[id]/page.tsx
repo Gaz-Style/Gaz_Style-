@@ -2,7 +2,8 @@ import React from 'react';
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 import { ArrowLeft, Map, Clock, Users, HeartPulse, Mountain, CheckCircle2, XCircle, Tent, Backpack } from 'lucide-react';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
+import { challengesData } from '../../desafios/data';
 
 import Image from 'next/image';
 
@@ -26,6 +27,12 @@ async function getRouteData(id: string) {
 
 export default async function RouteDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
+
+    // Si el ID corresponde a uno de los Grandes Desafíos, redirigir a su página completa
+    if (challengesData[id]) {
+        redirect(`/desafios/${id}`);
+    }
+
     const route = await getRouteData(id);
 
     if (!route) {

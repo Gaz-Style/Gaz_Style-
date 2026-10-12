@@ -137,9 +137,11 @@ export default function RootLayout({
     <html lang="es" className={`${inter.variable} ${outfit.variable}`}>
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="theme-color" content="#020617" />
-        <link rel="apple-touch-icon" href="/icon-192.png" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="theme-color" content="#ffffff" />
+        <link rel="icon" href="/logo%20sh.png" />
+        <link rel="shortcut icon" href="/logo%20sh.png" />
+        <link rel="apple-touch-icon" href="/logo%20sh.png" />
         
         {/* Marcado Semántico para Motores de Búsqueda y LLMs */}
         <script

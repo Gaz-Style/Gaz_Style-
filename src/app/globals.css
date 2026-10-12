@@ -1,33 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fdfdfc;
-  --foreground: #111827;
-  --primary: #f97316; /* Vibrant Orange */
-  --primary-foreground: #ffffff;
-  --secondary: #166534; /* Forest Green */
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --primary: #f59e0b;
+  --primary-foreground: #000000;
+  --secondary: #166534;
   --secondary-foreground: #ffffff;
-  --accent: #f3f4f6;
-  --accent-foreground: #1f2937;
+  --accent: #f8fafc;
+  --accent-foreground: #0f172a;
   --card: #ffffff;
-  --card-foreground: #111827;
-  --border: #e5e7eb;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0f1115; /* Dark Charcoal */
-    --foreground: #f9fafb;
-    --primary: #ea580c; /* Deep Orange */
-    --primary-foreground: #ffffff;
-    --secondary: #22c55e; /* Bright Green */
-    --secondary-foreground: #022c22;
-    --accent: #1f2937;
-    --accent-foreground: #f9fafb;
-    --card: #161b22;
-    --card-foreground: #f9fafb;
-    --border: #374151;
-  }
+  --card-foreground: #0f172a;
+  --border: #e2e8f0;
 }
 
 @theme inline {
@@ -47,9 +31,21 @@
   --font-heading: var(--font-outfit);
 }
 
+@font-face {
+  font-family: 'Edo';
+  src: url('/fonts/edosz.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.font-edo {
+  font-family: 'Edo', cursive, sans-serif;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: #ffffff;
+  color: #0f172a;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
@@ -59,24 +55,24 @@ body {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--background);
+  background: #f8fafc;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: #cbd5e1;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-foreground);
+  background: #94a3b8;
 }
 
 .glass-panel {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
 }
 
 .gold-gradient-text {
-  background: linear-gradient(to right, #f59e0b, #fbbf24, #fcd34d);
+  background: linear-gradient(to right, #d97706, #b45309);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -89,28 +85,30 @@ body {
   scrollbar-width: none;
 }
 
-/* Arc'teryx & Roark Functional Minimalism */
+/* Arc'teryx & Roark Functional Minimalism - Pure White Editorial (Alba & Paz) */
 .topographic-pattern {
-  background-color: #08090c;
+  background-color: #faf9f6;
   background-image: 
-    radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.05) 0%, transparent 70%),
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.04) 0%, transparent 60%),
+    linear-gradient(rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
   background-size: 100% 100%, 64px 64px, 64px 64px;
+  color: #0f172a;
 }
 
 .topographic-contours {
-  background-image: url("data:image/svg+xml,%3Csvg width='800' height='800' viewBox='0 0 800 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 400 C 150 370, 300 430, 450 400 C 600 370, 750 430, 800 400 M0 340 C 160 300, 310 380, 460 340 C 610 300, 760 380, 800 340 M0 280 C 180 230, 330 320, 480 270 C 630 220, 770 310, 800 270 M0 460 C 140 500, 290 440, 440 480 C 590 520, 740 460, 800 480 M0 520 C 130 570, 280 500, 430 550 C 580 600, 730 530, 800 550 M0 220 C 200 160, 350 260, 500 200 C 650 140, 780 240, 800 200 M0 580 C 120 640, 270 560, 420 620 C 570 680, 720 600, 800 620' fill='none' stroke='rgba(255,255,255,0.04)' stroke-width='1.2' /%3E%3Ccircle cx='400' cy='400' r='180' fill='none' stroke='rgba(255,255,255,0.03)' stroke-width='1' stroke-dasharray='3,6' /%3E%3Ccircle cx='400' cy='400' r='300' fill='none' stroke='rgba(255,255,255,0.025)' stroke-width='1' /%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='800' height='800' viewBox='0 0 800 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 400 C 150 370, 300 430, 450 400 C 600 370, 750 430, 800 400 M0 340 C 160 300, 310 380, 460 340 C 610 300, 760 380, 800 340 M0 280 C 180 230, 330 320, 480 270 C 630 220, 770 310, 800 270 M0 460 C 140 500, 290 440, 440 480 C 590 520, 740 460, 800 480 M0 520 C 130 570, 280 500, 430 550 C 580 600, 730 530, 800 550 M0 220 C 200 160, 350 260, 500 200 C 650 140, 780 240, 800 200 M0 580 C 120 640, 270 560, 420 620 C 570 680, 720 600, 800 620' fill='none' stroke='rgba(15,23,42,0.045)' stroke-width='1.2' /%3E%3Ccircle cx='400' cy='400' r='180' fill='none' stroke='rgba(15,23,42,0.035)' stroke-width='1' stroke-dasharray='3,6' /%3E%3Ccircle cx='400' cy='400' r='300' fill='none' stroke='rgba(15,23,42,0.03)' stroke-width='1' /%3E%3C/svg%3E");
   background-size: 800px 800px;
 }
 
+/* Botones Arc'teryx - Alta Definición Minimalista */
 .btn-arcteryx {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  border: 1px solid #0f172a;
   background-color: transparent;
-  color: #ffffff;
+  color: #0f172a;
   padding: 0.875rem 2rem;
   font-size: 0.6875rem;
   font-weight: 700;
@@ -119,6 +117,28 @@ body {
   transition: all 0.2s ease-in-out;
 }
 .btn-arcteryx:hover {
+  background-color: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+}
+
+/* Botón Hero sobre foto de montaña */
+.btn-arcteryx-hero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  color: #ffffff;
+  padding: 0.875rem 2rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transition: all 0.2s ease-in-out;
+}
+.btn-arcteryx-hero:hover {
   background-color: #ffffff;
   color: #000000;
   border-color: #ffffff;
@@ -139,8 +159,7 @@ body {
   transition: all 0.2s ease-in-out;
 }
 .btn-arcteryx-primary:hover {
-  background-color: #fbbf24;
-  border-color: #fbbf24;
-  color: #000000;
+  background-color: #d97706;
+  border-color: #d97706;
+  color: #ffffff;
 }
-

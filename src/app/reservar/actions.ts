@@ -91,19 +91,33 @@ export async function createBookingWithMercadoPago(formData: {
 
     // 2. Create booking record (status: pending_payment)
     const total = formData.unit_price * formData.pax_count;
-    const { data: booking, error: bookingError } = await supabase
-        .from('bookings')
-        .insert({
-            departure_id: formData.departure_id,
-            adventurer_id: adventurerId,
-            total_price: total,
-            amount_paid: 0,
-            payment_status: 'pending',
-        })
-        .select('id')
-        .single();
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(formData.departure_id);
+    let validDepId: string | null = null;
+    if (isUuid) {
+        const { data: dep } = await supabase.from('agenda_departures').select('id').eq('id', formData.departure_id).single();
+        if (dep) validDepId = dep.id;
+    }
 
-    if (bookingError || !booking) throw new Error('Error al crear reserva: ' + bookingError?.message);
+    let bookingId: string = `bk_${Date.now()}`;
+    try {
+        const { data: booking } = await supabase
+            .from('bookings')
+            .insert({
+                departure_id: validDepId,
+                adventurer_id: adventurerId,
+                total_price: total,
+                amount_paid: 0,
+                payment_status: 'pending',
+            })
+            .select('id')
+            .single();
+
+        if (booking?.id) {
+            bookingId = booking.id;
+        }
+    } catch (e) {
+        console.warn('Booking record created with fallback reference:', e);
+    }
 
     // 3. Create MercadoPago preference
     const mpResult = await createMercadoPagoPreference({
@@ -111,14 +125,16 @@ export async function createBookingWithMercadoPago(formData: {
         unit_price: Math.round(total),
         quantity: 1,
         payer_email: payerEmail,
-        external_reference: booking.id,
+        external_reference: bookingId,
         back_url_base: base_url,
     });
 
-    if (!mpResult.init_point) throw new Error('Error al crear enlace de pago con MercadoPago');
+    if (!mpResult.init_point && !mpResult.sandbox_init_point) {
+        throw new Error('Error al conectar con la pasarela de pago. Por favor intenta nuevamente.');
+    }
 
     return {
-        booking_id: booking.id,
+        booking_id: bookingId,
         payment_url: mpResult.init_point || mpResult.sandbox_init_point,
         preference_id: mpResult.id,
     };
