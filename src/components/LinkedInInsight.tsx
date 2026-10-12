@@ -9,7 +9,7 @@ export default function LinkedInInsight() {
 
   return (
     <>
-      <Script id="linkedin-insight" strategy="afterInteractive">
+      <Script id="linkedin-insight" strategy="lazyOnload">
         {`
           _linkedin_partner_id = "${LINKEDIN_PARTNER_ID}";
           window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];

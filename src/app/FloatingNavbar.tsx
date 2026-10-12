@@ -64,11 +64,15 @@ export default function FloatingNavbar({ currentLang }: Props) {
     >
       <div className="max-w-6xl mx-auto pointer-events-auto">
         
-        {/* Cápsula Flotante Cristal Oscuro Transparente de Alta Gama (Luxury Frosted Crystal) */}
+        {/* Cápsula Flotante Cristal Esmerilado Puro (True Frosted Glass) */}
         <div 
-          className={`bg-stone-950/40 hover:bg-stone-950/50 backdrop-blur-2xl backdrop-saturate-150 border-t border-white/30 border-x border-white/15 border-b border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.25),0_16px_40px_rgba(0,0,0,0.35)] rounded-2xl md:rounded-full px-4 sm:px-7 h-16 sm:h-18 flex justify-between items-center transition-all duration-300 ${
-            scrolled ? 'bg-stone-950/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.3),0_20px_45px_rgba(0,0,0,0.45)] border-t-white/35' : ''
-          }`}
+          className="rounded-2xl md:rounded-full px-4 sm:px-7 h-16 sm:h-18 flex justify-between items-center transition-all duration-300 shadow-[0_8px_30px_rgba(0,0,0,0.15)] hover:bg-white/10"
+          style={{
+            backgroundColor: scrolled ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.05)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+          }}
         >
           {/* Logotipo Blanco + Texto SANTIAGO en blanco */}
           <Link 
@@ -124,9 +128,17 @@ export default function FloatingNavbar({ currentLang }: Props) {
           </div>
         </div>
 
-        {/* Menú Desplegable Glassmorphism en Móvil (Cristal Oscuro) */}
+        {/* Menú Desplegable Glassmorphism en Móvil */}
         {mobileMenuOpen && (
-          <div className="md:hidden mt-2 bg-stone-950/75 backdrop-blur-2xl border-t border-white/25 border-x border-white/15 border-b border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_20px_50px_rgba(0,0,0,0.5)] rounded-2xl p-5 flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div 
+            className="md:hidden mt-2 rounded-2xl p-5 flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-200 shadow-[0_12px_40px_rgba(0,0,0,0.25)]"
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.08)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
             {navLinks.map((link) => (
               <a
                 key={link.href}

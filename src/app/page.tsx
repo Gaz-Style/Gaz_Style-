@@ -46,8 +46,20 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
         <HeroCarousel />
 
         <div className="relative z-10 max-w-5xl mx-auto text-center mt-12">
-          {/* Badge de Coordenadas Geográficas */}
-          <div className="inline-flex items-center gap-2 border border-white/30 bg-black/50 backdrop-blur-md px-4 py-1.5 mb-8 text-[10px] md:text-xs font-mono tracking-[0.25em] uppercase text-white shadow-lg rounded-full">
+          {/* Badge de Coordenadas Geográficas (Pestaña Superior de Expedición) */}
+          <div 
+            className="inline-flex items-center gap-2.5 px-5 sm:px-6 py-2 sm:py-2.5 mb-8 text-xs sm:text-[13px] font-mono tracking-[0.25em] uppercase text-white shadow-[0_8px_25px_rgba(0,0,0,0.2)] rounded-full transition-all hover:bg-white/10"
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+            }}
+          >
+            <span className="relative flex h-2 w-2 mr-0.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-400" />
+            </span>
             <span>33°21'S 70°38'W</span>
             <span className="text-amber-400">·</span>
             <span>ANDES EXPEDITIONS</span>
@@ -68,43 +80,69 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
               : 'Conquista los Andes chilenos. Salidas boutique de un día, seguridad en montaña y las mejores cumbres sobre el valle de Santiago.'}
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="#rutas" className="btn-arcteryx-primary w-full sm:w-auto shadow-md">
-              EXPLORAR SALIDAS ACTIVAS
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
+            <a
+              href="#rutas"
+              className="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-black px-8 sm:px-9 py-4 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all hover:scale-105 shadow-[0_0_20px_rgba(245,158,11,0.35)] cursor-pointer text-center select-none"
+            >
+              EXPLORAR RUTAS
             </a>
-            <a href="#desafios" className="btn-arcteryx-hero w-full sm:w-auto">
-              LOS GRANDES DESAFÍOS
+            <a
+              href="#desafios"
+              className="w-full sm:w-auto text-white px-8 sm:px-9 py-4 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all hover:scale-105 hover:bg-white/10 cursor-pointer text-center select-none"
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+              }}
+            >
+              EXPLORAR DESAFÍOS
             </a>
+          </div>
+
+          {/* Social Proof & Trust Badges (Benchmark Much Better Adventures) */}
+          <div className="mt-8 pt-6 border-t border-white/15 flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-white/90 text-xs font-mono">
+            <div className="flex items-center gap-1.5">
+              <span className="text-amber-400 font-bold">★★★★★</span>
+              <span className="font-bold text-white">4.9/5</span>
+              <span className="text-white/60">(+320 Reseñas)</span>
+            </div>
+            <div className="hidden sm:inline text-white/30">·</div>
+            <div className="flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span>Guías Certificados WFR</span>
+            </div>
+            <div className="hidden sm:inline text-white/30">·</div>
+            <div className="flex items-center gap-1.5">
+              <Compass className="w-4 h-4 text-amber-400" />
+              <span>SOS Satelital Garmin inReach</span>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* LEAD MAGNET / DESCARGA GUÍA (Lienzo Nieve / Limpio) */}
-      <section className="py-14 bg-stone-100/70 border-y border-stone-200 relative z-20">
+      {/* LEAD MAGNET / QUIZ INTERACTIVO (Inspirado en Much Better Adventures) */}
+      <section className="py-14 bg-transparent relative z-20">
         <div className="max-w-5xl mx-auto px-6">
-          <LeadMagnetForm
-            title="Guía Técnica de Rutas de Santiago."
-            subtitle="Recibe gratis en tu correo el mapa de desniveles, equipamiento WFR y cerros imperdibles."
-            buttonText="Descargar Guía"
-            lang={lang}
-          />
+          <LeadMagnetForm lang={lang} />
         </div>
       </section>
 
       {/* 2. LOS GRANDES DESAFÍOS ANDINOS (Lienzo Blanco Editorial: Fotografías como Galería) */}
-      <section id="desafios" className="py-24 bg-white relative z-20 border-b border-stone-200">
+      <section id="desafios" className="py-24 bg-transparent relative z-20">
         <div className="max-w-7xl mx-auto px-6">
           
-          <div className="mb-14 border-b border-stone-200 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div className="mb-14 border-b border-white/15 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-              <span className="text-stone-500 font-mono text-[10px] tracking-[0.3em] uppercase block mb-1">
+              <span className="text-white/50 font-mono text-[10px] tracking-[0.3em] uppercase block mb-1">
                 The Andes Challenges · Serie 2026
               </span>
-              <h2 className="text-3xl md:text-5xl font-black text-stone-900 uppercase tracking-tight">
+              <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight">
                 Los Grandes Desafíos
               </h2>
             </div>
-            <p className="text-stone-600 text-xs md:text-sm max-w-md font-light leading-relaxed">
+            <p className="text-white/60 text-xs md:text-sm max-w-md font-light leading-relaxed">
               Cuatro expediciones icónicas para llevar tu resistencia física y mental al siguiente nivel en la Cordillera de los Andes.
             </p>
           </div>
@@ -244,84 +282,84 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
       </section>
 
       {/* 3. SISTEMA DE NIVELES FUNCIONAL (Limpio, Técnico & Sereno) */}
-      <section id="niveles" className="py-24 bg-stone-50/60 relative z-20 border-b border-stone-200">
+      <section id="niveles" className="py-24 bg-transparent relative z-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-12">
-            <span className="text-stone-500 font-mono text-[10px] tracking-[0.3em] uppercase block mb-1">
+            <span className="text-white/50 font-mono text-[10px] tracking-[0.3em] uppercase block mb-1">
               Graduación Técnica · Cuenca Central
             </span>
-            <h2 className="text-3xl md:text-4xl font-black text-stone-900 uppercase tracking-tight">
+            <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight">
               Sistema de Niveles de Montaña
             </h2>
           </div>
 
-          <div className="border-y border-stone-200 divide-y divide-stone-200 bg-white rounded-xl shadow-xs px-6 md:px-10">
+          <div className="glass-divide rounded-xl px-6 md:px-10" style={{backgroundColor:'rgba(255,255,255,0.06)',backdropFilter:'blur(18px)',WebkitBackdropFilter:'blur(18px)',border:'1px solid rgba(255,255,255,0.11)'} as React.CSSProperties}>
             
             {/* Nivel 1 */}
-            <div className="py-7 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:bg-stone-50/80 transition-colors">
+            <div className="py-7 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:bg-white/10 transition-colors">
               <div className="flex items-baseline gap-4 md:w-1/3">
-                <span className="text-stone-400 font-mono text-xs font-bold">01</span>
+                <span className="text-white/40 font-mono text-xs font-bold">01</span>
                 <div>
-                  <h4 className="text-stone-900 font-bold text-lg uppercase tracking-tight">Iniciación Activa</h4>
-                  <span className="text-[11px] font-mono text-stone-500 block">Desnivel &lt;400m+ · 3.5 hrs</span>
+                  <h4 className="text-white font-bold text-lg uppercase tracking-tight">Iniciación Activa</h4>
+                  <span className="text-[11px] font-mono text-white/45 block">Desnivel &lt;400m+ · 3.5 hrs</span>
                 </div>
               </div>
-              <p className="text-stone-600 text-xs md:text-sm font-light md:w-1/2 leading-relaxed">
+              <p className="text-white/60 text-xs md:text-sm font-light md:w-1/2 leading-relaxed">
                 Ritmo amable y pausas panorámicas. Ideal para tu primera cumbre, fotografía profesional y café al atardecer sobre la cuenca.
               </p>
               <div className="md:w-1/6 md:text-right">
-                <span className="text-[11px] font-mono text-stone-800 font-semibold uppercase tracking-wider">Sunset Manquehuito</span>
+                <span className="text-[11px] font-mono text-amber-300 font-semibold uppercase tracking-wider">Sunset Manquehuito</span>
               </div>
             </div>
 
             {/* Nivel 2 */}
-            <div className="py-7 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:bg-stone-50/80 transition-colors">
+            <div className="py-7 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:bg-white/10 transition-colors">
               <div className="flex items-baseline gap-4 md:w-1/3">
-                <span className="text-stone-400 font-mono text-xs font-bold">02</span>
+                <span className="text-white/40 font-mono text-xs font-bold">02</span>
                 <div>
-                  <h4 className="text-stone-900 font-bold text-lg uppercase tracking-tight">Cardio & Desconexión</h4>
-                  <span className="text-[11px] font-mono text-stone-500 block">Desnivel 400 a 800m+ · 4-5 hrs</span>
+                  <h4 className="text-white font-bold text-lg uppercase tracking-tight">Cardio & Desconexión</h4>
+                  <span className="text-[11px] font-mono text-white/45 block">Desnivel 400 a 800m+ · 4-5 hrs</span>
                 </div>
               </div>
-              <p className="text-stone-600 text-xs md:text-sm font-light md:w-1/2 leading-relaxed">
+              <p className="text-white/60 text-xs md:text-sm font-light md:w-1/2 leading-relaxed">
                 Ritmo deportivo sostenido para botar el estrés de la oficina. Exige calzado con buen agarre, respiración constante y energía activa.
               </p>
               <div className="md:w-1/6 md:text-right">
-                <span className="text-[11px] font-mono text-stone-800 font-semibold uppercase tracking-wider">WildTrek / Pochoco</span>
+                <span className="text-[11px] font-mono text-amber-300 font-semibold uppercase tracking-wider">WildTrek / Pochoco</span>
               </div>
             </div>
 
             {/* Nivel 3 */}
-            <div className="py-7 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:bg-stone-50/80 transition-colors">
+            <div className="py-7 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:bg-white/10 transition-colors">
               <div className="flex items-baseline gap-4 md:w-1/3">
-                <span className="text-stone-400 font-mono text-xs font-bold">03</span>
+                <span className="text-white/40 font-mono text-xs font-bold">03</span>
                 <div>
-                  <h4 className="text-stone-900 font-bold text-lg uppercase tracking-tight">Desafío Andino</h4>
-                  <span className="text-[11px] font-mono text-stone-500 block">Desnivel 800 a 1.400m+ · 6-8 hrs</span>
+                  <h4 className="text-white font-bold text-lg uppercase tracking-tight">Desafío Andino</h4>
+                  <span className="text-[11px] font-mono text-white/45 block">Desnivel 800 a 1.400m+ · 6-8 hrs</span>
                 </div>
               </div>
-              <p className="text-stone-600 text-xs md:text-sm font-light md:w-1/2 leading-relaxed">
+              <p className="text-white/60 text-xs md:text-sm font-light md:w-1/2 leading-relaxed">
                 Terreno técnico, piedras sueltas y exigencia física real. Requiere preparación previa, bastones de trekking y chequeo médico.
               </p>
               <div className="md:w-1/6 md:text-right">
-                <span className="text-[11px] font-mono text-stone-800 font-semibold uppercase tracking-wider">Manquehue / Provincia</span>
+                <span className="text-[11px] font-mono text-amber-300 font-semibold uppercase tracking-wider">Manquehue / Provincia</span>
               </div>
             </div>
 
             {/* Nivel 4 */}
-            <div className="py-7 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:bg-stone-50/80 transition-colors">
+            <div className="py-7 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:bg-white/10 transition-colors">
               <div className="flex items-baseline gap-4 md:w-1/3">
-                <span className="text-stone-400 font-mono text-xs font-bold">04</span>
+                <span className="text-white/40 font-mono text-xs font-bold">04</span>
                 <div>
-                  <h4 className="text-stone-900 font-bold text-lg uppercase tracking-tight">Alta Montaña</h4>
-                  <span className="text-[11px] font-mono text-stone-500 block">Altitud &gt;3.800m · Full Day / Campamento</span>
+                  <h4 className="text-white font-bold text-lg uppercase tracking-tight">Alta Montaña</h4>
+                  <span className="text-[11px] font-mono text-white/45 block">Altitud &gt;3.800m · Full Day / Campamento</span>
                 </div>
               </div>
-              <p className="text-stone-600 text-xs md:text-sm font-light md:w-1/2 leading-relaxed">
+              <p className="text-white/60 text-xs md:text-sm font-light md:w-1/2 leading-relaxed">
                 Cumbres mayores sobre los 4.000m. Exposición a altitud, viento y posible campamento base. Guiado estricto con botiquín WFR y satélite.
               </p>
               <div className="md:w-1/6 md:text-right">
-                <span className="text-[11px] font-mono text-stone-800 font-semibold uppercase tracking-wider">Pintor / El Plomo</span>
+                <span className="text-[11px] font-mono text-amber-300 font-semibold uppercase tracking-wider">Pintor / El Plomo</span>
               </div>
             </div>
 
@@ -330,31 +368,31 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
       </section>
 
       {/* 4. CATÁLOGO DE SALIDAS ACTIVAS DE TEMPORADA */}
-      <section id="rutas" className="py-28 bg-white relative z-20 border-b border-stone-200">
+      <section id="rutas" className="py-28 bg-transparent relative z-20">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="mb-16 md:flex justify-between items-end border-b border-stone-200 pb-8">
+          <div className="mb-16 md:flex justify-between items-end border-b border-white/15 pb-8">
             <div>
-              <span className="text-amber-600 font-mono text-xs uppercase tracking-[0.25em] mb-2 block font-semibold">
+              <span className="text-amber-400 font-mono text-xs uppercase tracking-[0.25em] mb-2 block font-semibold">
                 Temporada 2026
               </span>
-              <h2 className="text-4xl md:text-5xl font-black text-stone-900 uppercase tracking-tight">
+              <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tight">
                 Salidas Grupales Activas
               </h2>
             </div>
-            <p className="text-stone-600 text-sm max-w-sm mt-4 md:mt-0 font-light">
+            <p className="text-white/60 text-sm max-w-sm mt-4 md:mt-0 font-light">
               Grupos reducidos guiados por Gaz. Equipamiento de seguridad, primeros auxilios WFR y fotografía profesional de cumbre incluidos.
             </p>
           </div>
 
           {routes.length === 0 ? (
-            <div className="py-20 text-center border border-dashed border-stone-300 rounded-2xl bg-stone-50">
-              <Tent className="w-12 h-12 text-stone-400 mx-auto mb-4" />
-              <p className="text-stone-600 text-sm">Próximamente publicaremos el nuevo calendario de salidas.</p>
+            <div className="py-20 text-center rounded-2xl" style={{backgroundColor:'rgba(255,255,255,0.05)',border:'1px dashed rgba(255,255,255,0.15)'}}>
+              <Tent className="w-12 h-12 text-white/30 mx-auto mb-4" />
+              <p className="text-white/50 text-sm">Próximamente publicaremos el nuevo calendario de salidas.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {routes.map((route: any) => (
-                <div key={route.id} className="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-xs hover:shadow-xl hover:border-amber-500/50 transition-all duration-300 flex flex-col justify-between group">
+                <div key={route.id} className="rounded-2xl overflow-hidden hover:border-amber-400/60 transition-all duration-300 flex flex-col justify-between group" style={{backgroundColor:'rgba(255,255,255,0.06)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',border:'1px solid rgba(255,255,255,0.10)'}}>
                   
                   {/* Foto de Portada de la Ruta */}
                   <div className="aspect-[16/10] relative overflow-hidden bg-stone-100">
@@ -378,33 +416,36 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
                   {/* Ficha Técnica */}
                   <div className="p-8 flex-1 flex flex-col justify-between">
                     <div>
-                      <h3 className="text-2xl font-bold text-stone-900 uppercase tracking-tight mb-2">
+                      <h3 className="text-2xl font-bold text-white uppercase tracking-tight mb-2">
                         {route.title}
                       </h3>
-                      <p className="text-sm text-stone-600 mb-6 font-light line-clamp-2">
+                      <p className="text-sm text-white/60 mb-6 font-light line-clamp-2">
                         {route.description || 'Guiado premium paso a paso en la cordillera.'}
                       </p>
                       
-                      <div className="grid grid-cols-3 gap-2 border-y border-stone-100 bg-stone-50/80 py-4 mb-6 text-center font-mono rounded-lg">
+                      <div className="grid grid-cols-3 gap-2 py-4 mb-6 text-center font-mono rounded-lg" style={{backgroundColor:'rgba(255,255,255,0.05)',borderTop:'1px solid rgba(255,255,255,0.08)',borderBottom:'1px solid rgba(255,255,255,0.08)'}}>
                         <div>
-                          <p className="text-[10px] text-stone-500 uppercase font-medium">Duración</p>
-                          <p className="text-xs font-bold text-stone-900">{route.duration_text || `${route.duration_days}d`}</p>
+                          <p className="text-[10px] text-white/40 uppercase font-medium">Duración</p>
+                          <p className="text-xs font-bold text-white">{route.duration_text || `${route.duration_days}d`}</p>
                         </div>
                         <div>
-                          <p className="text-[10px] text-stone-500 uppercase font-medium">Dificultad</p>
-                          <p className="text-xs font-bold text-amber-600">{route.difficulty_level}</p>
+                          <p className="text-[10px] text-white/40 uppercase font-medium">Dificultad</p>
+                          <p className="text-xs font-bold text-amber-400">{route.difficulty_level}</p>
                         </div>
                         <div>
-                          <p className="text-[10px] text-stone-500 uppercase font-medium">Cupo Máx</p>
-                          <p className="text-xs font-bold text-stone-900">{route.max_pax} pax</p>
+                          <p className="text-[10px] text-white/40 uppercase font-medium">Cupo Máx</p>
+                          <p className="text-xs font-bold text-white">{route.max_pax} pax</p>
                         </div>
                       </div>
                     </div>
 
                     <div className="flex items-center justify-between pt-4">
                       <div>
-                        <span className="text-[10px] text-stone-500 uppercase tracking-widest block font-mono">Desde</span>
-                        <span className="text-2xl font-black text-stone-900 font-mono">${Number(route.base_price).toLocaleString('es-CL')}</span>
+                        <span className="text-[10px] text-white/40 uppercase tracking-widest block font-mono">Desde</span>
+                        <span className="text-2xl font-black text-white font-mono">
+                          ${Number((route.base_price && route.base_price >= 5000) ? route.base_price : 25000).toLocaleString('es-CL')}
+                        </span>
+                        <span className="text-[10px] text-amber-400 font-mono block">Reserva flexible</span>
                       </div>
                       <Link href={`/rutas/${route.id}`} className="btn-arcteryx">
                         Ver Ficha
@@ -420,44 +461,44 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
       </section>
 
       {/* 5. PLANES "CIELO, MAR Y TIERRA" (Ecosistema All-Inclusive) */}
-      <section id="alianzas" className="py-28 bg-stone-50/60 relative z-20 border-b border-stone-200">
+      <section id="alianzas" className="py-28 bg-transparent relative z-20">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="mb-16 md:flex justify-between items-end border-b border-stone-200 pb-8">
+          <div className="mb-16 md:flex justify-between items-end border-b border-white/15 pb-8">
             <div>
-              <span className="text-amber-600 font-mono text-xs uppercase tracking-[0.25em] mb-2 block font-semibold">
+              <span className="text-amber-400 font-mono text-xs uppercase tracking-[0.25em] mb-2 block font-semibold">
                 Ecosistema All-Inclusive
               </span>
-              <h2 className="text-4xl md:text-5xl font-black text-stone-900 uppercase tracking-tight">
+              <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tight">
                 Cielo, Mar & Tierra
               </h2>
             </div>
-            <p className="text-stone-600 text-sm max-w-md mt-4 md:mt-0 font-light">
+            <p className="text-white/60 text-sm max-w-md mt-4 md:mt-0 font-light">
               La experiencia integral de Chile central: unimos las cumbres de los Andes, la costa pacífica y la gastronomía de autor a través de alianzas estratégicas.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             
-            <div className="border border-stone-200 p-8 bg-white rounded-2xl shadow-xs">
-              <span className="text-amber-600 font-mono text-xs uppercase tracking-widest block mb-2 font-bold">01 · CORDILLERA</span>
-              <h3 className="text-xl font-bold text-stone-900 uppercase mb-3">Refugios & Ascensos</h3>
-              <p className="text-stone-600 text-sm font-light leading-relaxed">
+            <div className="p-8 rounded-2xl" style={{backgroundColor:'rgba(255,255,255,0.06)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',border:'1px solid rgba(255,255,255,0.10)'}}>
+              <span className="text-amber-400 font-mono text-xs uppercase tracking-widest block mb-2 font-bold">01 · CORDILLERA</span>
+              <h3 className="text-xl font-bold text-white uppercase mb-3">Refugios & Ascensos</h3>
+              <p className="text-white/60 text-sm font-light leading-relaxed">
                 Alojamiento en refugios de montaña y glampings boutique en Farellones y Cajón del Maipo. Salidas al atardecer, avistamiento astronómico y seguridad certificada WFR.
               </p>
             </div>
 
-            <div className="border border-stone-200 p-8 bg-white rounded-2xl shadow-xs">
-              <span className="text-amber-600 font-mono text-xs uppercase tracking-widest block mb-2 font-bold">02 · GASTRONOMÍA</span>
-              <h3 className="text-xl font-bold text-stone-900 uppercase mb-3">El "Tercer Tiempo"</h3>
-              <p className="text-stone-600 text-sm font-light leading-relaxed">
+            <div className="p-8 rounded-2xl" style={{backgroundColor:'rgba(255,255,255,0.06)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',border:'1px solid rgba(255,255,255,0.10)'}}>
+              <span className="text-amber-400 font-mono text-xs uppercase tracking-widest block mb-2 font-bold">02 · GASTRONOMÍA</span>
+              <h3 className="text-xl font-bold text-white uppercase mb-3">El "Tercer Tiempo"</h3>
+              <p className="text-white/60 text-sm font-light leading-relaxed">
                 Bajada directa del cerro a locales gastronómicos y viñedos aliados. Maridajes exclusivos, carnes y cocina de autor para reponer energías con el grupo o tu pareja.
               </p>
             </div>
 
-            <div className="border border-stone-200 p-8 bg-white rounded-2xl shadow-xs">
-              <span className="text-amber-600 font-mono text-xs uppercase tracking-widest block mb-2 font-bold">03 · COSTA PACÍFICA</span>
-              <h3 className="text-xl font-bold text-stone-900 uppercase mb-3">Océano & Escape</h3>
-              <p className="text-stone-600 text-sm font-light leading-relaxed">
+            <div className="p-8 rounded-2xl" style={{backgroundColor:'rgba(255,255,255,0.06)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',border:'1px solid rgba(255,255,255,0.10)'}}>
+              <span className="text-amber-400 font-mono text-xs uppercase tracking-widest block mb-2 font-bold">03 · COSTA PACÍFICA</span>
+              <h3 className="text-xl font-bold text-white uppercase mb-3">Océano & Escape</h3>
+              <p className="text-white/60 text-sm font-light leading-relaxed">
                 Extensión opcional hacia la costa (Zapallar / Pichilemu): surf, hoteles frente al mar y desconexión total. De la nieve de los Andes a las olas del Pacífico en 2 horas.
               </p>
             </div>
@@ -465,15 +506,15 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
           </div>
 
           {/* Banner CTA Personalizado */}
-          <div className="border border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50 p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 rounded-2xl shadow-sm">
+          <div className="p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 rounded-2xl" style={{backgroundColor:'rgba(245,158,11,0.10)',backdropFilter:'blur(18px)',WebkitBackdropFilter:'blur(18px)',border:'1px solid rgba(245,158,11,0.30)'}}>
             <div>
-              <span className="text-amber-700 font-mono text-xs uppercase tracking-widest block mb-2 font-bold">
+              <span className="text-amber-400 font-mono text-xs uppercase tracking-widest block mb-2 font-bold">
                 A Tu Medida
               </span>
-              <h3 className="text-3xl font-black text-stone-900 uppercase tracking-tight mb-2">
+              <h3 className="text-3xl font-black text-white uppercase tracking-tight mb-2">
                 ¿Buscas un paquete privado o corporativo?
               </h3>
-              <p className="text-stone-700 text-sm font-light max-w-xl">
+              <p className="text-white/65 text-sm font-light max-w-xl">
                 Diseñamos expediciones privadas 1 a 1, aniversarios para parejas o jornadas de team building para empresas con transporte, alojamiento y guianza exclusiva.
               </p>
             </div>
@@ -491,13 +532,13 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
       </section>
 
       {/* 6. TESTIMONIOS (Voces de la Cumbre) */}
-      <section className="py-24 bg-white relative z-20 border-b border-stone-200">
+      <section className="py-24 bg-transparent relative z-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-14">
-            <span className="text-amber-600 font-mono text-xs uppercase tracking-[0.25em] mb-2 block font-semibold">
+            <span className="text-amber-400 font-mono text-xs uppercase tracking-[0.25em] mb-2 block font-semibold">
               Comunidad en Terreno
             </span>
-            <h2 className="text-3xl md:text-4xl font-black text-stone-900 uppercase tracking-tight">
+            <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight">
               Voces de la Cumbre
             </h2>
           </div>
@@ -506,17 +547,17 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
       </section>
 
       {/* 7. EL CÍRCULO & PRÓXIMAS SALIDAS */}
-      <section id="circulo" className="py-28 bg-stone-50/60 relative z-20 border-b border-stone-200">
+      <section id="circulo" className="py-28 bg-transparent relative z-20">
         <div className="max-w-5xl mx-auto px-6">
           
-          <div className="border border-stone-200 p-8 md:p-14 text-center mb-16 bg-white rounded-2xl shadow-xs">
-            <span className="text-amber-600 font-mono text-xs uppercase tracking-[0.25em] mb-3 block font-bold">
+          <div className="p-8 md:p-14 text-center mb-16 rounded-2xl" style={{backgroundColor:'rgba(255,255,255,0.06)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',border:'1px solid rgba(255,255,255,0.11)'}}>
+            <span className="text-amber-400 font-mono text-xs uppercase tracking-[0.25em] mb-3 block font-bold">
               Outdoor Club & Red
             </span>
-            <h2 className="text-3xl md:text-5xl font-black text-stone-900 uppercase tracking-tight mb-4">
+            <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight mb-4">
               El Círculo Santiago Hiking
             </h2>
-            <p className="text-stone-600 text-sm md:text-base font-light mb-8 max-w-xl mx-auto leading-relaxed">
+            <p className="text-white/60 text-sm md:text-base font-light mb-8 max-w-xl mx-auto leading-relaxed">
               La montaña se disfruta en comunidad. Únete al WhatsApp oficial gratuito donde avisamos salidas espontáneas, resolvemos dudas de equipo y compartimos fotos de cada cumbre.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
@@ -541,16 +582,16 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
 
           {/* AGENDA - PRÓXIMAS SALIDAS */}
           <div>
-            <div className="mb-8 flex justify-between items-end border-b border-stone-200 pb-4">
+            <div className="mb-8 flex justify-between items-end border-b border-white/15 pb-4">
               <div>
-                <span className="text-amber-600 font-mono text-[10px] uppercase tracking-widest block font-semibold">Calendario</span>
-                <h3 className="text-2xl font-bold text-stone-900 uppercase tracking-tight">Fechas Abiertas</h3>
+                <span className="text-amber-400 font-mono text-[10px] uppercase tracking-widest block font-semibold">Calendario</span>
+                <h3 className="text-2xl font-bold text-white uppercase tracking-tight">Fechas Abiertas</h3>
               </div>
             </div>
 
             {departures.length === 0 ? (
-              <div className="py-12 text-center border border-dashed border-stone-300 bg-white rounded-2xl">
-                <p className="text-stone-500 text-xs font-mono">No hay salidas programadas para los próximos días. Únete al WhatsApp para enterarte de las aperturas.</p>
+              <div className="py-12 text-center rounded-2xl" style={{backgroundColor:'rgba(255,255,255,0.04)',border:'1px dashed rgba(255,255,255,0.12)'}}>
+                <p className="text-white/40 text-xs font-mono">No hay salidas programadas para los próximos días. Únete al WhatsApp para enterarte de las aperturas.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -558,26 +599,28 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
                   const adv = dep.adventures_catalog;
                   const spots = (adv?.max_pax || 0) - (dep.current_pax || 0);
                   return (
-                    <div key={dep.id} className="border border-stone-200 p-6 flex items-center gap-5 hover:border-amber-500/50 transition-all bg-white rounded-2xl shadow-xs font-mono">
-                      <div className="text-center min-w-[56px] border-r border-stone-200 pr-4">
-                        <p className="text-2xl font-black text-stone-900">{new Date(dep.start_date).toLocaleDateString('es-CL', { timeZone: 'UTC', day: 'numeric' })}</p>
-                        <p className="text-[10px] font-bold text-amber-600 uppercase">
+                    <div key={dep.id} className="p-6 flex items-center gap-5 hover:bg-white/10 transition-all rounded-2xl font-mono" style={{backgroundColor:'rgba(255,255,255,0.06)',backdropFilter:'blur(14px)',WebkitBackdropFilter:'blur(14px)',border:'1px solid rgba(255,255,255,0.10)'}}>
+                      <div className="text-center min-w-[56px] border-r border-white/10 pr-4">
+                        <p className="text-2xl font-black text-white">{new Date(dep.start_date).toLocaleDateString('es-CL', { timeZone: 'UTC', day: 'numeric' })}</p>
+                        <p className="text-[10px] font-bold text-amber-400 uppercase">
                           {new Date(dep.start_date).toLocaleDateString('es-CL', { timeZone: 'UTC', month: 'short' })}
                         </p>
                       </div>
                       <div className="flex-grow">
-                        <p className="font-bold text-stone-900 text-sm uppercase">{adv?.title || 'Expedición'}</p>
-                        <p className="text-xs text-stone-500 mt-0.5">
+                        <p className="font-bold text-white text-sm uppercase">{adv?.title || 'Expedición'}</p>
+                        <p className="text-xs text-white/50 mt-0.5">
                           {spots <= 5 ? (
-                            <span className="text-amber-600 font-bold">Últimos {spots} cupos</span>
+                            <span className="text-amber-400 font-bold">Últimos {spots} cupos</span>
                           ) : (
                             <span>Cupos disponibles</span>
                           )}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold text-stone-900 text-sm">${Number(adv?.base_price).toLocaleString('es-CL')}</p>
-                        <Link href="/reservar" className="text-[10px] text-amber-600 hover:text-stone-900 hover:underline uppercase tracking-wider block mt-1 font-bold">
+                        <p className="font-bold text-white text-sm">
+                          ${Number(((adv?.base_price || 0) >= 5000) ? adv.base_price : 25000).toLocaleString('es-CL')}
+                        </p>
+                        <Link href="/reservar" className="text-[10px] text-amber-400 hover:text-white hover:underline uppercase tracking-wider block mt-1 font-bold">
                           Reservar &rarr;
                         </Link>
                       </div>
@@ -592,9 +635,9 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
       </section>
 
       {/* 8. FOOTER CARTOGRÁFICO (Inspirado en Roark) */}
-      <footer className="pt-16 pb-12 bg-stone-100 border-t border-stone-200 text-stone-600 font-mono text-xs relative z-20">
+      <footer className="pt-16 pb-12 font-mono text-xs relative z-20" style={{backgroundColor:'rgba(0,0,0,0.55)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',borderTop:'1px solid rgba(255,255,255,0.08)'}}>
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 pb-12 border-b border-stone-200">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 pb-12" style={{borderBottom:'1px solid rgba(255,255,255,0.08)'}}>
             
             {/* Columna Marca */}
             <div className="space-y-4">
@@ -615,12 +658,12 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
                   className="h-5 sm:h-6 w-auto object-contain"
                 />
               </div>
-              <p className="text-stone-600 text-xs font-sans font-light leading-relaxed">
+              <p className="text-white/50 text-xs font-sans font-light leading-relaxed">
                 {lang === 'en'
                   ? 'Expeditions in the Chilean Andes, backcountry safety, and summits above Santiago. Guided by Gaz.'
                   : 'Expediciones en los Andes chilenos, seguridad en montaña y cumbres sobre el valle de Santiago. Guiado por Gaz.'}
               </p>
-              <p className="text-[11px] text-stone-500 font-mono">
+              <p className="text-[11px] text-white/30 font-mono">
                 CORDILLERA DE LOS ANDES · SANTIAGO DE CHILE <br />
                 LAT -33.35° S · LON -70.51° W
               </p>
@@ -628,7 +671,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
 
             {/* Columna Rutas */}
             <div>
-              <p className="text-stone-900 text-xs font-bold uppercase tracking-widest mb-4">Expediciones</p>
+              <p className="text-white text-xs font-bold uppercase tracking-widest mb-4">Expediciones</p>
               <ul className="space-y-2 text-xs">
                 <li><Link href="/desafios/desafio-5am" className="hover:text-amber-600 transition-colors">Desafío 5:00 AM</Link></li>
                 <li><Link href="/desafios/triple-corona" className="hover:text-amber-600 transition-colors">Triple Corona Santiago</Link></li>
@@ -640,7 +683,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
 
             {/* Columna Alianzas */}
             <div>
-              <p className="text-stone-900 text-xs font-bold uppercase tracking-widest mb-4">Ecosistema</p>
+              <p className="text-white text-xs font-bold uppercase tracking-widest mb-4">Ecosistema</p>
               <ul className="space-y-2 text-xs">
                 <li><a href="#alianzas" className="hover:text-amber-600 transition-colors">Cielo, Mar y Tierra</a></li>
                 <li><a href="#alianzas" className="hover:text-amber-600 transition-colors">Hoteles & Refugios Aliados</a></li>
@@ -652,7 +695,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
 
             {/* Columna Contacto */}
             <div>
-              <p className="text-stone-900 text-xs font-bold uppercase tracking-widest mb-4">Contacto Directo</p>
+              <p className="text-white text-xs font-bold uppercase tracking-widest mb-4">Contacto Directo</p>
               <ul className="space-y-2 text-xs">
                 <li>WhatsApp Oficial: <a href="https://wa.me/56957958467" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:underline font-semibold">+56 9 5795 8467</a></li>
                 <li>Instagram: <a href="https://instagram.com/santiagohiking" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:underline font-semibold">@santiagohiking</a></li>
@@ -662,7 +705,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
 
           </div>
 
-          <div className="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] text-stone-500">
+          <div className="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] text-white/35">
             <p>&copy; 2026 GAZ_STYLE · SANTIAGO HIKING. TODOS LOS DERECHOS RESERVADOS.</p>
             <div className="flex gap-6">
               <Link href="/faq" className="hover:text-stone-900 transition-colors">FAQ & Montaña</Link>

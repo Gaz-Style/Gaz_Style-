@@ -34,7 +34,7 @@ export default function HeroCarousel() {
                     }`}
                 />
             ))}
-            <div className="absolute inset-0 bg-black/35" />
+            <div className="absolute inset-0 bg-gradient-to-b from-stone-950/45 via-transparent to-stone-950/65" />
         </div>
     );
 }

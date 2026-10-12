@@ -223,10 +223,23 @@ export default function RootLayout({
           {`
             if ('serviceWorker' in navigator) {
               window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js').then(
-                  function(registration) { console.log('SW registered: ', registration.scope); },
-                  function(err) { console.log('SW registration failed: ', err); }
-                );
+                var isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                if (isLocal) {
+                  // En localhost desregistramos cualquier SW y limpiamos cachés para ver siempre la versión real en tiempo real
+                  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for (var r of registrations) { r.unregister(); }
+                  });
+                  if ('caches' in window) {
+                    caches.keys().then(function(names) {
+                      for (var name of names) { caches.delete(name); }
+                    });
+                  }
+                } else {
+                  navigator.serviceWorker.register('/sw.js').then(
+                    function(registration) { console.log('SW registered: ', registration.scope); },
+                    function(err) { console.log('SW registration failed: ', err); }
+                  );
+                }
               });
             }
           `}

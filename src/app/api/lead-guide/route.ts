@@ -4,7 +4,15 @@ import { createClient } from '@supabase/supabase-js';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { email, lang = 'es' } = body;
+    const { 
+      email, 
+      lang = 'es', 
+      phone = '', 
+      experience_level = '', 
+      preferred_style = '', 
+      recommended_route = '', 
+      discount_code = 'CUMBRE10K' 
+    } = body;
 
     if (!email || !email.includes('@')) {
       return NextResponse.json(
@@ -24,8 +32,15 @@ export async function POST(req: Request) {
         await supabase.from('leads_guides').insert([
           {
             email: email.trim().toLowerCase(),
-            guide_type: '5_rutas_santiago',
+            guide_type: 'quiz_cumbre_ideal',
             language: lang,
+            metadata: {
+              phone,
+              experience_level,
+              preferred_style,
+              recommended_route,
+              discount_code,
+            },
             created_at: new Date().toISOString(),
           },
         ]);

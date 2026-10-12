@@ -63,7 +63,7 @@ export default function TestimonialsCarousel() {
   return (
     <>
       {/* Mobile Auto-Fading Carousel */}
-      <div className="md:hidden relative min-h-[300px] mb-8 bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+      <div className="md:hidden relative min-h-[300px] mb-8 overflow-hidden rounded-2xl" style={{backgroundColor:'rgba(255,255,255,0.06)',backdropFilter:'blur(18px)',WebkitBackdropFilter:'blur(18px)',border:'1px solid rgba(255,255,255,0.11)'}}>
         {testimonials.map((t, i) => (
           <div 
             key={i} 
@@ -71,27 +71,27 @@ export default function TestimonialsCarousel() {
           >
             <div>
               <div className="flex items-center justify-between mb-3">
-                <div className="text-amber-500 flex gap-1">
+                <div className="text-amber-400 flex gap-1">
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
                 </div>
-                <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                   <CheckCircle2 className="w-3 h-3" /> {t.tag}
                 </span>
               </div>
-              <p className="text-stone-700 font-light text-sm italic leading-relaxed mb-4">"{t.text}"</p>
+              <p className="text-white/75 font-light text-sm italic leading-relaxed mb-4">"{t.text}"</p>
             </div>
             
-            <div className="flex items-center gap-3 pt-4 border-t border-stone-100">
-              <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-xs uppercase bg-stone-100 text-stone-800 border border-stone-200 shadow-sm shrink-0`}>
+            <div className="flex items-center gap-3 pt-4" style={{borderTop:'1px solid rgba(255,255,255,0.08)'}}>
+              <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-xs uppercase shrink-0 bg-gradient-to-br ${t.color} border`}>
                 {t.initials}
               </div>
               <div>
-                <p className="text-stone-900 text-sm font-bold">{t.name}</p>
-                <p className="text-stone-500 text-xs">{t.origin} · <span className="text-amber-600 font-medium">{t.route}</span></p>
+                <p className="text-white text-sm font-bold">{t.name}</p>
+                <p className="text-white/45 text-xs">{t.origin} · <span className="text-amber-400 font-medium">{t.route}</span></p>
               </div>
             </div>
           </div>
@@ -99,7 +99,7 @@ export default function TestimonialsCarousel() {
         {/* Paginators */}
         <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2 z-20">
           {testimonials.map((_, i) => (
-            <div key={i} className={`h-1.5 rounded-full transition-all duration-500 ${i === current ? 'bg-amber-500 w-6' : 'bg-stone-300 w-1.5'}`} />
+            <div key={i} className={`h-1.5 rounded-full transition-all duration-500 ${i === current ? 'bg-amber-400 w-6' : 'bg-white/20 w-1.5'}`} />
           ))}
         </div>
       </div>
@@ -107,31 +107,41 @@ export default function TestimonialsCarousel() {
       {/* Desktop Grid */}
       <div className="hidden md:grid md:grid-cols-3 gap-6">
         {testimonials.slice(0, 3).map((t, i) => (
-          <div key={i} className="bg-white p-8 rounded-2xl relative flex flex-col justify-between border border-stone-200 shadow-sm hover:shadow-md hover:border-amber-500/40 transition-all duration-300 group">
+          <div
+            key={i}
+            className="p-8 rounded-2xl relative flex flex-col justify-between hover:border-amber-400/50 transition-all duration-300 group"
+            style={{
+              backgroundColor: 'rgba(255,255,255,0.06)',
+              backdropFilter: 'blur(18px)',
+              WebkitBackdropFilter: 'blur(18px)',
+              border: '1px solid rgba(255,255,255,0.11)',
+            }}
+          >
             <div>
               <div className="flex items-center justify-between mb-4">
-                <div className="text-amber-500 flex gap-1">
+                <div className="text-amber-400 flex gap-1">
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
                   <Star className="w-4 h-4 fill-current" />
                 </div>
-                <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                   <CheckCircle2 className="w-3 h-3" /> {t.tag}
                 </span>
               </div>
-              <p className="text-stone-700 font-light text-sm italic mb-6 leading-relaxed">"{t.text}"</p>
+              <Quote className="w-6 h-6 text-white/15 mb-2" />
+              <p className="text-white/70 font-light text-sm italic mb-6 leading-relaxed">{t.text}</p>
             </div>
 
-            <div className="flex items-center gap-3 pt-4 border-t border-stone-100">
-              <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-xs uppercase bg-stone-100 text-stone-800 border border-stone-200 shadow-sm shrink-0 group-hover:scale-105 transition-transform`}>
+            <div className="flex items-center gap-3 pt-4" style={{borderTop:'1px solid rgba(255,255,255,0.08)'}}>
+              <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-xs uppercase bg-gradient-to-br ${t.color} border shrink-0 group-hover:scale-105 transition-transform`}>
                 {t.initials}
               </div>
               <div>
-                <p className="text-stone-900 text-sm font-bold">{t.name}</p>
-                <p className="text-stone-500 text-xs">{t.origin}</p>
-                <p className="text-amber-600 text-[10px] uppercase tracking-wider font-semibold mt-0.5">{t.route}</p>
+                <p className="text-white text-sm font-bold">{t.name}</p>
+                <p className="text-white/40 text-xs">{t.origin}</p>
+                <p className="text-amber-400 text-[10px] uppercase tracking-wider font-semibold mt-0.5">{t.route}</p>
               </div>
             </div>
           </div>

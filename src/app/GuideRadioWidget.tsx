@@ -50,10 +50,19 @@ export default function GuideRadioWidget() {
         target="_blank"
         rel="noopener noreferrer"
         title="Hablar con el Guía Gaz"
-        className="group flex flex-col items-center justify-center py-4 px-2.5 bg-stone-950/80 hover:bg-stone-900/95 backdrop-blur-xl border-l border-y border-white/20 hover:border-white/40 rounded-l-xl shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition-all duration-300 hover:-translate-x-1 cursor-pointer select-none"
+        className="group flex flex-col items-center justify-center py-6 px-3.5 sm:px-4.5 rounded-l-2xl shadow-[-4px_0_25px_rgba(0,0,0,0.15)] transition-all duration-300 hover:-translate-x-2 hover:bg-white/10 cursor-pointer select-none"
+        style={{
+          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+          borderLeft: '1px solid rgba(255, 255, 255, 0.08)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          borderRight: 'none',
+        }}
       >
-        {/* Texto Vertical en blanco minimalista */}
-        <span className="[writing-mode:vertical-rl] rotate-180 text-[10px] font-mono tracking-[0.22em] font-bold text-white transition-opacity group-hover:opacity-90 uppercase">
+        {/* Texto Vertical en blanco */}
+        <span className="[writing-mode:vertical-rl] rotate-180 text-xs sm:text-[13px] font-mono tracking-[0.28em] font-extrabold text-white group-hover:text-amber-300 transition-colors uppercase py-2">
           HABLAR CON GUÍA
         </span>
       </a>
