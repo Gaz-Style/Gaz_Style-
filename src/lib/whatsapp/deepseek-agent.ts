@@ -92,7 +92,7 @@ REGLAS DE ORO OBLIGATORIAS:
         const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID || process.env.WHATSAPP_PHONE_ID;
         
         if (metaToken && phoneId) {
-            await fetch(`https://graph.facebook.com/v21.0/${phoneId}/messages`, {
+            const waRes = await fetch(`https://graph.facebook.com/v21.0/${phoneId}/messages`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${metaToken}`,
@@ -105,6 +105,8 @@ REGLAS DE ORO OBLIGATORIAS:
                     text: { body: aiReply }
                 })
             });
+            const waData = await waRes.json();
+            console.log('[DeepSeek Agent] Meta WhatsApp Outbound Response:', waData);
         }
     } catch (e) {
         console.error("Error en processDirectWhatsAppMessage:", e);
