@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import MicrosoftClarity from "@/components/MicrosoftClarity";
 import TikTokPixel from "@/components/TikTokPixel";
+import LinkedInInsight from "@/components/LinkedInInsight";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -161,9 +162,10 @@ export default function RootLayout({
 
         {children}
 
-        {/* Microsoft Clarity & TikTok Pixel */}
+        {/* Analytics & Tracking Tags */}
         <MicrosoftClarity />
         <TikTokPixel />
+        <LinkedInInsight />
 
         {/* 1. Google Tag Manager */}
         {gtmId && (

@@ -17,6 +17,7 @@ Este documento centraliza todos los hitos completados, las tareas pendientes par
 | **Microsoft Clarity** | `ywf770g6y5` (Grabaciones de sesión y mapas de calor) | ✅ Configurado |
 | **TikTok Pixel** | `DB6827BC77UDJT301L90` | ✅ Configurado |
 | **TikTok Events API (CAPI)** | Token Servidor: `caaa066fae652...` | ✅ Probado (`code: 0, message: OK`) |
+| **LinkedIn Insight Tag** | Partner ID: `11063657` (Networking & B2B) | ✅ Configurado |
 | **Google Search Console** | Archivo `google42ee4234a9dc3e43.html` + Meta tag | ✅ Listo en `public/` y `<head>` |
 | **Sitemap & SEO** | `https://www.santiagohiking.com/sitemap.xml` dinámico | ✅ Generando rutas |
 
