@@ -98,12 +98,16 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                         <Link href="/" className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white uppercase tracking-widest transition-colors">
                             <ArrowLeft className="w-4 h-4" /> Volver
                         </Link>
-                        <div className="flex items-center gap-3">
-                            <Image src="/logo.png" alt="Gaz Style Logo" width={24} height={24} className="object-contain drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
-                            <div className="font-serif font-bold text-xl tracking-wider text-white">
-                                GAZ<span className="text-amber-500 italic">_Style</span>
-                            </div>
-                        </div>
+                        <Link href="/" className="flex items-center group transition-transform hover:scale-105 duration-300">
+                            <Image 
+                                src="/santiago-hiking-10.png" 
+                                alt="Santiago Hiking" 
+                                width={150} 
+                                height={69} 
+                                className="h-9 w-auto object-contain drop-shadow-[0_2px_10px_rgba(245,158,11,0.25)]" 
+                                priority 
+                            />
+                        </Link>
                     </div>
                 </nav>
 

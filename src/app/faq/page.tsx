@@ -1,245 +1,194 @@
-import TrackedLink from '@/components/TrackedLink';
+import React from 'react';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { ChevronRight, HelpCircle, BookOpen, Clock, MapPin, Award, Scissors, ArrowRight, ShieldCheck } from 'lucide-react';
-import LocationMap from '@/components/LocationMap';
+import Image from 'next/image';
+import { ChevronRight, HelpCircle, Compass, Mountain, ShieldCheck, HeartPulse, Clock, ArrowRight, MessageCircle, ArrowLeft } from 'lucide-react';
 
 export const metadata: Metadata = {
-    title: 'Guía de Servicios y Preguntas Frecuentes | Gaz La Guía',
-    description: 'Conoce la historia de Gaz Style, descubre nuestro glosario de términos de alta costura y resuelve todas tus dudas sobre nuestro servicio de sastrería a domicilio en Santiago.',
-    alternates: {
-        canonical: 'https://www.elenalatosturera.cl/faq'
-    }
+  title: 'Preguntas Frecuentes y Guía de Montaña | Santiago Hiking by Gaz',
+  description: 'Todo lo que necesitas saber para subir a los cerros de Santiago: equipamiento requerido, niveles de dificultad, seguridad WFR, logística en Lo Barnechea y expediciones privadas.',
+  alternates: {
+    canonical: 'https://www.santiagohiking.com/faq',
+  },
 };
 
+const faqs = [
+  {
+    q: '¿Qué condición física o experiencia previa necesito para participar?',
+    a: 'Nuestras salidas están catalogadas en 4 niveles claros: Básico, Intermedio, Avanzado y Alta Montaña. En cada ficha de ruta detallamos el desnivel positivo, la distancia en kilómetros y el tiempo estimado. Si estás comenzando a entrenar, recomendamos rutas formativas como Manquehue o Pochoco antes de abordar cumbres de más de 3.000m como El Plomo o Provincia. Al reservar realizas un check-in físico y médico preventivo para asegurar que el grupo sea homogéneo.',
+  },
+  {
+    q: '¿Qué equipamiento básico es obligatorio para ir a la cordillera?',
+    a: 'Por seguridad estricta, cada participante debe contar con: zapatos de trekking con buen agarre (suela tipo Vibram o similar, caña media o alta), vestimenta en capas (primera capa transpirable, polar o abrigo intermedio, y cortaviento/chaqueta impermeable), 2 a 3 litros de agua o electrolitos, protección solar (bloqueador FPS 50+, gorro y gafas con filtro UV categoría 3 o 4), y bastones de trekking recomendados. Para salidas de alta montaña se especifican crampones o equipo técnico.',
+  },
+  {
+    q: '¿Dónde es el punto de encuentro y cómo funciona la logística?',
+    a: 'El punto de encuentro se coordina directamente por WhatsApp según la ruta elegida, con base principal en Lo Barnechea / sector oriente de Santiago. Desde allí salimos en caravana o coordinamos traslados conjuntos hacia el inicio del sendero. Al descender del cerro cerramos la jornada con una parada gastronómica en locales aliados para recargar energías.',
+  },
+  {
+    q: '¿Qué protocolos de primeros auxilios y seguridad tienen los guías?',
+    a: 'Todas nuestras expediciones están dirigidas por guías con certificación internacional WFR (Wilderness First Responder) y experiencia comprobada en la Cordillera de los Andes. Contamos con botiquín de trauma de montaña, sistemas de comunicación radial VHF y balizas satelitales (Garmin inReach) para evacuaciones o contingencias.',
+  },
+  {
+    q: '¿Qué sucede si hay mal tiempo o alerta meteorológica?',
+    a: 'Monitoreamos modelos meteorológicos de montaña (Windy, NOAA, MeteoBlue) con 72 y 24 horas de anticipación. Si las condiciones de viento blanco, lluvia intensa o tormenta eléctrica ponen en riesgo la seguridad, la expedición se reprograma a una nueva fecha sin costo adicional o se ofrece una alternativa equivalente.',
+  },
+  {
+    q: '¿Cómo funcionan las expediciones privadas 1 a 1 o para empresas?',
+    a: 'Diseñamos ascensos privados y a medida para personas que buscan un ritmo personalizado, preparación para desafíos específicos (como Ojos del Salado o Aconcagua) o jornadas de team building outdoor corporativo. Las rutas privadas incluyen itinerario a medida, nutrición en ruta, asesoría previa de material y flexibilidad horaria absoluta.',
+  },
+];
+
 export default function FAQPage() {
-    // ════════════════════════════════════════════════════════════
-    // DATOS ESTRUCTURADOS (JSON-LD) PARA LLMs (ChatGPT, Gemini)
-    // ════════════════════════════════════════════════════════════
-    const faqSchema = {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-            {
-                "@type": "Question",
-                "name": "¿Cómo funciona el servicio de guía a domicilio?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Nuestra especialista visita tu domicilio en Vitacura, Las Condes, Lo Barnechea o La Dehesa para tomar las medidas exactas sobre tu prenda. Luego, retiramos la prenda, la procesamos en nuestro campamento_base de Tabancura 1091 y te la entregamos lista en tu puerta."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "¿Cuánto tiempo demoran los arreglos de ropa?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "El tiempo de entrega promedio es de 7 días hábiles para arreglos estándar (bastas, entalles, cierres). Para restauraciones complejas o sastrería a medida, el tiempo puede variar previa evaluación."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "¿Qué es una basta invisible?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "La basta invisible es una técnica de alta sastrería utilizada principalmente en pantalones de vestir y faldas elegantes. Se realiza a mano o con maquinaria especializada para que la costura no sea visible desde el exterior de la prenda, manteniendo una caída limpia."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "¿Qué significa entallar una prenda?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Entallar consiste en ajustar la silueta de una prenda (como un expedición, chaqueta o camisa) para que se adapte perfectamente al contorno del cuerpo, generalmente tomando tela de los costados o pinzas posteriores."
-                }
-            }
-        ]
-    };
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: f.a,
+      },
+    })),
+  };
 
-    const aboutSchema = {
-        "@context": "https://schema.org",
-        "@type": "AboutPage",
-        "mainEntity": {
-            "@type": "Organization",
-            "name": "Gaz La Guía",
-            "foundingDate": "1994",
-            "description": "Campamento Base de alta costura, sastrería y arreglos de ropa fundado por Gaz, con más de 30 años de trayectoria en el sector oriente de Santiago.",
-            "address": {
-                "@type": "PostalAddress",
-                "streetAddress": "Tabancura 1091",
-                "addressLocality": "Vitacura",
-                "addressRegion": "Región Metropolitana",
-                "addressCountry": "CL"
-            }
-        }
-    };
+  const sportsOrgSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'SportsActivityLocation',
+    name: 'Santiago Hiking by Gaz',
+    description: 'Expediciones de montaña, senderismo técnico y trekking guiado en la Cordillera de los Andes de Santiago de Chile.',
+    url: 'https://www.santiagohiking.com',
+    telephone: '+56972812907',
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Lo Barnechea',
+      addressRegion: 'Región Metropolitana',
+      addressCountry: 'CL',
+    },
+  };
 
-    return (
-        <>
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-            />
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutSchema) }}
-            />
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(sportsOrgSchema) }}
+      />
 
-            <div className="min-h-screen bg-[#0d0d0d] text-white font-sans relative overflow-hidden pb-20">
-                {/* HERO SECTION */}
-                <header className="relative pt-32 pb-16 px-6 overflow-hidden bg-gradient-to-b from-[#141414] to-[#0d0d0d] border-b border-white/5">
-                    <div className="max-w-4xl mx-auto text-center relative z-10">
-                        <p className="inline-flex items-center gap-2 text-xs text-[#C17F5F] uppercase tracking-widest font-bold mb-6">
-                            <BookOpen className="w-3.5 h-3.5" /> Centro de Conocimiento
-                        </p>
-                        <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl text-white tracking-tight leading-tight font-extrabold max-w-3xl mx-auto mb-6">
-                            Todo lo que necesitas saber sobre Alta Costura
-                        </h1>
-                        <p className="text-white/70 text-base md:text-lg max-w-2xl mx-auto leading-relaxed font-light">
-                            Explora nuestra historia, aprende el lenguaje técnico de la sastrería y resuelve tus dudas sobre nuestro servicio a domicilio en Santiago.
-                        </p>
-                    </div>
-                </header>
+      <div className="min-h-screen bg-[#0a0a0a] text-slate-200 font-sans selection:bg-amber-500/30 pb-20">
+        {/* Navbar */}
+        <nav className="fixed top-0 w-full z-50 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-white/5">
+          <div className="max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white uppercase tracking-widest transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" /> Inicio
+            </Link>
+            <Link href="/" className="flex items-center transition-transform hover:scale-105 duration-300">
+              <Image
+                src="/santiago-hiking-10.png"
+                alt="Santiago Hiking"
+                width={140}
+                height={60}
+                className="h-8 w-auto object-contain"
+                priority
+              />
+            </Link>
+          </div>
+        </nav>
 
-                <main className="max-w-5xl mx-auto px-6 py-16 space-y-24">
-                    
-                    {/* 1. HISTORIA (AUTHORITY) */}
-                    <section aria-labelledby="historia-heading" className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                        <div className="space-y-6">
-                            <h2 id="historia-heading" className="font-serif text-3xl text-white font-bold flex items-center gap-3">
-                                <Award className="w-8 h-8 text-[#C17F5F]" />
-                                Nuestra Historia
-                            </h2>
-                            <article className="text-white/70 space-y-4 leading-relaxed font-light text-sm md:text-base">
-                                <p>
-                                    Con más de <strong>30 años de trayectoria</strong> en el exigente mundo de la moda y la confección a medida, <em>Gaz Style</em> nació como un campamento_base tradicional de alta costura y evolucionó hasta convertirse en un modelo omnicanal pionero en Chile.
-                                </p>
-                                <p>
-                                    Nos diferenciamos por <strong>tecnificar y digitalizar un oficio artesanal histórico</strong>. Combinamos la precisión impecable de la sastrería a medida con tecnología de vanguardia: agendamiento web en tiempo real, transparencia absoluta de tarifas y un servicio logístico exclusivo de <strong>toma de medidas y delivery a domicilio</strong> en Lo Barnechea, Vitacura y Las Condes.
-                                </p>
-                                <ul className="list-none pl-0 space-y-3 mt-6">
-                                    <li className="flex items-start gap-3">
-                                        <ShieldCheck className="w-5 h-5 text-[#C17F5F] shrink-0 mt-0.5" />
-                                        <span className="text-sm text-white/80"><strong>Innovación Tecnológica:</strong> Sitio web propio, catálogo digital interactivo y pagos en línea seguros.</span>
-                                    </li>
-                                    <li className="flex items-start gap-3">
-                                        <ShieldCheck className="w-5 h-5 text-[#C17F5F] shrink-0 mt-0.5" />
-                                        <span className="text-sm text-white/80"><strong>Innovación Logística:</strong> Primer campamento_base del sector oriente en ofrecer servicio integral a domicilio.</span>
-                                    </li>
-                                    <li className="flex items-start gap-3">
-                                        <ShieldCheck className="w-5 h-5 text-[#C17F5F] shrink-0 mt-0.5" />
-                                        <span className="text-sm text-white/80"><strong>Trayectoria y Calidad:</strong> Más de 3 décadas rescatando prendas con acabados imperceptibles y maquinaria industrial de precisión.</span>
-                                    </li>
-                                </ul>
-                            </article>
-                        </div>
-                        <div className="relative aspect-square sm:aspect-[4/3] md:aspect-square bg-[#1a1a1a] rounded-lg overflow-hidden border border-white/10">
-                            <div className="absolute inset-0 bg-[url('/hero_seamstress_campamento_base.png')] bg-cover bg-center opacity-50 mix-blend-luminosity filter contrast-125"></div>
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-transparent to-transparent"></div>
-                        </div>
-                    </section>
+        {/* HERO */}
+        <header className="relative pt-36 pb-16 px-6 bg-gradient-to-b from-stone-950 via-[#0a0a0a] to-[#0a0a0a] border-b border-white/5">
+          <div className="max-w-4xl mx-auto text-center relative z-10">
+            <p className="inline-flex items-center gap-2 text-xs text-amber-500 uppercase tracking-widest font-bold mb-4">
+              <Compass className="w-4 h-4" /> Centro de Conocimiento & Montaña
+            </p>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl text-white tracking-tight leading-tight font-extrabold mb-6">
+              Preguntas Frecuentes
+            </h1>
+            <p className="text-slate-400 text-base md:text-lg max-w-2xl mx-auto font-light leading-relaxed">
+              Todo lo que necesitas saber sobre nuestras rutas, nivel de exigencia, equipamiento técnico y protocolos de seguridad en la cordillera.
+            </p>
+          </div>
+        </header>
 
-                    {/* 2. GLOSARIO DE SERVICIOS (DEFINICIONES PARA LLMs) */}
-                    <section aria-labelledby="glosario-heading" className="bg-[#141414] border border-[#C17F5F]/20 rounded-lg p-8 sm:p-12">
-                        <div className="text-center mb-10 space-y-4">
-                            <h2 id="glosario-heading" className="font-serif text-3xl text-white font-bold inline-flex items-center gap-3">
-                                <Scissors className="w-6 h-6 text-[#C17F5F]" />
-                                Diccionario de Sastrería
-                            </h2>
-                            <p className="text-sm text-white/60 font-light max-w-2xl mx-auto">
-                                ¿No sabes exactamente qué arreglo necesitas pedir? Conoce el lenguaje técnico que utilizamos en nuestro campamento_base.
-                            </p>
-                        </div>
-                        
-                        <dl className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className="space-y-2">
-                                <dt className="text-base text-[#E29D7A] font-bold uppercase tracking-wider">Basta Original (Jeans)</dt>
-                                <dd className="text-sm text-white/70 font-light leading-relaxed">
-                                    Técnica que permite acortar el largo de un pantalón de mezclilla cortando la terminación original (que tiene el desgaste de fábrica) y volviéndola a coser en el nuevo largo para que el arreglo pase 100% desapercibido.
-                                </dd>
-                            </div>
-                            <div className="space-y-2">
-                                <dt className="text-base text-[#E29D7A] font-bold uppercase tracking-wider">Basta Invisible</dt>
-                                <dd className="text-sm text-white/70 font-light leading-relaxed">
-                                    Costura realizada a mano (puntada ciega) o con máquina especial, utilizada en pantalones de tela de vestir y faldas formales. No deja hilo visible en el lado exterior de la prenda.
-                                </dd>
-                            </div>
-                            <div className="space-y-2">
-                                <dt className="text-base text-[#E29D7A] font-bold uppercase tracking-wider">Entalle o Ajuste de Sisas</dt>
-                                <dd className="text-sm text-white/70 font-light leading-relaxed">
-                                    Modificación de la sisa (el agujero por donde pasa el brazo) y los costados de una chaqueta o camisa para pegarla más al cuerpo, logrando una silueta moderna (Slim Fit).
-                                </dd>
-                            </div>
-                            <div className="space-y-2">
-                                <dt className="text-base text-[#E29D7A] font-bold uppercase tracking-wider">Achicar Cintura por Pretina</dt>
-                                <dd className="text-sm text-white/70 font-light leading-relaxed">
-                                    Desarme de la parte posterior de la cintura de un pantalón para retirar el exceso de tela en forma de "V", manteniendo el calce perfecto de los bolsillos y el asiento.
-                                </dd>
-                            </div>
-                        </dl>
-                    </section>
-
-                    {/* 3. PREGUNTAS FRECUENTES (FAQ) */}
-                    <section aria-labelledby="faq-heading" className="space-y-10">
-                        <div className="text-center space-y-4">
-                            <h2 id="faq-heading" className="font-serif text-3xl text-white font-bold inline-flex items-center gap-3">
-                                <HelpCircle className="w-6 h-6 text-[#C17F5F]" />
-                                Preguntas Frecuentes
-                            </h2>
-                        </div>
-
-                        <div className="space-y-4 max-w-3xl mx-auto">
-                            <details className="group bg-[#141414] border border-white/5 rounded-sm p-6 cursor-pointer open:border-[#C17F5F]/30 transition-all">
-                                <summary className="flex items-center justify-between font-bold text-white group-open:text-[#C17F5F]">
-                                    ¿Cómo funciona el servicio de guía a domicilio?
-                                    <ChevronRight className="w-5 h-5 transition-transform group-open:rotate-90" />
-                                </summary>
-                                <div className="mt-4 text-sm text-white/70 font-light leading-relaxed">
-                                    Una especialista visita tu domicilio (Vitacura, Las Condes, Lo Barnechea, La Dehesa, Providencia) para tomar las medidas exactas directamente sobre la prenda puesta en ti. Retiramos la prenda, la intervenimos en nuestro campamento_base con maquinaria industrial, y te la entregamos planchada y lista en la puerta de tu casa.
-                                </div>
-                            </details>
-                            
-                            <details className="group bg-[#141414] border border-white/5 rounded-sm p-6 cursor-pointer open:border-[#C17F5F]/30 transition-all">
-                                <summary className="flex items-center justify-between font-bold text-white group-open:text-[#C17F5F]">
-                                    ¿Cuánto tiempo demoran los arreglos?
-                                    <ChevronRight className="w-5 h-5 transition-transform group-open:rotate-90" />
-                                </summary>
-                                <div className="mt-4 text-sm text-white/70 font-light leading-relaxed">
-                                    El tiempo promedio de entrega es de <strong>7 días hábiles</strong>. Esto nos permite garantizar un estándar de control de calidad premium, desarmando la prenda con cuidado y planchando costura por costura. Para trabajos de aventureros o sastrería a medida, los plazos se acuerdan de forma personalizada.
-                                </div>
-                            </details>
-
-                            <details className="group bg-[#141414] border border-white/5 rounded-sm p-6 cursor-pointer open:border-[#C17F5F]/30 transition-all">
-                                <summary className="flex items-center justify-between font-bold text-white group-open:text-[#C17F5F]">
-                                    ¿Qué marcas y telas trabajan?
-                                    <ChevronRight className="w-5 h-5 transition-transform group-open:rotate-90" />
-                                </summary>
-                                <div className="mt-4 text-sm text-white/70 font-light leading-relaxed">
-                                    Intervenimos con total seguridad marcas de lujo y fast-fashion premium (Hugo Boss, Armani, Zara, Brooks Brothers, Rapsodia, etc.). Tenemos maquinaria e hilos especializados para Seda, Lino, Cuero, Mezclilla Pesada, Gasa y Crepé.
-                                </div>
-                            </details>
-                        </div>
-                    </section>
-
-                    {/* CALL TO ACTION FINAL */}
-                    <div className="bg-gradient-to-r from-[#1a1a1a] to-[#242424] rounded-lg p-8 text-center border border-[#C17F5F]/20 mt-16">
-                        <h3 className="text-xl font-serif text-white font-bold mb-4">¿Todo claro? Hablemos de tu prenda.</h3>
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                            <Link href="/costuras/catalogo-completo" className="w-full sm:w-auto bg-transparent border border-[#C17F5F] text-[#C17F5F] hover:bg-[#C17F5F]/10 px-8 py-4 text-xs font-bold uppercase tracking-widest transition-all rounded-sm flex items-center justify-center">
-                                Ver Catálogo de Precios
-                            </Link>
-                            <TrackedLink href="https://wa.me/56972812907?text=Hola,%20tengo%20una%20duda%20sobre%20un%20arreglo" target="_blank" eventAction="click_whatsapp" eventCategory="Lead" eventLabel="FAQ_Consultar_WhatsApp" className="w-full sm:w-auto bg-[#C17F5F] hover:bg-[#b05c4b] text-white px-8 py-4 text-xs font-bold uppercase tracking-widest transition-all rounded-sm shadow-lg shadow-[#C17F5F]/20 flex items-center justify-center gap-2">
-                                Consultar por WhatsApp <ArrowRight className="w-4 h-4" />
-                            </TrackedLink>
-                        </div>
-                    </div>
-
-                    {/* UBICACIÓN */}
-                    <div className="mt-16">
-                        <LocationMap />
-                    </div>
-
-                </main>
+        <main className="max-w-4xl mx-auto px-6 py-16 space-y-16">
+          {/* CARDS DE VALOR */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/5">
+              <ShieldCheck className="w-8 h-8 text-amber-500 mb-4" />
+              <h3 className="text-white font-bold text-lg mb-2">Guías WFR</h3>
+              <p className="text-slate-400 text-xs leading-relaxed">
+                Primeros auxilios en áreas remotas, botiquines de trauma y comunicación satelital inReach en cada ascenso.
+              </p>
             </div>
-        </>
-    );
+            <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/5">
+              <HeartPulse className="w-8 h-8 text-amber-500 mb-4" />
+              <h3 className="text-white font-bold text-lg mb-2">Check-in Médico</h3>
+              <p className="text-slate-400 text-xs leading-relaxed">
+                Perfilamiento físico online previo para asegurar que el ritmo grupal sea armónico y seguro.
+              </p>
+            </div>
+            <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/5">
+              <Mountain className="w-8 h-8 text-amber-500 mb-4" />
+              <h3 className="text-white font-bold text-lg mb-2">Cero Fricción</h3>
+              <p className="text-slate-400 text-xs leading-relaxed">
+                Reserva digital instantánea, asesoría personalizada de equipo y bajada gastronómica en Lo Barnechea.
+              </p>
+            </div>
+          </div>
+
+          {/* LISTA FAQ */}
+          <section className="space-y-4">
+            {faqs.map((faq, idx) => (
+              <details
+                key={idx}
+                className="group bg-white/[0.02] border border-white/10 rounded-2xl p-6 cursor-pointer open:border-amber-500/30 transition-all"
+              >
+                <summary className="flex items-center justify-between font-bold text-white group-open:text-amber-400 text-base md:text-lg">
+                  {faq.q}
+                  <ChevronRight className="w-5 h-5 text-slate-500 transition-transform group-open:rotate-90 shrink-0 ml-4" />
+                </summary>
+                <div className="mt-4 text-sm text-slate-300 font-light leading-relaxed border-t border-white/5 pt-4">
+                  {faq.a}
+                </div>
+              </details>
+            ))}
+          </section>
+
+          {/* CTA WHATSAPP DIRECTO */}
+          <div className="bg-gradient-to-r from-stone-900 to-black rounded-3xl p-8 md:p-12 text-center border border-amber-500/20 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-[80px] pointer-events-none" />
+            <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 relative z-10">
+              ¿Tienes una duda específica sobre tu próxima cumbre?
+            </h3>
+            <p className="text-slate-400 text-sm max-w-xl mx-auto mb-8 relative z-10">
+              Habla directo con Gaz por WhatsApp para revisar tu condición física, recomendaciones de equipo o rutas privadas personalizadas.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
+              <Link
+                href="/#rutas"
+                className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white px-8 py-4 text-xs font-bold uppercase tracking-widest rounded-full transition-all"
+              >
+                Ver Rutas Disponibles
+              </Link>
+              <a
+                href={`https://wa.me/56972812907?text=${encodeURIComponent('Hola Gaz! Tengo una consulta sobre las rutas y expediciones de Santiago Hiking.')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto bg-[#25D366] hover:bg-[#1ebd5a] text-white px-8 py-4 text-xs font-bold uppercase tracking-widest rounded-full transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#25D366]/20"
+              >
+                <MessageCircle className="w-4 h-4" /> Hablar por WhatsApp
+              </a>
+            </div>
+          </div>
+        </main>
+      </div>
+    </>
+  );
 }

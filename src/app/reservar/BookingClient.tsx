@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import { createBookingWithMercadoPago } from './actions';
+import { trackBeginCheckout } from '@/lib/analytics';
 
 function getDifficultyColor(level: string) {
     if (!level) return 'text-slate-400 bg-white/5';
@@ -47,6 +48,11 @@ export default function BookingClient({ departures, initialAdventureId }: { depa
         }
         setIsSubmitting(true);
         try {
+            trackBeginCheckout({
+                id: selected.id,
+                title: selected.adventures_catalog?.title || 'Expedición',
+                price: total
+            });
             const result = await createBookingWithMercadoPago({
                 first_name: form.first_name,
                 last_name: form.last_name,

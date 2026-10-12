@@ -1,139 +1,60 @@
 import { MetadataRoute } from 'next';
+import { createClient } from '@supabase/supabase-js';
 
-export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = 'https://elenalaguía.cl';
-    const communes = ['vitacura', 'las-condes', 'lo-barnechea', 'providencia', 'la-reina', 'nunoa'];
-    const costurasSectors = ['vitacura', 'las-condes', 'lo-barnechea', 'la-dehesa', 'los-trapenses', 'el-huinganal'];
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.santiagohiking.com';
 
-    const staticRoutes: MetadataRoute.Sitemap = [
-        {
-            url: baseUrl,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 1,
-        },
-        {
-            url: `${baseUrl}/agenda`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.9,
-        },
-        {
-            url: `${baseUrl}/aventureros`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.95,
-        },
-        {
-            url: `${baseUrl}/sastreria`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.9,
-        },
-        {
-            url: `${baseUrl}/servicios`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/costuras`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.85,
-        },
-        {
-            url: `${baseUrl}/restauracion`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/graduacion`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.85,
-        },
-        {
-            url: `${baseUrl}/opiniones`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.7,
-        },
-        {
-            url: `${baseUrl}/portafolio`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.9,
-        },
-        {
-            url: `${baseUrl}/portafolio/aventureros/sofia-tres-expedicións-matrimonio-las-condes`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.95,
-        },
-        {
-            url: `${baseUrl}/faq`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.6,
-        },
-        {
-            url: `${baseUrl}/vip`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.6,
-        },
-        {
-            url: `${baseUrl}/registro`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.5,
-        },
-        {
-            url: `${baseUrl}/cursos`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.6,
-        },
-        {
-            url: `${baseUrl}/presupuesto`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.4,
-        },
-    ];
+  const staticRoutes: MetadataRoute.Sitemap = [
+    {
+      url: baseUrl,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 1.0,
+    },
+    {
+      url: `${baseUrl}/reservar`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/faq`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.85,
+    },
+    {
+      url: `${baseUrl}/llms.txt`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+  ];
 
-    // Generar dinámicamente las páginas satélite para cada comuna/sector
-    const dynamicRoutes: MetadataRoute.Sitemap = [];
+  let dynamicRoutes: MetadataRoute.Sitemap = [];
 
-    communes.forEach(commune => {
-        // 1. Ruta de Graduación por Comuna
-        dynamicRoutes.push({
-            url: `${baseUrl}/graduacion/${commune}`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.7,
-        });
+  try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
 
-        // 2. Ruta de Aventureros por Comuna
-        dynamicRoutes.push({
-            url: `${baseUrl}/aventureros/${commune}`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.8,
-        });
-    });
+    const { data: routes } = await supabase
+      .from('adventures_catalog')
+      .select('id, updated_at')
+      .eq('is_active', true);
 
-    costurasSectors.forEach(sector => {
-        // 3. Ruta de Costuras por Sector Premium
-        dynamicRoutes.push({
-            url: `${baseUrl}/costuras/${sector}`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.9, // Máxima prioridad por la alta transaccionalidad local
-        });
-    });
+    if (routes && routes.length > 0) {
+      dynamicRoutes = routes.map((route) => ({
+        url: `${baseUrl}/rutas/${route.id}`,
+        lastModified: route.updated_at ? new Date(route.updated_at) : new Date(),
+        changeFrequency: 'weekly',
+        priority: 0.9,
+      }));
+    }
+  } catch (error) {
+    console.error('Error generating dynamic sitemap routes:', error);
+  }
 
-    return [...staticRoutes, ...dynamicRoutes];
+  return [...staticRoutes, ...dynamicRoutes];
 }

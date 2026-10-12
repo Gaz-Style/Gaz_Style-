@@ -5,6 +5,7 @@ import HeroCarousel from "./HeroCarousel";
 import { ArrowLeft, Mountain, ShieldCheck, Clock, HeartPulse, Compass, Download, MessageCircle, Camera, Tent, ArrowRight, CheckCircle2, Star, Globe } from "lucide-react";
 import TestimonialsCarousel from "./TestimonialsCarousel";
 import LanguageSwitcher from "./LanguageSwitcher";
+import LeadMagnetForm from "./LeadMagnetForm";
 import { createClient } from '@supabase/supabase-js';
 
 export const dynamic = 'force-dynamic';
@@ -31,7 +32,7 @@ const dict: Record<string, any> = {
     heroSubtitle: "Mentalidad, conexión y aventura. Vamos a la montaña.",
     exploreRoutes: "Explorar Rutas",
     joinClub: "El Círculo",
-    leadTitle: "Las 5 rutas para empezar.",
+    leadTitle: "Guía de rutas imperdibles en Santiago.",
     leadSub: "Recibe la guía en tu correo.",
     leadBtn: "Recibir Guía",
     experiences: "Experiencias",
@@ -75,8 +76,8 @@ const dict: Record<string, any> = {
     spotsAvail: "Cupos Abiertos",
     perPerson: "por persona",
     book: "Anotarme",
-    footerText: "Tu compañero de ruta. Creador de contenido y guía de montaña.",
-    rights: "Todos los derechos reservados."
+    footerText: "Guía de montaña y creador de contenido.",
+    rights: "Derechos reservados."
   },
   en: {
     bookHike: "Book a Hike",
@@ -87,7 +88,7 @@ const dict: Record<string, any> = {
     heroSubtitle: "Mindset, connection, and adventure. Let's hit the mountains.",
     exploreRoutes: "Explore Routes",
     joinClub: "Join the Club",
-    leadTitle: "Top 5 beginner routes.",
+    leadTitle: "Must-do hiking trails in Santiago.",
     leadSub: "Get our exclusive PDF guide in your inbox.",
     leadBtn: "Get Guide",
     experiences: "Experiences",
@@ -131,7 +132,7 @@ const dict: Record<string, any> = {
     spotsAvail: "Spots Available",
     perPerson: "per person",
     book: "Book",
-    footerText: "Your trail partner. Content creator and mountain guide.",
+    footerText: "Mountain guide and content creator.",
     rights: "All rights reserved."
   },
   pt: {
@@ -143,7 +144,7 @@ const dict: Record<string, any> = {
     heroSubtitle: "Mentalidade, conexão e aventura. Vamos para a montanha.",
     exploreRoutes: "Explorar Trilhas",
     joinClub: "Entrar no Clube",
-    leadTitle: "As 5 melhores trilhas.",
+    leadTitle: "Guia de trilhas imperdíveis em Santiago.",
     leadSub: "Receba o guia exclusivo no seu email.",
     leadBtn: "Receber Guia",
     experiences: "Experiências",
@@ -187,8 +188,8 @@ const dict: Record<string, any> = {
     spotsAvail: "Vagas Abertas",
     perPerson: "por pessoa",
     book: "Reservar",
-    footerText: "Seu parceiro de trilha. Criador de conteúdo e guia de montanha.",
-    rights: "Todos os direitos reservados."
+    footerText: "Guia de montanha e criador de conteúdo.",
+    rights: "Direitos reservados."
   },
   de: {
     bookHike: "Tour buchen",
@@ -199,7 +200,7 @@ const dict: Record<string, any> = {
     heroSubtitle: "Mindset, Verbindung und Abenteuer. Auf in die Berge.",
     exploreRoutes: "Routen entdecken",
     joinClub: "Dem Club beitreten",
-    leadTitle: "Top 5 Einsteiger-Routen.",
+    leadTitle: "Wanderrouten in Santiago, die man machen muss.",
     leadSub: "Hol dir unseren PDF-Guide direkt ins Postfach.",
     leadBtn: "Guide erhalten",
     experiences: "Erlebnisse",
@@ -243,7 +244,7 @@ const dict: Record<string, any> = {
     spotsAvail: "Plätze verfügbar",
     perPerson: "pro Person",
     book: "Buchen",
-    footerText: "Dein Trail-Partner. Content Creator und Bergführer.",
+    footerText: "Bergführer und Content Creator.",
     rights: "Alle Rechte vorbehalten."
   },
   zh: {
@@ -255,7 +256,7 @@ const dict: Record<string, any> = {
     heroSubtitle: "心态、联系与冒险。向大山出发。",
     exploreRoutes: "探索路线",
     joinClub: "加入俱乐部",
-    leadTitle: "五大新手徒步路线。",
+    leadTitle: "圣地亚哥必去徒步路线指南。",
     leadSub: "在收件箱获取独家PDF指南。",
     leadBtn: "获取指南",
     experiences: "体验评价",
@@ -299,7 +300,7 @@ const dict: Record<string, any> = {
     spotsAvail: "名额开放",
     perPerson: "每人",
     book: "预订",
-    footerText: "您的徒步伙伴。内容创作者和高山向导。",
+    footerText: "高山向导与内容创作者。",
     rights: "版权所有。"
   }
 };
@@ -349,12 +350,16 @@ export default async function ExperienciaMontanaPage(props: { searchParams: Prom
             <div className="w-[180px] hidden md:block"></div>
             
             {/* Logo al centro */}
-            <div className="flex items-center justify-center gap-3">
-              <Image src="/images/logo/Favicon 1.png" alt="Santiago Hiking Logo" width={28} height={28} className="object-contain drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
-              <span className="font-editorial font-bold text-2xl tracking-wider text-white">
-                Santiago <span className="text-amber-500 italic">Hiking</span>
-              </span>
-            </div>
+            <Link href="/" className="flex items-center justify-center group transition-transform duration-300 hover:scale-105">
+              <Image 
+                src="/santiago-hiking-10.png" 
+                alt="Santiago Hiking" 
+                width={200} 
+                height={92} 
+                className="h-11 md:h-13 w-auto object-contain drop-shadow-[0_2px_15px_rgba(245,158,11,0.25)]" 
+                priority 
+              />
+            </Link>
 
             {/* Controles a la derecha */}
             <div className="flex items-center justify-end gap-4 w-auto md:w-[180px]">
@@ -402,23 +407,12 @@ export default async function ExperienciaMontanaPage(props: { searchParams: Prom
         {/* LEAD MAGNET / NEWSLETTER */}
         <section className="py-8 bg-transparent relative z-20">
           <div className="max-w-5xl mx-auto px-6">
-            <div className="glass-panel border-amber-500/20 rounded-3xl p-6 flex flex-col md:flex-row items-center justify-between gap-5">
-              <div className="flex items-center gap-4 w-full md:w-auto">
-                <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center flex-shrink-0 hidden sm:flex">
-                  <Mountain className="w-6 h-6 text-amber-500" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-white leading-tight">{t.leadTitle}</h3>
-                  <p className="text-slate-400 font-light text-xs mt-1">{t.leadSub}</p>
-                </div>
-              </div>
-              <form className="flex flex-col sm:flex-row w-full md:w-auto gap-3 sm:gap-2 mt-2 md:mt-0">
-                <input type="email" placeholder="Email" className="bg-black/50 border border-slate-700 rounded-full px-4 py-3 sm:py-2 text-sm text-white focus:outline-none focus:border-amber-500 flex-1 md:w-64" required />
-                <button type="button" className="w-full sm:w-auto bg-white hover:bg-slate-200 text-black font-bold uppercase tracking-widest text-[10px] px-6 py-3 sm:py-2 rounded-full transition-colors whitespace-nowrap shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-                  {t.leadBtn}
-                </button>
-              </form>
-            </div>
+            <LeadMagnetForm
+              title={t.leadTitle}
+              subtitle={t.leadSub}
+              buttonText={t.leadBtn}
+              lang={lang}
+            />
           </div>
         </section>
 
@@ -563,7 +557,18 @@ export default async function ExperienciaMontanaPage(props: { searchParams: Prom
                 </p>
               </div>
               <div className="relative z-10 flex-shrink-0">
-                <a href="#" className="inline-block bg-amber-500 text-black px-8 py-4 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-amber-400 transition-colors text-center shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)]">
+                <a
+                  href={`https://wa.me/56972812907?text=${encodeURIComponent(
+                    lang === 'en'
+                      ? 'Hello Gaz! I would like to book or quote a private 1-on-1 expedition with Santiago Hiking.'
+                      : lang === 'pt'
+                      ? 'Olá Gaz! Gostaria de agendar ou cotar uma expedição privada 1 a 1 com Santiago Hiking.'
+                      : 'Hola Gaz! Quiero cotizar una expedición privada 1 a 1 con Santiago Hiking.'
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block bg-amber-500 text-black px-8 py-4 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-amber-400 transition-colors text-center shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)]"
+                >
                   {t.quoteBtn}
                 </a>
               </div>
@@ -584,10 +589,26 @@ export default async function ExperienciaMontanaPage(props: { searchParams: Prom
                   {t.communitySub}
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center gap-4">
-                  <a href="#" className="inline-flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1ebd5a] text-white font-bold uppercase tracking-widest text-xs px-8 py-4 rounded-full transition-all hover:scale-[1.02] shadow-lg shadow-[#25D366]/20">
+                  <a
+                    href={`https://wa.me/56972812907?text=${encodeURIComponent(
+                      lang === 'en'
+                        ? 'Hello Gaz! I want to join the Santiago Hiking outdoor community.'
+                        : lang === 'pt'
+                        ? 'Olá Gaz! Quero entrar na comunidade outdoor de Santiago Hiking.'
+                        : 'Hola Gaz! Quiero unirme a la comunidad y salidas grupales de Santiago Hiking.'
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1ebd5a] text-white font-bold uppercase tracking-widest text-xs px-8 py-4 rounded-full transition-all hover:scale-[1.02] shadow-lg shadow-[#25D366]/20"
+                  >
                     <MessageCircle className="w-5 h-5" /> {t.whatsapp}
                   </a>
-                  <a href="https://instagram.com/" target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-3 glass-panel hover:bg-white/10 text-white font-bold uppercase tracking-widest text-xs px-8 py-4 rounded-full transition-all">
+                  <a
+                    href="https://www.instagram.com/santiagohiking"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-3 glass-panel hover:bg-white/10 text-white font-bold uppercase tracking-widest text-xs px-8 py-4 rounded-full transition-all"
+                  >
                     <Camera className="w-5 h-5" /> {t.instagram}
                   </a>
                 </div>
@@ -647,14 +668,23 @@ export default async function ExperienciaMontanaPage(props: { searchParams: Prom
         {/* FOOTER */}
         <footer className="pt-12 pb-8 mt-auto bg-black/90 backdrop-blur-xl border-t border-white/5 text-center relative z-20">
           <div className="max-w-7xl mx-auto px-6 flex flex-col items-center justify-center">
-            <div className="flex justify-center items-center gap-2 mb-6">
-               <span className="text-sm font-light text-slate-400 italic">by</span>
-               <span className="font-editorial font-bold text-2xl tracking-wider text-white">
-                  GAZ<span className="text-amber-500 italic">_Style</span>
-               </span>
+            <div className="flex flex-col items-center justify-center mb-6">
+              <Image 
+                src="/santiago-hiking-10.png" 
+                alt="Santiago Hiking" 
+                width={160} 
+                height={73} 
+                className="h-10 w-auto object-contain mb-3 drop-shadow-[0_2px_10px_rgba(245,158,11,0.2)]" 
+              />
+              <div className="flex justify-center items-center gap-2">
+                 <span className="text-xs font-light text-slate-400 italic">by</span>
+                 <span className="font-editorial font-bold text-xl tracking-wider text-white">
+                    GAZ<span className="text-amber-500 italic">_Style</span>
+                 </span>
+              </div>
             </div>
-            <p className="text-slate-500 text-xs font-light mb-2 max-w-md mx-auto leading-relaxed">{t.footerText}</p>
-            <p className="text-slate-600 text-[10px] tracking-widest uppercase mt-4">
+            <p className="text-slate-500 text-xs font-light mb-2 max-w-md mx-auto">{t.footerText}</p>
+            <p className="text-slate-600 text-[10px] mt-2">
               &copy; 2026 GAZ_STYLE. {t.rights}
             </p>
           </div>

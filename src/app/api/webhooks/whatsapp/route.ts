@@ -15,7 +15,8 @@ export async function GET(req: Request) {
     const challenge = url.searchParams.get('hub.challenge');
 
     if (mode && token) {
-        if (mode === 'subscribe' && token === process.env.WHATSAPP_VERIFY_TOKEN) {
+        const expectedToken = process.env.WHATSAPP_VERIFY_TOKEN || 'gazstyle_wa_verify_2026';
+        if (mode === 'subscribe' && token === expectedToken) {
             console.log('WEBHOOK_VERIFIED');
             return new NextResponse(challenge, { status: 200 });
         } else {
@@ -232,7 +233,8 @@ export async function POST(req: Request) {
                                         // Limpiar la URL base por si tiene un slash final
                                         const baseUrl = qstashUrl.endsWith('/') ? qstashUrl.slice(0, -1) : qstashUrl;
                                         
-                                        const res = await fetch(`${baseUrl}/v2/publish/https://www.elenalaguía.cl/api/orchestrator`, {
+                                        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.santiagohiking.com';
+                                        const res = await fetch(`${baseUrl}/v2/publish/${siteUrl}/api/orchestrator`, {
                                             method: 'POST',
                                             headers: {
                                                 'Authorization': `Bearer ${process.env.QSTASH_TOKEN}`,

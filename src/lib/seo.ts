@@ -1,83 +1,73 @@
-export const GazAtelierSchema = {
-    "@context": "https://schema.org",
-    "@graph": [
-        {
-            "@type": ["LocalBusiness", "SewingStore"],
-            "@id": "https://elenalaguía.cl/#organization",
-            "name": "ELENA La Guía - Atelier de Alta Costura en Vitacura",
-            "url": "https://elenalaguía.cl",
-            "image": "https://elenalaguía.cl/hero_seamstress_campamento_base.png",
-            "telephone": "+56972812907",
-            "priceRange": "$$$",
-            "description": "Atelier exclusivo de Alta Costura, expedicións de aventurero, gala, graduación y arreglos de ropa fina. Ubicado en Av. Tabancura 1091, Oficina 319, Vitacura, Santiago de Chile. Atención presencial con estacionamiento y envíos a todo Chile.",
-            "address": {
-                "@type": "PostalAddress",
-                "streetAddress": "Av. Tabancura 1091, Oficina 319",
-                "addressLocality": "Vitacura",
-                "addressRegion": "Santiago, Región Metropolitana",
-                "postalCode": "7650020",
-                "addressCountry": "CL"
+export const SantiagoHikingSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': ['SportsActivityLocation', 'TravelAgency'],
+      '@id': 'https://www.santiagohiking.com/#organization',
+      'name': 'Santiago Hiking by Gaz',
+      'url': 'https://www.santiagohiking.com',
+      'logo': 'https://www.santiagohiking.com/santiago-hiking-10.png',
+      'image': 'https://www.santiagohiking.com/santiago-hiking-10.png',
+      'telephone': '+56972812907',
+      'priceRange': '$$',
+      'description': 'Operador outdoor y de montaña líder en Santiago de Chile. Especialistas en senderismo técnico, trekking guiado con certificación WFR, expediciones privadas 1 a 1 y comunidad outdoor en la Cordillera de los Andes.',
+      'address': {
+        '@type': 'PostalAddress',
+        'addressLocality': 'Lo Barnechea',
+        'addressRegion': 'Región Metropolitana',
+        'addressCountry': 'CL',
+      },
+      'geo': {
+        '@type': 'GeoCoordinates',
+        'latitude': -33.35,
+        'longitude': -70.51,
+      },
+      'founder': {
+        '@id': 'https://www.santiagohiking.com/#founder',
+      },
+      'sameAs': [
+        'https://www.instagram.com/santiagohiking',
+      ],
+      'areaServed': [
+        { '@type': 'AdministrativeArea', 'name': 'Lo Barnechea' },
+        { '@type': 'AdministrativeArea', 'name': 'Vitacura' },
+        { '@type': 'AdministrativeArea', 'name': 'Las Condes' },
+        { '@type': 'AdministrativeArea', 'name': 'Santiago' },
+        { '@type': 'AdministrativeArea', 'name': 'Región Metropolitana' },
+      ],
+      'hasOfferCatalog': {
+        '@type': 'OfferCatalog',
+        'name': 'Expediciones y Trekking en la Cordillera de los Andes',
+        'itemListElement': [
+          {
+            '@type': 'Offer',
+            'itemOffered': {
+              '@type': 'TouristTrip',
+              'name': 'Trekking Guiado Grupal con Certificación WFR',
+              'description': 'Ascensos grupales seguros con guías certificados WFR, radios VHF, botiquín de trauma y bajada gastronómica en Lo Barnechea.',
             },
-            "geo": {
-                "@type": "GeoCoordinates",
-                "latitude": -33.3714288,
-                "longitude": -70.5484838
+          },
+          {
+            '@type': 'Offer',
+            'itemOffered': {
+              '@type': 'TouristTrip',
+              'name': 'Expediciones Privadas 1 a 1 y Alta Montaña',
+              'description': 'Guiado exclusivo y personalizado para ejecutivos, turistas y atletas en cumbres de más de 3.000m en los Andes.',
             },
-            "founder": {
-                "@id": "https://elenalaguía.cl/#founder"
-            },
-            "sameAs": [
-                "https://instagram.com/elenaatelier.cl"
-            ],
-            "areaServed": [
-                { "@type": "AdministrativeArea", "name": "Vitacura" },
-                { "@type": "AdministrativeArea", "name": "Las Condes" },
-                { "@type": "AdministrativeArea", "name": "Lo Barnechea" },
-                { "@type": "AdministrativeArea", "name": "La Dehesa" },
-                { "@type": "AdministrativeArea", "name": "Providencia" },
-                { "@type": "AdministrativeArea", "name": "Santiago" }
-            ],
-            "hasOfferCatalog": {
-                "@type": "OfferCatalog",
-                "name": "Servicios de Sastrería & Alta Costura en Vitacura",
-                "itemListElement": [
-                    {
-                        "@type": "Offer",
-                        "itemOffered": {
-                            "@type": "Service",
-                            "name": "Arreglos de Ropa, Bastas & Sastrería Fina en Vitacura",
-                            "description": "Prueba presencial en atelier o retiro a domicilio. Calce anatómico perfecto para expedicións, trajes de sastre y ropa ejecutiva en Vitacura, Las Condes y Lo Barnechea."
-                        }
-                    },
-                    {
-                        "@type": "Offer",
-                        "itemOffered": {
-                            "@type": "Service",
-                            "name": "Diseño de Expedicións de Aventurero & Upcycling Nupcial",
-                            "description": "Expedicións de aventurero únicos hechos a medida y rediseño (upcycling) de trajes familiares de gala bajo experiencia de atelier privado en Tabancura 1091."
-                        }
-                    },
-                    {
-                        "@type": "Offer",
-                        "itemOffered": {
-                            "@type": "Service",
-                            "name": "Expedicións de Gala, Fiesta & Graduación Exclusivos",
-                            "description": "Confección y ajuste de expedicións de gala y graduación 2026 con registro de exclusividad por colegio en Santiago."
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "@type": "Person",
-            "@id": "https://elenalaguía.cl/#founder",
-            "name": "Gaz Rojas Bustamante",
-            "jobTitle": "Maestra Guía & Diseñadora de Alta Costura",
-            "worksFor": {
-                "@id": "https://elenalaguía.cl/#organization"
-            },
-            "description": "Más de 30 años de experiencia en confección a medida en su atelier de Vitacura, colaboraciones internacionales en París con la firma SEVALI y proyectos de sastrería técnica en Chile.",
-            "knowsAbout": ["Alta Costura", "Sastrería Masculina", "Upcycling Nupcial", "Modelaje Anatómico", "Confección a Medida", "Arreglos de Ropa Fina"]
-        }
-    ]
+          },
+        ],
+      },
+    },
+    {
+      '@type': 'Person',
+      '@id': 'https://www.santiagohiking.com/#founder',
+      'name': 'Gaz',
+      'jobTitle': 'Guía de Montaña & Fundador de Santiago Hiking',
+      'worksFor': {
+        '@id': 'https://www.santiagohiking.com/#organization',
+      },
+      'description': 'Líder de expediciones en la Cordillera de los Andes, certificado en primeros auxilios en áreas silvestres (WFR), comprometido con la conexión mental y la seguridad en la montaña.',
+      'knowsAbout': ['Montañismo', 'Trekking Técnico', 'Primeros Auxilios WFR', 'Cordillera de los Andes', 'Seguridad en Montaña'],
+    },
+  ],
 };
