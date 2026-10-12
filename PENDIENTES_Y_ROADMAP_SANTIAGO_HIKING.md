@@ -39,6 +39,8 @@ Tareas a realizar durante la fase de formalización del negocio:
   - Ejecutar la tabla `crm_whatsapp_messages` para guardar el log histórico de conversaciones del bot en la base de datos.
 - [ ] **Ficha de Google Maps (Google Business Profile) sin oficina:**
   - Crear la ficha configurada como *"Área de servicio"* (cubre Lo Barnechea, Las Condes, Vitacura, Santiago) sin mostrar dirección residencial, para recibir reseñas y llamadas orgánicas.
+- [ ] **Enlaces Rastreables (UTM) en Biografías:**
+  - Actualizar el enlace en la biografía de Instagram (`@gaz_style`), TikTok (`@gaz_style`) y LinkedIn (`Mario Cruz`) usando los enlaces listados en la Sección 4 para medir ventas exactas.
 
 ---
 
@@ -79,12 +81,29 @@ Las dos mayores plataformas globales donde las agencias de viaje y turistas rese
 
 Para mantener sincronizada la marca personal con el negocio:
 
-* **Bio de TikTok / Instagram de @GazStyle:**
-  - Enlace directo a `https://www.santiagohiking.com` o `https://www.santiagohiking.com/reservar`.
+### 🔗 Enlaces Rastreables con Parámetros UTM (Listos para Copiar y Pegar)
+
+Usa estos enlaces exactos en las biografías de tus perfiles para que Google Analytics y los píxeles identifiquen de qué red social vienen las ventas:
+
+* **Para la Bio de Instagram (@gaz_style o @santiagohiking):**
+  ```text
+  https://www.santiagohiking.com?utm_source=instagram&utm_medium=bio&utm_campaign=gazstyle_profile
+  ```
+
+* **Para la Bio de TikTok (@gaz_style):**
+  ```text
+  https://www.santiagohiking.com?utm_source=tiktok&utm_medium=bio&utm_campaign=gazstyle_profile
+  ```
+
+* **Para el perfil de LinkedIn (Mario Cruz):**
+  ```text
+  https://www.santiagohiking.com?utm_source=linkedin&utm_medium=profile&utm_campaign=mario_cruz
+  ```
+
 * **Fórmula de Contenido:**
   1. *Gancho (Hook):* Atardecer épico sobre el mar de nubes de Santiago.
   2. *Desarrollo:* Cómo subir seguro, qué equipo llevar, la experiencia de bajar de noche con linternas.
-  3. *Llamado a la acción (CTA):* *"Súmate a la próxima salida este fin de semana en santiagohiking.com o escríbenos al WhatsApp de la bio"*.
+  3. *Llamado a la acción (CTA):* *"Súmate a la próxima salida este fin de semana en el link de la bio o escríbenos al WhatsApp"*.
 * **El Píxel de TikTok y Meta:**
   - Ya están optimizados para aprender de cada clic que llegue desde tus videos y convertir a los espectadores en participantes confirmados.
 
