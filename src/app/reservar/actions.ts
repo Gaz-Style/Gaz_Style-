@@ -41,7 +41,11 @@ export async function createBookingWithMercadoPago(formData: {
     unit_price: number;
 }) {
     const supabase = getAdminClient();
-    const base_url = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const rawBaseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://www.santiagohiking.com';
+    const isProduction = process.env.NODE_ENV === 'production' || !!process.env.VERCEL;
+    const base_url = isProduction && rawBaseUrl.includes('localhost')
+        ? 'https://www.santiagohiking.com'
+        : rawBaseUrl;
     const isLocalhost = base_url.includes('localhost');
 
     // MP Sandbox requires a test buyer email — real emails cause fatal errors in sandbox
