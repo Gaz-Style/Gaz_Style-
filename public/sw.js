@@ -22,11 +22,16 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// 3. Estrategia NETWORK-FIRST (Siempre consulta la red primero)
+// 3. Estrategia NETWORK-FIRST (Solo para recursos del propio dominio)
 self.addEventListener('fetch', (event) => {
-  // Ignorar peticiones no-GET o de desarrollo local
+  // Ignorar peticiones no-GET
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
+
+  // NO interceptar peticiones a dominios externos (Meta, Google, Clarity, TikTok, Supabase, etc.)
+  if (url.origin !== self.location.origin) {
+    return;
+  }
 
   // En localhost o API, no interceptar
   if (url.hostname === 'localhost' || url.hostname === '127.0.0.1' || url.pathname.startsWith('/api/')) {
@@ -45,9 +50,12 @@ self.addEventListener('fetch', (event) => {
         }
         return networkResponse;
       })
-      .catch(() => {
-        // Solo en caso de corte total de internet (modo offline en cerro), usamos la caché
-        return caches.match(event.request);
+      .catch(async () => {
+        // En caso de corte de red, buscamos en la caché local
+        const cached = await caches.match(event.request);
+        if (cached) return cached;
+        // Evitar que devuelva undefined si no está en caché
+        return new Response('Offline', { status: 503, statusText: 'Offline' });
       })
   );
 });
