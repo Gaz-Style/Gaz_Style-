@@ -116,7 +116,7 @@ export default async function ChallengeDetailPage({ params }: PageProps) {
             <h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight">Ficha del Recorrido</h2>
           </div>
 
-          <div className="divide-y" style={{ borderTop: '1px solid rgba(255,255,255,0.08)', borderBottom: '1px solid rgba(255,255,255,0.08)', '--tw-divide-opacity': '1' }}>
+          <div className="divide-y divide-white/8" style={{ borderTop: '1px solid rgba(255,255,255,0.08)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
             {[
               { label: 'Altitud máxima', value: challenge.metrics.altitud },
               { label: 'Desnivel acumulado', value: challenge.metrics.desnivel },
