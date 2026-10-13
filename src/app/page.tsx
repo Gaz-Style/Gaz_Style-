@@ -11,6 +11,7 @@ import TestimonialsCarousel from "./TestimonialsCarousel";
 import FloatingNavbar from "./FloatingNavbar";
 import GuideRadioWidget from "./GuideRadioWidget";
 import LeadMagnetForm from "./LeadMagnetForm";
+import SwipeCarousel from "./SwipeCarousel";
 import { createClient } from '@supabase/supabase-js';
 
 export const dynamic = 'force-dynamic';
@@ -48,7 +49,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
         <div className="relative z-10 max-w-5xl mx-auto text-center mt-12">
           {/* Badge de Coordenadas Geográficas (Pestaña Superior de Expedición) */}
           <div 
-            className="inline-flex items-center gap-2.5 px-5 sm:px-6 py-2 sm:py-2.5 mb-8 text-xs sm:text-[13px] font-mono tracking-[0.25em] uppercase text-white shadow-[0_8px_25px_rgba(0,0,0,0.2)] rounded-full transition-all hover:bg-white/10"
+            className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 mb-8 text-[10px] sm:text-[13px] font-mono tracking-[0.18em] sm:tracking-[0.25em] uppercase text-white shadow-[0_8px_25px_rgba(0,0,0,0.2)] rounded-full transition-all hover:bg-white/10 max-w-[calc(100vw-3rem)] overflow-hidden"
             style={{
               backgroundColor: 'rgba(255, 255, 255, 0.05)',
               backdropFilter: 'blur(16px)',
@@ -56,15 +57,15 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
               border: '1px solid rgba(255, 255, 255, 0.08)',
             }}
           >
-            <span className="relative flex h-2 w-2 mr-0.5">
+            <span className="relative flex h-2 w-2 mr-0.5 shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-400" />
             </span>
-            <span>33°21'S 70°38'W</span>
+            <span className="truncate">33°21&apos;S 70°38&apos;W</span>
+            <span className="text-amber-400 hidden sm:inline">·</span>
+            <span className="hidden sm:inline">ANDES EXPEDITIONS</span>
             <span className="text-amber-400">·</span>
-            <span>ANDES EXPEDITIONS</span>
-            <span className="text-amber-400">·</span>
-            <span className="text-amber-300 font-bold">SANTIAGO DE CHILE</span>
+            <span className="text-amber-300 font-bold truncate">SANTIAGO DE CHILE</span>
           </div>
           
           <h1 className="text-5xl sm:text-6xl md:text-8xl font-black uppercase tracking-tight text-white leading-[0.95] mb-6 drop-shadow-md">
@@ -85,7 +86,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
               href="#rutas"
               className="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-black px-8 sm:px-9 py-4 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all hover:scale-105 shadow-[0_0_20px_rgba(245,158,11,0.35)] cursor-pointer text-center select-none"
             >
-              EXPLORAR RUTAS
+              EXPLORAR HIKING
             </a>
             <a
               href="#desafios"
@@ -122,10 +123,62 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
         </div>
       </section>
 
-      {/* LEAD MAGNET / QUIZ INTERACTIVO (Inspirado en Much Better Adventures) */}
-      <section className="py-14 bg-transparent relative z-20">
+      {/* LEAD MAGNET COMPACTO — Barra inline con dropdowns */}
+      <section className="py-6 bg-transparent relative z-20">
         <div className="max-w-5xl mx-auto px-6">
           <LeadMagnetForm lang={lang} />
+        </div>
+      </section>
+
+      {/* CATÁLOGO DE SALIDAS ACTIVAS DE TEMPORADA */}
+      <section id="rutas" className="py-14 bg-transparent relative z-20">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="mb-8 border-b border-white/15 pb-6">
+            <span className="text-amber-400 font-mono text-xs uppercase tracking-[0.25em] mb-2 block font-semibold">
+              Temporada 2026
+            </span>
+            <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight">
+              Salidas Grupales
+            </h2>
+            <p className="text-white/55 text-sm mt-2 font-light max-w-sm">
+              Grupos reducidos guiados por Gaz. Seguridad WFR y fotografía profesional incluidos.
+            </p>
+          </div>
+
+          {routes.length === 0 ? (
+            <div className="py-20 text-center rounded-2xl" style={{backgroundColor:'rgba(255,255,255,0.05)',border:'1px dashed rgba(255,255,255,0.15)'}}>
+              <Tent className="w-12 h-12 text-white/30 mx-auto mb-4" />
+              <p className="text-white/50 text-sm">Próximamente publicaremos el nuevo calendario de salidas.</p>
+            </div>
+          ) : (
+            <SwipeCarousel peekWidth={32} gap={14}>
+              {routes.map((route: any) => (
+                <div key={route.id} className="h-full rounded-2xl overflow-hidden flex flex-col group" style={{backgroundColor:'rgba(255,255,255,0.06)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',border:'1px solid rgba(255,255,255,0.10)'}}>
+                  <div className="aspect-[16/10] relative overflow-hidden bg-stone-100">
+                    {route.image_url ? (
+                      <Image src={route.image_url} alt={route.title} fill sizes="(max-width: 768px) 100vw, 70vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                    ) : (
+                      <Mountain className="w-16 h-16 text-stone-300 m-auto" />
+                    )}
+                    <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/35 to-transparent pointer-events-none" />
+                    <span className="absolute top-4 right-4 bg-stone-900/80 backdrop-blur px-3 py-1 text-[10px] font-mono tracking-widest uppercase font-bold text-white rounded shadow-sm">{route.category}</span>
+                  </div>
+                  <div className="p-6 flex flex-col flex-1 gap-3">
+                    <div>
+                      <h3 className="text-2xl font-bold text-white uppercase tracking-tight mb-2">{route.title}</h3>
+                      <p className="text-sm text-white/60 mb-4 font-light line-clamp-2">{route.description || 'Guiado premium paso a paso en la cordillera.'}</p>
+                      <div className="grid grid-cols-3 gap-2 py-3 text-center font-mono rounded-lg" style={{backgroundColor:'rgba(255,255,255,0.05)',borderTop:'1px solid rgba(255,255,255,0.08)',borderBottom:'1px solid rgba(255,255,255,0.08)'}}>
+                        <div><p className="text-[10px] text-white/40 uppercase font-medium">Duración</p><p className="text-xs font-bold text-white">{route.duration_text || `${route.duration_days}d`}</p></div>
+                        <div><p className="text-[10px] text-white/40 uppercase font-medium">Dificultad</p><p className="text-xs font-bold text-amber-400">{route.difficulty_level}</p></div>
+                        <div><p className="text-[10px] text-white/40 uppercase font-medium">Cupo Máx</p><p className="text-xs font-bold text-white">{route.max_pax} pax</p></div>
+                      </div>
+                    </div>
+                    <Link href={`/rutas/${route.id}`} className="btn-arcteryx w-full flex items-center justify-center">Ver Detalles</Link>
+                  </div>
+                </div>
+              ))}
+            </SwipeCarousel>
+          )}
         </div>
       </section>
 
@@ -147,137 +200,29 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-            
-            {/* Desafío 1: 5:00 AM Sunrise */}
-            <div className="relative min-h-[480px] md:min-h-[540px] overflow-hidden flex flex-col justify-end p-8 md:p-10 group border border-stone-200 hover:border-stone-400 transition-all duration-500 bg-stone-900 rounded-xl shadow-sm hover:shadow-lg">
-              <Image 
-                src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=85" 
-                alt="Desafío 5:00 AM" 
-                fill 
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover group-hover:scale-105 transition-transform duration-700 opacity-100"
-              />
-              <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-stone-950/90 via-stone-950/45 to-transparent pointer-events-none" />
-              
-              <div className="relative z-10 space-y-3">
-                <span className="text-[10px] font-mono tracking-[0.25em] uppercase text-white/80 block">
-                  01 · COTA 1.638M · MANQUEHUITO
-                </span>
-                <h3 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tight">
-                  Desafío 5:00 AM
-                </h3>
-                <p className="text-slate-200 text-xs md:text-sm font-light leading-relaxed max-w-lg">
-                  Ascenso nocturno con linternas frontales. Conquista la cumbre al romper el alba con café caliente de especialidad sobre el mar de nubes de Santiago. Bajas antes de que despierte la ciudad.
-                </p>
-                <div className="pt-2">
-                  <Link 
-                    href="/desafios/desafio-5am"
-                    className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-white border-b border-white/60 pb-1 hover:border-white transition-all hover:text-amber-300"
-                  >
-                    Ver Detalles y Ficha Técnica &rarr;
-                  </Link>
+          <SwipeCarousel peekWidth={32} gap={14}>
+            {[
+              { num: '01', meta: 'COTA 1.638M · MANQUEHUITO', title: 'Desafío 5:00 AM', slug: '/desafios/desafio-5am', img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=85', alt: 'Desafío 5:00 AM', desc: 'Ascenso nocturno con linternas frontales. Conquista la cumbre al romper el alba con café caliente sobre el mar de nubes de Santiago.' },
+              { num: '02', meta: '3 CUMBRES · +2.100M D+', title: 'La Triple Corona', slug: '/desafios/triple-corona', img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=85', alt: 'La Triple Corona de Santiago', desc: 'El reto andino definitivo: Manquehuito, Cerro Manquehue y Cerro Pochoco. Forja resistencia real en los Andes.' },
+              { num: '03', meta: 'COTA 3.250M · ALTA EXIGENCIA', title: 'Sierra de Ramón', slug: '/desafios/sierra-de-ramon', img: 'https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?auto=format&fit=crop&w=1200&q=85', alt: 'Travesía Sierra de Ramón', desc: 'La travesía técnica reina de Santiago. Aristas de roca, vistas 360° y protocolo WFR estricto.' },
+              { num: '04', meta: 'PLAN 6 SEMANAS · 1 CERRO/SEM', title: 'Desbloqueando Santiago', slug: '/desafios/desbloqueando-santiago', img: 'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=1200&q=85', alt: 'Desbloqueando Santiago', desc: 'El pasaporte de montaña para principiantes activos. Dificultad creciente, orientación en subida y cumbres semanales.' },
+            ].map((d) => (
+              <div key={d.num} className="relative min-h-[500px] overflow-hidden flex flex-col justify-end p-8 group border border-stone-200/20 hover:border-white/30 transition-all duration-500 bg-stone-900 rounded-2xl">
+                <Image src={d.img} alt={d.alt} fill sizes="(max-width: 768px) 100vw, 60vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-stone-950/95 via-stone-950/50 to-transparent pointer-events-none" />
+                <div className="relative z-10 space-y-3">
+                  <span className="text-[10px] font-mono tracking-[0.25em] uppercase text-white/70 block">{d.num} · {d.meta}</span>
+                  <h3 className="text-3xl font-black text-white uppercase tracking-tight">{d.title}</h3>
+                  <p className="text-slate-200 text-sm font-light leading-relaxed">{d.desc}</p>
+                  <div className="pt-2">
+                    <Link href={d.slug} className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-white border-b border-white/60 pb-1 hover:border-white transition-all hover:text-amber-300">
+                      Ver Detalles y Ficha Técnica &rarr;
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            {/* Desafío 2: Triple Corona */}
-            <div className="relative min-h-[480px] md:min-h-[540px] overflow-hidden flex flex-col justify-end p-8 md:p-10 group border border-stone-200 hover:border-stone-400 transition-all duration-500 bg-stone-900 rounded-xl shadow-sm hover:shadow-lg">
-              <Image 
-                src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=85" 
-                alt="La Triple Corona de Santiago" 
-                fill 
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover group-hover:scale-105 transition-transform duration-700 opacity-100"
-              />
-              <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-stone-950/90 via-stone-950/45 to-transparent pointer-events-none" />
-              
-              <div className="relative z-10 space-y-3">
-                <span className="text-[10px] font-mono tracking-[0.25em] uppercase text-white/80 block">
-                  02 · 3 CUMBRES · +2.100M D+
-                </span>
-                <h3 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tight">
-                  La Triple Corona
-                </h3>
-                <p className="text-slate-200 text-xs md:text-sm font-light leading-relaxed max-w-lg">
-                  El reto andino definitivo: Manquehuito, Cerro Manquehue y Cerro Pochoco. Un programa progresivo para conquistar las tres cumbres clásicas de la cuenca y forjar resistencia real.
-                </p>
-                <div className="pt-2">
-                  <Link 
-                    href="/desafios/triple-corona"
-                    className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-white border-b border-white/60 pb-1 hover:border-white transition-all hover:text-amber-300"
-                  >
-                    Ver Detalles y Ficha Técnica &rarr;
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* Desafío 3: Sierra de Ramón */}
-            <div className="relative min-h-[480px] md:min-h-[540px] overflow-hidden flex flex-col justify-end p-8 md:p-10 group border border-stone-200 hover:border-stone-400 transition-all duration-500 bg-stone-900 rounded-xl shadow-sm hover:shadow-lg">
-              <Image 
-                src="https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?auto=format&fit=crop&w=1200&q=85" 
-                alt="Travesía Sierra de Ramón" 
-                fill 
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover group-hover:scale-105 transition-transform duration-700 opacity-100"
-              />
-              <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-stone-950/90 via-stone-950/45 to-transparent pointer-events-none" />
-              
-              <div className="relative z-10 space-y-3">
-                <span className="text-[10px] font-mono tracking-[0.25em] uppercase text-white/80 block">
-                  03 · COTA 3.250M · ALTA EXIGENCIA
-                </span>
-                <h3 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tight">
-                  Sierra de Ramón
-                </h3>
-                <p className="text-slate-200 text-xs md:text-sm font-light leading-relaxed max-w-lg">
-                  La travesía técnica reina de Santiago. Aristas de roca, vistas panorámicas de 360° hacia los valles centrales y protocolo de autosuficiencia y seguridad con guías certificados WFR.
-                </p>
-                <div className="pt-2">
-                  <Link 
-                    href="/desafios/sierra-de-ramon"
-                    className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-white border-b border-white/60 pb-1 hover:border-white transition-all hover:text-amber-300"
-                  >
-                    Ver Detalles y Ficha Técnica &rarr;
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* Desafío 4: Desbloqueando Santiago */}
-            <div className="relative min-h-[480px] md:min-h-[540px] overflow-hidden flex flex-col justify-end p-8 md:p-10 group border border-stone-200 hover:border-stone-400 transition-all duration-500 bg-stone-900 rounded-xl shadow-sm hover:shadow-lg">
-              <Image 
-                src="https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=1200&q=85" 
-                alt="Desbloqueando Santiago" 
-                fill 
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover group-hover:scale-105 transition-transform duration-700 opacity-100"
-              />
-              <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-stone-950/90 via-stone-950/45 to-transparent pointer-events-none" />
-              
-              <div className="relative z-10 space-y-3">
-                <span className="text-[10px] font-mono tracking-[0.25em] uppercase text-white/80 block">
-                  04 · PLAN 6 SEMANAS · 1 CERRO/SEM
-                </span>
-                <h3 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tight">
-                  Desbloqueando Santiago
-                </h3>
-                <p className="text-slate-200 text-xs md:text-sm font-light leading-relaxed max-w-lg">
-                  El pasaporte de montaña para principiantes activos. Una ruta semanal con dificultad creciente para ponerte en forma, aprender orientación en subida y conquistar la capital cima por cima.
-                </p>
-                <div className="pt-2">
-                  <Link 
-                    href="/desafios/desbloqueando-santiago"
-                    className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-white border-b border-white/60 pb-1 hover:border-white transition-all hover:text-amber-300"
-                  >
-                    Ver Detalles y Ficha Técnica &rarr;
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-          </div>
+            ))}
+          </SwipeCarousel>
         </div>
       </section>
 
@@ -367,98 +312,6 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
         </div>
       </section>
 
-      {/* 4. CATÁLOGO DE SALIDAS ACTIVAS DE TEMPORADA */}
-      <section id="rutas" className="py-28 bg-transparent relative z-20">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="mb-16 md:flex justify-between items-end border-b border-white/15 pb-8">
-            <div>
-              <span className="text-amber-400 font-mono text-xs uppercase tracking-[0.25em] mb-2 block font-semibold">
-                Temporada 2026
-              </span>
-              <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tight">
-                Salidas Grupales Activas
-              </h2>
-            </div>
-            <p className="text-white/60 text-sm max-w-sm mt-4 md:mt-0 font-light">
-              Grupos reducidos guiados por Gaz. Equipamiento de seguridad, primeros auxilios WFR y fotografía profesional de cumbre incluidos.
-            </p>
-          </div>
-
-          {routes.length === 0 ? (
-            <div className="py-20 text-center rounded-2xl" style={{backgroundColor:'rgba(255,255,255,0.05)',border:'1px dashed rgba(255,255,255,0.15)'}}>
-              <Tent className="w-12 h-12 text-white/30 mx-auto mb-4" />
-              <p className="text-white/50 text-sm">Próximamente publicaremos el nuevo calendario de salidas.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {routes.map((route: any) => (
-                <div key={route.id} className="rounded-2xl overflow-hidden hover:border-amber-400/60 transition-all duration-300 flex flex-col justify-between group" style={{backgroundColor:'rgba(255,255,255,0.06)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',border:'1px solid rgba(255,255,255,0.10)'}}>
-                  
-                  {/* Foto de Portada de la Ruta */}
-                  <div className="aspect-[16/10] relative overflow-hidden bg-stone-100">
-                    {route.image_url ? (
-                      <Image
-                        src={route.image_url}
-                        alt={route.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                        className="object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
-                    ) : (
-                      <Mountain className="w-16 h-16 text-stone-300 m-auto" />
-                    )}
-                    <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/35 to-transparent pointer-events-none" />
-                    <span className="absolute top-4 right-4 bg-stone-900/80 backdrop-blur px-3 py-1 text-[10px] font-mono tracking-widest uppercase font-bold text-white rounded shadow-sm">
-                      {route.category}
-                    </span>
-                  </div>
-
-                  {/* Ficha Técnica */}
-                  <div className="p-8 flex-1 flex flex-col justify-between">
-                    <div>
-                      <h3 className="text-2xl font-bold text-white uppercase tracking-tight mb-2">
-                        {route.title}
-                      </h3>
-                      <p className="text-sm text-white/60 mb-6 font-light line-clamp-2">
-                        {route.description || 'Guiado premium paso a paso en la cordillera.'}
-                      </p>
-                      
-                      <div className="grid grid-cols-3 gap-2 py-4 mb-6 text-center font-mono rounded-lg" style={{backgroundColor:'rgba(255,255,255,0.05)',borderTop:'1px solid rgba(255,255,255,0.08)',borderBottom:'1px solid rgba(255,255,255,0.08)'}}>
-                        <div>
-                          <p className="text-[10px] text-white/40 uppercase font-medium">Duración</p>
-                          <p className="text-xs font-bold text-white">{route.duration_text || `${route.duration_days}d`}</p>
-                        </div>
-                        <div>
-                          <p className="text-[10px] text-white/40 uppercase font-medium">Dificultad</p>
-                          <p className="text-xs font-bold text-amber-400">{route.difficulty_level}</p>
-                        </div>
-                        <div>
-                          <p className="text-[10px] text-white/40 uppercase font-medium">Cupo Máx</p>
-                          <p className="text-xs font-bold text-white">{route.max_pax} pax</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-4">
-                      <div>
-                        <span className="text-[10px] text-white/40 uppercase tracking-widest block font-mono">Desde</span>
-                        <span className="text-2xl font-black text-white font-mono">
-                          ${Number((route.base_price && route.base_price >= 5000) ? route.base_price : 25000).toLocaleString('es-CL')}
-                        </span>
-                        <span className="text-[10px] text-amber-400 font-mono block">Reserva flexible</span>
-                      </div>
-                      <Link href={`/rutas/${route.id}`} className="btn-arcteryx">
-                        Ver Ficha
-                      </Link>
-                    </div>
-
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
 
       {/* 5. PLANES "CIELO, MAR Y TIERRA" (Ecosistema All-Inclusive) */}
       <section id="alianzas" className="py-28 bg-transparent relative z-20">

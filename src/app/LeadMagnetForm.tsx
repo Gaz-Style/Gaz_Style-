@@ -1,313 +1,431 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { trackLeadGuide } from '@/lib/analytics';
-import { Mountain, CheckCircle2, Loader2, Sparkles, ArrowRight, ArrowLeft, Tag, Compass, Flame } from 'lucide-react';
+import { CheckCircle2, Loader2, Tag, ChevronDown, ArrowRight, MapPin, Clock, Flame } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
-interface Props {
-  title?: string;
-  subtitle?: string;
-  buttonText?: string;
-  lang?: string;
+interface Props { lang?: string; }
+
+// ── Rutas resultado (tarjeta final) ──────────────────────────────────────────
+const ROUTES = {
+  iniciacion: {
+    id:         'sunset-manquehuito',
+    slug:       '/desafios/desafio-5am',
+    title:      'Saltos de Apoquindo',
+    subtitle:   'Tu primera cumbre ideal',
+    difficulty: 'Nivel 1 · Iniciación Activa',
+    meta:       '3.5 hrs · 1.638m · Desnivel +420m',
+    desc:       'El cerro perfecto para empezar. Senderos claros, ritmo amable y vistas de 360° sobre el valle de Santiago antes del mediodía.',
+    image:      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=85',
+    color:      'from-emerald-900/80',
+  },
+  intermedio_sunset: {
+    id:         'desafio-5am',
+    slug:       '/desafios/desafio-5am',
+    title:      'Desafío 5:00 AM',
+    subtitle:   'Cumbre al romper el alba',
+    difficulty: 'Nivel 2 · Cardio & Desconexión',
+    meta:       '5 hrs · Manquehuito · Ascenso nocturno',
+    desc:       'Salida con linternas frontales, cumbre al amanecer y café de especialidad sobre el mar de nubes de Santiago. Bajas antes de que despierte la ciudad.',
+    image:      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=85',
+    color:      'from-indigo-900/80',
+  },
+  intermedio_cardio: {
+    id:         'triple-corona',
+    slug:       '/desafios/triple-corona',
+    title:      'La Triple Corona',
+    subtitle:   'El reto andino definitivo',
+    difficulty: 'Nivel 3 · Desafío Andino',
+    meta:       '3 cumbres · +2.100m D+ · Un programa progresivo',
+    desc:       'Manquehuito, Cerro Manquehue y Cerro Pochoco. Conquista las tres cumbres clásicas de la cuenca y forja resistencia real en los Andes.',
+    image:      'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=900&q=85',
+    color:      'from-orange-900/80',
+  },
+  avanzado: {
+    id:         'sierra-de-ramon',
+    slug:       '/desafios/sierra-de-ramon',
+    title:      'Sierra de Ramón',
+    subtitle:   'La travesía técnica reina',
+    difficulty: 'Nivel 4 · Alta Exigencia',
+    meta:       '3.250m · Full Day · Aristas de roca',
+    desc:       'Aristas técnicas, vistas panorámicas de 360° y protocolo de autosuficiencia con guías WFR. La cumbre más exigente sobre Santiago.',
+    image:      'https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?auto=format&fit=crop&w=900&q=85',
+    color:      'from-red-900/80',
+  },
+} as const;
+
+type RouteKey = keyof typeof ROUTES;
+
+// ── Traducciones ──────────────────────────────────────────────────────────────
+const T: Record<string, {
+  title: string; subtitle: string;
+  step1Label: string; step2Label: string;
+  levels: string[]; vibes: string[];
+  ctaDiscover: string;
+  namePlaceholder: string; phonePlaceholder: string; emailPlaceholder: string;
+  ctaClaim: string; ctaRoute: string;
+  footerPrivacy: string;
+  resultTag: string;
+}> = {
+  es: {
+    title:          '¿Cuál es tu cumbre?',
+    subtitle:       'Responde 2 preguntas y descubrí tu ruta perfecta en los Andes.',
+    step1Label:     'Nivel',
+    step2Label:     'Desafío',
+    levels:         ['Primera cumbre / Iniciación', 'Intermedio — ya subo cerros', 'Avanzado — gran altitud'],
+    vibes:          ['Sunset & Desconexión', 'Cardio & Adrenalina', 'Desafío Andino Épico'],
+    ctaDiscover:    'Descubre la tuya',
+    namePlaceholder:  'Nombre y Apellido',
+    phonePlaceholder: 'Teléfono / WhatsApp',
+    emailPlaceholder: 'Correo electrónico',
+    ctaClaim:       'Mi cumbre + 50% OFF',
+    ctaRoute:       'Ver Ficha Técnica',
+    footerPrivacy:  '🔒 Sin spam · Código de descuento por email',
+    resultTag:      'Tu cumbre ideal',
+  },
+  en: {
+    title:          'What\'s Your Summit?',
+    subtitle:       'Answer 2 questions and discover your perfect Andes route.',
+    step1Label:     'Level',
+    step2Label:     'Challenge',
+    levels:         ['First summit / Beginner', 'Intermediate — active hiker', 'Advanced — high altitude'],
+    vibes:          ['Sunset & Scenic Views', 'Cardio & Adrenaline', 'Epic Andean Challenge'],
+    ctaDiscover:    'Discover Yours',
+    namePlaceholder:  'Full Name',
+    phonePlaceholder: 'Phone / WhatsApp',
+    emailPlaceholder: 'Email address',
+    ctaClaim:       'My summit + 50% OFF',
+    ctaRoute:       'View Route Details',
+    footerPrivacy:  '🔒 No spam · Discount code by email',
+    resultTag:      'Your ideal summit',
+  },
+  fr: {
+    title:          'Quel est votre sommet ?',
+    subtitle:       'Répondez à 2 questions et découvrez votre itinéraire parfait.',
+    step1Label:     'Niveau',
+    step2Label:     'Défi',
+    levels:         ['Premier sommet / Débutant', 'Intermédiaire — randonneur actif', 'Avancé — haute altitude'],
+    vibes:          ['Coucher de soleil & Détente', 'Cardio & Adrénaline', 'Défi andin épique'],
+    ctaDiscover:    'Découvrez la vôtre',
+    namePlaceholder:  'Nom et prénom',
+    phonePlaceholder: 'Téléphone / WhatsApp',
+    emailPlaceholder: 'Adresse email',
+    ctaClaim:       'Mon sommet + -50%',
+    ctaRoute:       'Voir la fiche technique',
+    footerPrivacy:  '🔒 Sans spam · Code de réduction par email',
+    resultTag:      'Votre sommet idéal',
+  },
+  de: {
+    title:          'Was ist dein Gipfel?',
+    subtitle:       'Beantworte 2 Fragen und entdecke deine perfekte Andentour.',
+    step1Label:     'Level',
+    step2Label:     'Challenge',
+    levels:         ['Erster Gipfel / Anfänger', 'Mittel — aktiver Wanderer', 'Fortgeschrittene — Hochgebirge'],
+    vibes:          ['Sonnenuntergang & Erholung', 'Cardio & Adrenalin', 'Epische Andentour'],
+    ctaDiscover:    'Entdecke deine',
+    namePlaceholder:  'Vor- und Nachname',
+    phonePlaceholder: 'Telefon / WhatsApp',
+    emailPlaceholder: 'E-Mail-Adresse',
+    ctaClaim:       'Mein Gipfel + 50% Rabatt',
+    ctaRoute:       'Routendetails ansehen',
+    footerPrivacy:  '🔒 Kein Spam · Rabattcode per E-Mail',
+    resultTag:      'Dein idealer Gipfel',
+  },
+  pt: {
+    title:          'Qual é o seu cume?',
+    subtitle:       'Responda 2 perguntas e descubra sua rota perfeita nos Andes.',
+    step1Label:     'Nível',
+    step2Label:     'Desafio',
+    levels:         ['Primeira cume / Iniciante', 'Intermediário — trilheiro ativo', 'Avançado — alta altitude'],
+    vibes:          ['Pôr do sol & Desconexão', 'Cardio & Adrenalina', 'Desafio Andino Épico'],
+    ctaDiscover:    'Descubra a sua',
+    namePlaceholder:  'Nome e sobrenome',
+    phonePlaceholder: 'Telefone / WhatsApp',
+    emailPlaceholder: 'Email',
+    ctaClaim:       'Meu cume + 50% OFF',
+    ctaRoute:       'Ver ficha técnica',
+    footerPrivacy:  '🔒 Sem spam · Código de desconto por email',
+    resultTag:      'Seu cume ideal',
+  },
+};
+
+function tx(lang: string) { return T[lang] ?? T['es']; }
+
+const LEVEL_IDS = ['iniciacion', 'intermedio', 'avanzado'] as const;
+const VIBE_IDS  = ['sunset', 'cardio', 'alta_montana'] as const;
+type Level = typeof LEVEL_IDS[number];
+type Vibe  = typeof VIBE_IDS[number];
+
+function getRouteKey(level: Level, vibe: Vibe): RouteKey {
+  if (level === 'avanzado') return 'avanzado';
+  if (level === 'intermedio' && vibe === 'cardio') return 'intermedio_cardio';
+  if (level === 'intermedio') return 'intermedio_sunset';
+  return 'iniciacion';
 }
 
-export default function LeadMagnetForm({ lang = 'es' }: Props) {
-  // Estado del Quiz Interactivo
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
-  const [level, setLevel] = useState<'iniciacion' | 'intermedio' | 'avanzado'>('iniciacion');
-  const [vibe, setVibe] = useState<'sunset' | 'cardio' | 'alta_montana'>('sunset');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
+// ── Dropdown personalizado ────────────────────────────────────────────────────
+interface DropdownProps {
+  value: string; options: string[]; ids: readonly string[];
+  onChange: (id: string) => void; stepNum: number; stepLabel: string;
+}
+function CustomDropdown({ value, options, ids, onChange, stepNum, stepLabel }: DropdownProps) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const idx = ids.indexOf(value as any);
+  const label = idx >= 0 ? options[idx] : options[0];
 
-  // Lógica de recomendación de ruta basada en respuestas
-  const getRecommendation = () => {
-    if (vibe === 'sunset' || level === 'iniciacion') {
-      return {
-        title: 'Sunset Manquehuito & Café de Especialidad',
-        desc: 'Tu ruta perfecta: 3.5 hrs, ritmo relajado, atardecer sobre Santiago y café caliente en cumbre.',
-        difficulty: 'Nivel 1 · Iniciación Activa',
-        badgeColor: 'text-amber-600 bg-amber-50 border-amber-200',
-        routeId: 'be1beb1c-ef0c-44b7-9a34-58a5a62c7245',
-      };
-    }
-    if (vibe === 'cardio' || level === 'intermedio') {
-      return {
-        title: 'WildTrek Cerro Manquehue / Pochoco',
-        desc: 'Desconexión deportiva: ritmo sostenido, vistas 360° y liberación de estrés tras la semana laboral.',
-        difficulty: 'Nivel 2-3 · Cardio Deportivo',
-        badgeColor: 'text-orange-600 bg-orange-50 border-orange-200',
-        routeId: 'ef298aff-971c-4329-b18f-879d6538f7fc',
-      };
-    }
-    return {
-      title: 'Alta Montaña Cerro Pintor (4.180m)',
-      desc: 'Desafío andino supremo: altitud real, glaciares y protocolo estricto WFR en los Andes centrales.',
-      difficulty: 'Nivel 4 · Alta Exigencia',
-      badgeColor: 'text-red-600 bg-red-50 border-red-200',
-      routeId: 'desafios/sierra-de-ramon',
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     };
-  };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
 
-  const recommendation = getRecommendation();
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center gap-3 rounded-xl px-4 py-3 text-xs font-mono cursor-pointer transition-all focus:outline-none text-left"
+        style={{
+          backgroundColor: 'rgba(255,255,255,0.07)',
+          border: `1px solid ${open ? 'rgba(245,158,11,0.50)' : 'rgba(255,255,255,0.14)'}`,
+        }}
+      >
+        <span
+          className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shrink-0"
+          style={{ backgroundColor: 'rgba(245,158,11,0.18)', color: '#fbbf24', border: '1px solid rgba(245,158,11,0.35)' }}
+        >{stepNum}</span>
+        <div className="flex flex-col min-w-0">
+          <span className="text-[9px] uppercase tracking-[0.15em] text-white/35 font-bold">{stepLabel}</span>
+          <span className="text-white/85 truncate leading-tight mt-0.5">{label}</span>
+        </div>
+        <ChevronDown className={`w-3.5 h-3.5 text-white/35 shrink-0 ml-auto transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && (
+        <div
+          className="absolute top-full left-0 right-0 mt-1.5 z-50 rounded-xl overflow-hidden"
+          style={{
+            backgroundColor: 'rgba(12,12,18,0.96)',
+            backdropFilter: 'blur(28px)',
+            WebkitBackdropFilter: 'blur(28px)',
+            border: '1px solid rgba(255,255,255,0.10)',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.65)',
+          }}
+        >
+          {ids.map((id, i) => (
+            <button
+              key={id} type="button"
+              onClick={() => { onChange(id); setOpen(false); }}
+              className={`w-full text-left px-4 py-3 text-xs font-mono transition-colors cursor-pointer flex items-center gap-2.5
+                ${value === id ? 'text-amber-400 bg-amber-500/10' : 'text-white/70 hover:text-white hover:bg-white/05'}`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${value === id ? 'bg-amber-400' : 'bg-transparent'}`} />
+              {options[i]}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Componente principal ──────────────────────────────────────────────────────
+export default function LeadMagnetForm({ lang = 'es' }: Props) {
+  const t = tx(lang);
+  const [level, setLevel]       = useState<Level>('iniciacion');
+  const [vibe,  setVibe]        = useState<Vibe>('sunset');
+  const [showForm, setShowForm] = useState(false);
+  const [name,  setName]        = useState('');
+  const [phone, setPhone]       = useState('');
+  const [email, setEmail]       = useState('');
+  const [loading,   setLoading]   = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [errorMsg,  setErrorMsg]  = useState('');
+
+  const routeKey = getRouteKey(level, vibe);
+  const route    = ROUTES[routeKey];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !email.includes('@')) return;
-
-    setLoading(true);
-    setErrorMsg('');
-
+    if (!email || !email.includes('@') || !name) return;
+    setLoading(true); setErrorMsg('');
     try {
       const res = await fetch('/api/lead-guide', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email,
+          email, lang,
+          name: name.trim(),
           phone,
-          lang,
           experience_level: level,
-          preferred_style: vibe,
-          recommended_route: recommendation.title,
-          discount_code: 'CUMBRE10K',
+          preferred_style:  vibe,
+          recommended_route: route.title,
+          discount_code: 'SUMMIT50',
         }),
       });
-
-      if (res.ok) {
-        setSubmitted(true);
-        trackLeadGuide(email);
-      } else {
-        const data = await res.json();
-        setErrorMsg(data.error || 'Hubo un error al procesar tu solicitud');
-      }
-    } catch {
-      setErrorMsg('Error de conexión');
-    } finally {
-      setLoading(false);
-    }
+      if (res.ok) { setSubmitted(true); trackLeadGuide(email); }
+      else { const d = await res.json(); setErrorMsg(d.error || 'Error'); }
+    } catch { setErrorMsg('Error de conexión'); }
+    finally { setLoading(false); }
   };
 
-  return (
-    <div
-      className="rounded-3xl p-6 sm:p-10 transition-all duration-300 shadow-[0_8px_30px_rgba(0,0,0,0.15)]"
-      style={{
-        backgroundColor: 'rgba(255, 255, 255, 0.07)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255, 255, 255, 0.12)',
-      }}
-    >
-      
-      {/* CABECERA CON BADGE ESTILO MUCH BETTER ADVENTURES */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/15 mb-6">
-        <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/15 border border-amber-500/40 rounded-full text-amber-300 text-[11px] font-mono uppercase tracking-wider font-bold mb-2">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>Interactive Mountain Quiz · Edición 2026</span>
-          </div>
-          <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-            Descubre tu Cumbre Ideal en Santiago
-          </h3>
-          <p className="text-white/60 text-xs sm:text-sm font-light mt-0.5">
-            Responde 2 preguntas y desbloquea <strong className="text-white/90 font-semibold">$10.000 CLP de crédito de bienvenida</strong> + la Guía Técnica WFR.
+  /* ── RESULTADO: TARJETA DE RUTA ─────────────────────────── */
+  if (submitted) {
+    return (
+      <div className="animate-in zoom-in-95 duration-300 space-y-3">
+        {/* Tag éxito */}
+        <div className="flex items-center gap-2 px-1">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <p className="text-white/70 text-xs font-mono">
+            {t.resultTag} · <span className="text-amber-400 font-bold">SUMMIT50 — 50% OFF</span>
           </p>
         </div>
 
-        {/* Indicador de progreso */}
-        {!submitted && (
-          <div className="flex items-center gap-2 self-start sm:self-center font-mono text-xs font-bold text-white/40">
-            <span className={step >= 1 ? 'text-amber-400' : ''}>Paso {step}</span>
-            <span>/</span>
+        {/* TARJETA DE RUTA — estilo desafíos */}
+        <div
+          className="relative min-h-[320px] overflow-hidden flex flex-col justify-end p-6 group rounded-2xl"
+          style={{ border: '1px solid rgba(255,255,255,0.12)' }}
+        >
+          <Image
+            src={route.image}
+            alt={route.title}
+            fill
+            sizes="(max-width: 768px) 100vw, 560px"
+            className="object-cover group-hover:scale-105 transition-transform duration-700"
+          />
+          {/* Gradiente inferior */}
+          <div className={`absolute inset-x-0 bottom-0 h-4/5 bg-gradient-to-t ${route.color} via-stone-950/60 to-transparent pointer-events-none`} />
+
+          {/* Contenido */}
+          <div className="relative z-10 space-y-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-500/20 border border-amber-500/40 rounded-full text-amber-300 text-[10px] font-mono font-bold uppercase tracking-wider">
+                <Flame className="w-2.5 h-2.5" />{route.difficulty}
+              </span>
+              <span className="inline-flex items-center gap-1 text-white/50 text-[10px] font-mono">
+                <Clock className="w-2.5 h-2.5" />{route.meta.split('·')[0].trim()}
+              </span>
+              <span className="inline-flex items-center gap-1 text-white/50 text-[10px] font-mono">
+                <MapPin className="w-2.5 h-2.5" />{route.meta.split('·')[1]?.trim()}
+              </span>
+            </div>
+
+            <p className="text-[10px] font-mono text-white/45 uppercase tracking-widest">{route.subtitle}</p>
+            <h3 className="text-2xl font-black text-white uppercase tracking-tight leading-tight">
+              {route.title}
+            </h3>
+            <p className="text-white/65 text-xs font-light leading-relaxed max-w-sm">
+              {route.desc}
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-2 pt-2">
+              <Link
+                href={route.slug}
+                className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-black font-bold uppercase tracking-widest text-[11px] px-5 py-2.5 rounded-xl transition-all hover:scale-105 w-fit"
+              >
+                {t.ctaRoute} <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+              <p className="text-[10px] text-white/35 self-center">
+                Código <span className="text-amber-400 font-mono font-bold">SUMMIT50</span> enviado a {email}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── FORMULARIO ──────────────────────────────────────────── */
+  return (
+    <div
+      className="rounded-2xl overflow-visible"
+      style={{
+        backgroundColor: 'rgba(255,255,255,0.06)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255,255,255,0.11)',
+      }}
+    >
+      {/* TÍTULO DEL QUIZ */}
+      <div className="px-5 pt-4 pb-3">
+        <h3 className="text-white font-black text-base uppercase tracking-tight">
+          {t.title}
+        </h3>
+        <p className="text-white/45 text-[11px] font-light mt-0.5">{t.subtitle}</p>
+      </div>
+
+      <div className="px-4 pb-4 space-y-2">
+
+        {/* PASO 1 */}
+        <CustomDropdown
+          value={level} ids={LEVEL_IDS} options={t.levels}
+          onChange={id => setLevel(id as Level)}
+          stepNum={1} stepLabel={t.step1Label}
+        />
+
+        {/* PASO 2 */}
+        <CustomDropdown
+          value={vibe} ids={VIBE_IDS} options={t.vibes}
+          onChange={id => setVibe(id as Vibe)}
+          stepNum={2} stepLabel={t.step2Label}
+        />
+
+        {/* PASO 3 — BOTÓN / FORMULARIO */}
+        {!showForm ? (
+          <button
+            type="button"
+            onClick={() => setShowForm(true)}
+            className="w-full flex items-center justify-center gap-2 font-black uppercase tracking-widest text-xs px-5 py-3.5 rounded-xl transition-all hover:scale-[1.01] active:scale-95 cursor-pointer shadow-[0_0_24px_rgba(245,158,11,0.30)]"
+            style={{ backgroundColor: '#f59e0b', color: '#0c0c0c' }}
+          >
             <span>3</span>
+            <span className="mx-1 opacity-40">·</span>
+            {t.ctaDiscover}
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        ) : (
+          <div
+            className="rounded-xl overflow-hidden animate-in slide-in-from-top-2 duration-300"
+            style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(245,158,11,0.20)' }}
+          >
+            <form onSubmit={handleSubmit} className="p-4 space-y-2">
+              <input
+                type="text" value={name} onChange={e => setName(e.target.value)}
+                placeholder={t.namePlaceholder}
+                className="w-full rounded-xl px-3.5 py-2.5 text-xs text-white placeholder:text-white/30 focus:outline-none transition-colors"
+                style={{ backgroundColor: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}
+                required disabled={loading}
+              />
+              <input
+                type="tel" value={phone} onChange={e => setPhone(e.target.value)}
+                placeholder={t.phonePlaceholder}
+                className="w-full rounded-xl px-3.5 py-2.5 text-xs text-white placeholder:text-white/30 focus:outline-none transition-colors"
+                style={{ backgroundColor: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}
+                disabled={loading}
+              />
+              <input
+                type="email" value={email} onChange={e => setEmail(e.target.value)}
+                placeholder={t.emailPlaceholder}
+                className="w-full rounded-xl px-3.5 py-2.5 text-xs text-white placeholder:text-white/30 focus:outline-none transition-colors"
+                style={{ backgroundColor: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}
+                required disabled={loading}
+              />
+              <button
+                type="submit" disabled={loading}
+                className="w-full flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 active:scale-95 text-black font-black uppercase tracking-widest text-xs px-5 py-3.5 rounded-xl transition-all hover:scale-[1.01] shadow-[0_0_20px_rgba(245,158,11,0.30)] cursor-pointer mt-1"
+              >
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Tag className="w-3.5 h-3.5" /><span>{t.ctaClaim}</span></>}
+              </button>
+              {errorMsg && <p className="text-red-400 text-xs">{errorMsg}</p>}
+              <p className="text-[10px] text-white/25 text-center">{t.footerPrivacy}</p>
+            </form>
           </div>
         )}
       </div>
-
-      {/* PASO 1: NIVEL DE CONDICIÓN FÍSICA */}
-      {step === 1 && (
-        <div className="space-y-4 animate-in fade-in duration-300">
-          <p className="text-sm font-bold text-white/80 uppercase tracking-wider font-mono">
-            1. ¿Cuál es tu experiencia actual en senderos?
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {[
-              { id: 'iniciacion', label: 'Iniciación / Primera Cumbre', desc: 'Hago caminatas suaves o quiero empezar de cero sin riesgos.', icon: Mountain },
-              { id: 'intermedio', label: 'Intermedio / Hago Deporte', desc: 'Tengo buena condición física, subo cerros de Santiago de vez en cuando.', icon: Compass },
-              { id: 'avanzado', label: 'Avanzado / Gran Altitud', desc: 'Busco desnivel potente, aristas de roca o ascensos sobre 3.500m.', icon: Flame },
-            ].map((opt) => (
-              <button
-                key={opt.id}
-                type="button"
-                onClick={() => {
-                  setLevel(opt.id as any);
-                  setStep(2);
-                }}
-                className={`p-5 rounded-2xl text-left transition-all cursor-pointer flex flex-col justify-between group hover:bg-white/20 ${
-                  level === opt.id ? 'bg-amber-500/20 border border-amber-400/50' : 'border border-white/10 bg-white/05'
-                }`}
-                style={{ backgroundColor: level === opt.id ? 'rgba(245,158,11,0.15)' : 'rgba(255,255,255,0.05)' }}
-              >
-                <div>
-                  <opt.icon className="w-5 h-5 text-amber-400 mb-3 group-hover:scale-110 transition-transform" />
-                  <p className="font-bold text-white text-sm">{opt.label}</p>
-                  <p className="text-white/55 text-xs mt-1 font-light leading-relaxed">{opt.desc}</p>
-                </div>
-                <div className="mt-4 flex items-center gap-1 text-[11px] font-mono text-amber-400 font-bold uppercase tracking-wider">
-                  <span>Elegir</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* PASO 2: TIPO DE EXPERIENCIA */}
-      {step === 2 && (
-        <div className="space-y-4 animate-in fade-in duration-300">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-bold text-white/80 uppercase tracking-wider font-mono">
-              2. ¿Qué tipo de experiencia quieres vivir?
-            </p>
-            <button
-              type="button"
-              onClick={() => setStep(1)}
-              className="text-xs text-white/50 hover:text-white flex items-center gap-1 font-mono transition-colors"
-            >
-              <ArrowLeft className="w-3 h-3" /> Volver
-            </button>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {[
-              { id: 'sunset', label: 'Sunset & Desconexión', desc: 'Atardecer, fotos de cumbre de calidad y café caliente sobre el mar de nubes.' },
-              { id: 'cardio', label: 'Cardio & Liberación', desc: 'Ritmo sostenido para botar el estrés de la semana en contacto con la cordillera.' },
-              { id: 'alta_montana', label: 'Desafío Andino Épico', desc: 'Ascenso técnico, autosuficiencia y vistas a los colosos de los Andes centrales.' },
-            ].map((opt) => (
-              <button
-                key={opt.id}
-                type="button"
-                onClick={() => {
-                  setVibe(opt.id as any);
-                  setStep(3);
-                }}
-                className={`p-5 rounded-2xl text-left transition-all cursor-pointer flex flex-col justify-between group hover:bg-white/20 ${
-                  vibe === opt.id ? 'border border-amber-400/50' : 'border border-white/10'
-                }`}
-                style={{ backgroundColor: vibe === opt.id ? 'rgba(245,158,11,0.15)' : 'rgba(255,255,255,0.05)' }}
-              >
-                <div>
-                  <p className="font-bold text-white text-sm mb-1">{opt.label}</p>
-                  <p className="text-white/55 text-xs font-light leading-relaxed">{opt.desc}</p>
-                </div>
-                <div className="mt-4 flex items-center gap-1 text-[11px] font-mono text-amber-400 font-bold uppercase tracking-wider">
-                  <span>Ver Mi Cumbre</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* PASO 3: RECOMENDACIÓN PERSONALIZADA + RECLAMAR VOUCHER */}
-      {step === 3 && !submitted && (
-        <div className="space-y-6 animate-in fade-in duration-300">
-          {/* Card de la Ruta Recomendada */}
-          <div
-            className="p-5 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
-            style={{
-              backgroundColor: 'rgba(255,255,255,0.07)',
-              border: '1px solid rgba(255,255,255,0.12)',
-            }}
-          >
-            <div className="space-y-1">
-              <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase border border-amber-400/50 text-amber-300 bg-amber-500/15">
-                {recommendation.difficulty}
-              </span>
-              <h4 className="text-lg font-black text-white tracking-tight">
-                {recommendation.title}
-              </h4>
-              <p className="text-white/60 text-xs font-light max-w-xl">
-                {recommendation.desc}
-              </p>
-            </div>
-            <div className="flex items-center gap-2 bg-amber-500/15 border border-amber-400/40 text-amber-300 px-4 py-2 rounded-xl shrink-0 font-mono text-xs font-bold">
-              <Tag className="w-4 h-4 text-amber-400" />
-              <span>Voucher $10.000 Reservado</span>
-            </div>
-          </div>
-
-          {/* Formulario de Reclamación */}
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <div className="flex flex-col sm:flex-row gap-2">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Tu email principal..."
-                className="rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-amber-400 flex-1"
-                style={{ backgroundColor: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}
-                required
-                disabled={loading}
-              />
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="WhatsApp (opcional, para avisos)"
-                className="rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-amber-400 sm:w-64"
-                style={{ backgroundColor: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}
-                disabled={loading}
-              />
-              <button
-                type="submit"
-                disabled={loading}
-                className="bg-amber-500 hover:bg-amber-400 text-black font-bold uppercase tracking-widest text-xs px-6 py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-98 cursor-pointer whitespace-nowrap shadow-[0_0_20px_rgba(245,158,11,0.35)]"
-              >
-                {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                Reclamar $10.000 + Guía
-              </button>
-            </div>
-            {errorMsg && <p className="text-red-400 text-xs font-medium">{errorMsg}</p>}
-            <p className="text-[11px] text-white/35 text-center sm:text-left">
-              🔒 Cero spam. Te enviaremos el código de descuento y el PDF técnico de las rutas de Santiago.
-            </p>
-          </form>
-        </div>
-      )}
-
-      {/* ESTADO FINAL: VOUCHER DESBLOQUEADO Y ENTREGADO */}
-      {submitted && (
-        <div className="bg-stone-900 text-white p-6 sm:p-8 rounded-2xl animate-in zoom-in-95 duration-300">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-            <div className="space-y-2">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-500/20 text-green-400 border border-green-500/30 rounded-full text-xs font-mono font-bold">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>¡Voucher Desbloqueado con Éxito!</span>
-              </div>
-              <h4 className="text-2xl font-black uppercase tracking-tight">
-                Tu Cupón de Bienvenida: <span className="text-amber-400 font-mono">CUMBRE10K</span>
-              </h4>
-              <p className="text-slate-300 text-xs sm:text-sm font-light max-w-xl">
-                Hemos enviado tu Guía Técnica a <strong className="text-white">{email}</strong>. Puedes usar tu cupón de $10.000 CLP en cualquiera de nuestras salidas de temporada.
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-3 shrink-0">
-              <Link
-                href="/reservar"
-                className="bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold uppercase tracking-widest text-xs px-6 py-3.5 rounded-xl transition-all text-center shadow-lg hover:scale-105 active:scale-95"
-              >
-                Usar Cupón en Reserva &rarr;
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-
     </div>
   );
 }
