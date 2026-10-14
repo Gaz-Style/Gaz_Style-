@@ -31,7 +31,7 @@ INSERT INTO public.adventures_catalog (
   base_price, price_usd, max_pax, image_url, logistics, highlights, itinerary_steps, required_equipment, is_active
 ) VALUES 
 (
-  'Cerro Manquehuito Sunset · Café sobre las Nubes', 'grupales', 'trekking', 'Trekking Grupal', 'INICIACIÓN · ATARDECER',
+  'Manquehuito Sunset', 'grupales', 'trekking', 'Trekking Grupal', 'INICIACIÓN · ATARDECER',
   'Tu primera cumbre sobre el mar de nubes de Santiago.',
   'Ascenso vespertino de baja dificultad hacia la cumbre del Manquehuito (1.319 m). Conquista la cima al caer el sol, disfruta de un café caliente o infusión de montaña y comparte con la comunidad Gaz-Style con vista panorámica a la cuenca de Santiago.',
   'Baja', '3.5 hrs', 1, '1.319 m', 25000, 'US$26', 14,
@@ -42,7 +42,7 @@ INSERT INTO public.adventures_catalog (
   '["Zapatillas con buen agarre", "Linterna frontal o celular cargado", "Cortaviento", "1.5L agua"]'::jsonb, true
 ),
 (
-  'Cerro Manquehue Clásico · La Cumbre Ícono', 'grupales', 'trekking', 'Trekking Grupal', 'CLÁSICO · COTA 1.627M',
+  'Manquehue', 'grupales', 'trekking', 'Trekking Grupal', 'CLÁSICO · COTA 1.627M',
   'El gran centinela de la cuenca central de Santiago.',
   'La ruta clásica por excelencia de la capital. Ascenso continuo por senderos de bosque esclerófilo hasta alcanzar la arista rocosa y la meseta cumbrera a 1.627 msnm con vista 360° a toda la ciudad y la Cordillera de los Andes.',
   'Media', '4.5 hrs', 1, '1.627 m', 28000, 'US$30', 12,
@@ -53,7 +53,7 @@ INSERT INTO public.adventures_catalog (
   '["Calzado de trekking", "Ropa cómoda por capas", "2L agua", "Protección solar"]'::jsonb, true
 ),
 (
-  'Alto del Naranjo · Bosque & Mirador de Los Andes', 'grupales', 'trekking', 'Trekking Grupal', 'MEDIA MONTAÑA · 1.890M',
+  'Alto del Naranjo', 'grupales', 'trekking', 'Trekking Grupal', 'MEDIA MONTAÑA · 1.890M',
   'La gran terraza natural bajo la imponente cumbre del Cerro Provincia.',
   'Ascenso por la precordillera de Las Condes hasta la famosa meseta del Naranjo (1.890 msnm), protegida por un milenario árbol de quillay y vistas directas a los farallones del Cerro Provincia. Ideal para quienes buscan un buen desafío cardiovascular sin escalada técnica.',
   'Media', '5 hrs', 1, '1.890 m', 28000, 'US$30', 14,
@@ -64,7 +64,7 @@ INSERT INTO public.adventures_catalog (
   '["Calzado de trekking", "Bastones de apoyo", "2L agua", "Snack de marcha"]'::jsonb, true
 ),
 (
-  'Cuevas del Manzano · Aventura Precordillerana', 'grupales', 'trekking', 'Trekking Grupal', 'CAJÓN DEL MAIPO · NATURALEZA',
+  'Cuevas del Manzano', 'grupales', 'trekking', 'Trekking Grupal', 'CAJÓN DEL MAIPO · NATURALEZA',
   'Cuevas geológicas y esteros cristalinos en el corazón del Cajón del Maipo.',
   'Ruta refrescante y formativa que bordea el Estero El Manzano adentrándose en bosques nativos de peumos y litres, culminando en imponentes formaciones rocosas y cavernas de origen sedimentario con miradores hacia el Río Maipo.',
   'Media', '5 hrs', 1, '1.650 m', 30000, 'US$32', 12,
@@ -75,7 +75,7 @@ INSERT INTO public.adventures_catalog (
   '["Calzado con agarre para roca", "Ropa ligera", "Ración de marcha", "2L agua"]'::jsonb, true
 ),
 (
-  'Cerro Pochoco · La Escuela Vertical de Santiago', 'grupales', 'trekking', 'Trekking Grupal', 'DESAFÍO VERTICAL · 1.804M',
+  'Pochoco', 'grupales', 'trekking', 'Trekking Grupal', 'DESAFÍO VERTICAL · 1.804M',
   'Pendiente pura y directa para templar el carácter montañero.',
   'El gran campo de entrenamiento de los montañistas de Santiago. Una subida empinada desde el Arrayán que pone a prueba la cadencia y el equilibrio sobre terreno de roca y tierra suelta, premiando con una vista majestuosa al macizo del Plomo y Farellones.',
   'Media - Alta', '4.5 hrs', 1, '1.804 m', 28000, 'US$30', 12,
@@ -86,7 +86,7 @@ INSERT INTO public.adventures_catalog (
   '["Botas o zapatillas con suela Vibram/taqueada", "Bastones obligatorios", "2L agua", "Gorro y bloqueador"]'::jsonb, true
 ),
 (
-  'Cerro Carbón · Mirador Panorámico del Parque Metropolitano', 'grupales', 'trekking', 'Trekking Grupal', 'SUNSET · COTA 1.365M',
+  'Carbón', 'grupales', 'trekking', 'Trekking Grupal', 'SUNSET · COTA 1.365M',
   'El mejor mirador urbano sobre el poniente y centro de Santiago.',
   'Ruta amigable y panorámica que sube desde Saint George o Parque Bicentenario hacia la cumbre del Carbón. Perfecta para entrenar entre semana o ver la puesta de sol iluminando el skyline de la ciudad.',
   'Baja', '3 hrs', 1, '1.365 m', 25000, 'US$26', 14,

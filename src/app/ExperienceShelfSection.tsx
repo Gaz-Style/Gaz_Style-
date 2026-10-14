@@ -71,7 +71,10 @@ export default function ExperienceShelfSection({
             const durationText = route.duration_text || (route.duration_days ? `${route.duration_days}d` : '3 - 5');
             const difficultyText = route.difficulty_level || 'Media';
             const locationText = route.location || 'LO BARNECHEA';
-            const cleanTitle = (route.title || '').split('·')[0].trim();
+            let cleanTitle = (route.title || '').split('·')[0].trim();
+            if (isSplit) {
+              cleanTitle = cleanTitle.replace(/^cerro\s+/i, '').trim();
+            }
 
             // ── VARIANTE 1: TARJETA OFICIAL SALIDAS GRUPALES (Split Image + Dark Glass Container) ──
             if (isSplit) {
