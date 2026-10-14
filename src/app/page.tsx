@@ -11,6 +11,7 @@ import TestimonialsCarousel from "./TestimonialsCarousel";
 import FloatingNavbar from "./FloatingNavbar";
 import GuideRadioWidget from "./GuideRadioWidget";
 import LeadMagnetForm from "./LeadMagnetForm";
+import HeroActionButtons from "./HeroActionButtons";
 import SwipeCarousel from "./SwipeCarousel";
 import { createClient } from '@supabase/supabase-js';
 
@@ -34,7 +35,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
   const { routes, departures } = await getPublicData();
 
   return (
-    <div className="topographic-pattern topographic-contours min-h-screen text-stone-900 font-sans selection:bg-amber-500/30">
+    <div className="bg-stone-950 topographic-pattern topographic-contours min-h-screen text-stone-100 font-sans selection:bg-amber-500/30">
       
       {/* MENÚ SUPERIOR FLOTANTE GLASSMORPHISM TIPO BOTÓN (Inspirado en Arc'teryx) */}
       <FloatingNavbar currentLang={lang} />
@@ -46,87 +47,43 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
       <section className="relative min-h-screen flex items-center justify-center pt-24 px-6 overflow-hidden">
         <HeroCarousel />
 
-        <div className="relative z-10 max-w-5xl mx-auto text-center mt-12">
-          {/* Badge de Coordenadas Geográficas (Pestaña Superior de Expedición) */}
-          <div 
-            className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 mb-8 text-[10px] sm:text-[13px] font-mono tracking-[0.18em] sm:tracking-[0.25em] uppercase text-white shadow-[0_8px_25px_rgba(0,0,0,0.2)] rounded-full transition-all hover:bg-white/10 max-w-[calc(100vw-3rem)] overflow-hidden"
-            style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.05)',
-              backdropFilter: 'blur(16px)',
-              WebkitBackdropFilter: 'blur(16px)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-            }}
-          >
-            <span className="relative flex h-2 w-2 mr-0.5 shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-400" />
-            </span>
-            <span className="truncate">33°21&apos;S 70°38&apos;W</span>
-            <span className="text-amber-400 hidden sm:inline">·</span>
-            <span className="hidden sm:inline">ANDES EXPEDITIONS</span>
-            <span className="text-amber-400">·</span>
-            <span className="text-amber-300 font-bold truncate">SANTIAGO DE CHILE</span>
+        <div className="relative z-10 max-w-5xl mx-auto text-center mt-6 sm:mt-10">
+          {/* 1. Trust & Reviews Badge Superior (Flotante limpio y con buena separación) */}
+          <div className="inline-flex items-center justify-center gap-2.5 sm:gap-4 mb-8 sm:mb-12 text-[12px] sm:text-[14px] font-mono tracking-wider text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.85)]">
+            <div className="flex items-center gap-1.5">
+              <span className="text-amber-400 font-black text-sm sm:text-base tracking-tight drop-shadow-sm">★★★★★</span>
+              <span className="font-bold text-white">4.9/5</span>
+              <span className="text-white/70 font-light">(+320)</span>
+            </div>
+            <span className="text-white/40 hidden sm:inline">·</span>
+            <div className="hidden sm:flex items-center gap-1.5 text-white/95">
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+              <span>Guías WFR</span>
+            </div>
+            <span className="text-white/40 hidden sm:inline">·</span>
+            <div className="hidden sm:flex items-center gap-1.5 text-white/95">
+              <Compass className="w-3.5 h-3.5 text-amber-400" />
+              <span>SOS Satelital Garmin</span>
+            </div>
           </div>
           
-          <h1 className="text-5xl sm:text-6xl md:text-8xl font-black uppercase tracking-tight text-white leading-[0.95] mb-6 drop-shadow-md">
+          {/* 2. Título Hero Sólido con Tipografía Oficial de Hiking (font-edo) en Dorado Andino */}
+          <h1 className="text-5xl sm:text-6xl md:text-8xl font-black uppercase tracking-tight text-white leading-[0.92] mb-6 drop-shadow-md">
             ENCUENTRA <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-white">
+            <span className="font-edo tracking-wider block mt-2 text-6xl sm:text-7xl md:text-9xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-100 bg-clip-text text-transparent drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]">
               TU CUMBRE.
             </span>
           </h1>
           
-          <p className="text-lg md:text-2xl text-slate-100 max-w-2xl mx-auto font-light leading-relaxed mb-10 drop-shadow">
+          {/* 3. Subtítulo (Bajada) */}
+          <p className="text-base sm:text-lg md:text-xl text-slate-100 max-w-2xl mx-auto font-normal leading-relaxed mb-10 drop-shadow">
             {lang === 'en'
-              ? 'Conquer the Chilean Andes. Boutique day-hikes, backcountry safety, and unmatched views above Santiago.'
-              : 'Conquista los Andes chilenos. Salidas boutique de un día, seguridad en montaña y las mejores cumbres sobre el valle de Santiago.'}
+              ? 'Live the adventure with high mountain experts, ideal for solo travelers.'
+              : 'Vive la aventura junto a expertos de alta montaña, ideal para quienes viajan solos.'}
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
-            <a
-              href="#rutas"
-              className="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-black px-8 sm:px-9 py-4 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all hover:scale-105 shadow-[0_0_20px_rgba(245,158,11,0.35)] cursor-pointer text-center select-none"
-            >
-              EXPLORAR HIKING
-            </a>
-            <a
-              href="#desafios"
-              className="w-full sm:w-auto text-white px-8 sm:px-9 py-4 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all hover:scale-105 hover:bg-white/10 cursor-pointer text-center select-none"
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                backdropFilter: 'blur(16px)',
-                WebkitBackdropFilter: 'blur(16px)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-              }}
-            >
-              EXPLORAR DESAFÍOS
-            </a>
-          </div>
-
-          {/* Social Proof & Trust Badges (Benchmark Much Better Adventures) */}
-          <div className="mt-8 pt-6 border-t border-white/15 flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-white/90 text-xs font-mono">
-            <div className="flex items-center gap-1.5">
-              <span className="text-amber-400 font-bold">★★★★★</span>
-              <span className="font-bold text-white">4.9/5</span>
-              <span className="text-white/60">(+320 Reseñas)</span>
-            </div>
-            <div className="hidden sm:inline text-white/30">·</div>
-            <div className="flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>Guías Certificados WFR</span>
-            </div>
-            <div className="hidden sm:inline text-white/30">·</div>
-            <div className="flex items-center gap-1.5">
-              <Compass className="w-4 h-4 text-amber-400" />
-              <span>SOS Satelital Garmin inReach</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* LEAD MAGNET COMPACTO — Barra inline con dropdowns */}
-      <section className="py-6 bg-transparent relative z-20">
-        <div className="max-w-5xl mx-auto px-6">
-          <LeadMagnetForm lang={lang} />
+          {/* 4. Botones Píldora Glassmorphism */}
+          <HeroActionButtons lang={lang} />
         </div>
       </section>
 
