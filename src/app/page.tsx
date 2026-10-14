@@ -124,46 +124,42 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
         </div>
       </section>
 
-      {/* ── SECCIÓN 1: SALIDAS GRUPALES ─────────────────────────────────── */}
+      {/* ── SECCIÓN: SALIDAS GRUPALES ─────────────────────────────────── */}
       <ExperienceShelfSection
         id="salidas-grupales"
-        numberTag="01"
         badge="COMUNIDAD & ATARDECERES"
-        title="1. SALIDAS"
+        title="SALIDAS"
         highlightTitle="GRUPALES"
         subtitle="Cumbres de día, atardeceres y rutas clásicas con la comunidad Gaz-Style. Café caliente o infusión en cumbre sobre el mar de nubes de Santiago."
         routes={salidasGrupales}
       />
 
-      {/* ── SECCIÓN 2: TRAVESÍAS & GRANDES DESAFÍOS ──────────────────────── */}
+      {/* ── SECCIÓN: TRAVESÍAS & GRANDES DESAFÍOS ──────────────────────── */}
       <ExperienceShelfSection
         id="travesias-desafios"
-        numberTag="02"
         badge="ENDURANCE FULL DAY"
-        title="2. TRAVESÍAS &"
+        title="TRAVESÍAS &"
         highlightTitle="GRANDES DESAFÍOS"
         subtitle="Los grandes retos de resistencia física y mental de la cuenca central. Jornadas continuas de +1.500m de desnivel vertical y filos andinos (Sierra de Ramón, Cerro Provincia, La Cruz, Carpa, Triple Corona)."
         routes={travesiasDesafios}
       />
 
-      {/* ── SECCIÓN 3: EXPEDITION HIGH MOUNTAIN ──────────────────────────── */}
+      {/* ── SECCIÓN: EXPEDITION HIGH MOUNTAIN ──────────────────────────── */}
       <ExperienceShelfSection
         id="high-mountain"
-        numberTag="03"
         badge="GRANDES CUMBRES 5.000M+ · ESTÁNDAR PUMA ADVENTURES"
-        title="3. EXPEDITION"
+        title="EXPEDITION"
         highlightTitle="HIGH MOUNTAIN"
         subtitle="Expediciones técnicas de altura en la alta cordillera (El Plomo 5.424m, Leonera 4.954m, Volcán San José 5.856m). Logística integral con porteo de mulas, arrieros, campamentos de altura y monitoreo satelital Garmin SOS."
         routes={expeditionHighMountain}
         isHighMountain
       />
 
-      {/* ── SECCIÓN 4: EXPEDITION BOUTIQUE ───────────────────────────────── */}
+      {/* ── SECCIÓN: EXPEDITION BOUTIQUE ───────────────────────────────── */}
       <ExperienceShelfSection
         id="expedition-boutique"
-        numberTag="04"
         badge="100% PRIVADO & TAILOR-MADE"
-        title="4. EXPEDITION"
+        title="EXPEDITION"
         highlightTitle="BOUTIQUE"
         subtitle="Experiencias exclusivas a tu propio ritmo con transporte ejecutivo puerta a puerta desde tu hotel en Santiago, catering gourmet de montaña y video Reel 4K profesional editado para tus redes sociales."
         routes={expeditionBoutique}

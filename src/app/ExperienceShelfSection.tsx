@@ -8,7 +8,6 @@ import SwipeCarousel from './SwipeCarousel';
 
 interface ExperienceShelfSectionProps {
   id: string;
-  numberTag: string;
   badge: string;
   title: string;
   highlightTitle?: string;
@@ -20,7 +19,6 @@ interface ExperienceShelfSectionProps {
 
 export default function ExperienceShelfSection({
   id,
-  numberTag,
   badge,
   title,
   highlightTitle,
@@ -39,7 +37,7 @@ export default function ExperienceShelfSection({
         <div className="mb-6 sm:mb-8 border-b border-white/15 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <span className="text-white/50 font-mono text-[10px] tracking-[0.3em] uppercase block mb-1">
-              {numberTag} · {badge}
+              {badge}
             </span>
             <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight">
               {title}{' '}
@@ -58,7 +56,6 @@ export default function ExperienceShelfSection({
         {/* Carrusel Editorial con Tarjetas de Imagen Completa (Estilo Lienzo de Galería) */}
         <SwipeCarousel peekWidth={32} gap={14}>
           {routes.map((route: any, idx: number) => {
-            const num = String(idx + 1).padStart(2, '0');
             const formattedClp = Number(route.base_price).toLocaleString('es-CL');
             const usdPrice = route.price_usd || (route.base_price ? `US$${Math.round(route.base_price / 975).toLocaleString('en-US')}` : null);
             const imgSrc = route.image_url || 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=85';
@@ -68,7 +65,7 @@ export default function ExperienceShelfSection({
 
             return (
               <div
-                key={route.id || num}
+                key={route.id || idx}
                 className="relative min-h-[500px] overflow-hidden flex flex-col justify-end p-8 group border border-stone-200/20 hover:border-white/30 transition-all duration-500 bg-stone-900 rounded-2xl"
               >
                 {/* Fotografía de Fondo Completa */}
@@ -87,7 +84,7 @@ export default function ExperienceShelfSection({
                 <div className="relative z-10 space-y-3">
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-[10px] font-mono tracking-[0.25em] uppercase text-white/70 block">
-                      {num} · {metaTag}
+                      {metaTag}
                     </span>
                     <span className="text-xs font-mono font-bold text-amber-300 tracking-wider">
                       {isHighMountain ? (

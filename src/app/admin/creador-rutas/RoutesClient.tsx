@@ -12,10 +12,10 @@ import { createAdventureWithCosts, updateAdventureWithCosts, toggleAdventureStat
 
 // Definición de las 4 Categorías Oficiales de Oferta de Santiago Hiking / Gaz-Style
 export const INITIAL_VERTICAL_DEFINITIONS = [
-  { id: 'salidas_grupales', label: '1. SALIDAS GRUPALES', icon: Mountain, shortLabel: 'Salidas Grupales' },
-  { id: 'travesias_desafios', label: '2. TRAVESÍAS & GRANDES DESAFÍOS', icon: Trophy, shortLabel: 'Travesías & Grandes Desafíos' },
-  { id: 'high_mountain', label: '3. EXPEDITION HIGH MOUNTAIN', icon: Crown, shortLabel: 'Expedition High Mountain' },
-  { id: 'expedition_pass', label: '4. EXPEDITION BOUTIQUE', icon: Sparkles, shortLabel: 'Expedition Boutique' },
+  { id: 'salidas_grupales', label: 'SALIDAS GRUPALES', icon: Mountain, shortLabel: 'Salidas Grupales' },
+  { id: 'travesias_desafios', label: 'TRAVESÍAS & GRANDES DESAFÍOS', icon: Trophy, shortLabel: 'Travesías & Grandes Desafíos' },
+  { id: 'high_mountain', label: 'EXPEDITION HIGH MOUNTAIN', icon: Crown, shortLabel: 'Expedition High Mountain' },
+  { id: 'expedition_pass', label: 'EXPEDITION BOUTIQUE', icon: Sparkles, shortLabel: 'Expedition Boutique' },
 ];
 
 export const VERTICAL_DEFINITIONS = INITIAL_VERTICAL_DEFINITIONS;
@@ -176,28 +176,28 @@ export default function RoutesClient({
   // Definición por defecto de las cabeceras de cada módulo
   const DEFAULT_MODULE_HEADERS: Record<string, { tag: string; title: string; highlight: string; desc: string; createBtn: string }> = {
     salidas_grupales: {
-      tag: '1. SALIDAS GRUPALES',
+      tag: 'SALIDAS GRUPALES',
       title: 'Salidas',
       highlight: 'Grupales',
       desc: 'Cumbres de día, atardeceres y rutas guiadas por Gaz en la precordillera de Santiago.',
       createBtn: '+ Crear Salida Grupal'
     },
     travesias_desafios: {
-      tag: '2. TRAVESÍAS & GRANDES DESAFÍOS',
+      tag: 'TRAVESÍAS & GRANDES DESAFÍOS',
       title: 'Travesías &',
       highlight: 'Grandes Desafíos',
       desc: 'Retos icónicos y programas de resistencia continua (Sierra de Ramón, Cerro Provincia, La Cruz, Triple Corona).',
       createBtn: '+ Crear Travesía / Gran Desafío'
     },
     high_mountain: {
-      tag: '3. EXPEDITION HIGH MOUNTAIN',
+      tag: 'EXPEDITION HIGH MOUNTAIN',
       title: 'Expedition',
       highlight: 'High Mountain',
       desc: 'Grandes cumbres sobre 4.000m y 5.000m (El Plomo, Leonera, Volcán San José) con logística integral de arrieros y campamento.',
       createBtn: '+ Crear Expedición High Mountain'
     },
     expedition_pass: {
-      tag: '4. EXPEDITION BOUTIQUE',
+      tag: 'EXPEDITION BOUTIQUE',
       title: 'Expedition',
       highlight: 'Boutique',
       desc: 'Salidas 100% privadas y personalizadas a tu ritmo con pick-up en hotel/domicilio y Reel 4K profesional.',
