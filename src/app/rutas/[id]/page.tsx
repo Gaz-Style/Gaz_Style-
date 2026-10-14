@@ -457,7 +457,7 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                         <div className="space-y-3 max-w-xl">
                                             <div className="flex items-center gap-2">
                                                 <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1.5">
-                                                    <Crown className="w-3 h-3 text-amber-400" /> Formato Expedition Pass Disponible
+                                                    <Crown className="w-3 h-3 text-amber-400" /> Formato Expedition Boutique Disponible
                                                 </span>
                                                 <span className="text-[10px] font-mono text-white/50 uppercase tracking-widest">100% Privado</span>
                                             </div>
@@ -465,7 +465,7 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                                 ¿Prefieres vivir esta cumbre en privado y a tu propio ritmo?
                                             </h3>
                                             <p className="text-xs sm:text-sm text-white/70 font-light leading-relaxed">
-                                                Convierte esta ruta en un <strong>Expedition Pass exclusivo</strong> para ti o tu grupo cerrado. Incluye pick-up directo en tu hotel o domicilio en Santiago, fecha abierta a tu elección (lunes a domingo) y entrega de un video <strong>Reel 4K editado profesional</strong> para tus redes.
+                                                Convierte esta ruta en una <strong>Expedition Boutique exclusiva</strong> para ti o tu grupo cerrado. Incluye pick-up directo en tu hotel o domicilio en Santiago, fecha abierta a tu elección (lunes a domingo) y entrega de un video <strong>Reel 4K editado profesional</strong> para tus redes.
                                             </p>
                                             <div className="flex flex-wrap gap-4 pt-1 text-xs font-mono text-white/60">
                                                 <span className="flex items-center gap-1.5"><Car className="w-3.5 h-3.5 text-amber-400" /> Pick-up Puerta a Puerta</span>
@@ -476,12 +476,12 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
 
                                         <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 w-full md:w-auto shrink-0">
                                             <a
-                                                href={`https://wa.me/56957958467?text=${encodeURIComponent(`¡Hola! Me gustaría cotizar la ruta "${route.title}" en formato privado Expedition Pass (con pick-up en Santiago y Reel 4K). ¿Qué disponibilidad tienen?`)}`}
+                                                href={`https://wa.me/56957958467?text=${encodeURIComponent(`¡Hola! Me gustaría cotizar la ruta "${route.title}" en formato privado Expedition Boutique (con pick-up en Santiago y Reel 4K). ¿Qué disponibilidad tienen?`)}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="btn-arcteryx-primary !py-3.5 !px-6 text-xs font-mono font-bold tracking-wider text-center flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(245,158,11,0.25)]"
                                             >
-                                                <Sparkles className="w-4 h-4" /> COTIZAR EXPEDITION PASS
+                                                <Sparkles className="w-4 h-4" /> COTIZAR EXPEDITION BOUTIQUE
                                             </a>
                                             <span className="text-[10px] font-mono text-center text-white/40">
                                                 Tarifa a medida · Respuesta &lt; 15 min
@@ -500,7 +500,7 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                 >
                                     <div className="flex items-center gap-2 mb-3">
                                         <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1.5">
-                                            <Crown className="w-3 h-3 text-amber-400" /> {isHighMountain ? 'Expedición de Alta Montaña Oficial' : 'Experiencia Privada Expedition Pass'}
+                                            <Crown className="w-3 h-3 text-amber-400" /> {isHighMountain ? 'Expedition High Mountain Oficial' : 'Expedition Boutique Privada'}
                                         </span>
                                         <span className="text-[10px] font-mono text-emerald-400 uppercase tracking-widest font-bold">Servicio Todo Incluido</span>
                                     </div>
@@ -601,7 +601,7 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                             >
                                 <div>
                                     <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-white/40 block mb-1">
-                                        {isHighMountain ? 'Tarifa Expedición Oficial' : (isExpeditionPass ? 'Tarifa Privada Expedition Pass' : 'Valor por persona')}
+                                        {isHighMountain ? 'Tarifa Expedition High Mountain' : (isExpeditionPass ? 'Tarifa Expedition Boutique' : 'Valor por persona')}
                                     </span>
                                     {isHighMountain ? (
                                         <div>
@@ -702,7 +702,7 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                         <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
                             <div>
                                 <span className="text-[9px] font-mono uppercase tracking-widest text-white/40 block">
-                                    {isHighMountain ? 'Tarifa Oficial' : (isExpeditionPass ? 'Expedition Pass' : 'Valor persona')}
+                                    {isHighMountain ? 'Tarifa High Mountain' : (isExpeditionPass ? 'Expedition Boutique' : 'Valor persona')}
                                 </span>
                                 {isHighMountain ? (
                                     <div className="flex items-baseline gap-1.5">

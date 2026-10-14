@@ -47,10 +47,11 @@ export default function FloatingNavbar({ currentLang }: Props) {
   }, []);
 
   const navLinks = [
-    { href: '#desafios', label: 'Desafíos' },
+    { href: '#salidas-grupales', label: '1. Grupales' },
+    { href: '#travesias-desafios', label: '2. Desafíos' },
+    { href: '#high-mountain', label: '3. High Mountain' },
+    { href: '#expedition-boutique', label: '4. Boutique' },
     { href: '#niveles', label: 'Niveles' },
-    { href: '#rutas', label: 'Salidas' },
-    { href: '#alianzas', label: 'Cielo, Mar & Tierra' },
     { href: '#circulo', label: 'Comunidad' },
   ];
 

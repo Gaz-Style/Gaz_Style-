@@ -15,6 +15,7 @@ import HeroActionButtons from "./HeroActionButtons";
 import SwipeCarousel from "./SwipeCarousel";
 import ScrollToTopButton from "./ScrollToTopButton";
 import ExperienceFilterableGrid from "./ExperienceFilterableGrid";
+import ExperienceShelfSection from "./ExperienceShelfSection";
 import { createClient } from '@supabase/supabase-js';
 
 export const dynamic = 'force-dynamic';
@@ -36,53 +37,37 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
   const lang = params?.lang || 'es';
   const { routes, departures } = await getPublicData();
 
-  // ── SEPARACIÓN ESTRICTA DE TIPOLOGÍAS ──────────────────────────────────────────
-  // Salidas Grupales: SOLO trekking regular, sunset y salidas de día.
-  // Los Grandes Desafíos y Expediciones jamás deben mezclarse aquí.
+  // ── SEPARACIÓN ESTRICTA EN LAS 4 SECCIONES OFICIALES ──────────────────────────
+  // 1. SALIDAS GRUPALES
   const salidasGrupales = routes.filter((r: any) => {
-    const cat = (r.category || '').toLowerCase();
-    const vt = (r.vertical_type || '').toLowerCase();
-    const title = (r.title || '').toLowerCase();
-    const isChallenge =
-      cat.includes('desafío') ||
-      cat.includes('desafio') ||
-      vt === 'challenges' ||
-      vt === 'expeditions' ||
-      title.includes('desafío') ||
-      title.includes('desafio') ||
-      title.includes('triple corona') ||
-      title.includes('desbloqueando') ||
-      title.includes('sierra de ramón') ||
-      title.includes('sierra de ramon');
-    return !isChallenge;
+    const v = (r.vertical_type || '').toLowerCase();
+    const c = (r.category || '').toLowerCase();
+    return v === 'salidas_grupales' || v === 'trekking' || c === 'salidas_grupales' || c === 'grupales';
   });
 
-  // Los Grandes Desafíos & Expediciones Andinas (Alimentados dinámicamente)
-  const dbDesafios = routes.filter((r: any) => {
-    const cat = (r.category || '').toLowerCase();
-    const vt = (r.vertical_type || '').toLowerCase();
-    const title = (r.title || '').toLowerCase();
-    return (
-      vt === 'challenges' ||
-      vt === 'expeditions' ||
-      cat.includes('desafío') ||
-      cat.includes('desafio') ||
-      title.includes('desafío') ||
-      title.includes('desafio') ||
-      title.includes('triple corona') ||
-      title.includes('desbloqueando') ||
-      title.includes('sierra de ramón') ||
-      title.includes('sierra de ramon')
-    );
+  // 2. TRAVESÍAS & GRANDES DESAFÍOS
+  const travesiasDesafios = routes.filter((r: any) => {
+    const v = (r.vertical_type || '').toLowerCase();
+    const c = (r.category || '').toLowerCase();
+    return v === 'travesias_desafios' || v === 'challenges' || c === 'travesias_desafios' || c === 'desafios';
   });
 
-  // Lista de desafíos: si existen en DB los usa dinámicamente; si no, fallback a los 4 icónicos
-  const desafiosList = dbDesafios.length > 0 ? dbDesafios : [
-    { id: '1', title: 'Desafío 5:00 AM', badge: 'COTA 1.638M · MANQUEHUITO', image_url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=85', description: 'Ascenso nocturno con linternas frontales. Conquista la cumbre al romper el alba con café caliente sobre el mar de nubes de Santiago.' },
-    { id: '2', title: 'La Triple Corona', badge: '3 CUMBRES · +2.100M D+', image_url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=85', description: 'El reto andino definitivo: Manquehuito, Cerro Manquehue y Cerro Pochoco. Forja resistencia real en los Andes.' },
-    { id: '3', title: 'Sierra de Ramón', badge: 'COTA 3.250M · ALTA EXIGENCIA', image_url: 'https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?auto=format&fit=crop&w=1200&q=85', description: 'La travesía técnica reina de Santiago. Aristas de roca, vistas 360° y protocolo WFR estricto.' },
-    { id: '4', title: 'Desbloqueando Santiago', badge: 'PLAN 6 SEMANAS · 1 CERRO/SEM', image_url: 'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=1200&q=85', description: 'El pasaporte de montaña para principiantes activos. Dificultad creciente, orientación en subida y cumbres semanales.' }
-  ];
+  // 3. EXPEDITION HIGH MOUNTAIN
+  const expeditionHighMountain = routes.filter((r: any) => {
+    const v = (r.vertical_type || '').toLowerCase();
+    const c = (r.category || '').toLowerCase();
+    const t = (r.title || '').toLowerCase();
+    return v === 'high_mountain' || c === 'high_mountain' || t.includes('plomo') || t.includes('leonera') || t.includes('san josé') || t.includes('san jose');
+  });
+
+  // 4. EXPEDITION BOUTIQUE
+  const expeditionBoutique = routes.filter((r: any) => {
+    const v = (r.vertical_type || '').toLowerCase();
+    const c = (r.category || '').toLowerCase();
+    const t = (r.title || '').toLowerCase();
+    const isHM = v === 'high_mountain' || c === 'high_mountain' || t.includes('plomo') || t.includes('leonera') || t.includes('san josé') || t.includes('san jose');
+    return !isHM && (v === 'expedition_pass' || c === 'expedition_pass' || t.includes('expedition pass') || t.includes('vip'));
+  });
 
   return (
     <div className="bg-stone-950 topographic-pattern topographic-contours min-h-screen text-stone-100 font-sans selection:bg-amber-500/30">
@@ -139,77 +124,51 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
         </div>
       </section>
 
-      {/* CATÁLOGO DE SALIDAS ACTIVAS DE TEMPORADA */}
-      <section id="rutas" className="py-8 sm:py-14 bg-transparent relative z-20">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="mb-4 sm:mb-6 border-b border-white/15 pb-3 sm:pb-4">
-            <span className="text-amber-400 font-mono text-xs uppercase tracking-[0.25em] mb-1 block font-semibold">
-              Temporada 2026 · Catálogo Oficial
-            </span>
-            <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight">
-              Experiencias & Rutas Andinas
-            </h2>
-            <p className="text-white/60 text-sm mt-1.5 font-light max-w-lg">
-              Explora nuestros 4 pilares: Salidas Grupales comunitarias, Travesías deportivas, Expedition Pass privado a medida y Expediciones High Mountain.
-            </p>
-          </div>
+      {/* ── SECCIÓN 1: SALIDAS GRUPALES ─────────────────────────────────── */}
+      <ExperienceShelfSection
+        id="salidas-grupales"
+        numberTag="01"
+        badge="COMUNIDAD & ATARDECERES"
+        title="1. SALIDAS"
+        highlightTitle="GRUPALES"
+        subtitle="Cumbres de día, atardeceres y rutas clásicas con la comunidad Gaz-Style. Café caliente o infusión en cumbre sobre el mar de nubes de Santiago."
+        routes={salidasGrupales}
+      />
 
-          {/* ── Vitrina Interactiva de Experiencias Filtrables por Categoría ── */}
-          <ExperienceFilterableGrid routes={routes} />
-        </div>
-      </section>
+      {/* ── SECCIÓN 2: TRAVESÍAS & GRANDES DESAFÍOS ──────────────────────── */}
+      <ExperienceShelfSection
+        id="travesias-desafios"
+        numberTag="02"
+        badge="ENDURANCE FULL DAY"
+        title="2. TRAVESÍAS &"
+        highlightTitle="GRANDES DESAFÍOS"
+        subtitle="Los grandes retos de resistencia física y mental de la cuenca central. Jornadas continuas de +1.500m de desnivel vertical y filos andinos (Sierra de Ramón, Cerro Provincia, La Cruz, Carpa, Triple Corona)."
+        routes={travesiasDesafios}
+      />
 
-      {/* 2. LOS GRANDES DESAFÍOS ANDINOS (Lienzo Blanco Editorial: Fotografías como Galería) */}
-      <section id="desafios" className="py-10 sm:py-16 md:py-20 bg-transparent relative z-20">
-        <div className="max-w-7xl mx-auto px-6">
-          
-          <div className="mb-4 sm:mb-8 border-b border-white/15 pb-3 sm:pb-4 flex flex-col md:flex-row md:items-end justify-between gap-2.5 sm:gap-4">
-            <div>
-              <span className="text-white/50 font-mono text-[10px] tracking-[0.3em] uppercase block mb-1">
-                The Andes Challenges · Serie 2026
-              </span>
-              <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight">
-                Los Grandes Desafíos
-              </h2>
-            </div>
-            <p className="text-white/60 text-xs md:text-sm max-w-md font-light leading-relaxed">
-              Expediciones icónicas diseñadas para llevar tu resistencia física y mental al siguiente nivel en la Cordillera de los Andes.
-            </p>
-          </div>
+      {/* ── SECCIÓN 3: EXPEDITION HIGH MOUNTAIN ──────────────────────────── */}
+      <ExperienceShelfSection
+        id="high-mountain"
+        numberTag="03"
+        badge="GRANDES CUMBRES 5.000M+ · ESTÁNDAR PUMA ADVENTURES"
+        title="3. EXPEDITION"
+        highlightTitle="HIGH MOUNTAIN"
+        subtitle="Expediciones técnicas de altura en la alta cordillera (El Plomo 5.424m, Leonera 4.954m, Volcán San José 5.856m). Logística integral con porteo de mulas, arrieros, campamentos de altura y monitoreo satelital Garmin SOS."
+        routes={expeditionHighMountain}
+        isHighMountain
+      />
 
-          <SwipeCarousel peekWidth={32} gap={14}>
-            {desafiosList.map((d: any, idx: number) => {
-              const num = String(idx + 1).padStart(2, '0');
-              const t = (d.title || '').toLowerCase();
-              let slug = `/rutas/${d.id}`;
-              if (t.includes('5:00 am') || t.includes('5am')) slug = '/desafios/desafio-5am';
-              else if (t.includes('triple corona')) slug = '/desafios/triple-corona';
-              else if (t.includes('sierra de ramón') || t.includes('sierra de ramon')) slug = '/desafios/sierra-de-ramon';
-              else if (t.includes('desbloqueando')) slug = '/desafios/desbloqueando-santiago';
-
-              const meta = d.badge || (d.vertical_type === 'expeditions' ? 'ALTA MONTAÑA · ANDES' : 'GRAN DESAFÍO · CUENCA CENTRAL');
-              const imgSrc = d.image_url || 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=85';
-
-              return (
-                <div key={d.id || num} className="relative min-h-[500px] overflow-hidden flex flex-col justify-end p-8 group border border-stone-200/20 hover:border-white/30 transition-all duration-500 bg-stone-900 rounded-2xl">
-                  <Image src={imgSrc} alt={d.title} fill sizes="(max-width: 768px) 100vw, 60vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
-                  <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-stone-950/95 via-stone-950/50 to-transparent pointer-events-none" />
-                  <div className="relative z-10 space-y-3">
-                    <span className="text-[10px] font-mono tracking-[0.25em] uppercase text-white/70 block">{num} · {meta}</span>
-                    <h3 className="text-3xl font-black text-white uppercase tracking-tight">{d.title}</h3>
-                    <p className="text-slate-200 text-sm font-light leading-relaxed line-clamp-3">{d.description || 'Reto de montaña de alta exigencia física y mental en los Andes de Santiago.'}</p>
-                    <div className="pt-2">
-                      <Link href={slug} className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-white border-b border-white/60 pb-1 hover:border-white transition-all hover:text-amber-300">
-                        Ver Detalles y Ficha Técnica &rarr;
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </SwipeCarousel>
-        </div>
-      </section>
+      {/* ── SECCIÓN 4: EXPEDITION BOUTIQUE ───────────────────────────────── */}
+      <ExperienceShelfSection
+        id="expedition-boutique"
+        numberTag="04"
+        badge="100% PRIVADO & TAILOR-MADE"
+        title="4. EXPEDITION"
+        highlightTitle="BOUTIQUE"
+        subtitle="Experiencias exclusivas a tu propio ritmo con transporte ejecutivo puerta a puerta desde tu hotel en Santiago, catering gourmet de montaña y video Reel 4K profesional editado para tus redes sociales."
+        routes={expeditionBoutique}
+        isBoutique
+      />
 
       {/* 3. SISTEMA DE NIVELES FUNCIONAL (Limpio, Técnico & Sereno) */}
       <section id="niveles" className="py-24 bg-transparent relative z-20">

@@ -14,8 +14,8 @@ import { createAdventureWithCosts, updateAdventureWithCosts, toggleAdventureStat
 export const INITIAL_VERTICAL_DEFINITIONS = [
   { id: 'salidas_grupales', label: '1. SALIDAS GRUPALES', icon: Mountain, shortLabel: 'Salidas Grupales' },
   { id: 'travesias_desafios', label: '2. TRAVESÍAS & GRANDES DESAFÍOS', icon: Trophy, shortLabel: 'Travesías & Grandes Desafíos' },
-  { id: 'expedition_pass', label: '3. EXPEDITION PASS', icon: Sparkles, shortLabel: 'Expedition Pass' },
-  { id: 'high_mountain', label: '4. HIGH MOUNTAIN', icon: Crown, shortLabel: 'High Mountain' },
+  { id: 'high_mountain', label: '3. EXPEDITION HIGH MOUNTAIN', icon: Crown, shortLabel: 'Expedition High Mountain' },
+  { id: 'expedition_pass', label: '4. EXPEDITION BOUTIQUE', icon: Sparkles, shortLabel: 'Expedition Boutique' },
 ];
 
 export const VERTICAL_DEFINITIONS = INITIAL_VERTICAL_DEFINITIONS;
@@ -189,25 +189,25 @@ export default function RoutesClient({
       desc: 'Retos icónicos y programas de resistencia continua (Sierra de Ramón, Cerro Provincia, La Cruz, Triple Corona).',
       createBtn: '+ Crear Travesía / Gran Desafío'
     },
-    expedition_pass: {
-      tag: '3. EXPEDITION PASS',
-      title: 'Expedition',
-      highlight: 'Pass',
-      desc: 'Salidas 100% privadas y personalizadas a tu ritmo con pick-up en hotel/domicilio y Reel 4K profesional.',
-      createBtn: '+ Crear Expedition Pass'
-    },
     high_mountain: {
-      tag: '4. HIGH MOUNTAIN',
-      title: 'High',
-      highlight: 'Mountain',
+      tag: '3. EXPEDITION HIGH MOUNTAIN',
+      title: 'Expedition',
+      highlight: 'High Mountain',
       desc: 'Grandes cumbres sobre 4.000m y 5.000m (El Plomo, Leonera, Volcán San José) con logística integral de arrieros y campamento.',
       createBtn: '+ Crear Expedición High Mountain'
+    },
+    expedition_pass: {
+      tag: '4. EXPEDITION BOUTIQUE',
+      title: 'Expedition',
+      highlight: 'Boutique',
+      desc: 'Salidas 100% privadas y personalizadas a tu ritmo con pick-up en hotel/domicilio y Reel 4K profesional.',
+      createBtn: '+ Crear Expedition Boutique'
     },
     all: {
       tag: 'CATÁLOGO SANTIAGO HIKING',
       title: 'Todas las',
       highlight: 'Experiencias',
-      desc: 'Vista global de Salidas Grupales, Travesías & Desafíos, Expedition Pass y High Mountain.',
+      desc: 'Vista global de Salidas Grupales, Travesías & Grandes Desafíos, Expedition High Mountain y Expedition Boutique.',
       createBtn: '+ Crear Experiencia'
     }
   };
@@ -607,10 +607,10 @@ export default function RoutesClient({
                 `/rutas/${route.id}`;
 
               const verticalLabel = 
-                route.vertical_type === 'high_mountain' || route.category === 'high_mountain' ? 'High Mountain' :
-                route.vertical_type === 'expedition_pass' || route.category === 'expedition_pass' ? 'Expedition Pass' :
-                route.vertical_type === 'travesias_desafios' || route.vertical_type === 'challenges' || route.category === 'desafios' ? 'Travesía & Desafío' :
-                'Salida Grupal';
+                route.vertical_type === 'high_mountain' || route.category === 'high_mountain' ? 'Expedition High Mountain' :
+                route.vertical_type === 'expedition_pass' || route.category === 'expedition_pass' ? 'Expedition Boutique' :
+                route.vertical_type === 'travesias_desafios' || route.vertical_type === 'challenges' || route.category === 'desafios' ? 'Travesías & Grandes Desafíos' :
+                'Salidas Grupales';
 
               return (
                 <div 
