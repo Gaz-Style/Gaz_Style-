@@ -71,6 +71,7 @@ export default function ExperienceShelfSection({
             const durationText = route.duration_text || (route.duration_days ? `${route.duration_days}d` : '3 - 5');
             const difficultyText = route.difficulty_level || 'Media';
             const locationText = route.location || 'LO BARNECHEA';
+            const cleanTitle = (route.title || '').split('·')[0].trim();
 
             // ── VARIANTE 1: TARJETA OFICIAL SALIDAS GRUPALES (Split Image + Dark Glass Container) ──
             if (isSplit) {
@@ -88,7 +89,7 @@ export default function ExperienceShelfSection({
                   <div className="aspect-[16/10] relative overflow-hidden bg-stone-900 shrink-0">
                     <Image
                       src={imgSrc}
-                      alt={route.title}
+                      alt={cleanTitle}
                       fill
                       sizes="(max-width: 768px) 100vw, 70vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-700 pointer-events-none"
@@ -103,7 +104,7 @@ export default function ExperienceShelfSection({
                   <div className="p-6 flex flex-col flex-1 justify-between gap-4">
                     <div>
                       <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-2">
-                        {route.title}
+                        {cleanTitle}
                       </h3>
                       <p className="text-sm text-stone-300 font-light leading-relaxed mb-4 line-clamp-2">
                         {route.description || 'Ascenso guiado paso a paso con la comunidad Gaz-Style en los Andes de Santiago.'}
@@ -186,7 +187,7 @@ export default function ExperienceShelfSection({
                 <div className="relative z-10 space-y-4 pt-12">
                   <div>
                     <h3 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight drop-shadow-md mb-2">
-                      {route.title}
+                      {cleanTitle}
                     </h3>
                     <p className="text-slate-200 text-sm font-light leading-relaxed line-clamp-2 drop-shadow">
                       {route.description || 'Expedición técnica guiada en la alta cordillera de los Andes de Santiago.'}
