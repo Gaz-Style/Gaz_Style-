@@ -172,7 +172,11 @@ export default function ExperienceShelfSection({
             return (
               <div
                 key={route.id || idx}
-                className="relative min-h-[500px] overflow-hidden flex flex-col justify-end p-8 group border border-stone-200/20 hover:border-white/30 transition-all duration-500 bg-stone-900 rounded-2xl"
+                className={`relative min-h-[500px] overflow-hidden flex flex-col justify-end p-8 group transition-all duration-500 bg-stone-900 rounded-2xl ${
+                  isBoutique
+                    ? 'border-2 border-amber-400/70 hover:border-amber-300 shadow-[0_0_30px_rgba(245,158,11,0.22)] hover:shadow-[0_0_50px_rgba(245,158,11,0.40)]'
+                    : 'border border-stone-200/20 hover:border-white/30'
+                }`}
               >
                 {/* Fotografía de Fondo Completa */}
                 <Image
@@ -186,9 +190,24 @@ export default function ExperienceShelfSection({
                 {/* Velo Cinematográfico Suave */}
                 <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-stone-950/95 via-stone-950/50 to-transparent pointer-events-none" />
 
+                {/* Aura Dorada de Tarjeta Golden Card (Solo Boutique) */}
+                {isBoutique && (
+                  <div
+                    className="absolute inset-0 pointer-events-none z-10 opacity-70 group-hover:opacity-100 transition-opacity duration-500"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.18) 0%, rgba(217, 119, 6, 0.05) 40%, transparent 70%)',
+                      boxShadow: 'inset 0 0 24px rgba(245, 158, 11, 0.15)',
+                    }}
+                  />
+                )}
+
                 {/* Contenido Editorial Limpio & Completo */}
                 <div className="relative z-10 space-y-3">
-                  <span className="text-[10px] font-mono tracking-[0.25em] uppercase text-white/70 block">
+                  <span
+                    className={`text-[10px] font-mono tracking-[0.25em] uppercase block ${
+                      isBoutique ? 'text-amber-400 font-bold' : 'text-white/70'
+                    }`}
+                  >
                     {meta}
                   </span>
 
@@ -203,7 +222,11 @@ export default function ExperienceShelfSection({
                   <div className="pt-2">
                     <Link
                       href={targetUrl}
-                      className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-white border-b border-white/60 pb-1 hover:border-white transition-all hover:text-amber-300"
+                      className={`inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold border-b pb-1 transition-all ${
+                        isBoutique
+                          ? 'text-amber-300 border-amber-400/80 hover:text-amber-200 hover:border-amber-300'
+                          : 'text-white border-white/60 hover:border-white hover:text-amber-300'
+                      }`}
                     >
                       Ver Detalles y Ficha Técnica &rarr;
                     </Link>
