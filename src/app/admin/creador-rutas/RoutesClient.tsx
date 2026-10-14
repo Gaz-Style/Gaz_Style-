@@ -12,10 +12,10 @@ import { createAdventureWithCosts, updateAdventureWithCosts, toggleAdventureStat
 
 // Definición de las 4 Categorías Oficiales de Oferta de Santiago Hiking / Gaz-Style
 export const INITIAL_VERTICAL_DEFINITIONS = [
-  { id: 'salidas_grupales', label: 'Salidas Grupales', icon: Mountain, shortLabel: 'Grupales' },
-  { id: 'travesias_desafios', label: 'Travesías & Desafíos', icon: Trophy, shortLabel: 'Desafíos' },
-  { id: 'expedition_pass', label: 'Expedition Pass', icon: Sparkles, shortLabel: 'Expedition Pass' },
-  { id: 'high_mountain', label: 'High Mountain (5.000m+)', icon: Crown, shortLabel: 'High Mountain' },
+  { id: 'salidas_grupales', label: '1. SALIDAS GRUPALES', icon: Mountain, shortLabel: 'Salidas Grupales' },
+  { id: 'travesias_desafios', label: '2. TRAVESÍAS & GRANDES DESAFÍOS', icon: Trophy, shortLabel: 'Travesías & Grandes Desafíos' },
+  { id: 'expedition_pass', label: '3. EXPEDITION PASS', icon: Sparkles, shortLabel: 'Expedition Pass' },
+  { id: 'high_mountain', label: '4. HIGH MOUNTAIN', icon: Crown, shortLabel: 'High Mountain' },
 ];
 
 export const VERTICAL_DEFINITIONS = INITIAL_VERTICAL_DEFINITIONS;
@@ -176,28 +176,28 @@ export default function RoutesClient({
   // Definición por defecto de las cabeceras de cada módulo
   const DEFAULT_MODULE_HEADERS: Record<string, { tag: string; title: string; highlight: string; desc: string; createBtn: string }> = {
     salidas_grupales: {
-      tag: 'COMMUNITY PASS',
+      tag: '1. SALIDAS GRUPALES',
       title: 'Salidas',
       highlight: 'Grupales',
       desc: 'Cumbres de día, atardeceres y rutas guiadas por Gaz en la precordillera de Santiago.',
       createBtn: '+ Crear Salida Grupal'
     },
     travesias_desafios: {
-      tag: 'ENDURANCE FULL DAY',
+      tag: '2. TRAVESÍAS & GRANDES DESAFÍOS',
       title: 'Travesías &',
-      highlight: 'Desafíos',
-      desc: 'Retos icónicos y programas de resistencia continua (Sierra de Ramón, Cerro Provincia, La Cruz).',
-      createBtn: '+ Crear Travesía / Desafío'
+      highlight: 'Grandes Desafíos',
+      desc: 'Retos icónicos y programas de resistencia continua (Sierra de Ramón, Cerro Provincia, La Cruz, Triple Corona).',
+      createBtn: '+ Crear Travesía / Gran Desafío'
     },
     expedition_pass: {
-      tag: 'UNIVERSAL PRIVATE & TAILOR-MADE',
+      tag: '3. EXPEDITION PASS',
       title: 'Expedition',
       highlight: 'Pass',
       desc: 'Salidas 100% privadas y personalizadas a tu ritmo con pick-up en hotel/domicilio y Reel 4K profesional.',
       createBtn: '+ Crear Expedition Pass'
     },
     high_mountain: {
-      tag: 'ALTA MONTAÑA 5.000M+',
+      tag: '4. HIGH MOUNTAIN',
       title: 'High',
       highlight: 'Mountain',
       desc: 'Grandes cumbres sobre 4.000m y 5.000m (El Plomo, Leonera, Volcán San José) con logística integral de arrieros y campamento.',

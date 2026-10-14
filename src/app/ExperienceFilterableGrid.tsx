@@ -51,7 +51,7 @@ export default function ExperienceFilterableGrid({ routes }: ExperienceFilterabl
   const tabs: { id: CategoryTab; label: string; icon: any }[] = [
     { id: 'all', label: 'Todas', icon: Compass },
     { id: 'grupales', label: 'Salidas Grupales', icon: Users },
-    { id: 'desafios', label: 'Travesías & Desafíos', icon: Mountain },
+    { id: 'desafios', label: 'Travesías & Grandes Desafíos', icon: Mountain },
     { id: 'expedition_pass', label: 'Expedition Pass', icon: Sparkles },
     { id: 'high_mountain', label: 'High Mountain', icon: ShieldAlert },
   ];
