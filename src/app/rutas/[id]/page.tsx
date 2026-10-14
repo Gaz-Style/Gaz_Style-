@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
-import { ArrowLeft, Clock, Users, HeartPulse, Mountain, CheckCircle2, XCircle, Map, Calendar, MessageCircle, ShieldCheck, Ticket, Award, Sparkles, Navigation } from 'lucide-react';
+import { ArrowLeft, Clock, Users, HeartPulse, Mountain, CheckCircle2, XCircle, Map, Calendar, MessageCircle, ShieldCheck, Ticket, Award, Sparkles, Navigation, Car, Video, Crown } from 'lucide-react';
 import { notFound, redirect } from 'next/navigation';
 import { challengesData } from '../../desafios/data';
 import Image from 'next/image';
@@ -71,27 +71,61 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
 
     const elevation = route.elevation_gain || (route.difficulty_level === 'Alta' ? '+1.200m' : '+600m');
 
-    const itinerary = route.itinerary?.length > 0 ? route.itinerary : [
-        { time: '07:00', title: 'Punto de Encuentro', desc: 'Nos juntamos en el punto acordado en Lo Barnechea.' },
-        { time: '08:30', title: 'Inicio del Trekking', desc: 'Comenzamos la caminata a ritmo de aclimatación y respiración.' },
-        { time: '12:30', title: 'Cumbre y Desconexión', desc: 'Llegamos a la cumbre con vistas 360° sobre todo Santiago.' },
-        { time: '16:00', title: 'Regreso y Cierre', desc: 'Bajamos a la ciudad con la expedición completa y fotos del día.' }
-    ];
+    const itinerary = (route.itinerary_steps && Array.isArray(route.itinerary_steps) && route.itinerary_steps.length > 0)
+        ? route.itinerary_steps.map((s: any) => ({
+            time: s.hora || s.time || '',
+            title: s.titulo || s.title || '',
+            desc: s.descripcion || s.desc || ''
+        }))
+        : (route.itinerary?.length > 0 ? route.itinerary : [
+            { time: '07:00', title: 'Punto de Encuentro', desc: 'Nos juntamos en el punto acordado en Lo Barnechea.' },
+            { time: '08:30', title: 'Inicio del Trekking', desc: 'Comenzamos la caminata a ritmo de aclimatación y respiración.' },
+            { time: '12:30', title: 'Cumbre y Desconexión', desc: 'Llegamos a la cumbre con vistas 360° sobre todo Santiago.' },
+            { time: '16:00', title: 'Regreso y Cierre', desc: 'Bajamos a la ciudad con la expedición completa y fotos del día.' }
+        ]);
 
-    const included = route.included?.length > 0 ? route.included : [
+    const isExpeditionPass = (route.category || '').toLowerCase() === 'expedition_pass' || (route.title || '').toLowerCase().includes('expedition pass');
+    const isHighMountain = (route.category || '').toLowerCase() === 'high_mountain' || (route.title || '').toLowerCase().includes('5.424m') || (route.title || '').toLowerCase().includes('5.856m') || (route.title || '').toLowerCase().includes('4.954m');
+
+    const included = isExpeditionPass ? [
+        'Pick-up y Drop-off privado en tu hotel o domicilio en Santiago (SUV / 4x4)',
+        'Guía de montaña profesional bilingüe certificado WFR dedicado a tu ritmo',
+        'Registro audiovisual cinematográfico: Video Reel vertical 4K editado para tus redes',
+        'Box lunch ancestral gourmet + frutos secos andinos y café de cumbre',
+        'Bebida helada de cortesía al descender de la montaña',
+        'Bastones de trekking de préstamo + botiquín WAFA',
+        'Comunicación satelital Garmin InReach SOS activa'
+    ] : (isHighMountain ? [
+        'Arrieros y mulas de carga para transporte de equipo pesado a campamento base',
+        'Campamento base montado con carpas 4 estaciones resistentes al viento',
+        'Guías de alta montaña certificados WFR con protocolo estricto de aclimatación',
+        'Monitoreo diario de oximetría (SpO2) y balón de oxígeno medicinal de emergencia',
+        'Transporte 4x4 Santiago - Cordillera ida y vuelta',
+        'Comunicación satelital Garmin SOS y radios VHF',
+        'Todas las raciones de marcha y comidas calientes de campamento'
+    ] : (route.included?.length > 0 ? route.included : [
         'Expedition Pass Digital con coordenadas GPS y voucher oficial',
         'Guía profesional de montaña WFR certificado',
         'Fotografía profesional en ruta y cumbre',
         'Botiquín de primeros auxilios de alta montaña',
         'Radios VHF y comunicación satelital Garmin SOS',
         'Ración de marcha técnica y snacks energéticos'
-    ];
+    ]));
 
-    const notIncluded = route.not_included?.length > 0 ? route.not_included : [
+    const notIncluded = isExpeditionPass ? [
+        'Indumentaria y calzado técnico personal de montaña',
+        'Consumos o comidas fuera del itinerario estipulado',
+        'Propinas voluntarias para guía o conductor'
+    ] : (isHighMountain ? [
+        'Indumentaria técnica personal (botas de alta montaña, saco pluma -10°C, primera capa)',
+        'Equipo técnico personal (crampones y piolet, disponibles para arriendo)',
+        'Seguro médico personal de accidentes de montaña',
+        'Propinas voluntarias para arrieros y guías'
+    ] : (route.not_included?.length > 0 ? route.not_included : [
         'Transporte hasta el punto de encuentro en Lo Barnechea',
         'Indumentaria y calzado técnico de trekking',
         'Seguro personal de accidentes'
-    ];
+    ]));
 
     const whatsappMessage = encodeURIComponent(
         `¡Hola Santiago Hiking! Me interesa agendar la salida "${route.title}". ¿Tienen cupos disponibles para las próximas fechas?`
@@ -407,6 +441,99 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                 </div>
                             </section>
 
+                            {/* ── BANNER EXPEDITION PASS / HIGH MOUNTAIN VIP UPGRADE ── */}
+                            {(!isExpeditionPass && !isHighMountain) ? (
+                                <section 
+                                    className="p-6 sm:p-8 rounded-3xl relative overflow-hidden border border-amber-500/30 shadow-[0_12px_40px_rgba(245,158,11,0.12)]"
+                                    style={{
+                                        background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(20, 20, 20, 0.85) 100%)',
+                                        backdropFilter: 'blur(20px)',
+                                        WebkitBackdropFilter: 'blur(20px)',
+                                    }}
+                                >
+                                    <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+                                    
+                                    <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                                        <div className="space-y-3 max-w-xl">
+                                            <div className="flex items-center gap-2">
+                                                <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1.5">
+                                                    <Crown className="w-3 h-3 text-amber-400" /> Formato Expedition Pass Disponible
+                                                </span>
+                                                <span className="text-[10px] font-mono text-white/50 uppercase tracking-widest">100% Privado</span>
+                                            </div>
+                                            <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-white">
+                                                ¿Prefieres vivir esta cumbre en privado y a tu propio ritmo?
+                                            </h3>
+                                            <p className="text-xs sm:text-sm text-white/70 font-light leading-relaxed">
+                                                Convierte esta ruta en un <strong>Expedition Pass exclusivo</strong> para ti o tu grupo cerrado. Incluye pick-up directo en tu hotel o domicilio en Santiago, fecha abierta a tu elección (lunes a domingo) y entrega de un video <strong>Reel 4K editado profesional</strong> para tus redes.
+                                            </p>
+                                            <div className="flex flex-wrap gap-4 pt-1 text-xs font-mono text-white/60">
+                                                <span className="flex items-center gap-1.5"><Car className="w-3.5 h-3.5 text-amber-400" /> Pick-up Puerta a Puerta</span>
+                                                <span className="flex items-center gap-1.5"><Video className="w-3.5 h-3.5 text-amber-400" /> Reel 4K de Cumbre</span>
+                                                <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Guía WFR Exclusivo</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 w-full md:w-auto shrink-0">
+                                            <a
+                                                href={`https://wa.me/56957958467?text=${encodeURIComponent(`¡Hola! Me gustaría cotizar la ruta "${route.title}" en formato privado Expedition Pass (con pick-up en Santiago y Reel 4K). ¿Qué disponibilidad tienen?`)}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="btn-arcteryx-primary !py-3.5 !px-6 text-xs font-mono font-bold tracking-wider text-center flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(245,158,11,0.25)]"
+                                            >
+                                                <Sparkles className="w-4 h-4" /> COTIZAR EXPEDITION PASS
+                                            </a>
+                                            <span className="text-[10px] font-mono text-center text-white/40">
+                                                Tarifa a medida · Respuesta &lt; 15 min
+                                            </span>
+                                        </div>
+                                    </div>
+                                </section>
+                            ) : (
+                                <section 
+                                    className="p-6 sm:p-8 rounded-3xl relative overflow-hidden border border-amber-500/30 shadow-[0_12px_40px_rgba(245,158,11,0.15)]"
+                                    style={{
+                                        background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(15, 15, 15, 0.9) 100%)',
+                                        backdropFilter: 'blur(20px)',
+                                        WebkitBackdropFilter: 'blur(20px)',
+                                    }}
+                                >
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1.5">
+                                            <Crown className="w-3 h-3 text-amber-400" /> {isHighMountain ? 'Expedición de Alta Montaña Oficial' : 'Experiencia Privada Expedition Pass'}
+                                        </span>
+                                        <span className="text-[10px] font-mono text-emerald-400 uppercase tracking-widest font-bold">Servicio Todo Incluido</span>
+                                    </div>
+                                    <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-white mb-2">
+                                        Estándar Internacional de Expedición Andina
+                                    </h3>
+                                    <p className="text-xs sm:text-sm text-white/70 font-light leading-relaxed mb-4">
+                                        {isHighMountain 
+                                            ? 'Operación integral con campamentos de altura, porteo de mulas y arrieros (según itinerario), ratio técnico de seguridad 1:2 o 1:3, alimentación liofilizada de montaña y monitoreo satelital Garmin SOS 24/7 en tiempo real.'
+                                            : 'Servicio 100% privado con transporte ejecutivo puerta a puerta desde tu hotel en Santiago, ritmo de ascenso personalizado sin presiones y cobertura audiovisual con Reel 4K profesional listo para compartir.'
+                                        }
+                                    </p>
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-xs font-mono">
+                                        <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex flex-col gap-1">
+                                            <span className="text-amber-400 font-bold flex items-center gap-1"><Car className="w-3.5 h-3.5" /> Pick-up</span>
+                                            <span className="text-[11px] text-white/60">Puerta a puerta en Santiago</span>
+                                        </div>
+                                        <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex flex-col gap-1">
+                                            <span className="text-amber-400 font-bold flex items-center gap-1"><Video className="w-3.5 h-3.5" /> Reel 4K</span>
+                                            <span className="text-[11px] text-white/60">Edición profesional incluida</span>
+                                        </div>
+                                        <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex flex-col gap-1">
+                                            <span className="text-amber-400 font-bold flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5" /> WFR / SOS</span>
+                                            <span className="text-[11px] text-white/60">Garmin InReach satelital</span>
+                                        </div>
+                                        <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex flex-col gap-1">
+                                            <span className="text-amber-400 font-bold flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> A tu Medida</span>
+                                            <span className="text-[11px] text-white/60">Lunes a Domingo a elección</span>
+                                        </div>
+                                    </div>
+                                </section>
+                            )}
+
                             {/* Inclusiones (Diseño de Tarjetas de Cristal Ahumado) */}
                             <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div 
@@ -473,15 +600,33 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                 }}
                             >
                                 <div>
-                                    <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-white/40 block mb-1">Valor por persona</span>
-                                    <div className="flex items-baseline justify-between">
-                                        <p className="text-4xl font-black text-white font-mono">
-                                            ${Number(route.base_price || 25000).toLocaleString('es-CL')}
-                                        </p>
-                                        <span className="text-sm text-white/45 font-mono">
-                                            US${Math.round((route.base_price || 25000) / 950).toLocaleString('en-US')}
-                                        </span>
-                                    </div>
+                                    <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-white/40 block mb-1">
+                                        {isHighMountain ? 'Tarifa Expedición Oficial' : (isExpeditionPass ? 'Tarifa Privada Expedition Pass' : 'Valor por persona')}
+                                    </span>
+                                    {isHighMountain ? (
+                                        <div>
+                                            <div className="flex items-baseline justify-between">
+                                                <p className="text-4xl font-black text-amber-400 font-mono">
+                                                    US${Math.round((route.base_price || 1460000) / 975).toLocaleString('en-US')}
+                                                </p>
+                                                <span className="text-sm text-white/60 font-mono">
+                                                    ${Number(route.base_price || 1460000).toLocaleString('es-CL')} CLP
+                                                </span>
+                                            </div>
+                                            <span className="text-[10px] font-mono text-emerald-400 block mt-1">
+                                                Garantía de tarifa oficial · Guías UIAGM/WFR
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-baseline justify-between">
+                                            <p className="text-4xl font-black text-white font-mono">
+                                                ${Number(route.base_price || 25000).toLocaleString('es-CL')}
+                                            </p>
+                                            <span className="text-sm text-white/45 font-mono">
+                                                US${Math.round((route.base_price || 25000) / 950).toLocaleString('en-US')}
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Widget de Salidas Confirmadas con Disponibilidad */}
@@ -557,16 +702,27 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                         <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
                             <div>
                                 <span className="text-[9px] font-mono uppercase tracking-widest text-white/40 block">
-                                    Valor persona
+                                    {isHighMountain ? 'Tarifa Oficial' : (isExpeditionPass ? 'Expedition Pass' : 'Valor persona')}
                                 </span>
-                                <div className="flex items-baseline gap-1.5">
-                                    <span className="text-xl font-black text-white font-mono">
-                                        ${Number(route.base_price || 25000).toLocaleString('es-CL')}
-                                    </span>
-                                    <span className="text-[11px] text-white/40 font-mono">
-                                        US${Math.round((route.base_price || 25000) / 950).toLocaleString('en-US')}
-                                    </span>
-                                </div>
+                                {isHighMountain ? (
+                                    <div className="flex items-baseline gap-1.5">
+                                        <span className="text-xl font-black text-amber-400 font-mono">
+                                            US${Math.round((route.base_price || 1460000) / 975).toLocaleString('en-US')}
+                                        </span>
+                                        <span className="text-[11px] text-white/50 font-mono">
+                                            ${Number(route.base_price || 1460000).toLocaleString('es-CL')}
+                                        </span>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-baseline gap-1.5">
+                                        <span className="text-xl font-black text-white font-mono">
+                                            ${Number(route.base_price || 25000).toLocaleString('es-CL')}
+                                        </span>
+                                        <span className="text-[11px] text-white/40 font-mono">
+                                            US${Math.round((route.base_price || 25000) / 950).toLocaleString('en-US')}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
 
                             <Link

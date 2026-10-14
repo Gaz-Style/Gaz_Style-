@@ -141,21 +141,21 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
 
       {/* CATÁLOGO DE SALIDAS ACTIVAS DE TEMPORADA */}
       <section id="rutas" className="py-8 sm:py-14 bg-transparent relative z-20">
-        <div className="max-w-5xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-6">
           <div className="mb-4 sm:mb-6 border-b border-white/15 pb-3 sm:pb-4">
             <span className="text-amber-400 font-mono text-xs uppercase tracking-[0.25em] mb-1 block font-semibold">
-              Temporada 2026
+              Temporada 2026 · Catálogo Oficial
             </span>
             <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight">
-              Salidas Grupales
+              Experiencias & Rutas Andinas
             </h2>
-            <p className="text-white/55 text-sm mt-1.5 font-light max-w-sm">
-              Grupos reducidos guiados por Gaz. Seguridad WFR y fotografía profesional incluidos.
+            <p className="text-white/60 text-sm mt-1.5 font-light max-w-lg">
+              Explora nuestros 4 pilares: Salidas Grupales comunitarias, Travesías deportivas, Expedition Pass privado a medida y Expediciones High Mountain.
             </p>
           </div>
 
-          {/* ── Vitrina Interactiva de Salidas Grupales (Sin Desafíos Mezclados) ── */}
-          <ExperienceFilterableGrid routes={salidasGrupales} />
+          {/* ── Vitrina Interactiva de Experiencias Filtrables por Categoría ── */}
+          <ExperienceFilterableGrid routes={routes} />
         </div>
       </section>
 
