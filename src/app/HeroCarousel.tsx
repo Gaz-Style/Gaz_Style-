@@ -3,11 +3,12 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 
 const HERO_VIDEOS = [
-  { id: 'manquehue', src: '/contenido/hiking-manquehue.mov', label: 'Cerro Manquehue' },
-  { id: 'img-6160', src: '/contenido/IMG_6160.MOV', label: 'Ruta & Naturaleza' },
-  { id: 'img-6705', src: '/contenido/IMG_6705.MOV', label: 'Expedición Cordillera' },
-  { id: 'img-8505', src: '/contenido/IMG_8505.MOV', label: 'Cumbre & Aventura' },
-  { id: 'clip-story', src: '/contenido/92c594f305e440dfac7345ca5abf6469.MOV', label: 'Comunidad Hiking' },
+  { id: 'manquehue', src: '/contenido/hiking-manquehue.mp4', label: 'Cerro Manquehue' },
+  { id: 'img-6160', src: '/contenido/img_6160.mp4', label: 'Ruta & Naturaleza' },
+  { id: 'img-6705', src: '/contenido/img_6705.mp4', label: 'Expedición Cordillera' },
+  { id: 'img-8505', src: '/contenido/img_8505.mp4', label: 'Cumbre & Aventura' },
+  { id: 'img-8696', src: '/contenido/img_8696.mp4', label: 'Senderos Andinos' },
+  { id: 'img-8698', src: '/contenido/img_8698.mp4', label: 'Alta Montaña' },
 ];
 
 export default function HeroCarousel() {
@@ -35,31 +36,36 @@ export default function HeroCarousel() {
   return (
     <div className="fixed inset-0 z-0 w-full h-full overflow-hidden bg-stone-950 pointer-events-none">
       {/* Carrusel de Videos con Crossfade Cinematográfico */}
-      {HERO_VIDEOS.map((vid, idx) => (
-        <video
-          key={vid.id}
-          ref={(el) => {
-            videoRefs.current[idx] = el;
-          }}
-          autoPlay={idx === 0}
-          loop={false}
-          muted
-          playsInline
-          preload={idx === 0 ? 'auto' : 'metadata'}
-          onEnded={handleNext}
-          onError={() => {
-            // Si un clip falla o no es compatible, salta fluidamente al siguiente
-            if (idx === current) handleNext();
-          }}
-          poster="https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=2000&q=80"
-          className={`absolute inset-0 w-full h-full object-cover object-center scale-105 transition-opacity duration-1000 ease-in-out ${
-            idx === current ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
-          }`}
-        >
-          <source src={vid.src} type="video/mp4" />
-          <source src={vid.src} type="video/quicktime" />
-        </video>
-      ))}
+      {HERO_VIDEOS.map((vid, idx) => {
+        const isCurrent = idx === current;
+        const isNext = idx === (current + 1) % HERO_VIDEOS.length;
+        const preloadStrategy = isCurrent ? 'auto' : isNext ? 'metadata' : 'none';
+
+        return (
+          <video
+            key={vid.id}
+            ref={(el) => {
+              videoRefs.current[idx] = el;
+            }}
+            autoPlay={idx === 0}
+            loop={false}
+            muted
+            playsInline
+            preload={preloadStrategy}
+            onEnded={handleNext}
+            onError={() => {
+              // Si un clip falla o no es compatible, salta fluidamente al siguiente
+              if (idx === current) handleNext();
+            }}
+            poster="https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=2000&q=80"
+            className={`absolute inset-0 w-full h-full object-cover object-center scale-105 transition-opacity duration-1000 ease-in-out ${
+              isCurrent ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+            }`}
+          >
+            <source src={vid.src} type="video/mp4" />
+          </video>
+        );
+      })}
 
       {/* Overlay sutil y luminoso: mantiene la luz natural de los videos sin oscurecer */}
       <div className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-b from-black/35 via-transparent to-black/45" />

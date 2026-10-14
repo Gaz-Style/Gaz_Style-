@@ -91,10 +91,10 @@ export default function FAQPage() {
             </Link>
             <Link href="/" className="flex items-center transition-transform hover:scale-105 duration-300">
               <Image
-                src="/santiago-hiking-10.png"
+                src="/logotipo blanco.png"
                 alt="Santiago Hiking"
-                width={140}
-                height={60}
+                width={220}
+                height={50}
                 className="h-8 w-auto object-contain"
                 priority
               />

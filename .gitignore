@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# scratch test scripts
+test_wa_send.js
+verify_livechat_db.js
+seed_challenges_to_supabase.js

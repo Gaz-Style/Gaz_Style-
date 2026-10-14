@@ -301,9 +301,9 @@ export const sendLuxuryPassEmail = async (
 
   try {
     const info = await transporter.sendMail({
-      from: `"Luxury Pass - Gaz La Guía" <${fromAddress}>`,
+      from: `"Expedition Pass - Santiago Hiking" <${fromAddress}>`,
       to,
-      subject: subject || 'Tu Luxury Pass Exclusivo - Gaz Style',
+      subject: subject || 'Tu Expedition Pass Oficial - Santiago Hiking',
       html,
     });
     return { success: true, messageId: info.messageId };

@@ -51,9 +51,9 @@ export default function AdminHeader({ hasUser }: AdminHeaderProps) {
             </Link>
           )}
           <div className="flex flex-col">
-            <span className="text-[9px] uppercase text-primary font-black tracking-widest flex items-center gap-1.5">
+            <span className="text-[9px] uppercase text-amber-400 font-black tracking-widest flex items-center gap-1.5">
               <Mountain className="w-3 h-3" />
-              Gaz Style Expeditions
+              Santiago Hiking
             </span>
             <span className="text-sm font-bold text-white tracking-wide">{currentModuleName}</span>
           </div>

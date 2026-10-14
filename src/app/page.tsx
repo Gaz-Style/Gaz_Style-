@@ -13,6 +13,8 @@ import GuideRadioWidget from "./GuideRadioWidget";
 import LeadMagnetForm from "./LeadMagnetForm";
 import HeroActionButtons from "./HeroActionButtons";
 import SwipeCarousel from "./SwipeCarousel";
+import ScrollToTopButton from "./ScrollToTopButton";
+import ExperienceFilterableGrid from "./ExperienceFilterableGrid";
 import { createClient } from '@supabase/supabase-js';
 
 export const dynamic = 'force-dynamic';
@@ -34,6 +36,54 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
   const lang = params?.lang || 'es';
   const { routes, departures } = await getPublicData();
 
+  // ── SEPARACIÓN ESTRICTA DE TIPOLOGÍAS ──────────────────────────────────────────
+  // Salidas Grupales: SOLO trekking regular, sunset y salidas de día.
+  // Los Grandes Desafíos y Expediciones jamás deben mezclarse aquí.
+  const salidasGrupales = routes.filter((r: any) => {
+    const cat = (r.category || '').toLowerCase();
+    const vt = (r.vertical_type || '').toLowerCase();
+    const title = (r.title || '').toLowerCase();
+    const isChallenge =
+      cat.includes('desafío') ||
+      cat.includes('desafio') ||
+      vt === 'challenges' ||
+      vt === 'expeditions' ||
+      title.includes('desafío') ||
+      title.includes('desafio') ||
+      title.includes('triple corona') ||
+      title.includes('desbloqueando') ||
+      title.includes('sierra de ramón') ||
+      title.includes('sierra de ramon');
+    return !isChallenge;
+  });
+
+  // Los Grandes Desafíos & Expediciones Andinas (Alimentados dinámicamente)
+  const dbDesafios = routes.filter((r: any) => {
+    const cat = (r.category || '').toLowerCase();
+    const vt = (r.vertical_type || '').toLowerCase();
+    const title = (r.title || '').toLowerCase();
+    return (
+      vt === 'challenges' ||
+      vt === 'expeditions' ||
+      cat.includes('desafío') ||
+      cat.includes('desafio') ||
+      title.includes('desafío') ||
+      title.includes('desafio') ||
+      title.includes('triple corona') ||
+      title.includes('desbloqueando') ||
+      title.includes('sierra de ramón') ||
+      title.includes('sierra de ramon')
+    );
+  });
+
+  // Lista de desafíos: si existen en DB los usa dinámicamente; si no, fallback a los 4 icónicos
+  const desafiosList = dbDesafios.length > 0 ? dbDesafios : [
+    { id: '1', title: 'Desafío 5:00 AM', badge: 'COTA 1.638M · MANQUEHUITO', image_url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=85', description: 'Ascenso nocturno con linternas frontales. Conquista la cumbre al romper el alba con café caliente sobre el mar de nubes de Santiago.' },
+    { id: '2', title: 'La Triple Corona', badge: '3 CUMBRES · +2.100M D+', image_url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=85', description: 'El reto andino definitivo: Manquehuito, Cerro Manquehue y Cerro Pochoco. Forja resistencia real en los Andes.' },
+    { id: '3', title: 'Sierra de Ramón', badge: 'COTA 3.250M · ALTA EXIGENCIA', image_url: 'https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?auto=format&fit=crop&w=1200&q=85', description: 'La travesía técnica reina de Santiago. Aristas de roca, vistas 360° y protocolo WFR estricto.' },
+    { id: '4', title: 'Desbloqueando Santiago', badge: 'PLAN 6 SEMANAS · 1 CERRO/SEM', image_url: 'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=1200&q=85', description: 'El pasaporte de montaña para principiantes activos. Dificultad creciente, orientación en subida y cumbres semanales.' }
+  ];
+
   return (
     <div className="bg-stone-950 topographic-pattern topographic-contours min-h-screen text-stone-100 font-sans selection:bg-amber-500/30">
       
@@ -42,6 +92,9 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
 
       {/* PESTAÑA LATERAL VIDRIO AHUMADO: CANAL DE RADIO GUÍA / SOS */}
       <GuideRadioWidget />
+
+      {/* BOTÓN FLOTANTE INFERIOR: VOLVER AL INICIO */}
+      <ScrollToTopButton />
 
       {/* 1. HERO SECTION CINEMATOGRÁFICO (Inspirado en Arc'teryx) */}
       <section className="relative min-h-screen flex items-center justify-center pt-24 px-6 overflow-hidden">
@@ -53,7 +106,6 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
             <div className="flex items-center gap-1.5">
               <span className="text-amber-400 font-black text-sm sm:text-base tracking-tight drop-shadow-sm">★★★★★</span>
               <span className="font-bold text-white">4.9/5</span>
-              <span className="text-white/70 font-light">(+320)</span>
             </div>
             <span className="text-white/40 hidden sm:inline">·</span>
             <div className="hidden sm:flex items-center gap-1.5 text-white/95">
@@ -68,18 +120,18 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
           </div>
           
           {/* 2. Título Hero Sólido con Tipografía Oficial de Hiking (font-edo) en Dorado Andino */}
-          <h1 className="text-5xl sm:text-6xl md:text-8xl font-black uppercase tracking-tight text-white leading-[0.92] mb-6 drop-shadow-md">
-            ENCUENTRA <br />
-            <span className="font-edo tracking-wider block mt-2 text-6xl sm:text-7xl md:text-9xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-100 bg-clip-text text-transparent drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]">
-              TU CUMBRE.
+          <h1 className="text-5xl sm:text-7xl md:text-8xl font-black uppercase tracking-tight text-white leading-[0.92] mb-6 drop-shadow-md">
+            DESBLOQUEA <br />
+            <span className="font-edo tracking-wider block mt-2 text-6xl sm:text-8xl md:text-9xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-100 bg-clip-text text-transparent drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]">
+              LA CUMBRE.
             </span>
           </h1>
           
           {/* 3. Subtítulo (Bajada) */}
           <p className="text-base sm:text-lg md:text-xl text-slate-100 max-w-2xl mx-auto font-normal leading-relaxed mb-10 drop-shadow">
             {lang === 'en'
-              ? 'Live the adventure with high mountain experts, ideal for solo travelers.'
-              : 'Vive la aventura junto a expertos de alta montaña, ideal para quienes viajan solos.'}
+              ? 'The city goes silent when the mountain speaks. Wild trekking, trail, and raw adrenaline in the Andes of Santiago, Chile: feel the altitude, break your limits, and claim your place at the summit.'
+              : 'La ciudad se calla cuando habla la montaña. Rutas salvajes de trekking, trail y adrenalina en los Andes de Santiago de Chile: siente la altura, rompe tus límites y reclama tu lugar en la cima.'}
           </p>
 
           {/* 4. Botones Píldora Glassmorphism */}
@@ -88,62 +140,30 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
       </section>
 
       {/* CATÁLOGO DE SALIDAS ACTIVAS DE TEMPORADA */}
-      <section id="rutas" className="py-14 bg-transparent relative z-20">
+      <section id="rutas" className="py-8 sm:py-14 bg-transparent relative z-20">
         <div className="max-w-5xl mx-auto px-6">
-          <div className="mb-8 border-b border-white/15 pb-6">
-            <span className="text-amber-400 font-mono text-xs uppercase tracking-[0.25em] mb-2 block font-semibold">
+          <div className="mb-4 sm:mb-6 border-b border-white/15 pb-3 sm:pb-4">
+            <span className="text-amber-400 font-mono text-xs uppercase tracking-[0.25em] mb-1 block font-semibold">
               Temporada 2026
             </span>
             <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight">
               Salidas Grupales
             </h2>
-            <p className="text-white/55 text-sm mt-2 font-light max-w-sm">
+            <p className="text-white/55 text-sm mt-1.5 font-light max-w-sm">
               Grupos reducidos guiados por Gaz. Seguridad WFR y fotografía profesional incluidos.
             </p>
           </div>
 
-          {routes.length === 0 ? (
-            <div className="py-20 text-center rounded-2xl" style={{backgroundColor:'rgba(255,255,255,0.05)',border:'1px dashed rgba(255,255,255,0.15)'}}>
-              <Tent className="w-12 h-12 text-white/30 mx-auto mb-4" />
-              <p className="text-white/50 text-sm">Próximamente publicaremos el nuevo calendario de salidas.</p>
-            </div>
-          ) : (
-            <SwipeCarousel peekWidth={32} gap={14}>
-              {routes.map((route: any) => (
-                <div key={route.id} className="h-full rounded-2xl overflow-hidden flex flex-col group" style={{backgroundColor:'rgba(255,255,255,0.06)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',border:'1px solid rgba(255,255,255,0.10)'}}>
-                  <div className="aspect-[16/10] relative overflow-hidden bg-stone-100">
-                    {route.image_url ? (
-                      <Image src={route.image_url} alt={route.title} fill sizes="(max-width: 768px) 100vw, 70vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
-                    ) : (
-                      <Mountain className="w-16 h-16 text-stone-300 m-auto" />
-                    )}
-                    <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/35 to-transparent pointer-events-none" />
-                    <span className="absolute top-4 right-4 bg-stone-900/80 backdrop-blur px-3 py-1 text-[10px] font-mono tracking-widest uppercase font-bold text-white rounded shadow-sm">{route.category}</span>
-                  </div>
-                  <div className="p-6 flex flex-col flex-1 gap-3">
-                    <div>
-                      <h3 className="text-2xl font-bold text-white uppercase tracking-tight mb-2">{route.title}</h3>
-                      <p className="text-sm text-white/60 mb-4 font-light line-clamp-2">{route.description || 'Guiado premium paso a paso en la cordillera.'}</p>
-                      <div className="grid grid-cols-3 gap-2 py-3 text-center font-mono rounded-lg" style={{backgroundColor:'rgba(255,255,255,0.05)',borderTop:'1px solid rgba(255,255,255,0.08)',borderBottom:'1px solid rgba(255,255,255,0.08)'}}>
-                        <div><p className="text-[10px] text-white/40 uppercase font-medium">Duración</p><p className="text-xs font-bold text-white">{route.duration_text || `${route.duration_days}d`}</p></div>
-                        <div><p className="text-[10px] text-white/40 uppercase font-medium">Dificultad</p><p className="text-xs font-bold text-amber-400">{route.difficulty_level}</p></div>
-                        <div><p className="text-[10px] text-white/40 uppercase font-medium">Cupo Máx</p><p className="text-xs font-bold text-white">{route.max_pax} pax</p></div>
-                      </div>
-                    </div>
-                    <Link href={`/rutas/${route.id}`} className="btn-arcteryx w-full flex items-center justify-center">Ver Detalles</Link>
-                  </div>
-                </div>
-              ))}
-            </SwipeCarousel>
-          )}
+          {/* ── Vitrina Interactiva de Salidas Grupales (Sin Desafíos Mezclados) ── */}
+          <ExperienceFilterableGrid routes={salidasGrupales} />
         </div>
       </section>
 
       {/* 2. LOS GRANDES DESAFÍOS ANDINOS (Lienzo Blanco Editorial: Fotografías como Galería) */}
-      <section id="desafios" className="py-24 bg-transparent relative z-20">
+      <section id="desafios" className="py-10 sm:py-16 md:py-20 bg-transparent relative z-20">
         <div className="max-w-7xl mx-auto px-6">
           
-          <div className="mb-14 border-b border-white/15 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div className="mb-4 sm:mb-8 border-b border-white/15 pb-3 sm:pb-4 flex flex-col md:flex-row md:items-end justify-between gap-2.5 sm:gap-4">
             <div>
               <span className="text-white/50 font-mono text-[10px] tracking-[0.3em] uppercase block mb-1">
                 The Andes Challenges · Serie 2026
@@ -153,32 +173,40 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
               </h2>
             </div>
             <p className="text-white/60 text-xs md:text-sm max-w-md font-light leading-relaxed">
-              Cuatro expediciones icónicas para llevar tu resistencia física y mental al siguiente nivel en la Cordillera de los Andes.
+              Expediciones icónicas diseñadas para llevar tu resistencia física y mental al siguiente nivel en la Cordillera de los Andes.
             </p>
           </div>
 
           <SwipeCarousel peekWidth={32} gap={14}>
-            {[
-              { num: '01', meta: 'COTA 1.638M · MANQUEHUITO', title: 'Desafío 5:00 AM', slug: '/desafios/desafio-5am', img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=85', alt: 'Desafío 5:00 AM', desc: 'Ascenso nocturno con linternas frontales. Conquista la cumbre al romper el alba con café caliente sobre el mar de nubes de Santiago.' },
-              { num: '02', meta: '3 CUMBRES · +2.100M D+', title: 'La Triple Corona', slug: '/desafios/triple-corona', img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=85', alt: 'La Triple Corona de Santiago', desc: 'El reto andino definitivo: Manquehuito, Cerro Manquehue y Cerro Pochoco. Forja resistencia real en los Andes.' },
-              { num: '03', meta: 'COTA 3.250M · ALTA EXIGENCIA', title: 'Sierra de Ramón', slug: '/desafios/sierra-de-ramon', img: 'https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?auto=format&fit=crop&w=1200&q=85', alt: 'Travesía Sierra de Ramón', desc: 'La travesía técnica reina de Santiago. Aristas de roca, vistas 360° y protocolo WFR estricto.' },
-              { num: '04', meta: 'PLAN 6 SEMANAS · 1 CERRO/SEM', title: 'Desbloqueando Santiago', slug: '/desafios/desbloqueando-santiago', img: 'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=1200&q=85', alt: 'Desbloqueando Santiago', desc: 'El pasaporte de montaña para principiantes activos. Dificultad creciente, orientación en subida y cumbres semanales.' },
-            ].map((d) => (
-              <div key={d.num} className="relative min-h-[500px] overflow-hidden flex flex-col justify-end p-8 group border border-stone-200/20 hover:border-white/30 transition-all duration-500 bg-stone-900 rounded-2xl">
-                <Image src={d.img} alt={d.alt} fill sizes="(max-width: 768px) 100vw, 60vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
-                <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-stone-950/95 via-stone-950/50 to-transparent pointer-events-none" />
-                <div className="relative z-10 space-y-3">
-                  <span className="text-[10px] font-mono tracking-[0.25em] uppercase text-white/70 block">{d.num} · {d.meta}</span>
-                  <h3 className="text-3xl font-black text-white uppercase tracking-tight">{d.title}</h3>
-                  <p className="text-slate-200 text-sm font-light leading-relaxed">{d.desc}</p>
-                  <div className="pt-2">
-                    <Link href={d.slug} className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-white border-b border-white/60 pb-1 hover:border-white transition-all hover:text-amber-300">
-                      Ver Detalles y Ficha Técnica &rarr;
-                    </Link>
+            {desafiosList.map((d: any, idx: number) => {
+              const num = String(idx + 1).padStart(2, '0');
+              const t = (d.title || '').toLowerCase();
+              let slug = `/rutas/${d.id}`;
+              if (t.includes('5:00 am') || t.includes('5am')) slug = '/desafios/desafio-5am';
+              else if (t.includes('triple corona')) slug = '/desafios/triple-corona';
+              else if (t.includes('sierra de ramón') || t.includes('sierra de ramon')) slug = '/desafios/sierra-de-ramon';
+              else if (t.includes('desbloqueando')) slug = '/desafios/desbloqueando-santiago';
+
+              const meta = d.badge || (d.vertical_type === 'expeditions' ? 'ALTA MONTAÑA · ANDES' : 'GRAN DESAFÍO · CUENCA CENTRAL');
+              const imgSrc = d.image_url || 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=85';
+
+              return (
+                <div key={d.id || num} className="relative min-h-[500px] overflow-hidden flex flex-col justify-end p-8 group border border-stone-200/20 hover:border-white/30 transition-all duration-500 bg-stone-900 rounded-2xl">
+                  <Image src={imgSrc} alt={d.title} fill sizes="(max-width: 768px) 100vw, 60vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-stone-950/95 via-stone-950/50 to-transparent pointer-events-none" />
+                  <div className="relative z-10 space-y-3">
+                    <span className="text-[10px] font-mono tracking-[0.25em] uppercase text-white/70 block">{num} · {meta}</span>
+                    <h3 className="text-3xl font-black text-white uppercase tracking-tight">{d.title}</h3>
+                    <p className="text-slate-200 text-sm font-light leading-relaxed line-clamp-3">{d.description || 'Reto de montaña de alta exigencia física y mental en los Andes de Santiago.'}</p>
+                    <div className="pt-2">
+                      <Link href={slug} className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-white border-b border-white/60 pb-1 hover:border-white transition-all hover:text-amber-300">
+                        Ver Detalles y Ficha Técnica &rarr;
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </SwipeCarousel>
         </div>
       </section>
@@ -451,21 +479,13 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
             
             {/* Columna Marca */}
             <div className="space-y-4">
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center">
                 <Image
-                  src="/logo sh.png"
+                  src="/logotipo blanco.png"
                   alt="Santiago Hiking"
-                  width={40}
-                  height={40}
-                  className="w-8 h-8 object-contain shrink-0"
-                />
-                {/* Logotipo Oficial 20 (SANTIAGO en negro + HIKING en ámbar) */}
-                <Image
-                  src="/logo-text-black.png"
-                  alt="Santiago Hiking"
-                  width={200}
-                  height={28}
-                  className="h-5 sm:h-6 w-auto object-contain"
+                  width={340}
+                  height={80}
+                  className="h-10 sm:h-12 w-auto object-contain"
                 />
               </div>
               <p className="text-white/50 text-xs font-sans font-light leading-relaxed">

@@ -39,18 +39,35 @@ function ConfirmadaContent() {
           Hemos recibido tu pago con éxito. Te enviamos el comprobante a tu correo y el equipo de Santiago Hiking te contactará para coordinar la salida.
         </p>
 
-        <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-6 text-left space-y-3 mb-8">
-          <div className="flex items-center gap-3 text-sm text-slate-300">
-            <ShieldCheck className="w-5 h-5 text-amber-500 shrink-0" />
-            <span>Check-in médico y protocolo WFR activado</span>
+        {/* ── PASO POST-PAGO: FICHA MÉDICA, RUT Y SEGURIDAD WFR ── */}
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-6 text-left space-y-3 mb-8">
+          <div className="flex items-center gap-2.5">
+            <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0" />
+            <h3 className="text-sm font-bold uppercase tracking-wider text-amber-400 font-mono">
+              Paso Final: Ficha Médica y RUT WFR
+            </h3>
           </div>
-          <div className="flex items-center gap-3 text-sm text-slate-300">
-            <Calendar className="w-5 h-5 text-amber-500 shrink-0" />
-            <span>Punto de encuentro: Lo Barnechea (detalles por WhatsApp)</span>
+          <p className="text-slate-300 text-xs sm:text-sm font-light leading-relaxed">
+            Para validar tu <strong>Expedition Pass</strong> oficial y coordinar el protocolo de seguridad en la montaña, registra el <strong>RUT o Pasaporte, contacto de emergencia y grupo sanguíneo</strong> de los participantes.
+          </p>
+          <div className="pt-2">
+            <Link
+              href={searchParams.get('external_reference') ? `/check-in/${searchParams.get('external_reference')}` : '/#rutas'}
+              className="btn-arcteryx-primary w-full sm:w-auto inline-flex items-center justify-center !py-3 !px-6 text-xs font-mono font-bold tracking-widest gap-2 shadow-[0_0_20px_rgba(245,158,11,0.35)]"
+            >
+              COMPLETAR FICHA DE SEGURIDAD & RUT →
+            </Link>
           </div>
-          <div className="flex items-center gap-3 text-sm text-slate-300">
-            <Mountain className="w-5 h-5 text-amber-500 shrink-0" />
-            <span>Revisa tu equipo: zapatillas con buen agarre y 2L de agua</span>
+        </div>
+
+        <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-5 text-left space-y-2.5 mb-8">
+          <div className="flex items-center gap-3 text-xs sm:text-sm text-slate-300">
+            <Calendar className="w-4 h-4 text-amber-400 shrink-0" />
+            <span>Punto de encuentro y horarios detallados en tu Expedition Pass</span>
+          </div>
+          <div className="flex items-center gap-3 text-xs sm:text-sm text-slate-300">
+            <Mountain className="w-4 h-4 text-amber-400 shrink-0" />
+            <span>Equipo requerido: calzado con buen agarre y 2L de hidratación</span>
           </div>
         </div>
 

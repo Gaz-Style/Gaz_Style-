@@ -39,6 +39,7 @@ export async function createBookingWithMercadoPago(formData: {
     pax_count: number;
     adventure_title: string;
     unit_price: number;
+    additional_participants?: { first_name: string; last_name: string; email?: string }[];
 }) {
     const supabase = getAdminClient();
     const rawBaseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://www.santiagohiking.com';

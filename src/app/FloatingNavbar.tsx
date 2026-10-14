@@ -66,7 +66,7 @@ export default function FloatingNavbar({ currentLang }: Props) {
         
         {/* Cápsula Flotante Cristal Esmerilado Puro (True Frosted Glass) */}
         <div 
-          className="rounded-2xl md:rounded-full px-4 sm:px-7 h-16 sm:h-18 flex justify-between items-center transition-all duration-300 shadow-[0_8px_30px_rgba(0,0,0,0.15)] hover:bg-white/10"
+          className="rounded-2xl md:rounded-full px-3.5 sm:px-7 min-h-[72px] sm:min-h-[82px] py-1.5 flex justify-between items-center transition-all duration-300 shadow-[0_8px_30px_rgba(0,0,0,0.15)] hover:bg-white/10"
           style={{
             backgroundColor: scrolled ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.05)',
             backdropFilter: 'blur(16px)',
@@ -74,28 +74,17 @@ export default function FloatingNavbar({ currentLang }: Props) {
             border: '1px solid rgba(255, 255, 255, 0.08)',
           }}
         >
-          {/* Logotipo Blanco + Texto SANTIAGO en blanco */}
+          {/* Logotipo Oficial Completo (Tamaño aumentado x3) */}
           <Link 
             href="/" 
-            className="flex items-center gap-2.5 sm:gap-3 group transition-transform duration-200 hover:scale-[1.02]"
+            className="flex items-center group transition-transform duration-200 hover:scale-[1.02] py-0.5"
           >
-            {/* Isotipo Oficial SH en Blanco */}
             <Image
-              src="/logo-sh-white.png"
+              src="/logotipo blanco.png"
               alt="Santiago Hiking"
-              width={44}
-              height={44}
-              className="w-8 h-8 sm:w-9 sm:h-9 object-contain shrink-0 drop-shadow-[0_2px_8px_rgba(255,255,255,0.2)]"
-              priority
-            />
-            
-            {/* Logotipo Oficial 19 (SANTIAGO en blanco + HIKING en ámbar) */}
-            <Image
-              src="/logo-text-white.png"
-              alt="Santiago Hiking"
-              width={220}
-              height={32}
-              className="h-5 sm:h-6 md:h-7 w-auto object-contain drop-shadow-xs"
+              width={500}
+              height={125}
+              className="h-12 sm:h-14 md:h-16 w-auto max-w-[58vw] sm:max-w-none object-contain drop-shadow-[0_2px_14px_rgba(0,0,0,0.7)]"
               priority
             />
           </Link>

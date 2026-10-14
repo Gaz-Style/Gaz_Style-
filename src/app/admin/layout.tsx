@@ -16,7 +16,7 @@ export default async function AdminLayout({
       {/* Admin Topbar */}
       <AdminHeader hasUser={!!user} />
       
-      <div className="flex-grow w-full max-w-full overflow-x-hidden">
+      <div className="flex-1 flex flex-col w-full max-w-full overflow-x-hidden bg-[#0f1115]">
         {children}
       </div>
     </AdminLayoutClient>

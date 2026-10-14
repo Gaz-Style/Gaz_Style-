@@ -9,6 +9,14 @@ import {
 } from 'lucide-react';
 import { challengesData } from '../data';
 import GuideRadioWidget from '../../GuideRadioWidget';
+import ScrollToTopButton from '../../ScrollToTopButton';
+import SwipeBackHandler from '@/app/rutas/[id]/SwipeBackHandler';
+import MountainWeatherWidget from '@/components/MountainWeatherWidget';
+import ElevationProfileWidget from '@/components/ElevationProfileWidget';
+import { getMountainWeather } from '@/lib/weather';
+import { createClient } from '@supabase/supabase-js';
+
+export const dynamic = 'force-dynamic';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -40,22 +48,137 @@ export default async function ChallengeDetailPage({ params }: PageProps) {
 
   const otherChallenges = Object.values(challengesData).filter(c => c.slug !== challenge.slug);
 
+  // Sincronización en vivo con Supabase (para reflejar cambios del Diseñador)
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const { data: dbAdventure } = await supabase
+    .from('adventures_catalog')
+    .select('*, agenda_departures(*)')
+    .eq('title', challenge.title)
+    .maybeSingle();
+
+  const liveDepartures = dbAdventure?.agenda_departures?.map((d: any) => {
+    const dDate = new Date(d.start_date);
+    const dateFormatted = dDate.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    const capitalizedDate = dateFormatted.charAt(0).toUpperCase() + dateFormatted.slice(1);
+    const timeFormatted = dDate.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase();
+    const cuposMax = dbAdventure.max_pax || 8;
+    const cuposDisponibles = Math.max(0, cuposMax - (d.current_pax || 0));
+    return {
+      id: d.id,
+      fecha: capitalizedDate,
+      hora: timeFormatted,
+      cuposDisponibles,
+      cuposTotales: cuposMax,
+      estado: cuposDisponibles <= 2 ? 'Últimos 2 cupos' : 'Cupos abiertos',
+    };
+  });
+
+  const finalFechas = (liveDepartures && liveDepartures.length > 0) ? liveDepartures : challenge.fechasDisponibles;
+  const displayPriceText = dbAdventure?.base_price ? `$${Number(dbAdventure.base_price).toLocaleString('es-CL')} CLP` : challenge.precioText;
+  const displayPriceUSD = dbAdventure?.price_usd || challenge.precioUSD;
+
+  // Configuración geo y altimetría por desafío
+  const geoConfig: Record<string, { lat: number; lng: number; alt: number; loc: string; stravaUrl: string; points?: { km: number; alt: number; label?: string }[] }> = {
+    'desafio-5am': {
+      lat: -33.3458,
+      lng: -70.5700,
+      alt: 1638,
+      loc: 'Cerro Manquehuito',
+      stravaUrl: 'https://www.strava.com/segments/11267438',
+      points: [
+        { km: 0.0, alt: 1020, label: 'Inicio Lo Barnechea' },
+        { km: 0.9, alt: 1190, label: 'Bosque Nativo' },
+        { km: 1.6, alt: 1380, label: 'Filo Este' },
+        { km: 2.1, alt: 1638, label: 'Cumbre Manquehuito (1.638m)' },
+        { km: 2.9, alt: 1410, label: 'Descenso Norte' },
+        { km: 3.6, alt: 1210 },
+        { km: 4.2, alt: 1020, label: 'Punto de Encuentro' },
+      ],
+    },
+    'triple-corona': {
+      lat: -33.3528,
+      lng: -70.5444,
+      alt: 1804,
+      loc: 'Manquehue, Manquehuito & Pochoco',
+      stravaUrl: 'https://www.strava.com/routes/30894567',
+      points: [
+        { km: 0.0, alt: 1020, label: 'Partida' },
+        { km: 2.1, alt: 1638, label: 'C1: Manquehuito' },
+        { km: 5.0, alt: 1150, label: 'Portezuelo' },
+        { km: 7.5, alt: 1635, label: 'C2: Manquehue' },
+        { km: 11.0, alt: 980, label: 'El Arrayán' },
+        { km: 14.8, alt: 1804, label: 'C3: Pochoco' },
+        { km: 18.5, alt: 980, label: 'Meta San Enrique' },
+      ],
+    },
+    'sierra-de-ramon': {
+      lat: -33.4750,
+      lng: -70.4700,
+      alt: 3250,
+      loc: 'Sierra de Ramón (Cota 3.250m)',
+      stravaUrl: 'https://www.strava.com/routes/30894568',
+      points: [
+        { km: 0.0, alt: 950, label: 'Acceso Macul' },
+        { km: 4.5, alt: 1520, label: 'Quebrada' },
+        { km: 8.0, alt: 2200, label: 'Filo Cumbrero' },
+        { km: 11.0, alt: 3250, label: 'Cumbre Ramón (3.250m)' },
+        { km: 15.0, alt: 2400, label: 'Punta Damas' },
+        { km: 18.5, alt: 1600, label: 'Arista Norte' },
+        { km: 22.0, alt: 1050, label: 'San Carlos Apoquindo' },
+      ],
+    },
+    'desbloqueando-santiago': {
+      lat: -33.4000,
+      lng: -70.5300,
+      alt: 1600,
+      loc: 'Cuenca Andina de Santiago',
+      stravaUrl: 'https://www.strava.com',
+      points: [
+        { km: 0.0, alt: 1100, label: 'Semana 1: Carbón' },
+        { km: 1.0, alt: 1350, label: 'Semana 2: Manquehuito' },
+        { km: 2.0, alt: 1635, label: 'Semana 3: Manquehue' },
+        { km: 3.0, alt: 1804, label: 'Semana 4: Pochoco' },
+        { km: 4.0, alt: 2050, label: 'Semana 5: Morro Guayacán' },
+        { km: 5.0, alt: 2750, label: 'Semana 6: Alto del Naranjo' },
+      ],
+    },
+  };
+
+  const geo = geoConfig[slug] || { lat: -33.3458, lng: -70.5700, alt: 1638, loc: challenge.title, stravaUrl: 'https://www.strava.com' };
+  const weather = await getMountainWeather(geo.lat, geo.lng, geo.alt);
+
   return (
     <div className="min-h-screen bg-stone-950 text-white font-sans selection:bg-amber-500/30">
-
+      <SwipeBackHandler fallbackUrl="/#desafios" />
+      <ScrollToTopButton />
       <GuideRadioWidget />
 
-      {/* ── Navbar ──────────────────────────────────────────────────── */}
-      <nav className="fixed top-0 w-full z-50" style={{ backgroundColor: 'rgba(10,10,10,0.85)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/#desafios" className="inline-flex items-center gap-2 text-[11px] font-bold text-white/60 hover:text-white uppercase tracking-[0.2em] transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Desafíos
+      {/* ── Navbar Flotante ──────────────────────────────────────────── */}
+      <header className="fixed top-3 sm:top-5 left-0 right-0 z-50 px-4 sm:px-8 pointer-events-none">
+        <div className="max-w-6xl mx-auto flex items-center justify-between pointer-events-auto">
+          <Link 
+            href="/#desafios" 
+            className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-white/80 hover:text-white transition-all hover:-translate-x-1 py-1 drop-shadow-[0_2px_10px_rgba(0,0,0,0.85)]"
+          >
+            <ArrowLeft className="w-4 h-4 text-amber-400" />
+            <span>Volver a Desafíos</span>
           </Link>
-          <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
-            <Image src="/santiago-hiking-10.png" alt="Santiago Hiking" width={140} height={64} className="h-8 w-auto object-contain drop-shadow-[0_2px_10px_rgba(245,158,11,0.3)]" priority />
+          <Link href="/" className="flex items-center transition-transform duration-200 hover:scale-105 py-1">
+            <Image 
+              src="/logotipo blanco.png" 
+              alt="Santiago Hiking" 
+              width={340} 
+              height={80} 
+              className="h-10 sm:h-12 w-auto object-contain drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]" 
+              priority 
+            />
           </Link>
         </div>
-      </nav>
+      </header>
 
       {/* ── Hero full-bleed ──────────────────────────────────────────── */}
       <header className="relative min-h-[75vh] flex flex-col justify-end">
@@ -134,6 +257,17 @@ export default async function ChallengeDetailPage({ params }: PageProps) {
               </div>
             ))}
           </div>
+
+          {/* ── Perfil Altimétrico y Strava ────────────────────────────── */}
+          <div className="mt-10">
+            <ElevationProfileWidget
+              points={geo.points}
+              maxAltitude={challenge.metrics.altitud}
+              elevationGain={challenge.metrics.desnivel}
+              distance={challenge.metrics.distancia}
+              stravaUrl={geo.stravaUrl}
+            />
+          </div>
         </div>
       </section>
 
@@ -153,32 +287,59 @@ export default async function ChallengeDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* Tarjeta de Acceso */}
-          <div className="p-6 rounded-2xl h-fit space-y-5" style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)' }}>
-            <div className="flex items-center gap-2 pb-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-              <MapPin className="w-4 h-4 text-amber-400" />
-              <h3 className="font-black text-white uppercase text-xs tracking-[0.2em]">¿Dónde y cómo llegar?</h3>
+          {/* Columna Derecha: Clima en Vivo + Tarjeta de Acceso + Credenciales WFR */}
+          <div className="space-y-6">
+            <MountainWeatherWidget
+              weather={weather}
+              locationName={geo.loc}
+              elevationText={challenge.metrics.altitud}
+            />
+
+            {/* Tarjeta de Acceso */}
+            <div className="p-6 rounded-2xl space-y-5" style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)' }}>
+              <div className="flex items-center gap-2 pb-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                <MapPin className="w-4 h-4 text-amber-400" />
+                <h3 className="font-black text-white uppercase text-xs tracking-[0.2em]">¿Dónde y cómo llegar?</h3>
+              </div>
+              <div className="space-y-4 font-mono text-xs">
+                {[
+                  { label: 'Sector', value: challenge.dondeEsta.sector },
+                  { label: 'Punto de Encuentro', value: challenge.dondeEsta.puntoEncuentro },
+                  { label: 'Acceso', value: challenge.dondeEsta.acceso },
+                  { label: 'Coordenadas GPS', value: challenge.dondeEsta.coordenadas },
+                ].map((d) => (
+                  <div key={d.label}>
+                    <p className="text-white/35 uppercase tracking-widest text-[10px] font-bold mb-0.5">{d.label}</p>
+                    <p className="text-white/80 font-sans text-sm">{d.value}</p>
+                  </div>
+                ))}
+              </div>
+              <a
+                href={`https://wa.me/56957958467?text=${encodeURIComponent(`Hola Gaz! Consulto sobre cómo llegar al ${challenge.title}.`)}`}
+                target="_blank" rel="noopener noreferrer"
+                className="btn-arcteryx w-full text-center block text-xs !py-2.5"
+              >
+                Consultar Traslados
+              </a>
             </div>
-            <div className="space-y-4 font-mono text-xs">
-              {[
-                { label: 'Sector', value: challenge.dondeEsta.sector },
-                { label: 'Punto de Encuentro', value: challenge.dondeEsta.puntoEncuentro },
-                { label: 'Acceso', value: challenge.dondeEsta.acceso },
-                { label: 'Coordenadas GPS', value: challenge.dondeEsta.coordenadas },
-              ].map((d) => (
-                <div key={d.label}>
-                  <p className="text-white/35 uppercase tracking-widest text-[10px] font-bold mb-0.5">{d.label}</p>
-                  <p className="text-white/80 font-sans text-sm">{d.value}</p>
+
+            {/* Credencial WFR & SOS Satelital */}
+            <div className="p-5 rounded-2xl" style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div className="flex items-center gap-2.5 mb-3 pb-3 border-b border-white/8">
+                <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
+                <div>
+                  <h4 className="text-xs font-mono font-bold uppercase text-white tracking-wider">Liderazgo & Seguridad WFR</h4>
+                  <p className="text-[10px] text-white/40 font-mono">Wilderness First Responder</p>
                 </div>
-              ))}
+              </div>
+              <p className="text-xs text-white/60 leading-relaxed font-light mb-3">
+                Salida guiada por <strong className="text-white font-medium">Gaz (WFR)</strong> con botiquín de trauma avanzado y comunicación satelital bidireccional <strong className="text-amber-300 font-medium">Garmin inReach SOS 24/7</strong>.
+              </p>
+              <div className="flex items-center gap-2 text-[10px] font-mono text-emerald-400">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Baliza satelital activa en cada salida</span>
+              </div>
             </div>
-            <a
-              href={`https://wa.me/56957958467?text=${encodeURIComponent(`Hola Gaz! Consulto sobre cómo llegar al ${challenge.title}.`)}`}
-              target="_blank" rel="noopener noreferrer"
-              className="btn-arcteryx w-full text-center block text-xs !py-2.5"
-            >
-              Consultar Traslados
-            </a>
           </div>
         </div>
       </section>
@@ -328,13 +489,13 @@ export default async function ChallengeDetailPage({ params }: PageProps) {
             </div>
             <div className="text-left md:text-right">
               <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/40 block mb-0.5">Tarifa por persona</span>
-              <p className="text-3xl font-black font-mono text-white">{challenge.precioText}</p>
-              <p className="text-sm text-white/40 font-mono">{challenge.precioUSD}</p>
+              <p className="text-3xl font-black font-mono text-white">{displayPriceText}</p>
+              <p className="text-sm text-white/40 font-mono">{displayPriceUSD}</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
-            {challenge.fechasDisponibles.map((salida: any) => {
+            {finalFechas.map((salida: any) => {
               const esUltimos = salida.cuposDisponibles <= 2;
               const bookingUrl = `/reservar?route=${challenge.slug}&fecha=${salida.id}`;
               const waUrl = `https://wa.me/56957958467?text=${encodeURIComponent(`Hola Gaz, quiero el ${challenge.title} — ${salida.fecha} (${salida.hora}). ¿Disponibilidad?`)}`;
@@ -356,7 +517,7 @@ export default async function ChallengeDetailPage({ params }: PageProps) {
                   <div className="pt-4 space-y-2" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
                     <div className="flex items-baseline justify-between mb-2">
                       <span className="text-xs text-white/35 font-mono">Total por cupo:</span>
-                      <span className="text-lg font-black font-mono text-white">{challenge.precioText}</span>
+                      <span className="text-lg font-black font-mono text-white">{displayPriceText}</span>
                     </div>
                     <Link href={bookingUrl} className="w-full btn-arcteryx-primary text-center justify-center !py-3 text-xs font-mono font-bold tracking-wider block">
                       RESERVAR CUPO →

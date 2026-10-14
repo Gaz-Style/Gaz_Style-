@@ -30,7 +30,12 @@ import {
     CalendarDays,
     ClipboardList,
     Shield,
-    HeartPulse
+    HeartPulse,
+    Trophy,
+    Flame,
+    Home,
+    UtensilsCrossed,
+    Star
 } from 'lucide-react';
 import { logoutAction } from '@/app/admin/login/actions';
 import { clsx, type ClassValue } from 'clsx';
@@ -40,15 +45,20 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-// 🏔️ Módulos adaptados estrictamente para Trekking / Gaz Style
+// 🏔️ Módulos adaptados estrictamente para Santiago Hiking
 export const sidebarSections = [
     {
-        title: 'RESERVAS & LOGÍSTICA',
+        title: 'OPERACIONES & AGENDA',
         items: [
             { name: 'Dashboard Central', href: '/admin', icon: LayoutDashboard },
             { name: 'Calendario de Salidas', href: '/admin/calendario', icon: CalendarDays },
             { name: 'Manifiestos & Operaciones', href: '/admin/operaciones', icon: ClipboardList },
-            { name: 'Diseñador de Rutas', href: '/admin/creador-rutas', icon: Map },
+        ]
+    },
+    {
+        title: 'EXPERIENCIAS & CATÁLOGO',
+        items: [
+            { name: 'Creador de Experiencias', href: '/admin/creador-rutas', icon: Mountain },
         ]
     },
     {
@@ -138,13 +148,16 @@ export default function Sidebar({
                                 exit={{ opacity: 0, x: -10 }}
                                 className="flex items-center gap-3 relative z-10"
                             >
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/10 border border-amber-500/20 flex items-center justify-center shadow-lg shadow-primary/30">
-                                    <Image src="/logo.png" alt="Gaz Style" width={24} height={24} className="object-contain" />
-                                </div>
-                                <div className="flex flex-col">
-                                    <span className="font-heading text-lg text-white font-black tracking-wide">GAZ STYLE</span>
-                                    <span className="text-[9px] uppercase text-primary font-bold tracking-widest mt-0.5">Expeditions OS</span>
-                                </div>
+                                <Link href="/" className="flex items-center hover:opacity-90 transition-opacity">
+                                    <Image 
+                                        src="/logotipo blanco.png" 
+                                        alt="Santiago Hiking" 
+                                        width={200} 
+                                        height={45} 
+                                        className="h-7 w-auto object-contain" 
+                                        priority 
+                                    />
+                                </Link>
                             </motion.div>
                         )}
                     </AnimatePresence>

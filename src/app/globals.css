@@ -82,12 +82,29 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
+/* Scrollbar Utilities & Invisible WhatsApp Mobile Scrollbars */
+.no-scrollbar::-webkit-scrollbar,
+.hide-scrollbar::-webkit-scrollbar,
+textarea::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
 }
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+.no-scrollbar,
+.hide-scrollbar,
+textarea {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+/* Ocultar el badge flotante "N" de Next.js en desarrollo que tapa los botones inferiores */
+nextjs-portal,
+[data-nextjs-dev-tools-button],
+#nextjs-dev-tools-button {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 /* Arc'teryx & Roark Functional Minimalism - Pure White Editorial (Alba & Paz) */

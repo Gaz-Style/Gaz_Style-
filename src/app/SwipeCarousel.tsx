@@ -10,66 +10,194 @@ interface Props {
 }
 
 export default function SwipeCarousel({ children, peekWidth = 24, gap = 12 }: Props) {
-  const [current, setCurrent] = useState(0);
   const total = children.length;
 
-  // ── Drag / Swipe ─────────────────────────────────────────────────────────
-  const startX   = useRef(0);
-  const deltaX   = useRef(0);
+  // Si hay 1 o 0 tarjetas, render directo sin loop
+  if (total <= 1) {
+    return (
+      <div className="relative select-none">
+        <div className="overflow-hidden">
+          <div className="flex" style={{ gap: `${gap}px` }}>
+            <div style={{ width: '100%' }}>{children[0] || null}</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Array extendido con clones en extremos para loop infinito continuo ────
+  // [Clon Último, Tarjeta 1, Tarjeta 2, ..., Tarjeta N, Clon Primero]
+  const extendedSlides = [
+    { key: 'clone-last', node: children[total - 1] },
+    ...children.map((c, i) => ({ key: `slide-${i}`, node: c })),
+    { key: 'clone-first', node: children[0] },
+  ];
+
+  // currentIndex arranca en 1 (que corresponde a children[0])
+  const [currentIndex, setCurrentIndex] = useState(1);
+  const [isTransitioning, setIsTransitioning] = useState(true);
+
+  // ── Drag / Swipe con Bloqueo de Eje Direccional (Axis Locking) ──────────────
+  const startX = useRef(0);
+  const startY = useRef(0);
+  const deltaX = useRef(0);
+  const isLocked = useRef<'x' | 'y' | null>(null);
   const dragging = useRef(false);
-  const [live, setLive] = useState(0); // offset en vivo mientras arrastra
+  const [live, setLive] = useState(0);
 
-  const onDragStart = useCallback((clientX: number) => {
-    startX.current = clientX;
-    deltaX.current = 0;
-    dragging.current = true;
-  }, []);
+  // Re-activar transiciones tras salto invisible de teletransporte
+  useEffect(() => {
+    if (!isTransitioning) {
+      const raf = requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setIsTransitioning(true);
+        });
+      });
+      return () => cancelAnimationFrame(raf);
+    }
+  }, [isTransitioning]);
 
-  const onDragMove = useCallback((clientX: number) => {
-    if (!dragging.current) return;
-    deltaX.current = clientX - startX.current;
-    setLive(deltaX.current);
-  }, []);
+  // Teletransporte invisible sin animación al llegar a los clones
+  const handleTransitionEnd = useCallback(() => {
+    if (currentIndex === 0) {
+      // Estábamos en el clon de la última -> saltar a la última real
+      setIsTransitioning(false);
+      setCurrentIndex(total);
+    } else if (currentIndex === total + 1) {
+      // Estábamos en el clon de la primera -> saltar a la primera real
+      setIsTransitioning(false);
+      setCurrentIndex(1);
+    }
+  }, [currentIndex, total]);
 
   const onDragEnd = useCallback(() => {
-    if (!dragging.current) return;
+    if (!dragging.current && isLocked.current !== 'x') {
+      isLocked.current = null;
+      return;
+    }
     dragging.current = false;
-    const threshold = 50;
-    if (deltaX.current < -threshold && current < total - 1) setCurrent(c => c + 1);
-    else if (deltaX.current > threshold && current > 0) setCurrent(c => c - 1);
+    const threshold = 35; // Umbral ágil y cómodo
+    if (deltaX.current < -threshold) {
+      setIsTransitioning(true);
+      setCurrentIndex(c => c + 1);
+    } else if (deltaX.current > threshold) {
+      setIsTransitioning(true);
+      setCurrentIndex(c => c - 1);
+    }
     setLive(0);
-  }, [current, total]);
+    deltaX.current = 0;
+    isLocked.current = null;
+  }, []);
 
-  // Touch
-  const onTouchStart = (e: React.TouchEvent) => onDragStart(e.touches[0].clientX);
-  const onTouchMove  = (e: React.TouchEvent) => onDragMove(e.touches[0].clientX);
-  const onTouchEnd   = () => onDragEnd();
+  const onTouchStart = (e: React.TouchEvent) => {
+    startX.current = e.touches[0].clientX;
+    startY.current = e.touches[0].clientY;
+    deltaX.current = 0;
+    isLocked.current = null;
+    dragging.current = true;
+  };
 
-  // Mouse
-  const onMouseDown = (e: React.MouseEvent) => onDragStart(e.clientX);
-  const onMouseMove = (e: React.MouseEvent) => onDragMove(e.clientX);
-  const onMouseUp   = () => onDragEnd();
+  const onTouchMove = (e: React.TouchEvent) => {
+    if (!dragging.current) return;
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
+    const diffX = currentX - startX.current;
+    const diffY = currentY - startY.current;
+
+    // Bloqueo de eje direccional tras los primeros 6px de movimiento
+    if (!isLocked.current) {
+      const absX = Math.abs(diffX);
+      const absY = Math.abs(diffY);
+      if (absX > 6 || absY > 6) {
+        if (absX >= absY) {
+          isLocked.current = 'x'; // Swipe horizontal: capturar gesto
+        } else {
+          isLocked.current = 'y'; // Scroll vertical: soltar carrusel
+          dragging.current = false;
+          setLive(0);
+          return;
+        }
+      } else {
+        return;
+      }
+    }
+
+    if (isLocked.current === 'x') {
+      deltaX.current = diffX;
+      setLive(diffX);
+    }
+  };
+
+  const onTouchEnd = () => onDragEnd();
+
+  // Mouse (Desktop)
+  const onMouseDown = (e: React.MouseEvent) => {
+    startX.current = e.clientX;
+    deltaX.current = 0;
+    isLocked.current = 'x';
+    dragging.current = true;
+  };
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!dragging.current || isLocked.current !== 'x') return;
+    deltaX.current = e.clientX - startX.current;
+    setLive(deltaX.current);
+  };
+
+  const onMouseUp = () => onDragEnd();
   const onMouseLeave = () => { if (dragging.current) onDragEnd(); };
 
-  // Keyboard
+  // Teclado
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight' && current < total - 1) setCurrent(c => c + 1);
-      if (e.key === 'ArrowLeft'  && current > 0)        setCurrent(c => c - 1);
+      if (e.key === 'ArrowRight') {
+        setIsTransitioning(true);
+        setCurrentIndex(c => c + 1);
+      }
+      if (e.key === 'ArrowLeft') {
+        setIsTransitioning(true);
+        setCurrentIndex(c => c - 1);
+      }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [current, total]);
+  }, []);
 
-  // ── Cálculo de transformada ───────────────────────────────────────────────
-  // Cada slide ocupa 100% - peek - gap. El track se mueve según el índice actual
-  const slideWidth  = `calc(100% - ${peekWidth}px)`;
-  const trackOffset = `calc(-${current} * (100% - ${peekWidth}px + ${gap}px) + ${live}px)`;
+  // ── Medición de contenedor para cálculo en píxeles exactos ───────────────
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(() => 
+    typeof window !== 'undefined' ? (window.innerWidth > 1024 ? 1024 : window.innerWidth) : 0
+  );
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const update = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.clientWidth);
+      }
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(containerRef.current);
+    return () => ro.disconnect();
+  }, []);
+
+  // ── Cálculo de ancho y offset del track ────────────────────────────────────
+  const effectiveContainerWidth = containerWidth > 0 ? containerWidth : (typeof window !== 'undefined' ? window.innerWidth : 390);
+  const slideWidthPx = Math.max(280, effectiveContainerWidth - peekWidth);
+  const slideWidthStyle = `${slideWidthPx}px`;
+  const step = slideWidthPx + gap;
+  const trackOffsetPx = -(currentIndex * step) + live;
+  const trackTransform = `translateX(${trackOffsetPx}px)`;
+
+  // Índice real activo para los puntitos (Dots)
+  const activeDot = (currentIndex - 1 + total) % total;
 
   return (
     <div className="relative select-none">
       {/* Track */}
       <div
+        ref={containerRef}
         className="overflow-hidden"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
@@ -78,78 +206,95 @@ export default function SwipeCarousel({ children, peekWidth = 24, gap = 12 }: Pr
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}
         onMouseLeave={onMouseLeave}
-        style={{ cursor: dragging.current ? 'grabbing' : 'grab' }}
+        onTransitionEnd={handleTransitionEnd}
+        style={{
+          cursor: dragging.current ? 'grabbing' : 'grab',
+          touchAction: 'pan-y',
+          WebkitTouchCallout: 'none',
+        }}
       >
         <div
           className="flex"
+          onTransitionEnd={handleTransitionEnd}
           style={{
             gap: `${gap}px`,
-            transform: `translateX(${trackOffset})`,
-            transition: dragging.current ? 'none' : 'transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            transform: trackTransform,
+            transition: (dragging.current || !isTransitioning) 
+              ? 'none' 
+              : 'transform 0.38s cubic-bezier(0.25, 1, 0.5, 1)',
             willChange: 'transform',
           }}
         >
-          {children.map((child, i) => (
-            <div
-              key={i}
-              style={{
-                minWidth: slideWidth,
-                width: slideWidth,
-                flexShrink: 0,
-                display: 'flex',
-                alignItems: 'stretch',
-                opacity: i === current ? 1 : 0.45,
-                transition: 'opacity 0.35s ease',
-                pointerEvents: i === current ? 'auto' : 'none',
-              }}
-            >
-              {child}
-            </div>
-          ))}
+          {extendedSlides.map((slide, i) => {
+            const isCurrent = i === currentIndex;
+            return (
+              <div
+                key={slide.key}
+                style={{
+                  minWidth: slideWidthStyle,
+                  width: slideWidthStyle,
+                  flexShrink: 0,
+                  display: 'flex',
+                  alignItems: 'stretch',
+                  opacity: isCurrent ? 1 : 0.45,
+                  transition: 'opacity 0.35s ease',
+                  pointerEvents: isCurrent ? 'auto' : 'none',
+                }}
+              >
+                {slide.node}
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Flechas desktop */}
-      {current > 0 && (
-        <button
-          onClick={() => setCurrent(c => c - 1)}
-          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110 hidden sm:flex"
-          style={{
-            backgroundColor: 'rgba(0,0,0,0.55)',
-            backdropFilter: 'blur(12px)',
-            border: '1px solid rgba(255,255,255,0.18)',
-          }}
-          aria-label="Anterior"
-        >
-          <ChevronLeft className="w-4 h-4 text-white" />
-        </button>
-      )}
-      {current < total - 1 && (
-        <button
-          onClick={() => setCurrent(c => c + 1)}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110 hidden sm:flex"
-          style={{
-            backgroundColor: 'rgba(0,0,0,0.55)',
-            backdropFilter: 'blur(12px)',
-            border: '1px solid rgba(255,255,255,0.18)',
-          }}
-          aria-label="Siguiente"
-        >
-          <ChevronRight className="w-4 h-4 text-white" />
-        </button>
-      )}
+      {/* Flechas desktop con loop infinito activo */}
+      <button
+        onClick={() => {
+          setIsTransitioning(true);
+          setCurrentIndex(c => c - 1);
+        }}
+        className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110 hidden sm:flex cursor-pointer"
+        style={{
+          backgroundColor: 'rgba(0,0,0,0.55)',
+          backdropFilter: 'blur(12px)',
+          border: '1px solid rgba(255,255,255,0.22)',
+        }}
+        aria-label="Anterior"
+      >
+        <ChevronLeft className="w-4 h-4 text-white" />
+      </button>
 
-      {/* Dots */}
+      <button
+        onClick={() => {
+          setIsTransitioning(true);
+          setCurrentIndex(c => c + 1);
+        }}
+        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110 hidden sm:flex cursor-pointer"
+        style={{
+          backgroundColor: 'rgba(0,0,0,0.55)',
+          backdropFilter: 'blur(12px)',
+          border: '1px solid rgba(255,255,255,0.22)',
+        }}
+        aria-label="Siguiente"
+      >
+        <ChevronRight className="w-4 h-4 text-white" />
+      </button>
+
+      {/* Dots (Sincronizados en tiempo real con activeDot) */}
       <div className="flex justify-center gap-1.5 mt-4">
         {children.map((_, i) => (
           <button
             key={i}
-            onClick={() => setCurrent(i)}
-            className="transition-all duration-300 rounded-full"
+            onClick={() => {
+              setIsTransitioning(true);
+              setCurrentIndex(i + 1);
+            }}
+            className="transition-all duration-300 rounded-full cursor-pointer"
             style={{
-              width:  i === current ? '20px' : '6px',
+              width: i === activeDot ? '22px' : '6px',
               height: '6px',
-              backgroundColor: i === current ? '#f59e0b' : 'rgba(255,255,255,0.25)',
+              backgroundColor: i === activeDot ? '#f59e0b' : 'rgba(255,255,255,0.25)',
             }}
             aria-label={`Ir a tarjeta ${i + 1}`}
           />

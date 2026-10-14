@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/santiago-hiking-10.png",
+        url: "/logotipo%20blanco.png",
         width: 1200,
         height: 630,
         alt: "Santiago Hiking - Premium Mountain Experiences",
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Santiago Hiking ⚡ Trekkings VIP en Santiago",
     description: "Mentalidad, conexión y aventura. Vamos a la montaña.",
-    images: ["/santiago-hiking-10.png"],
+    images: ["/logotipo%20blanco.png"],
   },
   verification: {
     google: "google42ee4234a9dc3e43",
@@ -88,7 +88,7 @@ export default function RootLayout({
         "name": "Santiago Hiking",
         "alternateName": "Gaz Style Expeditions",
         "url": "https://www.santiagohiking.com",
-        "logo": "https://www.santiagohiking.com/santiago-hiking-10.png",
+        "logo": "https://www.santiagohiking.com/logotipo%20blanco.png",
         "description": "Experiencias de trekking, salidas al cerro, networking outdoor y montañismo boutique en Santiago de Chile.",
         "founder": {
           "@type": "Person",

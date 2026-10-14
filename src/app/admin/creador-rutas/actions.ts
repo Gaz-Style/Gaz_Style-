@@ -69,40 +69,100 @@ export async function createAdventureWithCosts(formData: FormData, costs: Advent
     const not_includedStr = formData.get('not_included') as string || '';
     const not_included = not_includedStr ? not_includedStr.split('\n').filter(s=>s.trim()) : [];
 
-    // 1. Insertamos la Aventura (El Molde)
-    const { data: adventure, error: adventureError } = await supabase
+    // Campos extendidos del Diseñador Universal
+    const vertical_type = (formData.get('vertical_type') as string) || 'trekking';
+    const custom_discipline = (formData.get('custom_discipline') as string) || '';
+    const badge = (formData.get('badge') as string) || '';
+    const number_code = (formData.get('number_code') as string) || '';
+    const tagline = (formData.get('tagline') as string) || '';
+    const price_usd = (formData.get('price_usd') as string) || '';
+    const strava_url = (formData.get('strava_url') as string) || '';
+    const gpx_track_url = (formData.get('gpx_track_url') as string) || '';
+
+    const p1 = (formData.get('story_p1') as string) || '';
+    const p2 = (formData.get('story_p2') as string) || '';
+    const p3 = (formData.get('story_p3') as string) || '';
+    const story_paragraphs = [p1, p2, p3].filter(Boolean);
+
+    const logistics = {
+        sector: (formData.get('logistics_sector') as string) || '',
+        acceso: (formData.get('logistics_acceso') as string) || '',
+        puntoEncuentro: (formData.get('logistics_punto') as string) || '',
+        coordenadas: (formData.get('logistics_coordenadas') as string) || ''
+    };
+
+    const reqEquipStr = (formData.get('required_equipment') as string) || '';
+    const required_equipment = reqEquipStr ? reqEquipStr.split('\n').filter(s=>s.trim()) : [];
+
+    // Payload base garantizado
+    const basePayload: Record<string, any> = {
+        title,
+        category,
+        difficulty_level,
+        duration_days,
+        base_price,
+        min_pax,
+        max_pax,
+        description,
+        duration_text,
+        image_url,
+        elevation_gain,
+        max_altitude,
+        distance,
+        itinerary,
+        included,
+        not_included,
+        is_active: true
+    };
+
+    // Payload extendido con todas las columnas nuevas
+    const extendedPayload = {
+        ...basePayload,
+        vertical_type,
+        custom_discipline,
+        badge,
+        number_code,
+        tagline,
+        price_usd,
+        strava_url,
+        gpx_track_url,
+        story_paragraphs,
+        logistics,
+        required_equipment
+    };
+
+    // 1. Intentamos insertar con todas las columnas extendidas
+    let adventureId: string;
+    let { data: adventure, error: adventureError } = await supabase
         .from('adventures_catalog')
-        .insert({
-            title,
-            category,
-            difficulty_level,
-            duration_days,
-            base_price,
-            min_pax,
-            max_pax,
-            description,
-            duration_text,
-            image_url,
-            elevation_gain,
-            max_altitude,
-            distance,
-            itinerary,
-            included,
-            not_included,
-            is_active: true
-        })
+        .insert(extendedPayload)
         .select('id')
         .single();
 
-    if (adventureError) {
+    // Si da error por columnas faltantes en Supabase, reintentamos con basePayload seguro
+    if (adventureError && adventureError.message.includes('does not exist')) {
+        console.warn('Columnas extendidas no encontradas, insertando con basePayload:', adventureError.message);
+        const retry = await supabase
+            .from('adventures_catalog')
+            .insert(basePayload)
+            .select('id')
+            .single();
+        if (retry.error) {
+            console.error('Error creando aventura:', retry.error);
+            throw new Error(`Error al crear la aventura: ${retry.error.message}`);
+        }
+        adventureId = retry.data.id;
+    } else if (adventureError || !adventure) {
         console.error('Error creando aventura:', adventureError);
-        throw new Error(`Error al crear la aventura: ${adventureError.message}`);
+        throw new Error(`Error al crear la aventura: ${adventureError?.message || 'No se recibieron datos'}`);
+    } else {
+        adventureId = adventure.id;
     }
 
     // 2. Si hay costos, los insertamos en la Plantilla de Costos (Relación 1:N)
     if (costs && costs.length > 0) {
         const costsToInsert = costs.map(c => ({
-            adventure_id: adventure.id,
+            adventure_id: adventureId,
             cost_name: c.cost_name,
             expected_amount: c.expected_amount,
             cost_type: c.cost_type
@@ -194,30 +254,82 @@ export async function updateAdventureWithCosts(id: string, formData: FormData, c
     const not_includedStr = formData.get('not_included') as string || '';
     const not_included = not_includedStr ? not_includedStr.split('\n').filter(s=>s.trim()) : [];
 
-    // 1. Update Adventure
-    const { error: adventureError } = await supabase
+    // Campos extendidos del Diseñador Universal
+    const vertical_type = (formData.get('vertical_type') as string) || 'trekking';
+    const custom_discipline = (formData.get('custom_discipline') as string) || '';
+    const badge = (formData.get('badge') as string) || '';
+    const number_code = (formData.get('number_code') as string) || '';
+    const tagline = (formData.get('tagline') as string) || '';
+    const price_usd = (formData.get('price_usd') as string) || '';
+    const strava_url = (formData.get('strava_url') as string) || '';
+    const gpx_track_url = (formData.get('gpx_track_url') as string) || '';
+
+    const p1 = (formData.get('story_p1') as string) || '';
+    const p2 = (formData.get('story_p2') as string) || '';
+    const p3 = (formData.get('story_p3') as string) || '';
+    const story_paragraphs = [p1, p2, p3].filter(Boolean);
+
+    const logistics = {
+        sector: (formData.get('logistics_sector') as string) || '',
+        acceso: (formData.get('logistics_acceso') as string) || '',
+        puntoEncuentro: (formData.get('logistics_punto') as string) || '',
+        coordenadas: (formData.get('logistics_coordenadas') as string) || ''
+    };
+
+    const reqEquipStr = (formData.get('required_equipment') as string) || '';
+    const required_equipment = reqEquipStr ? reqEquipStr.split('\n').filter(s=>s.trim()) : [];
+
+    const baseUpdatePayload: Record<string, any> = {
+        title,
+        category,
+        difficulty_level,
+        duration_days,
+        base_price,
+        min_pax,
+        max_pax,
+        description,
+        duration_text,
+        image_url,
+        elevation_gain,
+        max_altitude,
+        distance,
+        itinerary,
+        included,
+        not_included
+    };
+
+    const extendedUpdatePayload = {
+        ...baseUpdatePayload,
+        vertical_type,
+        custom_discipline,
+        badge,
+        number_code,
+        tagline,
+        price_usd,
+        strava_url,
+        gpx_track_url,
+        story_paragraphs,
+        logistics,
+        required_equipment
+    };
+
+    // 1. Update Adventure (intentamos con todas las columnas y caemos a base si faltan)
+    let { error: adventureError } = await supabase
         .from('adventures_catalog')
-        .update({
-            title,
-            category,
-            difficulty_level,
-            duration_days,
-            base_price,
-            min_pax,
-            max_pax,
-            description,
-            duration_text,
-            image_url,
-            elevation_gain,
-            max_altitude,
-            distance,
-            itinerary,
-            included,
-            not_included
-        })
+        .update(extendedUpdatePayload)
         .eq('id', id);
 
-    if (adventureError) {
+    if (adventureError && adventureError.message.includes('does not exist')) {
+        console.warn('Columnas extendidas no encontradas al actualizar, guardando basePayload:', adventureError.message);
+        const retry = await supabase
+            .from('adventures_catalog')
+            .update(baseUpdatePayload)
+            .eq('id', id);
+        if (retry.error) {
+            console.error('Error actualizando aventura:', retry.error);
+            throw new Error(`Error al actualizar la aventura: ${retry.error.message}`);
+        }
+    } else if (adventureError) {
         console.error('Error actualizando aventura:', adventureError);
         throw new Error(`Error al actualizar la aventura: ${adventureError.message}`);
     }

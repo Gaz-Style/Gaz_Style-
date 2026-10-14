@@ -9,6 +9,73 @@ function getSupabaseClient() {
     );
 }
 
+// Notifica a Mario Cruz (dueño) a su WhatsApp personal cada vez que un cliente escribe
+async function notifyOwnerOfIncomingWhatsApp({
+    customerPhone,
+    customerName,
+    messageContent,
+    chatId
+}: {
+    customerPhone: string;
+    customerName: string;
+    messageContent: string;
+    chatId: string;
+}) {
+    const adminPhone = process.env.ADMIN_NOTIFICATION_PHONE || '56984021940';
+    const cleanAdmin = adminPhone.replace(/\D/g, '');
+    const cleanCustomer = customerPhone.replace(/\D/g, '');
+
+    // Evitar auto-notificarse si Mario Cruz es quien escribe
+    if (cleanCustomer === cleanAdmin || (cleanAdmin.length >= 8 && cleanCustomer.endsWith(cleanAdmin.slice(-8)))) {
+        return;
+    }
+
+    const token = process.env.WHATSAPP_API_TOKEN;
+    const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+
+    if (!token || !phoneId) {
+        console.warn('[Notify Owner] Falta WHATSAPP_API_TOKEN o WHATSAPP_PHONE_NUMBER_ID');
+        return;
+    }
+
+    const preview = messageContent 
+        ? (messageContent.length > 180 ? `${messageContent.substring(0, 177)}...` : messageContent) 
+        : '[Archivo adjunto / multimedia]';
+
+    const textBody = 
+        `🏔️ *Santiago Hiking — Mensaje Entrante*\n\n` +
+        `👤 *Cliente:* ${customerName}\n` +
+        `📱 *WhatsApp:* +${cleanCustomer}\n` +
+        `💬 *Mensaje:* "${preview}"\n\n` +
+        `👉 *Responder en el Panel LiveChat:*\n` +
+        `https://www.santiagohiking.com/admin/livechat`;
+
+    try {
+        const res = await fetch(`https://graph.facebook.com/v21.0/${phoneId}/messages`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                messaging_product: 'whatsapp',
+                to: cleanAdmin,
+                type: 'text',
+                text: { body: textBody }
+            })
+        });
+
+        const data = await res.json();
+        if (!res.ok || data.error) {
+            console.error('[Notify Owner] Error al notificar a Mario Cruz en WhatsApp:', data);
+        } else {
+            console.log(`[Notify Owner] Notificación WhatsApp enviada con éxito a Mario Cruz (+${cleanAdmin})`);
+        }
+    } catch (err) {
+        console.error('[Notify Owner] Excepción al enviar notificación WhatsApp a Mario Cruz:', err);
+    }
+}
+
 export async function GET(req: Request) {
     const url = new URL(req.url);
     const mode = url.searchParams.get('hub.mode');
@@ -79,7 +146,6 @@ export async function POST(req: Request) {
                     let content = '';
                     let messageType = 'text';
                     let mediaUrl = null;
-                    let geminiAnalysis = null;
 
                     if (message.type === 'text') {
                         content = message.text.body;
@@ -87,22 +153,17 @@ export async function POST(req: Request) {
                         messageType = 'image';
                         mediaUrl = message.image.id; 
                         content = message.image.caption || '';
-                        
-                        // El procesamiento de la imagen con Gemini Vision se ha movido al orquestador asíncrono
-                        // para evitar que WhatsApp de timeout (límite de 3 segundos).
                         if (mediaUrl) {
-                            console.log(`[Webhook] Imagen recibida: ${mediaUrl}. Se procesará en background.`);
+                            console.log(`[Webhook] Imagen recibida: ${mediaUrl}.`);
                         }
                     } else if (message.type === 'audio') {
                         messageType = 'audio';
                         mediaUrl = message.audio.id;
                     } else if (message.type === 'document') {
-                        // Muchos clientes envían fotos como documentos para no perder calidad.
-                        // Lo pasamos como 'image' para que la IA intente procesar la Media ID.
                         messageType = 'image';
                         mediaUrl = message.document.id;
                         content = message.document.caption || '';
-                        console.log(`[Webhook] Documento adjunto recibido: ${mediaUrl}. Intentando procesar como imagen.`);
+                        console.log(`[Webhook] Documento adjunto recibido: ${mediaUrl}.`);
                     } else if (message.type === 'sticker') {
                         messageType = 'text';
                         content = '[Sticker enviado]';
@@ -117,7 +178,7 @@ export async function POST(req: Request) {
                         content = `[Formato de archivo o mensaje no soportado: ${message.type}]`;
                     }
 
-                    // 3. Save user message to datab                    // 3. Save user message to database (safe, does not block execution)
+                    // 3. Save user message to database (safe, does not block execution)
                     try {
                         await supabase
                             .from('crm_whatsapp_messages')
@@ -132,17 +193,46 @@ export async function POST(req: Request) {
                         console.warn('[Webhook] Could not save message to crm_whatsapp_messages:', msgError);
                     }
 
-                    // Update last_message_at timestamp on chat session
+                    // Update last_message_at and last_message preview on chat session
                     try {
                         await supabase
                             .from('crm_whatsapp_chats')
-                            .update({ last_message_at: new Date().toISOString() })
+                            .update({ 
+                                last_message_at: new Date().toISOString(),
+                                last_message: content ? content.slice(0, 200) : `[${messageType}]`
+                            })
                             .eq('phone_number', phoneNumber);
                     } catch (updateErr) {
                         console.warn('[Webhook] Could not update chat interaction:', updateErr);
                     }
 
-                    // 4. Trigger AI Processing immediately if session is 'bot'
+                    // 4. Buscar nombre registrado en CRM de Aventureros si existe
+                    let resolvedName = contactName;
+                    try {
+                        const cleanDigits = phoneNumber.replace(/\D/g, '');
+                        const { data: adventurer } = await supabase
+                            .from('crm_adventurers')
+                            .select('full_name')
+                            .or(`phone.eq.${cleanDigits},phone.ilike.%${cleanDigits.slice(-8)}%`)
+                            .limit(1)
+                            .maybeSingle();
+
+                        if (adventurer?.full_name) {
+                            resolvedName = adventurer.full_name;
+                        }
+                    } catch (e) {
+                        // ignore lookup error
+                    }
+
+                    // 5. Notificar a Mario Cruz (dueño) de forma inmediata e independiente
+                    notifyOwnerOfIncomingWhatsApp({
+                        customerPhone: phoneNumber,
+                        customerName: resolvedName,
+                        messageContent: content || `[${messageType}]`,
+                        chatId: chatData.id
+                    }).catch(notifErr => console.error('[Webhook] Error en notificación a Mario Cruz:', notifErr));
+
+                    // 6. Trigger AI Processing immediately if session is 'bot'
                     if (chatData.session_status === 'bot' && content) {
                         try {
                             console.log(`[Webhook] Generando respuesta con DeepSeek para ${phoneNumber}: "${content}"`);

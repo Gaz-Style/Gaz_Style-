@@ -58,10 +58,9 @@ export default function AdminLayoutClient({ children }: { children: React.ReactN
             </Link>
           )}
           <div className="flex flex-col">
-            <span className="text-[10px] uppercase text-primary font-black tracking-widest flex items-center gap-1.5">
-              <Image src="/logo.png" alt="Gaz" width={12} height={12} className="object-contain" />
-              Gaz Style
-            </span>
+            <Link href="/" className="flex items-center gap-1.5 hover:opacity-90">
+              <Image src="/logotipo blanco.png" alt="Santiago Hiking" width={140} height={32} className="h-5 w-auto object-contain" />
+            </Link>
             <span className="text-xs font-bold text-slate-300 tracking-wide mt-0.5">{currentModuleName}</span>
           </div>
         </div>
