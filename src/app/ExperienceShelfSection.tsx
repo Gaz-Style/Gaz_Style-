@@ -153,87 +153,61 @@ export default function ExperienceShelfSection({
               );
             }
 
-            // ── VARIANTE 2: TARJETA DE LUJO CINEMATOGRÁFICA (Grandes Desafíos & Expeditions) ──
-            const topMeta = `${locationText} · ${altitudeText}`;
-            const priceTag = isHighMountain
-              ? `${usdPrice} · $${formattedClp} CLP`
-              : `$${formattedClp} CLP`;
+            // ── VARIANTE 2: TARJETA EDITORIAL DE LUJO ORIGINAL (Travesías, High Mountain & Boutique) ──
+            const t = (route.title || '').toLowerCase();
+            let targetUrl = `/rutas/${route.id}`;
+            if (t.includes('5:00 am') || t.includes('5am')) targetUrl = '/desafios/desafio-5am';
+            else if (t.includes('triple corona')) targetUrl = '/desafios/triple-corona';
+            else if (t.includes('sierra de ramón') || t.includes('sierra de ramon')) targetUrl = '/desafios/sierra-de-ramon';
+            else if (t.includes('desbloqueando')) targetUrl = '/desafios/desbloqueando-santiago';
+
+            const meta = route.badge || (
+              isHighMountain
+                ? 'ALTA MONTAÑA · ANDES 5.000M+'
+                : isBoutique
+                ? '100% PRIVADO · TAILOR-MADE'
+                : 'GRAN DESAFÍO · CUENCA CENTRAL'
+            );
 
             return (
               <div
                 key={route.id || idx}
-                className="relative min-h-[540px] rounded-3xl overflow-hidden flex flex-col justify-between p-6 sm:p-7 group border border-white/15 hover:border-white/30 transition-all duration-500 bg-stone-900"
+                className="relative min-h-[500px] overflow-hidden flex flex-col justify-end p-8 group border border-stone-200/20 hover:border-white/30 transition-all duration-500 bg-stone-900 rounded-2xl"
               >
                 {/* Fotografía de Fondo Completa */}
                 <Image
                   src={imgSrc}
-                  alt={route.title}
+                  alt={cleanTitle}
                   fill
                   sizes="(max-width: 768px) 100vw, 60vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-700 pointer-events-none"
                 />
 
                 {/* Velo Cinematográfico Suave */}
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/45 to-stone-950/20 pointer-events-none" />
+                <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-stone-950/95 via-stone-950/50 to-transparent pointer-events-none" />
 
-                {/* Badges Superiores Flotantes */}
-                <div className="relative z-10 flex items-center justify-between gap-2">
-                  <span className="bg-stone-950/80 backdrop-blur-md px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-mono text-white font-bold uppercase tracking-wider border border-white/10 shadow-sm">
-                    {topMeta}
+                {/* Contenido Editorial Limpio & Completo */}
+                <div className="relative z-10 space-y-3">
+                  <span className="text-[10px] font-mono tracking-[0.25em] uppercase text-white/70 block">
+                    {meta}
                   </span>
-                  <span className="bg-stone-950/85 backdrop-blur-md px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-mono font-bold text-amber-300 border border-amber-400/40 shadow-sm">
-                    {priceTag}
-                  </span>
-                </div>
 
-                {/* Contenido Inferior */}
-                <div className="relative z-10 space-y-4 pt-12">
-                  <div>
-                    <h3 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight drop-shadow-md mb-2">
-                      {cleanTitle}
-                    </h3>
-                    <p className="text-slate-200 text-sm font-light leading-relaxed line-clamp-2 drop-shadow">
-                      {route.description || 'Expedición técnica guiada en la alta cordillera de los Andes de Santiago.'}
-                    </p>
+                  <h3 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight leading-tight">
+                    {cleanTitle}
+                  </h3>
+
+                  <p className="text-slate-200 text-sm font-light leading-relaxed line-clamp-3">
+                    {route.description || 'Expedición técnica guiada en la Cordillera de los Andes de Santiago.'}
+                  </p>
+
+                  <div className="pt-2">
+                    <Link
+                      href={targetUrl}
+                      className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-white border-b border-white/60 pb-1 hover:border-white transition-all hover:text-amber-300"
+                    >
+                      Ver Detalles y Ficha Técnica &rarr;
+                    </Link>
                   </div>
-
-                  {/* Fila de Métricas Técnicas */}
-                  <div
-                    className="grid grid-cols-3 gap-2 py-3 px-3 text-center font-mono rounded-xl"
-                    style={{
-                      backgroundColor: 'rgba(0, 0, 0, 0.55)',
-                      backdropFilter: 'blur(12px)',
-                      WebkitBackdropFilter: 'blur(12px)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                    }}
-                  >
-                    <div>
-                      <p className="text-[10px] text-white/50 uppercase font-medium tracking-wider">Duración</p>
-                      <p className="text-xs font-bold text-white mt-0.5">
-                        {durationText}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-white/50 uppercase font-medium tracking-wider">Dificultad</p>
-                      <p className="text-xs font-bold text-amber-400 mt-0.5">
-                        {difficultyText}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-white/50 uppercase font-medium tracking-wider">Cumbre</p>
-                      <p className="text-xs font-bold text-white mt-0.5">
-                        {altitudeText}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Botón Píldora */}
-                  <Link
-                    href={`/rutas/${route.id}`}
-                    className="w-full rounded-full border border-white/30 bg-stone-950/60 hover:bg-stone-900 text-white font-bold tracking-wider py-3.5 px-6 text-center text-xs sm:text-sm transition-all uppercase flex items-center justify-center shadow-lg hover:border-white/50"
-                  >
-                    VER DETALLES & RESERVAR
-                  </Link>
                 </div>
               </div>
             );
