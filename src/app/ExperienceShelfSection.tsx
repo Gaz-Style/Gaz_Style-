@@ -15,6 +15,7 @@ interface ExperienceShelfSectionProps {
   routes: any[];
   isHighMountain?: boolean;
   isBoutique?: boolean;
+  cardVariant?: 'split' | 'cover';
 }
 
 export default function ExperienceShelfSection({
@@ -25,9 +26,12 @@ export default function ExperienceShelfSection({
   subtitle,
   routes,
   isHighMountain,
-  isBoutique
+  isBoutique,
+  cardVariant
 }: ExperienceShelfSectionProps) {
   if (!routes || routes.length === 0) return null;
+
+  const isSplit = cardVariant === 'split' || id === 'salidas-grupales';
 
   return (
     <section id={id} className="py-12 sm:py-16 md:py-20 bg-transparent relative z-20">
@@ -53,20 +57,108 @@ export default function ExperienceShelfSection({
           </p>
         </div>
 
-        {/* Carrusel Editorial con Tarjetas de Imagen Completa (Estilo Lienzo de Galería) */}
+        {/* Carrusel con las Tarjetas Oficiales de Santiago Hiking */}
         <SwipeCarousel peekWidth={32} gap={14}>
           {routes.map((route: any, idx: number) => {
             const formattedClp = Number(route.base_price).toLocaleString('es-CL');
             const usdPrice = route.price_usd || (route.base_price ? `US$${Math.round(route.base_price / 975).toLocaleString('en-US')}` : null);
             const imgSrc = route.image_url || 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=85';
             
-            // Meta tag editorial sobrio
-            const metaTag = route.badge || route.max_altitude || (isHighMountain ? '5.000M+ · ALTA MONTAÑA' : (isBoutique ? '100% PRIVADO' : 'TREKKING'));
+            const altitudeText = route.max_altitude
+              ? (String(route.max_altitude).toLowerCase().includes('m') ? route.max_altitude : `${route.max_altitude} m`)
+              : (route.difficulty_level === 'Alta' ? '2.100 m' : '1.638 m');
+
+            const durationText = route.duration_text || (route.duration_days ? `${route.duration_days}d` : '3 - 5');
+            const difficultyText = route.difficulty_level || 'Media';
+            const locationText = route.location || 'LO BARNECHEA';
+
+            // ── VARIANTE 1: TARJETA OFICIAL SALIDAS GRUPALES (Split Image + Dark Glass Container) ──
+            if (isSplit) {
+              return (
+                <div
+                  key={route.id || idx}
+                  className="h-full rounded-3xl overflow-hidden flex flex-col group min-h-[520px] justify-between border border-white/10 transition-all duration-300"
+                  style={{
+                    backgroundColor: 'rgba(20, 20, 24, 0.7)',
+                    backdropFilter: 'blur(20px)',
+                    WebkitBackdropFilter: 'blur(20px)',
+                  }}
+                >
+                  {/* Foto Superior */}
+                  <div className="aspect-[16/10] relative overflow-hidden bg-stone-900 shrink-0">
+                    <Image
+                      src={imgSrc}
+                      alt={route.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 70vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-700 pointer-events-none"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+                    <span className="absolute top-4 right-4 bg-stone-950/85 backdrop-blur-md px-3 py-1 text-[10px] font-mono tracking-widest uppercase font-bold text-white rounded border border-white/15 shadow-sm">
+                      {route.badge || route.custom_discipline || 'TREKKING'}
+                    </span>
+                  </div>
+
+                  {/* Cuerpo Glassmorphism */}
+                  <div className="p-6 flex flex-col flex-1 justify-between gap-4">
+                    <div>
+                      <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-2">
+                        {route.title}
+                      </h3>
+                      <p className="text-sm text-stone-300 font-light leading-relaxed mb-4 line-clamp-2">
+                        {route.description || 'Ascenso guiado paso a paso con la comunidad Gaz-Style en los Andes de Santiago.'}
+                      </p>
+
+                      {/* Métricas Técnicas */}
+                      <div
+                        className="grid grid-cols-3 gap-2 py-3 px-3 text-center font-mono rounded-xl"
+                        style={{
+                          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                          border: '1px solid rgba(255, 255, 255, 0.08)',
+                        }}
+                      >
+                        <div>
+                          <p className="text-[10px] text-white/40 uppercase font-medium tracking-wider">Duración</p>
+                          <p className="text-xs font-bold text-white mt-1">
+                            {durationText}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-white/40 uppercase font-medium tracking-wider">Dificultad</p>
+                          <p className="text-xs font-bold text-amber-400 mt-1">
+                            {difficultyText}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-white/40 uppercase font-medium tracking-wider">Altura</p>
+                          <p className="text-xs font-bold text-white mt-1">
+                            {altitudeText}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <Link
+                      href={`/rutas/${route.id}`}
+                      className="w-full rounded-full border border-white/30 bg-white/5 hover:bg-white/15 text-white font-bold tracking-wider py-3.5 px-6 text-center text-xs sm:text-sm transition-all uppercase flex items-center justify-center shadow-md hover:border-white/50"
+                    >
+                      VER DETALLES
+                    </Link>
+                  </div>
+                </div>
+              );
+            }
+
+            // ── VARIANTE 2: TARJETA DE LUJO CINEMATOGRÁFICA (Grandes Desafíos & Expeditions) ──
+            const topMeta = `${locationText} · ${altitudeText}`;
+            const priceTag = isHighMountain
+              ? `${usdPrice} · $${formattedClp} CLP`
+              : `$${formattedClp} CLP`;
 
             return (
               <div
                 key={route.id || idx}
-                className="relative min-h-[500px] overflow-hidden flex flex-col justify-end p-8 group border border-stone-200/20 hover:border-white/30 transition-all duration-500 bg-stone-900 rounded-2xl"
+                className="relative min-h-[540px] rounded-3xl overflow-hidden flex flex-col justify-between p-6 sm:p-7 group border border-white/15 hover:border-white/30 transition-all duration-500 bg-stone-900"
               >
                 {/* Fotografía de Fondo Completa */}
                 <Image
@@ -78,39 +170,66 @@ export default function ExperienceShelfSection({
                 />
 
                 {/* Velo Cinematográfico Suave */}
-                <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-stone-950/95 via-stone-950/50 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/45 to-stone-950/20 pointer-events-none" />
 
-                {/* Contenido Editorial Flotante */}
-                <div className="relative z-10 space-y-3">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-[10px] font-mono tracking-[0.25em] uppercase text-white/70 block">
-                      {metaTag}
-                    </span>
-                    <span className="text-xs font-mono font-bold text-amber-300 tracking-wider">
-                      {isHighMountain ? (
-                        <>{usdPrice} · ${formattedClp} CLP</>
-                      ) : (
-                        <>${formattedClp} CLP</>
-                      )}
-                    </span>
+                {/* Badges Superiores Flotantes */}
+                <div className="relative z-10 flex items-center justify-between gap-2">
+                  <span className="bg-stone-950/80 backdrop-blur-md px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-mono text-white font-bold uppercase tracking-wider border border-white/10 shadow-sm">
+                    {topMeta}
+                  </span>
+                  <span className="bg-stone-950/85 backdrop-blur-md px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-mono font-bold text-amber-300 border border-amber-400/40 shadow-sm">
+                    {priceTag}
+                  </span>
+                </div>
+
+                {/* Contenido Inferior */}
+                <div className="relative z-10 space-y-4 pt-12">
+                  <div>
+                    <h3 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight drop-shadow-md mb-2">
+                      {route.title}
+                    </h3>
+                    <p className="text-slate-200 text-sm font-light leading-relaxed line-clamp-2 drop-shadow">
+                      {route.description || 'Expedición técnica guiada en la alta cordillera de los Andes de Santiago.'}
+                    </p>
                   </div>
 
-                  <h3 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight">
-                    {route.title}
-                  </h3>
-
-                  <p className="text-slate-200 text-sm font-light leading-relaxed line-clamp-3">
-                    {route.description || 'Expedición técnica guiada en la Cordillera de los Andes de Santiago.'}
-                  </p>
-
-                  <div className="pt-2">
-                    <Link
-                      href={`/rutas/${route.id}`}
-                      className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-white border-b border-white/60 pb-1 hover:border-white transition-all hover:text-amber-300"
-                    >
-                      Ver Detalles y Ficha Técnica &rarr;
-                    </Link>
+                  {/* Fila de Métricas Técnicas */}
+                  <div
+                    className="grid grid-cols-3 gap-2 py-3 px-3 text-center font-mono rounded-xl"
+                    style={{
+                      backgroundColor: 'rgba(0, 0, 0, 0.55)',
+                      backdropFilter: 'blur(12px)',
+                      WebkitBackdropFilter: 'blur(12px)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                    }}
+                  >
+                    <div>
+                      <p className="text-[10px] text-white/50 uppercase font-medium tracking-wider">Duración</p>
+                      <p className="text-xs font-bold text-white mt-0.5">
+                        {durationText}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-white/50 uppercase font-medium tracking-wider">Dificultad</p>
+                      <p className="text-xs font-bold text-amber-400 mt-0.5">
+                        {difficultyText}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-white/50 uppercase font-medium tracking-wider">Cumbre</p>
+                      <p className="text-xs font-bold text-white mt-0.5">
+                        {altitudeText}
+                      </p>
+                    </div>
                   </div>
+
+                  {/* Botón Píldora */}
+                  <Link
+                    href={`/rutas/${route.id}`}
+                    className="w-full rounded-full border border-white/30 bg-stone-950/60 hover:bg-stone-900 text-white font-bold tracking-wider py-3.5 px-6 text-center text-xs sm:text-sm transition-all uppercase flex items-center justify-center shadow-lg hover:border-white/50"
+                  >
+                    VER DETALLES & RESERVAR
+                  </Link>
                 </div>
               </div>
             );
@@ -120,3 +239,4 @@ export default function ExperienceShelfSection({
     </section>
   );
 }
+

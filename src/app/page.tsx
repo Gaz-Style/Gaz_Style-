@@ -132,6 +132,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
         highlightTitle="GRUPALES"
         subtitle="Cumbres de día, atardeceres y rutas clásicas con la comunidad Gaz-Style. Café caliente o infusión en cumbre sobre el mar de nubes de Santiago."
         routes={salidasGrupales}
+        cardVariant="split"
       />
 
       {/* ── SECCIÓN: TRAVESÍAS & GRANDES DESAFÍOS ──────────────────────── */}
@@ -142,6 +143,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
         highlightTitle="GRANDES DESAFÍOS"
         subtitle="Los grandes retos de resistencia física y mental de la cuenca central. Jornadas continuas de +1.500m de desnivel vertical y filos andinos (Sierra de Ramón, Cerro Provincia, La Cruz, Carpa, Triple Corona)."
         routes={travesiasDesafios}
+        cardVariant="cover"
       />
 
       {/* ── SECCIÓN: EXPEDITION HIGH MOUNTAIN ──────────────────────────── */}
@@ -153,6 +155,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
         subtitle="Expediciones técnicas de altura en la alta cordillera (El Plomo 5.424m, Leonera 4.954m, Volcán San José 5.856m). Logística integral con porteo de mulas, arrieros, campamentos de altura y monitoreo satelital Garmin SOS."
         routes={expeditionHighMountain}
         isHighMountain
+        cardVariant="cover"
       />
 
       {/* ── SECCIÓN: EXPEDITION BOUTIQUE ───────────────────────────────── */}
@@ -164,6 +167,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
         subtitle="Experiencias exclusivas a tu propio ritmo con transporte ejecutivo puerta a puerta desde tu hotel en Santiago, catering gourmet de montaña y video Reel 4K profesional editado para tus redes sociales."
         routes={expeditionBoutique}
         isBoutique
+        cardVariant="cover"
       />
 
       {/* 3. SISTEMA DE NIVELES FUNCIONAL (Limpio, Técnico & Sereno) */}
