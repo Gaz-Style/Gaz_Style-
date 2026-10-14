@@ -76,16 +76,16 @@ export default function ExperienceShelfSection({
               cleanTitle = cleanTitle.replace(/^cerro\s+/i, '').trim();
             }
 
-            // ── VARIANTE 1: TARJETA OFICIAL SALIDAS GRUPALES (Split Image + Dark Glass Container) ──
+            // ── VARIANTE 1: TARJETA OFICIAL SALIDAS GRUPALES (Split Image + Lighter Frosted Glass Container) ──
             if (isSplit) {
               return (
                 <div
                   key={route.id || idx}
-                  className="h-full rounded-3xl overflow-hidden flex flex-col group min-h-[520px] justify-between border border-white/10 transition-all duration-300"
+                  className="h-full rounded-2xl overflow-hidden flex flex-col group min-h-[460px] justify-between border border-white/12 transition-all duration-300"
                   style={{
-                    backgroundColor: 'rgba(20, 20, 24, 0.7)',
-                    backdropFilter: 'blur(20px)',
-                    WebkitBackdropFilter: 'blur(20px)',
+                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                    backdropFilter: 'blur(18px)',
+                    WebkitBackdropFilter: 'blur(18px)',
                   }}
                 >
                   {/* Foto Superior */}
@@ -97,45 +97,45 @@ export default function ExperienceShelfSection({
                       sizes="(max-width: 768px) 100vw, 70vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-700 pointer-events-none"
                     />
-                    <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
-                    <span className="absolute top-4 right-4 bg-stone-950/85 backdrop-blur-md px-3 py-1 text-[10px] font-mono tracking-widest uppercase font-bold text-white rounded border border-white/15 shadow-sm">
+                    <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
+                    <span className="absolute top-3.5 right-3.5 bg-stone-900/80 backdrop-blur-md px-3 py-1 text-[10px] font-mono tracking-widest uppercase font-bold text-white rounded shadow-sm border border-white/10">
                       {route.badge || route.custom_discipline || 'TREKKING'}
                     </span>
                   </div>
 
-                  {/* Cuerpo Glassmorphism */}
-                  <div className="p-6 flex flex-col flex-1 justify-between gap-4">
+                  {/* Cuerpo Glassmorphism Más Claro y Compacto */}
+                  <div className="p-5 flex flex-col flex-1 justify-between gap-3">
                     <div>
-                      <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-2">
+                      <h3 className="text-xl sm:text-2xl font-bold text-white uppercase tracking-tight mb-1.5">
                         {cleanTitle}
                       </h3>
-                      <p className="text-sm text-stone-300 font-light leading-relaxed mb-4 line-clamp-2">
+                      <p className="text-xs sm:text-sm text-stone-200/80 font-light leading-relaxed mb-3 line-clamp-2">
                         {route.description || 'Ascenso guiado paso a paso con la comunidad Gaz-Style en los Andes de Santiago.'}
                       </p>
 
-                      {/* Métricas Técnicas */}
+                      {/* Métricas Técnicas Compactas */}
                       <div
-                        className="grid grid-cols-3 gap-2 py-3 px-3 text-center font-mono rounded-xl"
+                        className="grid grid-cols-3 gap-1 py-2.5 px-3 text-center font-mono rounded-xl"
                         style={{
                           backgroundColor: 'rgba(255, 255, 255, 0.05)',
                           border: '1px solid rgba(255, 255, 255, 0.08)',
                         }}
                       >
                         <div>
-                          <p className="text-[10px] text-white/40 uppercase font-medium tracking-wider">Duración</p>
-                          <p className="text-xs font-bold text-white mt-1">
+                          <p className="text-[10px] text-white/50 uppercase font-medium tracking-wider">Duración</p>
+                          <p className="text-xs font-bold text-white mt-0.5">
                             {durationText}
                           </p>
                         </div>
                         <div>
-                          <p className="text-[10px] text-white/40 uppercase font-medium tracking-wider">Dificultad</p>
-                          <p className="text-xs font-bold text-amber-400 mt-1">
+                          <p className="text-[10px] text-white/50 uppercase font-medium tracking-wider">Dificultad</p>
+                          <p className="text-xs font-bold text-amber-400 mt-0.5">
                             {difficultyText}
                           </p>
                         </div>
                         <div>
-                          <p className="text-[10px] text-white/40 uppercase font-medium tracking-wider">Altura</p>
-                          <p className="text-xs font-bold text-white mt-1">
+                          <p className="text-[10px] text-white/50 uppercase font-medium tracking-wider">Altura</p>
+                          <p className="text-xs font-bold text-white mt-0.5">
                             {altitudeText}
                           </p>
                         </div>
@@ -144,7 +144,7 @@ export default function ExperienceShelfSection({
 
                     <Link
                       href={`/rutas/${route.id}`}
-                      className="w-full rounded-full border border-white/30 bg-white/5 hover:bg-white/15 text-white font-bold tracking-wider py-3.5 px-6 text-center text-xs sm:text-sm transition-all uppercase flex items-center justify-center shadow-md hover:border-white/50"
+                      className="btn-arcteryx w-full !py-2.5 !px-5 text-center flex items-center justify-center text-xs font-bold tracking-widest uppercase"
                     >
                       VER DETALLES
                     </Link>
