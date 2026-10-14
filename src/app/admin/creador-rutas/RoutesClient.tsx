@@ -6,15 +6,16 @@ import {
   Clock, Users, Trash2, Power, Search, Filter, Activity,
   Calculator, Bus, Ticket, ChefHat, UserCircle, Upload, ImagePlus, X, Edit,
   Compass, Flame, Home, UtensilsCrossed, Star, Sparkles, Navigation, ShieldCheck, CheckCircle2,
-  Trophy, Layers
+  Trophy, Layers, Crown
 } from 'lucide-react';
 import { createAdventureWithCosts, updateAdventureWithCosts, toggleAdventureStatus, deleteAdventure, AdventureCost } from './actions';
 
-// Definición de Categorías Principales de Santiago Hiking
+// Definición de las 4 Categorías Oficiales de Oferta de Santiago Hiking / Gaz-Style
 export const INITIAL_VERTICAL_DEFINITIONS = [
-  { id: 'trekking', label: 'Salidas Grupales & Trekking', icon: Mountain, shortLabel: 'Trekking' },
-  { id: 'challenges', label: 'Los Grandes Desafíos', icon: Trophy, shortLabel: 'Desafíos' },
-  { id: 'expeditions', label: 'Expediciones Andinas', icon: Compass, shortLabel: 'Expediciones' },
+  { id: 'salidas_grupales', label: 'Salidas Grupales', icon: Mountain, shortLabel: 'Grupales' },
+  { id: 'travesias_desafios', label: 'Travesías & Desafíos', icon: Trophy, shortLabel: 'Desafíos' },
+  { id: 'expedition_pass', label: 'Expedition Pass', icon: Sparkles, shortLabel: 'Expedition Pass' },
+  { id: 'high_mountain', label: 'High Mountain (5.000m+)', icon: Crown, shortLabel: 'High Mountain' },
 ];
 
 export const VERTICAL_DEFINITIONS = INITIAL_VERTICAL_DEFINITIONS;
@@ -31,13 +32,13 @@ export const MACIZOS_SANTIAGO = [
 
 export default function RoutesClient({ 
   initialRoutes, 
-  initialVertical = 'trekking' 
+  initialVertical = 'all' 
 }: { 
   initialRoutes: any[]; 
   initialVertical?: string; 
 }) {
   const [routes, setRoutes] = useState(initialRoutes);
-  const [selectedFilter, setSelectedFilter] = useState(initialVertical === 'all' ? 'trekking' : initialVertical);
+  const [selectedFilter, setSelectedFilter] = useState(initialVertical);
   const [selectedMacizo, setSelectedMacizo] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,13 +46,13 @@ export default function RoutesClient({
   const [editingRoute, setEditingRoute] = useState<any>(null);
 
   // Estado de Vertical y Pestañas del Creador
-  const [verticalType, setVerticalType] = useState<string>(initialVertical === 'all' ? 'trekking' : initialVertical);
+  const [verticalType, setVerticalType] = useState<string>(initialVertical === 'all' ? 'salidas_grupales' : initialVertical);
   const [customDiscipline, setCustomDiscipline] = useState('');
   const [macizoCordillera, setMacizoCordillera] = useState('Cordón Manquehue & San Cristóbal');
   const [cerroPrincipal, setCerroPrincipal] = useState('');
   const [activeTab, setActiveTab] = useState<'identidad' | 'tecnica' | 'storytelling' | 'operaciones' | 'costos'>('identidad');
 
-  const [basePrice, setBasePrice] = useState(85000);
+  const [basePrice, setBasePrice] = useState(28000);
   const [minPax, setMinPax] = useState(2);
   const [imageUrl, setImageUrl] = useState('');
   const [imageUploading, setImageUploading] = useState(false);
@@ -62,7 +63,7 @@ export default function RoutesClient({
 
   // Sincronizar filtro cuando cambie initialVertical desde URL
   useEffect(() => {
-    if (initialVertical && initialVertical !== 'all') {
+    if (initialVertical) {
       setSelectedFilter(initialVertical);
     }
   }, [initialVertical]);
@@ -86,15 +87,20 @@ export default function RoutesClient({
   }
 
   function openCreateModal(forcedVertical?: string) {
-    const v = forcedVertical || (selectedFilter === 'all' ? 'trekking' : selectedFilter);
+    const v = forcedVertical || (selectedFilter === 'all' ? 'salidas_grupales' : selectedFilter);
     setEditingRoute(null);
     setVerticalType(v);
     setCustomDiscipline('');
     setCerroPrincipal('');
     setMacizoCordillera('Cordón Manquehue & San Cristóbal');
     setActiveTab('identidad');
-    setBasePrice(v === 'challenges' ? 45000 : (v === 'expeditions' ? 110000 : 85000));
-    setMinPax(2);
+    setBasePrice(
+      v === 'high_mountain' ? 1460000 : 
+      v === 'expedition_pass' ? 280000 : 
+      v === 'travesias_desafios' ? 49000 : 
+      28000
+    );
+    setMinPax(v === 'high_mountain' ? 1 : (v === 'expedition_pass' ? 1 : 2));
     setImageUrl('');
     setCosts([]);
     setNewCostName('');
@@ -104,7 +110,7 @@ export default function RoutesClient({
 
   function openEditModal(route: any) {
     setEditingRoute(route);
-    setVerticalType(route.vertical_type || 'trekking');
+    setVerticalType(route.vertical_type || 'salidas_grupales');
     setCustomDiscipline(route.custom_discipline || '');
     setCerroPrincipal(route.category || '');
     setActiveTab('identidad');
@@ -142,10 +148,16 @@ export default function RoutesClient({
     }
   }
 
-  // Filtrado estricto por vertical seleccionada
+  // Filtrado estricto por vertical seleccionada (con soporte de las 4 categorías oficiales)
   const filteredRoutes = routes.filter(r => {
-    const rVertical = r.vertical_type || 'trekking';
-    const matchesVertical = selectedFilter === 'all' || rVertical === selectedFilter;
+    const rVertical = r.vertical_type || 'salidas_grupales';
+    const matchesVertical = selectedFilter === 'all' || 
+      rVertical === selectedFilter ||
+      (selectedFilter === 'salidas_grupales' && (rVertical === 'trekking' || r.category === 'grupales')) ||
+      (selectedFilter === 'travesias_desafios' && (rVertical === 'challenges' || r.category === 'desafios')) ||
+      (selectedFilter === 'expedition_pass' && r.category === 'expedition_pass') ||
+      (selectedFilter === 'high_mountain' && r.category === 'high_mountain');
+
     const matchesSearch = !searchQuery || 
       r.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
       (r.description && r.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
@@ -163,33 +175,40 @@ export default function RoutesClient({
 
   // Definición por defecto de las cabeceras de cada módulo
   const DEFAULT_MODULE_HEADERS: Record<string, { tag: string; title: string; highlight: string; desc: string; createBtn: string }> = {
-    trekking: {
-      tag: 'SALIDAS GRUPALES',
-      title: 'Salidas Grupales &',
-      highlight: 'Trekking',
+    salidas_grupales: {
+      tag: 'COMMUNITY PASS',
+      title: 'Salidas',
+      highlight: 'Grupales',
       desc: 'Cumbres de día, atardeceres y rutas guiadas por Gaz en la precordillera de Santiago.',
       createBtn: '+ Crear Salida Grupal'
     },
-    challenges: {
-      tag: 'THE ANDES CHALLENGES',
-      title: 'Los Grandes',
+    travesias_desafios: {
+      tag: 'ENDURANCE FULL DAY',
+      title: 'Travesías &',
       highlight: 'Desafíos',
-      desc: 'Retos icónicos y programas de semanas (5:00 AM, Triple Corona, Desbloqueando Santiago).',
-      createBtn: '+ Crear Gran Desafío'
+      desc: 'Retos icónicos y programas de resistencia continua (Sierra de Ramón, Cerro Provincia, La Cruz).',
+      createBtn: '+ Crear Travesía / Desafío'
     },
-    expeditions: {
-      tag: 'ALTA MONTAÑA',
-      title: 'Expediciones',
-      highlight: 'Andinas',
-      desc: 'Travesías técnicas sobre 3.000m, glaciares y pernoctes en carpas de altura (Sierra de Ramón, El Plomo).',
-      createBtn: '+ Crear Expedición'
+    expedition_pass: {
+      tag: 'UNIVERSAL PRIVATE & TAILOR-MADE',
+      title: 'Expedition',
+      highlight: 'Pass',
+      desc: 'Salidas 100% privadas y personalizadas a tu ritmo con pick-up en hotel/domicilio y Reel 4K profesional.',
+      createBtn: '+ Crear Expedition Pass'
+    },
+    high_mountain: {
+      tag: 'ALTA MONTAÑA 5.000M+',
+      title: 'High',
+      highlight: 'Mountain',
+      desc: 'Grandes cumbres sobre 4.000m y 5.000m (El Plomo, Leonera, Volcán San José) con logística integral de arrieros y campamento.',
+      createBtn: '+ Crear Expedición High Mountain'
     },
     all: {
       tag: 'CATÁLOGO SANTIAGO HIKING',
       title: 'Todas las',
-      highlight: 'Aventuras',
-      desc: 'Vista global de Salidas Grupales, Grandes Desafíos y Expediciones Andinas.',
-      createBtn: '+ Crear Aventura'
+      highlight: 'Experiencias',
+      desc: 'Vista global de Salidas Grupales, Travesías & Desafíos, Expedition Pass y High Mountain.',
+      createBtn: '+ Crear Experiencia'
     }
   };
 
@@ -212,7 +231,7 @@ export default function RoutesClient({
       const savedCategories = localStorage.getItem('santiago_hiking_custom_categories');
       if (savedCategories) {
         const parsed = JSON.parse(savedCategories);
-        const legacyExcluded = ['accommodation', 'gastronomy', 'all_inclusive', 'action_sports', 'experiencias'];
+        const legacyExcluded = ['accommodation', 'gastronomy', 'all_inclusive', 'action_sports', 'experiencias', 'trekking', 'challenges', 'expeditions'];
         const cleanParsed = Array.isArray(parsed) ? parsed.filter((c: any) => !legacyExcluded.includes(c.id)) : [];
         setCategories([...INITIAL_VERTICAL_DEFINITIONS, ...cleanParsed]);
       }
@@ -304,7 +323,15 @@ export default function RoutesClient({
                 className="appearance-none bg-stone-950 border border-stone-700 hover:border-amber-400 rounded-xl px-4 py-2.5 pr-10 text-xs font-mono font-bold text-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400 transition-all cursor-pointer h-10"
               >
                 {categories.map(v => {
-                  const count = routes.filter(r => (r.vertical_type || 'trekking') === v.id).length;
+                  const count = routes.filter(r => {
+                    const rv = r.vertical_type || 'salidas_grupales';
+                    if (rv === v.id) return true;
+                    if (v.id === 'salidas_grupales' && (rv === 'trekking' || r.category === 'grupales')) return true;
+                    if (v.id === 'travesias_desafios' && (rv === 'challenges' || r.category === 'desafios')) return true;
+                    if (v.id === 'expedition_pass' && r.category === 'expedition_pass') return true;
+                    if (v.id === 'high_mountain' && r.category === 'high_mountain') return true;
+                    return false;
+                  }).length;
                   return (
                     <option key={v.id} value={v.id} className="bg-stone-900 text-stone-200">
                       {v.label} ({count})
@@ -580,8 +607,9 @@ export default function RoutesClient({
                 `/rutas/${route.id}`;
 
               const verticalLabel = 
-                route.vertical_type === 'challenges' ? 'Gran Desafío' :
-                route.vertical_type === 'expeditions' ? 'Expedición Andina' :
+                route.vertical_type === 'high_mountain' || route.category === 'high_mountain' ? 'High Mountain' :
+                route.vertical_type === 'expedition_pass' || route.category === 'expedition_pass' ? 'Expedition Pass' :
+                route.vertical_type === 'travesias_desafios' || route.vertical_type === 'challenges' || route.category === 'desafios' ? 'Travesía & Desafío' :
                 'Salida Grupal';
 
               return (
@@ -813,8 +841,8 @@ export default function RoutesClient({
                       Identidad Visual & Portada
                     </h3>
 
-                    {/* Selector de Macizo & Cerro si es Trekking o Expedición */}
-                    {(verticalType === 'trekking' || verticalType === 'expeditions') && (
+                    {/* Selector de Macizo & Cerro Cordillerano */}
+                    {verticalType !== 'action_sports' && (
                       <div className="p-4 rounded-xl bg-stone-950 border border-stone-800 space-y-3">
                         <div className="space-y-1.5">
                           <label className="text-xs font-mono font-bold text-amber-400 uppercase flex items-center gap-1.5">
