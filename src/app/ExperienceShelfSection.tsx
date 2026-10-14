@@ -209,17 +209,12 @@ export default function ExperienceShelfSection({
                     )}
                   </div>
 
-                  {/* Botón CTA de Reserva */}
+                  {/* Botón CTA Original */}
                   <Link
                     href={`/rutas/${route.id}`}
-                    className={`w-full flex items-center justify-center text-center py-3 px-4 rounded-xl text-xs font-mono font-bold tracking-wider transition-all duration-300 ${
-                      isHighMountain
-                        ? 'btn-arcteryx-primary shadow-[0_0_20px_rgba(245,158,11,0.3)]'
-                        : (isBoutique ? 'btn-arcteryx-primary' : 'btn-arcteryx hover:border-amber-400/50')
-                    }`}
+                    className="btn-arcteryx w-full flex items-center justify-center text-center mt-2"
                   >
-                    <span>{isHighMountain ? 'DETALLES & EXPEDICIÓN' : (isBoutique ? 'RESERVAR BOUTIQUE' : 'VER RUTA & AGENDAR')}</span>
-                    <ArrowRight className="w-3.5 h-3.5 ml-2" />
+                    Ver Detalles & Reservar
                   </Link>
                 </div>
               </div>
