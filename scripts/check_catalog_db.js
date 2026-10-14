@@ -26,7 +26,13 @@ async function check() {
     console.error('Error fetching catalog:', error.message);
   } else {
     console.log('Current items in catalog:', data.length);
-    data.forEach(d => console.log(`[${d.id}] ${d.title} (${d.category || 'sin cat'}) - $${d.base_price}`));
+    const summary = {};
+    data.forEach(d => {
+      const v = d.vertical_type || d.category || 'sin_cat';
+      summary[v] = (summary[v] || 0) + 1;
+    });
+    console.log('Distribución por categoría:', summary);
+    data.forEach(d => console.log(`[${d.vertical_type}] ${d.title} - $${d.base_price}`));
   }
 }
 
