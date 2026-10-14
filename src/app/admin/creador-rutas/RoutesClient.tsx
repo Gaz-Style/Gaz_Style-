@@ -1086,45 +1086,45 @@ export default function RoutesClient({
                   </div>
                 )}
 
-                {/* ── TAB 3: STORYTELLING ─────────────────────────────────── */}
+                {/* ── TAB 3: HISTORIA DEL CERRO & SEO GEO ─────────────────── */}
                 {activeTab === 'storytelling' && (
                   <div className="space-y-4 animate-in fade-in duration-200">
                     <h3 className="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider mb-2">
-                      Narrativa en 3 Tiempos
+                      Historia del Cerro / Travesía (SEO GEO & Autoridad)
                     </h3>
                     <p className="text-xs text-stone-400 font-light">
-                      La inmersión literaria que distingue a Santiago Hiking. Cada párrafo aborda una etapa de la expedición.
+                      Los 3 párrafos dedicados a la historia, geología y patrimonio del cerro o travesía. Clave para posicionamiento SEO Local y Generative Engine Optimization (ChatGPT, Perplexity, Gemini).
                     </p>
 
                     <div className="space-y-1.5">
-                      <label className="text-xs font-mono text-stone-400 uppercase font-semibold">Párrafo 1: El Concepto & La Salida</label>
+                      <label className="text-xs font-mono text-stone-400 uppercase font-semibold">Párrafo 1: Origen, Toponimia & Patrimonio Ancestral</label>
                       <textarea
                         name="story_p1"
                         rows={3}
                         defaultValue={editingRoute?.story_paragraphs?.[0] || ''}
-                        placeholder="Mientras la ciudad duerme en silencio, nos reunimos al pie de la montaña..."
+                        placeholder="Origen histórico o indígena del nombre, cosmovisión andina o uso colonial y su rol tutelar en la cuenca de Santiago..."
                         className="w-full bg-stone-950 border border-stone-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400 transition-colors resize-none leading-relaxed"
                       />
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-xs font-mono text-stone-400 uppercase font-semibold">Párrafo 2: La Vivencia en el Sendero</label>
+                      <label className="text-xs font-mono text-stone-400 uppercase font-semibold">Párrafo 2: Geología, Macizo & Entorno Andino</label>
                       <textarea
                         name="story_p2"
                         rows={3}
                         defaultValue={editingRoute?.story_paragraphs?.[1] || ''}
-                        placeholder="Subir de noche agudiza los sentidos: el sonido del viento andino en los matorrales..."
+                        placeholder="Formación geológica de la montaña, fallas tectónicas, tipo de roca, bosque esclerófilo nativo y cuenca cordillerana..."
                         className="w-full bg-stone-950 border border-stone-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400 transition-colors resize-none leading-relaxed"
                       />
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-xs font-mono text-stone-400 uppercase font-semibold">Párrafo 3: La Cumbre & El Ritual</label>
+                      <label className="text-xs font-mono text-stone-400 uppercase font-semibold">Párrafo 3: Tradición Montañera & Relevancia Actual</label>
                       <textarea
                         name="story_p3"
                         rows={3}
                         defaultValue={editingRoute?.story_paragraphs?.[2] || ''}
-                        placeholder="La cumbre nos recibe justo cuando el horizonte cordillerano comienza a teñirse de ámbar..."
+                        placeholder="Primeros ascensos registrados, senderos de arrieros históricos y su trascendencia actual para el montañismo y expediciones guiadas..."
                         className="w-full bg-stone-950 border border-stone-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400 transition-colors resize-none leading-relaxed"
                       />
                     </div>

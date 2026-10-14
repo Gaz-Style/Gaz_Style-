@@ -289,7 +289,7 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                     }}
                                 >
                                     <span className="text-amber-400 font-mono text-xs uppercase tracking-[0.25em] font-bold block">
-                                        La Experiencia
+                                        Historia & Geografía Andina
                                     </span>
                                     <div className="space-y-3 text-white/70 text-sm font-light leading-relaxed">
                                         {route.story_paragraphs.map((p: string, idx: number) => (
