@@ -120,7 +120,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
           </p>
 
           {/* 4. Botones Píldora Glassmorphism */}
-          <HeroActionButtons lang={lang} />
+          <HeroActionButtons lang={lang} allRoutes={routes} />
         </div>
       </section>
 

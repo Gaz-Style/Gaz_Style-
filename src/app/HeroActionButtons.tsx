@@ -7,12 +7,14 @@ import Image from 'next/image';
 import { 
   Lightbulb, X, ArrowRight, CheckCircle2, ChevronRight, 
   Flame, Clock, MessageCircle, RotateCcw,
-  Mountain, Users, Sun
+  Mountain, Users, Sun, Compass
 } from 'lucide-react';
 import { trackLeadGuide } from '@/lib/analytics';
+import AllAdventuresModal from './AllAdventuresModal';
 
 interface Props {
   lang?: string;
+  allRoutes?: any[];
 }
 
 // ── Rutas Recomendadas (Con imágenes reales locales y métricas idénticas a la web) ──────
@@ -69,9 +71,10 @@ const ROUTES = {
 
 type RouteKey = keyof typeof ROUTES;
 
-export default function HeroActionButtons({ lang = 'es' }: Props) {
+export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props) {
   const isEn = lang === 'en';
   const [isOpen, setIsOpen] = useState(false);
+  const [isAllAdventuresOpen, setIsAllAdventuresOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [step, setStep] = useState<1 | 2 | 3>(1);
 
@@ -170,13 +173,14 @@ export default function HeroActionButtons({ lang = 'es' }: Props) {
     <>
       {/* ── BOTONES HERO PÍLDORA CON GLASSMORPHISM & TRANSPARENCIA ── */}
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5 w-full max-w-lg mx-auto">
-        {/* Botón 1: Ver todas las aventuras (Diseño y Color Ámbar Oficial) */}
-        <a
-          href="#rutas"
+        {/* Botón 1: Ver todas las aventuras (Despliega Lista de Aventuras por Categoría) */}
+        <button
+          type="button"
+          onClick={() => setIsAllAdventuresOpen(true)}
           className="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-black px-8 sm:px-9 py-4 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all hover:scale-105 shadow-[0_0_20px_rgba(245,158,11,0.35)] cursor-pointer text-center select-none"
         >
           {isEn ? 'Ver todas las aventuras' : 'Ver todas las aventuras'}
-        </a>
+        </button>
 
         {/* Botón 2: Ayúdame a elegir (Diseño y Color Cristal Ahumado Oficial + Lógica del Quiz Modal) */}
         <button
@@ -197,6 +201,13 @@ export default function HeroActionButtons({ lang = 'es' }: Props) {
           <span>{isEn ? 'Ayúdame a elegir' : 'Ayúdame a elegir'}</span>
         </button>
       </div>
+
+      {/* ── MODAL: CATÁLOGO MAESTRO CON TODAS LAS AVENTURAS EN LISTA POR CATEGORÍA ── */}
+      <AllAdventuresModal
+        isOpen={isAllAdventuresOpen}
+        onClose={() => setIsAllAdventuresOpen(false)}
+        routes={allRoutes}
+      />
 
       {/* ── MODAL POPUP CON LA IDENTIDAD EXACTA DE LA WEB: CRISTAL, PÍLDORAS Y VIDEO NATIVO ── */}
       {isOpen && mounted && typeof document !== 'undefined' && document.body && createPortal(
