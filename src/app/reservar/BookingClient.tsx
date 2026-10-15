@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import {
     Calendar, Users, CreditCard,
     Clock, Shield, ArrowLeft, Loader2, CheckCircle2,
-    Lock, ShieldCheck, Mountain, Compass
+    Lock, ShieldCheck, Mountain, Compass, AlertCircle
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -71,6 +71,7 @@ export default function BookingClient({
     const [form, setForm] = useState({
         first_name: '', last_name: '', email: '', phone: ''
     });
+    const [touched, setTouched] = useState<Record<string, boolean>>({});
     const [acceptsWaiver, setAcceptsWaiver] = useState(false);
 
     const updateParticipant = (index: number, field: string, value: string) => {
@@ -87,14 +88,62 @@ export default function BookingClient({
         ? Math.max(1, (selected.adventures_catalog?.max_pax || 10) - (selected.current_pax || 0))
         : 10;
 
+    // Validación rigurosa de formato
+    const isEmailValid = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
+    const isPhoneValid = (p: string) => p.replace(/\D/g, '').length >= 8;
+
+    const errors = {
+        first_name: !form.first_name.trim() ? 'El nombre es obligatorio' : '',
+        last_name: !form.last_name.trim() ? 'El apellido es obligatorio' : '',
+        email: !form.email.trim() 
+            ? 'El correo es obligatorio' 
+            : !isEmailValid(form.email) 
+            ? 'Ingresa un correo electrónico válido' 
+            : '',
+        phone: !form.phone.trim() 
+            ? 'El celular/WhatsApp es obligatorio' 
+            : !isPhoneValid(form.phone) 
+            ? 'Ingresa un número de celular válido (mín. 8 dígitos)' 
+            : '',
+    };
+
+    // Validar si los acompañantes adicionales tienen sus datos obligatorios (si aplica)
+    const getAdditionalError = (index: number, field: 'first_name' | 'last_name') => {
+        const p = additionalParticipants[index];
+        if (!p || !p[field]?.trim()) {
+            return field === 'first_name' 
+                ? `El nombre del acompañante ${index + 2} es obligatorio` 
+                : `El apellido del acompañante ${index + 2} es obligatorio`;
+        }
+        return '';
+    };
+
+    const hasIncompleteAdditional = Array.from({ length: Math.max(0, paxCount - 1) }).some((_, i) => {
+        const p = additionalParticipants[i];
+        return !p?.first_name?.trim() || !p?.last_name?.trim();
+    });
+
+    const hasErrors = Object.values(errors).some(Boolean) || hasIncompleteAdditional;
+
     async function handlePay() {
         if (!selected) return;
-        if (!form.first_name || !form.last_name || !form.email || !form.phone) {
-            alert('Por favor completa los datos de contacto del titular para continuar.');
-            return;
+
+        // Marcar todos los campos como tocados para mostrar errores visuales inmediatos
+        const allTouched: Record<string, boolean> = {
+            first_name: true,
+            last_name: true,
+            email: true,
+            phone: true,
+            waiver: true,
+        };
+        for (let i = 0; i < paxCount - 1; i++) {
+            allTouched[`p_${i + 2}_first_name`] = true;
+            allTouched[`p_${i + 2}_last_name`] = true;
         }
-        if (!acceptsWaiver) {
-            alert('Debes aceptar los términos y condiciones de la expedición para continuar.');
+        setTouched(allTouched);
+
+        if (hasErrors || !acceptsWaiver) {
+            // Condicionar para no avanzar sin rellenar los campos obligatorios
             return;
         }
         setIsSubmitting(true);
@@ -302,26 +351,59 @@ export default function BookingClient({
 
                                 <div className="p-6 sm:p-8 space-y-7">
                                     
+                                    {/* Explicación del Flujo de Reserva en 2 Pasos */}
+                                    <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-start gap-3">
+                                        <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                                        <div className="text-xs text-stone-200/90 leading-relaxed font-light">
+                                            <span className="text-amber-400 font-bold uppercase tracking-wider block mb-1 text-[11px] font-mono">
+                                                Proceso de Reserva en 2 Pasos
+                                            </span>
+                                            <p className="text-white/80">
+                                                <strong className="text-white font-semibold">1. Datos de Contacto Obligatorios:</strong> Completa nombre, apellido, correo y celular para emitir tu orden y proceder al pago seguro.
+                                            </p>
+                                            <p className="text-amber-200/80 mt-1">
+                                                <strong className="text-amber-300 font-semibold">2. Ficha Médica & RUT Post-Pago:</strong> Inmediatamente después de pagar, completarás el RUT/Pasaporte, contacto de emergencia y ficha médica de cada participante.
+                                            </p>
+                                        </div>
+                                    </div>
+
                                     {/* 1. Datos de Contacto */}
                                     <div className="space-y-4">
-                                        <h4 className="text-xs font-bold uppercase tracking-wider text-amber-400 font-mono">
-                                            1. Datos de Contacto del Titular
-                                        </h4>
+                                        <div className="flex items-center justify-between">
+                                            <h4 className="text-xs font-bold uppercase tracking-wider text-amber-400 font-mono">
+                                                1. Datos de Contacto del Titular
+                                            </h4>
+                                            <span className="text-[10px] text-amber-400/80 font-mono">
+                                                (*) Campos obligatorios
+                                            </span>
+                                        </div>
                                         
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             <Field 
                                                 label="Nombre" 
                                                 name="first_name" 
                                                 value={form.first_name} 
-                                                onChange={(v: string) => setForm(f => ({...f, first_name: v}))} 
+                                                onChange={(v: string) => {
+                                                    setForm(f => ({...f, first_name: v}));
+                                                    if (touched.first_name) setTouched(t => ({...t, first_name: true}));
+                                                }} 
+                                                onBlur={() => setTouched(t => ({...t, first_name: true}))}
                                                 placeholder="Ej. Juan" 
+                                                required
+                                                error={touched.first_name ? errors.first_name : ''}
                                             />
                                             <Field 
                                                 label="Apellido" 
                                                 name="last_name" 
                                                 value={form.last_name} 
-                                                onChange={(v: string) => setForm(f => ({...f, last_name: v}))} 
+                                                onChange={(v: string) => {
+                                                    setForm(f => ({...f, last_name: v}));
+                                                    if (touched.last_name) setTouched(t => ({...t, last_name: true}));
+                                                }} 
+                                                onBlur={() => setTouched(t => ({...t, last_name: true}))}
                                                 placeholder="Ej. Pérez" 
+                                                required
+                                                error={touched.last_name ? errors.last_name : ''}
                                             />
                                         </div>
 
@@ -330,16 +412,28 @@ export default function BookingClient({
                                             name="email" 
                                             type="email" 
                                             value={form.email} 
-                                            onChange={(v: string) => setForm(f => ({...f, email: v}))} 
+                                            onChange={(v: string) => {
+                                                setForm(f => ({...f, email: v}));
+                                                if (touched.email) setTouched(t => ({...t, email: true}));
+                                            }} 
+                                            onBlur={() => setTouched(t => ({...t, email: true}))}
                                             placeholder="juan.perez@email.com" 
+                                            required
+                                            error={touched.email ? errors.email : ''}
                                         />
                                         
                                         <Field 
                                             label="Teléfono / WhatsApp (para coordinación del ascenso)" 
                                             name="phone" 
                                             value={form.phone} 
-                                            onChange={(v: string) => setForm(f => ({...f, phone: v}))} 
+                                            onChange={(v: string) => {
+                                                setForm(f => ({...f, phone: v}));
+                                                if (touched.phone) setTouched(t => ({...t, phone: true}));
+                                            }} 
+                                            onBlur={() => setTouched(t => ({...t, phone: true}))}
                                             placeholder="+56 9 1234 5678" 
+                                            required
+                                            error={touched.phone ? errors.phone : ''}
                                         />
                                     </div>
 
@@ -383,8 +477,8 @@ export default function BookingClient({
                                                     <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400 font-mono block">
                                                         Datos de los Acompañantes ({paxCount - 1} {paxCount === 2 ? 'adicional' : 'adicionales'})
                                                     </span>
-                                                    <span className="text-[10px] text-white/40 font-mono">
-                                                        Tickets individuales
+                                                    <span className="text-[10px] text-amber-400/80 font-mono">
+                                                        (*) Nombre y apellido obligatorios
                                                     </span>
                                                 </div>
 
@@ -413,15 +507,31 @@ export default function BookingClient({
                                                                     label="Nombre"
                                                                     name={`p_${pNum}_first_name`}
                                                                     value={pData.first_name}
-                                                                    onChange={(v: string) => updateParticipant(idx, 'first_name', v)}
+                                                                    onChange={(v: string) => {
+                                                                        updateParticipant(idx, 'first_name', v);
+                                                                        if (touched[`p_${pNum}_first_name`]) {
+                                                                            setTouched(t => ({...t, [`p_${pNum}_first_name`]: true}));
+                                                                        }
+                                                                    }}
+                                                                    onBlur={() => setTouched(t => ({...t, [`p_${pNum}_first_name`]: true}))}
                                                                     placeholder={`Ej. Nombre`}
+                                                                    required
+                                                                    error={touched[`p_${pNum}_first_name`] ? getAdditionalError(idx, 'first_name') : ''}
                                                                 />
                                                                 <Field
                                                                     label="Apellido"
                                                                     name={`p_${pNum}_last_name`}
                                                                     value={pData.last_name}
-                                                                    onChange={(v: string) => updateParticipant(idx, 'last_name', v)}
+                                                                    onChange={(v: string) => {
+                                                                        updateParticipant(idx, 'last_name', v);
+                                                                        if (touched[`p_${pNum}_last_name`]) {
+                                                                            setTouched(t => ({...t, [`p_${pNum}_last_name`]: true}));
+                                                                        }
+                                                                    }}
+                                                                    onBlur={() => setTouched(t => ({...t, [`p_${pNum}_last_name`]: true}))}
                                                                     placeholder={`Ej. Apellido`}
+                                                                    required
+                                                                    error={touched[`p_${pNum}_last_name`] ? getAdditionalError(idx, 'last_name') : ''}
                                                                 />
                                                             </div>
                                                             <Field
@@ -473,27 +583,63 @@ export default function BookingClient({
                                         </div>
 
                                         {/* Términos rápidos */}
-                                        <div className="flex items-start gap-3 pt-2">
-                                            <input 
-                                                type="checkbox" 
-                                                id="waiver" 
-                                                checked={acceptsWaiver}
-                                                onChange={(e) => setAcceptsWaiver(e.target.checked)}
-                                                className="mt-0.5 w-4 h-4 rounded border-white/30 text-amber-500 focus:ring-amber-400 bg-black/40 cursor-pointer accent-amber-500"
-                                            />
-                                            <label htmlFor="waiver" className="text-xs text-white/70 leading-relaxed cursor-pointer select-none">
-                                                Acepto los términos de la expedición y declaro tener salud compatible con senderismo en montaña.
-                                            </label>
+                                        <div className="space-y-2 pt-2">
+                                            <div className="flex items-start gap-3">
+                                                <input 
+                                                    type="checkbox" 
+                                                    id="waiver" 
+                                                    checked={acceptsWaiver}
+                                                    onChange={(e) => {
+                                                        setAcceptsWaiver(e.target.checked);
+                                                        setTouched(t => ({...t, waiver: true}));
+                                                    }}
+                                                    className="mt-0.5 w-4 h-4 rounded border-white/30 text-amber-500 focus:ring-amber-400 bg-black/40 cursor-pointer accent-amber-500"
+                                                />
+                                                <label htmlFor="waiver" className="text-xs text-white/70 leading-relaxed cursor-pointer select-none">
+                                                    Acepto los términos de la expedición y declaro tener salud compatible con senderismo en montaña. <span className="text-red-400 font-bold">*</span>
+                                                </label>
+                                            </div>
+                                            {touched.waiver && !acceptsWaiver && (
+                                                <span className="text-[10px] text-red-400 font-mono tracking-tight block pl-7">
+                                                    Debes aceptar los términos para poder avanzar al pago.
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
 
                                     {/* Botón de Pago Neutro y Multipasarela */}
                                     <div className="pt-6 border-t border-white/10 space-y-4">
+                                        {/* Alerta de campos obligatorios si el usuario intentó pagar */}
+                                        {hasErrors && Object.keys(touched).length > 0 && (
+                                            <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-200 text-xs flex items-start gap-2.5 animate-in fade-in">
+                                                <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                                                <div>
+                                                    <span className="font-bold text-red-300 block mb-0.5">Campos obligatorios requeridos:</span>
+                                                    <p className="font-light text-red-200/90 leading-relaxed">
+                                                        Por favor completa todos los campos marcados con asterisco (*) en rojo (Nombre, Apellido, Correo y Celular válidos) para avanzar al pago.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {!acceptsWaiver && Object.keys(touched).length > 0 && !hasErrors && (
+                                            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs flex items-center gap-2 animate-in fade-in">
+                                                <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                                                <span>Debes aceptar los términos y condiciones de la expedición para continuar.</span>
+                                            </div>
+                                        )}
+
                                         <button
                                             type="button"
                                             onClick={handlePay}
-                                            disabled={isSubmitting || !form.first_name || !form.last_name || !form.email || !form.phone || !acceptsWaiver}
-                                            className="btn-arcteryx-primary w-full !py-4 rounded-xl text-xs font-mono font-bold uppercase tracking-widest flex items-center justify-center gap-2.5 shadow-[0_0_24px_rgba(245,158,11,0.35)] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                                            disabled={isSubmitting}
+                                            className={`w-full !py-4 rounded-xl text-xs font-mono font-bold uppercase tracking-widest flex items-center justify-center gap-2.5 transition-all cursor-pointer ${
+                                                isSubmitting
+                                                    ? 'opacity-60 cursor-not-allowed bg-stone-800 text-white'
+                                                    : hasErrors || !acceptsWaiver
+                                                    ? 'bg-amber-500/25 text-amber-300 border border-amber-500/40 hover:bg-amber-500/35 hover:text-white'
+                                                    : 'btn-arcteryx-primary shadow-[0_0_24px_rgba(245,158,11,0.35)]'
+                                            }`}
                                         >
                                             {isSubmitting ? (
                                                 <>
@@ -502,7 +648,7 @@ export default function BookingClient({
                                                 </>
                                             ) : (
                                                 <>
-                                                    <CreditCard className="w-4 h-4 text-stone-950" />
+                                                    <CreditCard className="w-4 h-4" />
                                                     <span>PAGAR ${total.toLocaleString('es-CL')} CLP →</span>
                                                 </>
                                             )}
@@ -534,22 +680,56 @@ export default function BookingClient({
     );
 }
 
-function Field({ label, name, value, onChange, placeholder, type = 'text' }: any) {
+function Field({ 
+    label, 
+    name, 
+    value, 
+    onChange, 
+    onBlur,
+    placeholder, 
+    type = 'text', 
+    required = false,
+    error = '' 
+}: {
+    label: string;
+    name: string;
+    value: string;
+    onChange: (val: string) => void;
+    onBlur?: () => void;
+    placeholder?: string;
+    type?: string;
+    required?: boolean;
+    error?: string;
+}) {
+    const hasError = Boolean(error);
+
     return (
         <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-white/70 uppercase tracking-wider block font-mono text-[11px]">
-                {label}
-            </label>
+            <div className="flex items-center justify-between">
+                <label className="text-xs font-semibold text-white/80 uppercase tracking-wider block font-mono text-[11px]">
+                    {label} {required && <span className="text-red-400 font-bold">*</span>}
+                </label>
+                {hasError && (
+                    <span className="text-[10px] text-red-400 font-mono tracking-tight animate-in fade-in duration-200">
+                        {error}
+                    </span>
+                )}
+            </div>
             <input
                 type={type}
                 name={name}
                 value={value}
                 onChange={e => onChange(e.target.value)}
+                onBlur={onBlur}
                 placeholder={placeholder}
-                className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-colors"
+                className={`w-full rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none transition-all ${
+                    hasError
+                        ? 'border-red-500/80 focus:border-red-400 focus:ring-1 focus:ring-red-400 bg-red-950/20 shadow-[0_0_12px_rgba(239,68,68,0.2)]'
+                        : 'border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 bg-black/40'
+                }`}
                 style={{
-                    backgroundColor: 'rgba(0, 0, 0, 0.40)',
-                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    borderWidth: '1px',
+                    borderStyle: 'solid',
                 }}
             />
         </div>

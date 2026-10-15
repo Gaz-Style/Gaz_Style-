@@ -63,7 +63,7 @@ export default function TestimonialsCarousel() {
   return (
     <>
       {/* Mobile Auto-Fading Carousel */}
-      <div className="md:hidden relative min-h-[300px] mb-8 overflow-hidden rounded-2xl" style={{backgroundColor:'rgba(255,255,255,0.06)',backdropFilter:'blur(18px)',WebkitBackdropFilter:'blur(18px)',border:'1px solid rgba(255,255,255,0.11)'}}>
+      <div className="md:hidden relative min-h-[300px] mb-8 overflow-hidden rounded-2xl" style={{backgroundColor:'rgba(0, 0, 0, 0.35)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',border:'1px solid rgba(255, 255, 255, 0.10)'}}>
         {testimonials.map((t, i) => (
           <div 
             key={i} 
@@ -111,10 +111,10 @@ export default function TestimonialsCarousel() {
             key={i}
             className="p-8 rounded-2xl relative flex flex-col justify-between hover:border-amber-400/50 transition-all duration-300 group"
             style={{
-              backgroundColor: 'rgba(255,255,255,0.06)',
-              backdropFilter: 'blur(18px)',
-              WebkitBackdropFilter: 'blur(18px)',
-              border: '1px solid rgba(255,255,255,0.11)',
+              backgroundColor: 'rgba(0, 0, 0, 0.35)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              border: '1px solid rgba(255, 255, 255, 0.10)',
             }}
           >
             <div>
@@ -146,6 +146,19 @@ export default function TestimonialsCarousel() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Barra de Confianza y Verificación */}
+      <div className="mt-8 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-white/60">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-white/80 font-bold">Reseñas 100% Verificadas de Participantes Reales</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-4 text-[11px]">
+          <span className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-white/80">★ 4.9 / 5.0 Google Reviews</span>
+          <span className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-emerald-300">✓ Registro Sernatur Turismo Aventura</span>
+          <span className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-amber-300">🛡️ Guías Certificados WFR</span>
+        </div>
       </div>
     </>
   );

@@ -21,7 +21,7 @@ interface Props {
 const ROUTES = {
   iniciacion: {
     id: 'sunset-manquehuito',
-    slug: '/desafios/desafio-5am',
+    slug: '#salidas-grupales',
     title: 'WILDTREK',
     subtitle: 'Ascenso al Manquehuito',
     difficulty: 'Media',

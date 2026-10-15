@@ -12,7 +12,7 @@ interface Props { lang?: string; }
 const ROUTES = {
   iniciacion: {
     id:         'sunset-manquehuito',
-    slug:       '/desafios/desafio-5am',
+    slug:       '#salidas-grupales',
     title:      'Saltos de Apoquindo',
     subtitle:   'Tu primera cumbre ideal',
     difficulty: 'Nivel 1 · Iniciación Activa',

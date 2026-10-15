@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import HeroCarousel from "./HeroCarousel";
 import { 
-  Mountain, ShieldCheck, Clock, HeartPulse, Compass, 
+  Mountain, ShieldCheck, Clock, HeartPulse, Compass, Award, 
   MessageCircle, Camera, Tent, ArrowRight, CheckCircle2, 
   Star, Trophy, Flame, MapPin, Sparkles, Navigation, Calendar
 } from "lucide-react";
@@ -39,36 +39,50 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
   const dict = getDictionary(lang);
   const { routes, departures } = await getPublicData();
 
-  // ── SEPARACIÓN ESTRICTA EN LAS 4 SECCIONES OFICIALES ──────────────────────────
-  // 1. SALIDAS GRUPALES
-  const salidasGrupales = routes.filter((r: any) => {
-    const v = (r.vertical_type || '').toLowerCase();
-    const c = (r.category || '').toLowerCase();
-    return v === 'salidas_grupales' || v === 'trekking' || c === 'salidas_grupales' || c === 'grupales';
-  });
+  // ── SEPARACIÓN ESTRICTA Y DEDUPLICADA EN LAS 4 SECCIONES OFICIALES ─────────────
+  const seenIds = new Set<string>();
+  const seenTitles = new Set<string>();
 
-  // 2. TRAVESÍAS & GRANDES DESAFÍOS
-  const travesiasDesafios = routes.filter((r: any) => {
-    const v = (r.vertical_type || '').toLowerCase();
-    const c = (r.category || '').toLowerCase();
-    return v === 'travesias_desafios' || v === 'challenges' || c === 'travesias_desafios' || c === 'desafios';
-  });
+  const isDuplicate = (r: any) => {
+    if (!r || !r.id) return true;
+    if (seenIds.has(r.id)) return true;
+    const cleanT = (r.title || '').toLowerCase().replace(/sunset/g, '').replace(/treks?/g, '').trim();
+    if (cleanT.includes('manquehuito') && seenTitles.has('manquehuito')) return true;
+    if (cleanT.includes('manquehuito')) seenTitles.add('manquehuito');
+    seenIds.add(r.id);
+    return false;
+  };
 
-  // 3. EXPEDITION HIGH MOUNTAIN
+  // 1. EXPEDITION HIGH MOUNTAIN (Prioridad Alta Montaña)
   const expeditionHighMountain = routes.filter((r: any) => {
     const v = (r.vertical_type || '').toLowerCase();
     const c = (r.category || '').toLowerCase();
     const t = (r.title || '').toLowerCase();
-    return v === 'high_mountain' || c === 'high_mountain' || t.includes('plomo') || t.includes('leonera') || t.includes('san josé') || t.includes('san jose');
+    const matches = v === 'high_mountain' || c === 'high_mountain' || t.includes('plomo') || t.includes('leonera') || t.includes('san josé') || t.includes('san jose');
+    return matches && !isDuplicate(r);
   });
 
-  // 4. EXPEDITION BOUTIQUE
+  // 2. EXPEDITION BOUTIQUE (Prioridad VIP & Boutique)
   const expeditionBoutique = routes.filter((r: any) => {
     const v = (r.vertical_type || '').toLowerCase();
     const c = (r.category || '').toLowerCase();
     const t = (r.title || '').toLowerCase();
-    const isHM = v === 'high_mountain' || c === 'high_mountain' || t.includes('plomo') || t.includes('leonera') || t.includes('san josé') || t.includes('san jose');
-    return !isHM && (v === 'expedition_pass' || c === 'expedition_pass' || t.includes('expedition pass') || t.includes('vip'));
+    const matches = v === 'expedition_pass' || c === 'expedition_pass' || t.includes('expedition pass') || t.includes('vip');
+    return matches && !isDuplicate(r);
+  });
+
+  // 3. TRAVESÍAS & GRANDES DESAFÍOS
+  const travesiasDesafios = routes.filter((r: any) => {
+    const v = (r.vertical_type || '').toLowerCase();
+    const c = (r.category || '').toLowerCase();
+    const t = (r.title || '').toLowerCase();
+    const matches = v === 'travesias_desafios' || v === 'challenges' || c === 'travesias_desafios' || c === 'desafios' || t.includes('ramón') || t.includes('ramon') || t.includes('corona') || t.includes('carpa');
+    return matches && !isDuplicate(r);
+  });
+
+  // 4. SALIDAS GRUPALES (Resto de expediciones sin repetir)
+  const salidasGrupales = routes.filter((r: any) => {
+    return !isDuplicate(r);
   });
 
   return (
@@ -89,18 +103,20 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
 
         <div className="relative z-10 max-w-5xl mx-auto text-center mt-6 sm:mt-10">
           {/* 1. Trust & Reviews Badge Superior (Flotante limpio y con buena separación) */}
-          <div className="inline-flex items-center justify-center gap-2.5 sm:gap-4 mb-8 sm:mb-12 text-[12px] sm:text-[14px] font-mono tracking-wider text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.85)]">
-            <div className="flex items-center gap-1.5">
+          <div className="inline-flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 mb-8 sm:mb-12 text-[11px] sm:text-[13px] font-mono tracking-wider text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.85)]">
+            <div className="flex items-center gap-1.5 bg-black/40 px-3 py-1 rounded-full border border-white/10 backdrop-blur-md">
               <span className="text-amber-400 font-black text-sm sm:text-base tracking-tight drop-shadow-sm">★★★★★</span>
-              <span className="font-bold text-white">4.9/5</span>
+              <span className="font-bold text-white">4.9/5 Google</span>
             </div>
-            <span className="text-white/40 hidden sm:inline">·</span>
-            <div className="hidden sm:flex items-center gap-1.5 text-white/95">
+            <div className="flex items-center gap-1.5 text-white/95 bg-black/40 px-3 py-1 rounded-full border border-white/10 backdrop-blur-md">
               <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
               <span>{dict.hero.trust_wfr}</span>
             </div>
-            <span className="text-white/40 hidden sm:inline">·</span>
-            <div className="hidden sm:flex items-center gap-1.5 text-white/95">
+            <div className="flex items-center gap-1.5 text-white/95 bg-black/40 px-3 py-1 rounded-full border border-white/10 backdrop-blur-md">
+              <Award className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Sernatur Registrado</span>
+            </div>
+            <div className="hidden md:flex items-center gap-1.5 text-white/95 bg-black/40 px-3 py-1 rounded-full border border-white/10 backdrop-blur-md">
               <Compass className="w-3.5 h-3.5 text-amber-400" />
               <span>{dict.hero.trust_sos}</span>
             </div>
@@ -174,7 +190,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
         lang={lang}
       />
 
-      {/* 3. SISTEMA DE NIVELES FUNCIONAL (Limpio, Técnico & Sereno) */}
+            {/* 3. SISTEMA DE NIVELES FUNCIONAL (Limpio, Técnico & Sereno) */}
       <section id="niveles" className="py-24 bg-transparent relative z-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-12">
@@ -186,7 +202,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
             </h2>
           </div>
 
-          <div className="glass-divide rounded-xl px-6 md:px-10" style={{backgroundColor:'rgba(255,255,255,0.06)',backdropFilter:'blur(18px)',WebkitBackdropFilter:'blur(18px)',border:'1px solid rgba(255,255,255,0.11)'} as React.CSSProperties}>
+          <div className="glass-divide rounded-xl px-6 md:px-10" style={{backgroundColor:'rgba(0, 0, 0, 0.35)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',border:'1px solid rgba(255, 255, 255, 0.10)'} as React.CSSProperties}>
             
             {/* Nivel 1 */}
             <div className="py-7 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:bg-white/10 transition-colors">
@@ -280,7 +296,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             
-            <div className="p-8 rounded-2xl" style={{backgroundColor:'rgba(255,255,255,0.06)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',border:'1px solid rgba(255,255,255,0.10)'}}>
+            <div className="p-8 rounded-2xl" style={{backgroundColor:'rgba(0, 0, 0, 0.35)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',border:'1px solid rgba(255, 255, 255, 0.10)'}}>
               <span className="text-amber-400 font-mono text-xs uppercase tracking-widest block mb-2 font-bold">01 · CORDILLERA</span>
               <h3 className="text-xl font-bold text-white uppercase mb-3">Refugios & Ascensos</h3>
               <p className="text-white/60 text-sm font-light leading-relaxed">
@@ -288,7 +304,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
               </p>
             </div>
 
-            <div className="p-8 rounded-2xl" style={{backgroundColor:'rgba(255,255,255,0.06)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',border:'1px solid rgba(255,255,255,0.10)'}}>
+            <div className="p-8 rounded-2xl" style={{backgroundColor:'rgba(0, 0, 0, 0.35)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',border:'1px solid rgba(255, 255, 255, 0.10)'}}>
               <span className="text-amber-400 font-mono text-xs uppercase tracking-widest block mb-2 font-bold">02 · GASTRONOMÍA</span>
               <h3 className="text-xl font-bold text-white uppercase mb-3">El "Tercer Tiempo"</h3>
               <p className="text-white/60 text-sm font-light leading-relaxed">
@@ -296,7 +312,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
               </p>
             </div>
 
-            <div className="p-8 rounded-2xl" style={{backgroundColor:'rgba(255,255,255,0.06)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',border:'1px solid rgba(255,255,255,0.10)'}}>
+            <div className="p-8 rounded-2xl" style={{backgroundColor:'rgba(0, 0, 0, 0.35)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',border:'1px solid rgba(255, 255, 255, 0.10)'}}>
               <span className="text-amber-400 font-mono text-xs uppercase tracking-widest block mb-2 font-bold">03 · COSTA PACÍFICA</span>
               <h3 className="text-xl font-bold text-white uppercase mb-3">Océano & Escape</h3>
               <p className="text-white/60 text-sm font-light leading-relaxed">
@@ -351,7 +367,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
       <section id="circulo" className="py-28 bg-transparent relative z-20">
         <div className="max-w-5xl mx-auto px-6">
           
-          <div className="p-8 md:p-14 text-center mb-16 rounded-2xl" style={{backgroundColor:'rgba(255,255,255,0.06)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',border:'1px solid rgba(255,255,255,0.11)'}}>
+          <div className="p-8 md:p-14 text-center mb-16 rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.7)]" style={{backgroundColor:'rgba(0, 0, 0, 0.35)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',border:'1px solid rgba(255, 255, 255, 0.10)'}}>
             <span className="text-amber-400 font-mono text-xs uppercase tracking-[0.25em] mb-3 block font-bold">
               Outdoor Club & Red
             </span>
@@ -400,7 +416,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
                   const adv = dep.adventures_catalog;
                   const spots = (adv?.max_pax || 0) - (dep.current_pax || 0);
                   return (
-                    <div key={dep.id} className="p-6 flex items-center gap-5 hover:bg-white/10 transition-all rounded-2xl font-mono" style={{backgroundColor:'rgba(255,255,255,0.06)',backdropFilter:'blur(14px)',WebkitBackdropFilter:'blur(14px)',border:'1px solid rgba(255,255,255,0.10)'}}>
+                    <div key={dep.id} className="p-6 flex items-center gap-5 hover:bg-white/10 transition-all rounded-2xl font-mono" style={{backgroundColor:'rgba(0, 0, 0, 0.35)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',border:'1px solid rgba(255, 255, 255, 0.10)'}}>
                       <div className="text-center min-w-[56px] border-r border-white/10 pr-4">
                         <p className="text-2xl font-black text-white">{new Date(dep.start_date).toLocaleDateString('es-CL', { timeZone: 'UTC', day: 'numeric' })}</p>
                         <p className="text-[10px] font-bold text-amber-400 uppercase">
@@ -436,7 +452,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
       </section>
 
       {/* 8. FOOTER CARTOGRÁFICO (Inspirado en Roark) */}
-      <footer className="pt-16 pb-12 font-mono text-xs relative z-20" style={{backgroundColor:'rgba(0,0,0,0.55)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',borderTop:'1px solid rgba(255,255,255,0.08)'}}>
+      <footer className="pt-16 pb-12 font-mono text-xs relative z-20" style={{backgroundColor:'rgba(0, 0, 0, 0.35)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',borderTop:'1px solid rgba(255, 255, 255, 0.10)'}}>
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 pb-12" style={{borderBottom:'1px solid rgba(255,255,255,0.08)'}}>
             
@@ -458,7 +474,8 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
               </p>
               <p className="text-[11px] text-white/30 font-mono">
                 CORDILLERA DE LOS ANDES · SANTIAGO DE CHILE <br />
-                LAT -33.35° S · LON -70.51° W
+                LAT -33.35° S · LON -70.51° W <br />
+                <span className="text-amber-400/80 font-bold">PRESTADOR TURÍSTICO REGISTRADO SERNATUR</span> · CERTIFICACIÓN WFR / SOS
               </p>
             </div>
 

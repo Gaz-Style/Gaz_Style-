@@ -9,22 +9,33 @@ import ScrollToTopButton from '../../ScrollToTopButton';
 import SwipeBackHandler from './SwipeBackHandler';
 import MountainWeatherWidget from '@/components/MountainWeatherWidget';
 import ElevationProfileWidget from '@/components/ElevationProfileWidget';
+import PackingChecklistWidget from '@/components/PackingChecklistWidget';
 import { getMountainWeather } from '@/lib/weather';
 
 export const dynamic = 'force-dynamic';
 
-async function getRouteData(id: string) {
+async function getRouteData(idOrSlug: string) {
     const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
-    const { data, error } = await supabase
-        .from('adventures_catalog')
-        .select('*')
-        .eq('id', id)
-        .single();
-    if (error || !data) return null;
-    return data;
+    // 1. Try exact UUID match
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug);
+    if (isUUID) {
+        const { data } = await supabase.from('adventures_catalog').select('*').eq('id', idOrSlug).single();
+        if (data) return data;
+    }
+    // 2. Try slug/title fuzzy match for semantic SEO URLs
+    const cleanTerm = decodeURIComponent(idOrSlug).replace(/-/g, ' ').toLowerCase().trim();
+    const { data: allRoutes } = await supabase.from('adventures_catalog').select('*').eq('is_active', true);
+    if (allRoutes && allRoutes.length > 0) {
+        const match = allRoutes.find((r: any) => {
+            const t = (r.title || '').toLowerCase();
+            return t.includes(cleanTerm) || cleanTerm.includes(t);
+        });
+        if (match) return match;
+    }
+    return null;
 }
 
 async function getUpcomingDepartures(adventureId: string) {
@@ -578,6 +589,9 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                     </ul>
                                 </div>
                             </section>
+
+                            {/* ── Checklist Interactivo de Mochila & Equipamiento ── */}
+                            <PackingChecklistWidget />
                         </div>
 
                         {/* Columna Derecha: Clima en Vivo + Sidebar Desktop de Cristal Ahumado */}

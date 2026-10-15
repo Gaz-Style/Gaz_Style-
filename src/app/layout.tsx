@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Santiago Hiking ⚡ Experiencias de Montaña & Lifestyle en Santiago",
-    description: "Creando experiencias y recargando la fucking vibra. Salidas al cerro, fotografía profesional y gastronomía en Lo Barnechea.",
+    description: "Experiencias de montaña premium en la Cordillera de los Andes. Trekkings guiados con certificación WFR, fotografía profesional, salidas al atardecer en Manquehuito y gastronomía local en Santiago de Chile.",
     url: "https://www.santiagohiking.com",
     siteName: "Santiago Hiking",
     locale: "es_CL",
@@ -60,8 +60,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Santiago Hiking ⚡ Trekkings VIP en Santiago",
-    description: "Mentalidad, conexión y aventura. Vamos a la montaña.",
+    title: "Santiago Hiking ⚡ Trekkings VIP & Montañismo en Santiago",
+    description: "Seguridad WFR, guías bilingües, fotografía profesional y conexión en los Andes de Chile.",
     images: ["/logotipo%20blanco.png"],
   },
   verification: {

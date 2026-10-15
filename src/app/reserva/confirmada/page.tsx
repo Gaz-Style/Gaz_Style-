@@ -40,22 +40,22 @@ function ConfirmadaContent() {
         </p>
 
         {/* ── PASO POST-PAGO: FICHA MÉDICA, RUT Y SEGURIDAD WFR ── */}
-        <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-6 text-left space-y-3 mb-8">
+        <div className="bg-amber-500/10 border-2 border-amber-500/40 rounded-2xl p-6 text-left space-y-3 mb-8 shadow-[0_0_30px_rgba(245,158,11,0.2)]">
           <div className="flex items-center gap-2.5">
-            <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0" />
-            <h3 className="text-sm font-bold uppercase tracking-wider text-amber-400 font-mono">
-              Paso Final: Ficha Médica y RUT WFR
+            <ShieldCheck className="w-6 h-6 text-amber-400 shrink-0" />
+            <h3 className="text-sm font-bold uppercase tracking-wider text-amber-300 font-mono">
+              Paso Obligatorio: Ficha de Seguridad & RUT WFR
             </h3>
           </div>
-          <p className="text-slate-300 text-xs sm:text-sm font-light leading-relaxed">
-            Para validar tu <strong>Expedition Pass</strong> oficial y coordinar el protocolo de seguridad en la montaña, registra el <strong>RUT o Pasaporte, contacto de emergencia y grupo sanguíneo</strong> de los participantes.
+          <p className="text-slate-200 text-xs sm:text-sm font-light leading-relaxed">
+            Tu pago ya está confirmado. Ahora debes <strong className="text-white font-semibold">rellenar los campos correspondientes</strong> (RUT o Pasaporte, contacto de emergencia y ficha médica WFR) para activar tu <strong>Expedition Pass</strong> oficial y el protocolo de seguridad.
           </p>
           <div className="pt-2">
             <Link
-              href={searchParams.get('external_reference') ? `/check-in/${searchParams.get('external_reference')}` : '/#rutas'}
-              className="btn-arcteryx-primary w-full sm:w-auto inline-flex items-center justify-center !py-3 !px-6 text-xs font-mono font-bold tracking-widest gap-2 shadow-[0_0_20px_rgba(245,158,11,0.35)]"
+              href={searchParams.get('external_reference') ? `/check-in/${searchParams.get('external_reference')}` : '/check-in'}
+              className="btn-arcteryx-primary w-full inline-flex items-center justify-center !py-4 !px-6 text-xs font-mono font-bold tracking-widest gap-2 shadow-[0_0_24px_rgba(245,158,11,0.4)] hover:scale-[1.01] transition-transform"
             >
-              COMPLETAR FICHA DE SEGURIDAD & RUT →
+              RELLENAR FICHA DE SEGURIDAD & RUT AHORA →
             </Link>
           </div>
         </div>
