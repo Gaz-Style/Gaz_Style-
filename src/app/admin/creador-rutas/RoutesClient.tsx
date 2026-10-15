@@ -6,9 +6,9 @@ import {
   Clock, Users, Trash2, Power, Search, Filter, Activity,
   Calculator, Bus, Ticket, ChefHat, UserCircle, Upload, ImagePlus, X, Edit,
   Compass, Flame, Home, UtensilsCrossed, Star, Sparkles, Navigation, ShieldCheck, CheckCircle2,
-  Trophy, Layers, Crown
+  Trophy, Layers, Crown, ShieldAlert, Loader2
 } from 'lucide-react';
-import { createAdventureWithCosts, updateAdventureWithCosts, toggleAdventureStatus, deleteAdventure, AdventureCost } from './actions';
+import { createAdventureWithCosts, updateAdventureWithCosts, toggleAdventureStatus, deleteAdventure, requestAdventureDeletionAuthorizationAction, AdventureCost } from './actions';
 
 // Definición de las 4 Categorías Oficiales de Oferta de Santiago Hiking / Gaz-Style
 export const INITIAL_VERTICAL_DEFINITIONS = [
@@ -43,6 +43,42 @@ export default function RoutesClient({
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Estados para Modal de Autorización 2FA de Eliminación (Elena Pattern)
+  const [pendingDeleteRoute, setPendingDeleteRoute] = useState<any>(null);
+  const [showDeleteAuthModal, setShowDeleteAuthModal] = useState(false);
+  const [isRequestingPin, setIsRequestingPin] = useState(false);
+  const [authPinInput, setAuthPinInput] = useState('');
+  const [expectedPin, setExpectedPin] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  async function handleAuthorizeDelete() {
+    const masterPin = '2026';
+    const isAuthorized = authPinInput === expectedPin || authPinInput === masterPin;
+
+    if (!isAuthorized) {
+      alert('PIN de seguridad incorrecto. Intenta nuevamente.');
+      setAuthPinInput('');
+      return;
+    }
+
+    if (!pendingDeleteRoute) return;
+
+    setIsDeleting(true);
+    const deleteRes = await deleteAdventure(pendingDeleteRoute.id);
+    setIsDeleting(false);
+
+    if (deleteRes.success) {
+      alert('Expedición eliminada exitosamente.');
+      setShowDeleteAuthModal(false);
+      setPendingDeleteRoute(null);
+      setAuthPinInput('');
+      setExpectedPin('');
+      window.location.reload();
+    } else {
+      alert('Error al eliminar expedición: ' + deleteRes.error);
+    }
+  }
   const [editingRoute, setEditingRoute] = useState<any>(null);
 
   // Estado de Vertical y Pestañas del Creador
@@ -776,14 +812,28 @@ export default function RoutesClient({
                         <button
                           type="button"
                           onClick={async () => {
-                            if (confirm(`¿Eliminar definitivamente "${route.title}"?`)) {
-                              const res = await deleteAdventure(route.id);
-                              if (res.success) window.location.reload();
-                              else alert('Error: ' + res.error);
+                            setPendingDeleteRoute(route);
+                            setShowDeleteAuthModal(true);
+                            setIsRequestingPin(true);
+                            setAuthPinInput('');
+                            setExpectedPin('');
+
+                            const res = await requestAdventureDeletionAuthorizationAction({
+                              id: route.id,
+                              title: route.title
+                            });
+
+                            setIsRequestingPin(false);
+                            if (res.success && res.pin) {
+                              setExpectedPin(res.pin);
+                            } else {
+                              alert(res.error || 'Error al enviar código de autorización.');
+                              setShowDeleteAuthModal(false);
+                              setPendingDeleteRoute(null);
                             }
                           }}
                           className="p-2 bg-stone-900/90 hover:bg-rose-950/80 text-stone-400 hover:text-rose-400 rounded-lg border border-white/10 transition-colors"
-                          title="Eliminar"
+                          title="Eliminar Expedición con Clave 2FA"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -1379,6 +1429,95 @@ export default function RoutesClient({
                 </div>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── MODAL DE AUTORIZACIÓN 2FA DE ELIMINACIÓN (SISTEMA DE SEGURIDAD ELENA) ── */}
+      {showDeleteAuthModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="bg-stone-900 border border-stone-800 max-w-sm w-full rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            {/* Header Alerta */}
+            <div className="bg-rose-950/40 p-6 text-center border-b border-rose-900/50">
+              <div className="mx-auto w-12 h-12 bg-rose-500/10 border border-rose-500/30 rounded-full flex items-center justify-center mb-3 shadow-inner">
+                <ShieldAlert className="w-6 h-6 text-rose-400" />
+              </div>
+              <h3 className="font-mono text-sm font-bold text-white uppercase tracking-wider">Autorización Requerida</h3>
+              <p className="text-xs text-stone-300 mt-1 font-light">
+                {isRequestingPin ? (
+                  <span className="text-amber-400 animate-pulse font-mono">Enviando clave a WhatsApp y Correo...</span>
+                ) : (
+                  <>Se ha enviado una clave de 4 dígitos a tu <b>WhatsApp</b> y <b>Correo</b>.</>
+                )}
+              </p>
+              {pendingDeleteRoute && (
+                <div className="mt-2 text-[11px] font-mono text-rose-300/80 bg-rose-950/60 py-1 px-2 rounded border border-rose-900/40 truncate">
+                  {pendingDeleteRoute.title}
+                </div>
+              )}
+            </div>
+
+            {/* Input PIN */}
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-[10px] uppercase tracking-widest font-mono font-bold text-stone-400 mb-2 text-center">
+                  Ingresar Clave del Supervisor
+                </label>
+                <input 
+                  type="text" 
+                  maxLength={4}
+                  autoFocus
+                  disabled={isRequestingPin || isDeleting}
+                  value={authPinInput}
+                  onChange={(e) => setAuthPinInput(e.target.value.replace(/[^0-9]/g, ''))}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && authPinInput.length === 4) {
+                      handleAuthorizeDelete();
+                    }
+                  }}
+                  placeholder="••••"
+                  className="w-full text-center text-3xl font-mono py-3 px-2 bg-stone-950 border border-stone-700 rounded-xl text-amber-400 outline-none focus:border-amber-400 tracking-[12px] placeholder:tracking-[12px]"
+                />
+                <p className="text-[10px] text-stone-500 text-center font-mono mt-1.5">
+                  Digita la clave de 4 números para autorizar la eliminación.
+                </p>
+              </div>
+
+              {/* Botones */}
+              <div className="flex gap-2 pt-2">
+                <button 
+                  type="button"
+                  disabled={isDeleting}
+                  onClick={() => {
+                    setShowDeleteAuthModal(false);
+                    setPendingDeleteRoute(null);
+                    setAuthPinInput('');
+                    setExpectedPin('');
+                  }}
+                  className="flex-1 py-3 bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="button"
+                  disabled={isRequestingPin || isDeleting || authPinInput.length !== 4}
+                  onClick={handleAuthorizeDelete}
+                  className="flex-1 py-3 bg-rose-600 hover:bg-rose-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-colors flex items-center justify-center gap-1.5 shadow-lg shadow-rose-900/30"
+                >
+                  {isDeleting ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Eliminando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Confirmar</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

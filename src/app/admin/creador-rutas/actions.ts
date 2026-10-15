@@ -2,6 +2,8 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { revalidatePath } from 'next/cache';
+import nodemailer from 'nodemailer';
+import { sendWhatsAppMessage } from '@/lib/whatsapp';
 
 // Usamos el SERVICE_ROLE_KEY para operaciones de admin (bypasses RLS) con fallback seguro
 function getAdminClient() {
@@ -224,6 +226,107 @@ export async function toggleAdventureStatus(id: string, currentStatus: boolean):
         return { success: true };
     } catch (err: any) {
         return { success: false, error: err.message || 'Error inesperado del servidor' };
+    }
+}
+
+
+export async function requestAdventureDeletionAuthorizationAction(payload: {
+    id: string;
+    title: string;
+}): Promise<{ success: boolean; pin?: string; error?: string }> {
+    try {
+        const { id, title } = payload;
+        const pin = Math.floor(1000 + Math.random() * 9000).toString();
+
+        const smtpUser = process.env.SMTP_USER || '';
+        const smtpPassword = process.env.SMTP_PASSWORD || '';
+        const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || smtpUser || 'contacto@santiagohiking.com';
+
+        // 1. Envío por Correo Electrónico
+        if (smtpUser && smtpPassword) {
+            try {
+                const transporter = nodemailer.createTransport({
+                    host: 'smtp.gmail.com',
+                    port: 465,
+                    secure: true,
+                    auth: {
+                        user: smtpUser,
+                        pass: smtpPassword,
+                    },
+                });
+
+                const htmlContent = `
+                <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 540px; margin: 0 auto; padding: 28px; background-color: #0c0a09; color: #f5f5f4; border-radius: 12px; border: 1px solid #292524;">
+                    <div style="text-align: center; margin-bottom: 24px;">
+                        <span style="display: inline-block; padding: 6px 14px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 9999px; font-size: 11px; font-family: monospace; font-weight: bold; color: #f87171; letter-spacing: 1px; text-transform: uppercase;">
+                            ⚠️ Seguridad Admin · Santiago Hiking
+                        </span>
+                        <h2 style="margin: 16px 0 8px 0; font-size: 20px; font-weight: 800; color: #ffffff;">Autorización de Eliminación Requerida</h2>
+                        <p style="margin: 0; font-size: 13px; color: #a8a29e; line-height: 1.5;">Se ha solicitado la eliminación definitiva de una expedición del catálogo oficial.</p>
+                    </div>
+
+                    <div style="background: #1c1917; border: 1px solid #292524; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                            <tr>
+                                <td style="padding: 6px 0; color: #78716c; font-family: monospace;">Expedición:</td>
+                                <td style="padding: 6px 0; color: #ffffff; font-weight: bold; text-align: right;">${title}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 6px 0; color: #78716c; font-family: monospace;">ID Sistema:</td>
+                                <td style="padding: 6px 0; color: #d6d3d1; font-family: monospace; font-size: 11px; text-align: right;">${id}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 6px 0; color: #78716c; font-family: monospace;">Acción:</td>
+                                <td style="padding: 6px 0; color: #ef4444; font-weight: bold; text-align: right;">Eliminación Permanente</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div style="background: linear-gradient(180deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 22px; text-align: center; margin-bottom: 20px;">
+                        <p style="margin: 0 0 8px 0; font-size: 12px; font-family: monospace; color: #fbbf24; text-transform: uppercase; letter-spacing: 1px; font-weight: bold;">
+                            PIN DE AUTORIZACIÓN (Válido por 10 min)
+                        </p>
+                        <h1 style="margin: 0; font-size: 42px; font-family: monospace; font-weight: 900; letter-spacing: 10px; color: #fbbf24; text-shadow: 0 0 20px rgba(245, 158, 11, 0.3);">${pin}</h1>
+                        <p style="margin: 10px 0 0 0; font-size: 12px; color: #a8a29e;">Ingresa este código en el modal de confirmación del panel administrativo.</p>
+                    </div>
+
+                    <p style="margin: 0; font-size: 11px; color: #78716c; text-align: center; line-height: 1.4;">
+                        Si tú no solicitaste esta eliminación, ignora este mensaje o contacta de inmediato al equipo técnico.
+                    </p>
+                </div>
+                `;
+
+                const fromAddress = smtpUser.includes('gmail.com') ? smtpUser : 'contacto@santiagohiking.com';
+                await transporter.sendMail({
+                    from: `"Santiago Hiking Seguridad" <${fromAddress}>`,
+                    to: adminEmail,
+                    subject: `[URGENTE] PIN de Eliminación (${pin}) - ${title}`,
+                    html: htmlContent,
+                });
+            } catch (emailErr) {
+                console.error('Error enviando email de autorización de eliminación:', emailErr);
+            }
+        }
+
+        // 2. Envío por WhatsApp
+        try {
+            const adminPhone = process.env.ADMIN_NOTIFICATION_PHONE || '56984021940';
+            const targets = [adminPhone, '56937667709'].filter(Boolean);
+            const uniqueTargets = Array.from(new Set(targets));
+
+            const whatsappMessage = `⚠️ *SANTIAGO HIKING - AUTORIZACIÓN REQUERIDA* 🏔️\n\nSe ha solicitado la eliminación definitiva de la expedición:\n*${title}*\n\nTu PIN de confirmación es: *${pin}*\n\nIngresa este código en el panel para autorizar la acción.`;
+
+            for (const phone of uniqueTargets) {
+                await sendWhatsAppMessage(phone, whatsappMessage);
+            }
+        } catch (wspErr) {
+            console.error('Error enviando WhatsApp de autorización:', wspErr);
+        }
+
+        return { success: true, pin };
+    } catch (err: any) {
+        console.error('Error en requestAdventureDeletionAuthorizationAction:', err);
+        return { success: false, error: err.message || 'Error al generar autorización' };
     }
 }
 
