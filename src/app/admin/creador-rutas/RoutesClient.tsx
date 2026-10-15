@@ -113,6 +113,7 @@ export default function RoutesClient({
     setVerticalType(route.vertical_type || 'salidas_grupales');
     setCustomDiscipline(route.custom_discipline || '');
     setCerroPrincipal(route.category || '');
+    setMacizoCordillera(route.category || 'Cordón Manquehue & San Cristóbal');
     setActiveTab('identidad');
     setBasePrice(route.base_price || 0);
     setMinPax(route.min_pax || 2);
@@ -131,16 +132,48 @@ export default function RoutesClient({
         formData.set('custom_discipline', customDiscipline);
       }
       
+      const title = (formData.get('title') as string || '').trim();
+      if (!title) {
+        setActiveTab('identidad');
+        alert('Por favor ingresa un nombre comercial para la experiencia.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      let category = (formData.get('category') as string || '').trim();
+      if (!category) {
+        category = cerroPrincipal || macizoCordillera || 'Cordillera de Santiago';
+        formData.set('category', category);
+      }
+
+      if (!formData.get('base_price')) {
+        formData.set('base_price', String(basePrice || 0));
+      }
+      if (!formData.get('min_pax')) {
+        formData.set('min_pax', String(minPax || 2));
+      }
+      if (!formData.get('image_url')) {
+        formData.set('image_url', imageUrl || '');
+      }
+
       if (netMargin < 0 && !confirm('El margen proyectado es negativo. ¿Deseas guardar la experiencia de todos modos?')) {
         setIsSubmitting(false);
         return;
       }
       
+      let res: { success: boolean; error?: string; id?: string };
       if (editingRoute) {
-        await updateAdventureWithCosts(editingRoute.id, formData, costs);
+        res = await updateAdventureWithCosts(editingRoute.id, formData, costs);
       } else {
-        await createAdventureWithCosts(formData, costs);
+        res = await createAdventureWithCosts(formData, costs);
       }
+
+      if (res && !res.success) {
+        alert(res.error || 'Error al guardar la experiencia');
+        setIsSubmitting(false);
+        return;
+      }
+
       window.location.reload(); 
     } catch (error: any) {
       alert(error.message || 'Error al guardar la experiencia');
@@ -651,8 +684,12 @@ export default function RoutesClient({
                       type="button"
                       onClick={async (e) => {
                         e.stopPropagation();
-                        await toggleAdventureStatus(route.id, route.is_active);
-                        window.location.reload();
+                        const res = await toggleAdventureStatus(route.id, route.is_active);
+                        if (res && !res.success) {
+                          alert(res.error || 'Error al cambiar estado');
+                        } else {
+                          window.location.reload();
+                        }
                       }}
                       className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase transition-colors shadow-lg ${
                         route.is_active 
@@ -829,14 +866,13 @@ export default function RoutesClient({
               ))}
             </div>
             
-            <form onSubmit={handleSubmit} className="flex flex-col md:flex-row flex-grow overflow-hidden">
+            <form key={editingRoute?.id || "new_adventure"} onSubmit={handleSubmit} className="flex flex-col md:flex-row flex-grow overflow-hidden">
               
               {/* Columna Izquierda: Formulario Modular de la Experiencia */}
               <div className="p-6 w-full md:w-3/5 space-y-5 border-r border-stone-800 overflow-y-auto">
                 
                 {/* ── TAB 1: IDENTIDAD & HERO ─────────────────────────────── */}
-                {activeTab === 'identidad' && (
-                  <div className="space-y-4 animate-in fade-in duration-200">
+                <div className={activeTab === 'identidad' ? "space-y-4 animate-in fade-in duration-200" : "hidden"}>
                     <h3 className="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider mb-2">
                       Identidad Visual & Portada
                     </h3>
@@ -901,9 +937,7 @@ export default function RoutesClient({
 
                     <div className="space-y-1.5">
                       <label className="text-xs font-mono text-stone-400 uppercase font-semibold">Nombre Comercial</label>
-                      <input 
-                        required 
-                        name="title" 
+                      <input name="title" 
                         type="text" 
                         defaultValue={editingRoute?.title || ''} 
                         placeholder="Ej: Desafío 5:00 AM Manquehuito"
@@ -1016,11 +1050,9 @@ export default function RoutesClient({
                       )}
                     </div>
                   </div>
-                )}
 
                 {/* ── TAB 2: FICHA TÉCNICA & GPS ─────────────────────────── */}
-                {activeTab === 'tecnica' && (
-                  <div className="space-y-4 animate-in fade-in duration-200">
+                <div className={activeTab === 'tecnica' ? "space-y-4 animate-in fade-in duration-200" : "hidden"}>
                     <h3 className="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider mb-2">
                       Especificaciones de Recorrido & Strava
                     </h3>
@@ -1054,7 +1086,7 @@ export default function RoutesClient({
                       </div>
                       <div className="space-y-1.5">
                         <label className="text-xs font-mono text-stone-400 uppercase font-semibold">Días Bloqueo Calendario</label>
-                        <input required name="duration_days" type="number" min="1" defaultValue={editingRoute?.duration_days || 1} className="w-full bg-stone-950 border border-stone-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-400 font-mono" />
+                        <input name="duration_days" type="number" min="1" defaultValue={editingRoute?.duration_days || 1} className="w-full bg-stone-950 border border-stone-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-400 font-mono" />
                       </div>
                     </div>
 
@@ -1084,11 +1116,9 @@ export default function RoutesClient({
                       </div>
                     </div>
                   </div>
-                )}
 
                 {/* ── TAB 3: HISTORIA DEL CERRO & SEO GEO ─────────────────── */}
-                {activeTab === 'storytelling' && (
-                  <div className="space-y-4 animate-in fade-in duration-200">
+                <div className={activeTab === 'storytelling' ? "space-y-4 animate-in fade-in duration-200" : "hidden"}>
                     <h3 className="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider mb-2">
                       Historia del Cerro / Travesía (SEO GEO & Autoridad)
                     </h3>
@@ -1129,11 +1159,9 @@ export default function RoutesClient({
                       />
                     </div>
                   </div>
-                )}
 
                 {/* ── TAB 4: OPERACIONES & MOCHILA ────────────────────────── */}
-                {activeTab === 'operaciones' && (
-                  <div className="space-y-4 animate-in fade-in duration-200">
+                <div className={activeTab === 'operaciones' ? "space-y-4 animate-in fade-in duration-200" : "hidden"}>
                     <h3 className="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider mb-2">
                       Operaciones, Itinerario & Mochila Obligatoria
                     </h3>
@@ -1183,11 +1211,9 @@ export default function RoutesClient({
                       />
                     </div>
                   </div>
-                )}
 
                 {/* ── TAB 5: PRECIOS & PROVEEDORES ────────────────────────── */}
-                {activeTab === 'costos' && (
-                  <div className="space-y-4 animate-in fade-in duration-200">
+                <div className={activeTab === 'costos' ? "space-y-4 animate-in fade-in duration-200" : "hidden"}>
                     <h3 className="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider mb-2">
                       Parámetros Comerciales & Cupos
                     </h3>
@@ -1195,9 +1221,7 @@ export default function RoutesClient({
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1.5">
                         <label className="text-xs font-mono text-stone-400 uppercase font-semibold">Precio Venta (CLP)</label>
-                        <input 
-                          required 
-                          name="base_price" 
+                        <input name="base_price" 
                           type="number" 
                           value={basePrice} 
                           onChange={e => setBasePrice(parseFloat(e.target.value)||0)} 
@@ -1219,9 +1243,7 @@ export default function RoutesClient({
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1.5">
                         <label className="text-xs font-mono text-stone-400 uppercase font-semibold">Mínimo Pax (Punto de Equilibrio)</label>
-                        <input 
-                          required 
-                          name="min_pax" 
+                        <input name="min_pax" 
                           type="number" 
                           min="1" 
                           value={minPax} 
@@ -1231,9 +1253,7 @@ export default function RoutesClient({
                       </div>
                       <div className="space-y-1.5">
                         <label className="text-xs font-mono text-stone-400 uppercase font-semibold">Máximo Cupo Boutique</label>
-                        <input 
-                          required 
-                          name="max_pax" 
+                        <input name="max_pax" 
                           type="number" 
                           min="1" 
                           defaultValue={editingRoute?.max_pax || 8} 
@@ -1248,7 +1268,6 @@ export default function RoutesClient({
                       <p>• El margen proyectado debe mantenerse positivo antes de confirmar el producto.</p>
                     </div>
                   </div>
-                )}
               </div>
 
               {/* Columna Derecha: Calculadora Financiera de Proveedores (Yield Manager) */}
