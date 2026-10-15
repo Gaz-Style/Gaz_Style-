@@ -44,7 +44,7 @@ export default function RoutesClient({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Estados para Modal de Autorización 2FA de Eliminación (Elena Pattern)
+  // Estados para Modal de Autorización 2FA de Eliminación
   const [pendingDeleteRoute, setPendingDeleteRoute] = useState<any>(null);
   const [showDeleteAuthModal, setShowDeleteAuthModal] = useState(false);
   const [isRequestingPin, setIsRequestingPin] = useState(false);
@@ -1433,7 +1433,7 @@ export default function RoutesClient({
         </div>
       )}
 
-      {/* ── MODAL DE AUTORIZACIÓN 2FA DE ELIMINACIÓN (SISTEMA DE SEGURIDAD ELENA) ── */}
+      {/* ── MODAL DE AUTORIZACIÓN 2FA DE ELIMINACIÓN ── */}
       {showDeleteAuthModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
           <div className="bg-stone-900 border border-stone-800 max-w-sm w-full rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">

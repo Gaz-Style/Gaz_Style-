@@ -240,7 +240,9 @@ export async function requestAdventureDeletionAuthorizationAction(payload: {
 
         const smtpUser = process.env.SMTP_USER || '';
         const smtpPassword = process.env.SMTP_PASSWORD || '';
-        const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || smtpUser || 'contacto@santiagohiking.com';
+        const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || 'gazstylechile@gmail.com';
+        const adminPhone = process.env.ADMIN_NOTIFICATION_PHONE || '56984021940';
+        const adminName = process.env.ADMIN_NOTIFICATION_NAME || 'Mario Cruz';
 
         // 1. Envío por Correo Electrónico
         if (smtpUser && smtpPassword) {
@@ -262,7 +264,7 @@ export async function requestAdventureDeletionAuthorizationAction(payload: {
                             ⚠️ Seguridad Admin · Santiago Hiking
                         </span>
                         <h2 style="margin: 16px 0 8px 0; font-size: 20px; font-weight: 800; color: #ffffff;">Autorización de Eliminación Requerida</h2>
-                        <p style="margin: 0; font-size: 13px; color: #a8a29e; line-height: 1.5;">Se ha solicitado la eliminación definitiva de una expedición del catálogo oficial.</p>
+                        <p style="margin: 0; font-size: 13px; color: #a8a29e; line-height: 1.5;">Hola <b>Mario Cruz</b>, se ha solicitado la eliminación definitiva de una expedición de Santiago Hiking.</p>
                     </div>
 
                     <div style="background: #1c1917; border: 1px solid #292524; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
@@ -308,17 +310,11 @@ export async function requestAdventureDeletionAuthorizationAction(payload: {
             }
         }
 
-        // 2. Envío por WhatsApp
+        // 2. Envío por WhatsApp directo al CEO Mario Cruz
         try {
-            const adminPhone = process.env.ADMIN_NOTIFICATION_PHONE || '56984021940';
-            const targets = [adminPhone, '56937667709'].filter(Boolean);
-            const uniqueTargets = Array.from(new Set(targets));
+            const whatsappMessage = `⚠️ *SANTIAGO HIKING - AUTORIZACIÓN REQUERIDA* 🏔️\n\nHola Mario, se ha solicitado la eliminación definitiva de la expedición:\n*${title}*\n\nTu clave de confirmación es: *${pin}*\n\nIngresa este código en el panel administrativo para autorizar la acción.`;
 
-            const whatsappMessage = `⚠️ *SANTIAGO HIKING - AUTORIZACIÓN REQUERIDA* 🏔️\n\nSe ha solicitado la eliminación definitiva de la expedición:\n*${title}*\n\nTu PIN de confirmación es: *${pin}*\n\nIngresa este código en el panel para autorizar la acción.`;
-
-            for (const phone of uniqueTargets) {
-                await sendWhatsAppMessage(phone, whatsappMessage);
-            }
+            await sendWhatsAppMessage(adminPhone, whatsappMessage);
         } catch (wspErr) {
             console.error('Error enviando WhatsApp de autorización:', wspErr);
         }

@@ -522,7 +522,7 @@ ${ragContext}`;
                                     
                                     // Si hubo handoff, notificar al admin
                                     if (isHandoffTriggered) {
-                                        const adminPhones = ['56984021940', '56937667709'];
+                                        const adminPhones = [process.env.ADMIN_NOTIFICATION_PHONE || '56984021940'];
                                         
                                         let iconoAlerta = handoffUrgency === 'alta' ? '🚨' : '⚠️';
                                         let tituloAlerta = handoffUrgency === 'alta' ? '*URGENCIA: RECLAMO O PROBLEMA*' : '*Atención Humana Requerida*';
