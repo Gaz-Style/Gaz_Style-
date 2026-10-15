@@ -27,9 +27,10 @@ interface AllAdventuresModalProps {
   isOpen: boolean;
   onClose: () => void;
   routes: RouteItem[];
+  lang?: string;
 }
 
-export default function AllAdventuresModal({ isOpen, onClose, routes }: AllAdventuresModalProps) {
+export default function AllAdventuresModal({ isOpen, onClose, routes, lang = 'es' }: AllAdventuresModalProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

@@ -16,6 +16,7 @@ interface ExperienceShelfSectionProps {
   isHighMountain?: boolean;
   isBoutique?: boolean;
   cardVariant?: 'split' | 'cover';
+  lang?: string;
 }
 
 export default function ExperienceShelfSection({
@@ -27,7 +28,8 @@ export default function ExperienceShelfSection({
   routes,
   isHighMountain,
   isBoutique,
-  cardVariant
+  cardVariant,
+  lang = 'es'
 }: ExperienceShelfSectionProps) {
   if (!routes || routes.length === 0) return null;
 
@@ -155,11 +157,11 @@ export default function ExperienceShelfSection({
               return (
                 <div
                   key={route.id || idx}
-                  className="h-full rounded-2xl overflow-hidden flex flex-col group min-h-[460px] justify-between border border-white/12 transition-all duration-300"
+                  className="h-full rounded-2xl overflow-hidden flex flex-col group min-h-[460px] justify-between border border-white/12 transition-all duration-300 bg-stone-900/90"
                   style={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                    backdropFilter: 'blur(18px)',
-                    WebkitBackdropFilter: 'blur(18px)',
+                    backgroundColor: 'rgba(28, 25, 23, 0.88)',
+                    backdropFilter: 'blur(16px)',
+                    WebkitBackdropFilter: 'blur(16px)',
                   }}
                 >
                   {/* Foto Superior */}
@@ -196,19 +198,25 @@ export default function ExperienceShelfSection({
                         }}
                       >
                         <div>
-                          <p className="text-[10px] text-white/50 uppercase font-medium tracking-wider">Duración</p>
+                          <p className="text-[10px] text-white/50 uppercase font-medium tracking-wider">
+                            {lang === 'en' ? 'Duration' : lang === 'fr' ? 'Durée' : lang === 'pt' ? 'Duração' : lang === 'de' ? 'Dauer' : 'Duración'}
+                          </p>
                           <p className="text-xs font-bold text-white mt-0.5">
                             {durationText}
                           </p>
                         </div>
                         <div>
-                          <p className="text-[10px] text-white/50 uppercase font-medium tracking-wider">Dificultad</p>
+                          <p className="text-[10px] text-white/50 uppercase font-medium tracking-wider">
+                            {lang === 'en' ? 'Difficulty' : lang === 'fr' ? 'Difficulté' : lang === 'pt' ? 'Dificuldade' : lang === 'de' ? 'Schwierigkeit' : 'Dificultad'}
+                          </p>
                           <p className="text-xs font-bold text-amber-400 mt-0.5">
                             {difficultyText}
                           </p>
                         </div>
                         <div>
-                          <p className="text-[10px] text-white/50 uppercase font-medium tracking-wider">Altura</p>
+                          <p className="text-[10px] text-white/50 uppercase font-medium tracking-wider">
+                            {lang === 'en' ? 'Altitude' : lang === 'fr' ? 'Altitude' : lang === 'pt' ? 'Altitude' : lang === 'de' ? 'Höhe' : 'Altura'}
+                          </p>
                           <p className="text-xs font-bold text-white mt-0.5">
                             {altitudeText}
                           </p>
@@ -220,7 +228,7 @@ export default function ExperienceShelfSection({
                       href={`/rutas/${route.id}`}
                       className="btn-arcteryx w-full !py-2.5 !px-5 text-center flex items-center justify-center text-xs font-bold tracking-widest uppercase"
                     >
-                      VER DETALLES
+                      {lang === 'en' ? 'VIEW DETAILS' : lang === 'fr' ? 'VOIR DÉTAILS' : lang === 'pt' ? 'VER DETALHES' : lang === 'de' ? 'DETAILS ANSEHEN' : 'VER DETALLES'}
                     </Link>
                   </div>
                 </div>
@@ -325,7 +333,15 @@ export default function ExperienceShelfSection({
                           : 'text-white border-white/60 hover:border-white hover:text-stone-300'
                       }`}
                     >
-                      Ver Detalles y Ficha Técnica &rarr;
+                      {lang === 'en'
+                        ? 'View Details & Technical Specs →'
+                        : lang === 'fr'
+                        ? 'Voir Détails et Fiche Technique →'
+                        : lang === 'pt'
+                        ? 'Ver Detalhes e Ficha Técnica →'
+                        : lang === 'de'
+                        ? 'Details & Datenblatt anzeigen →'
+                        : 'Ver Detalles y Ficha Técnica →'}
                     </Link>
                   </div>
                 </div>

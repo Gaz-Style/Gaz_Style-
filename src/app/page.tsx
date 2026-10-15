@@ -17,6 +17,7 @@ import ScrollToTopButton from "./ScrollToTopButton";
 import ExperienceFilterableGrid from "./ExperienceFilterableGrid";
 import ExperienceShelfSection from "./ExperienceShelfSection";
 import { createClient } from '@supabase/supabase-js';
+import { getDictionary } from '@/lib/i18n';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,6 +36,7 @@ async function getPublicData() {
 export default async function HomePage({ searchParams }: { searchParams?: Promise<{ lang?: string }> }) {
   const params = await searchParams;
   const lang = params?.lang || 'es';
+  const dict = getDictionary(lang);
   const { routes, departures } = await getPublicData();
 
   // ── SEPARACIÓN ESTRICTA EN LAS 4 SECCIONES OFICIALES ──────────────────────────
@@ -95,28 +97,26 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
             <span className="text-white/40 hidden sm:inline">·</span>
             <div className="hidden sm:flex items-center gap-1.5 text-white/95">
               <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-              <span>Guías WFR</span>
+              <span>{dict.hero.trust_wfr}</span>
             </div>
             <span className="text-white/40 hidden sm:inline">·</span>
             <div className="hidden sm:flex items-center gap-1.5 text-white/95">
               <Compass className="w-3.5 h-3.5 text-amber-400" />
-              <span>SOS Satelital Garmin</span>
+              <span>{dict.hero.trust_sos}</span>
             </div>
           </div>
           
           {/* 2. Título Hero Sólido con Tipografía Oficial de Hiking (font-edo) en Dorado Andino */}
           <h1 className="text-5xl sm:text-7xl md:text-8xl font-black uppercase tracking-tight text-white leading-[0.92] mb-6 drop-shadow-md">
-            DESBLOQUEA <br />
+            {dict.hero.title_line1} <br />
             <span className="font-edo tracking-wider block mt-2 text-6xl sm:text-8xl md:text-9xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-100 bg-clip-text text-transparent drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]">
-              LA CUMBRE.
+              {dict.hero.title_line2}
             </span>
           </h1>
           
           {/* 3. Subtítulo (Bajada) */}
           <p className="text-base sm:text-lg md:text-xl text-slate-100 max-w-2xl mx-auto font-normal leading-relaxed mb-10 drop-shadow">
-            {lang === 'en'
-              ? 'The city goes silent when the mountain speaks. Wild trekking, trail, and raw adrenaline in the Andes of Santiago, Chile: feel the altitude, break your limits, and claim your place at the summit.'
-              : 'La ciudad se calla cuando habla la montaña. Rutas salvajes de trekking, trail y adrenalina en los Andes de Santiago de Chile: siente la altura, rompe tus límites y reclama tu lugar en la cima.'}
+            {dict.hero.subtitle}
           </p>
 
           {/* 4. Botones Píldora Glassmorphism */}
@@ -127,47 +127,51 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
       {/* ── SECCIÓN: SALIDAS GRUPALES ─────────────────────────────────── */}
       <ExperienceShelfSection
         id="salidas-grupales"
-        badge="COMUNIDAD & ATARDECERES"
-        title="SALIDAS"
-        highlightTitle="GRUPALES"
-        subtitle="Cumbres de día, atardeceres y rutas clásicas con la comunidad Gaz-Style. Café caliente o infusión en cumbre sobre el mar de nubes de Santiago."
+        badge={dict.sections.grupales.badge}
+        title={dict.sections.grupales.title}
+        highlightTitle={dict.sections.grupales.highlightTitle}
+        subtitle={dict.sections.grupales.subtitle}
         routes={salidasGrupales}
         cardVariant="split"
+        lang={lang}
       />
 
       {/* ── SECCIÓN: TRAVESÍAS & DESAFÍOS ─────────────────────────────── */}
       <ExperienceShelfSection
         id="travesias-desafios"
-        badge="ENDURANCE FULL DAY"
-        title="TRAVESÍAS &"
-        highlightTitle="DESAFÍOS"
-        subtitle="Retos de resistencia física y mental en la cuenca central con +1.500m de desnivel vertical y filos andinos."
+        badge={dict.sections.desafios.badge}
+        title={dict.sections.desafios.title}
+        highlightTitle={dict.sections.desafios.highlightTitle}
+        subtitle={dict.sections.desafios.subtitle}
         routes={travesiasDesafios}
         cardVariant="cover"
+        lang={lang}
       />
 
       {/* ── SECCIÓN: EXPEDITION HIGH MOUNTAIN ──────────────────────────── */}
       <ExperienceShelfSection
         id="high-mountain"
-        badge="GRANDES CUMBRES 5.000M+ · ESTÁNDAR PUMA ADVENTURES"
-        title="EXPEDITION"
-        highlightTitle="HIGH MOUNTAIN"
-        subtitle="Expediciones técnicas de altura en los Andes (El Plomo, Leonera, San José) con porteo, arrieros y monitoreo satelital."
+        badge={dict.sections.highMountain.badge}
+        title={dict.sections.highMountain.title}
+        highlightTitle={dict.sections.highMountain.highlightTitle}
+        subtitle={dict.sections.highMountain.subtitle}
         routes={expeditionHighMountain}
         isHighMountain
         cardVariant="cover"
+        lang={lang}
       />
 
       {/* ── SECCIÓN: EXPEDITION BOUTIQUE ───────────────────────────────── */}
       <ExperienceShelfSection
         id="expedition-boutique"
-        badge="100% PRIVADO & TAILOR-MADE"
-        title="EXPEDITION"
-        highlightTitle="BOUTIQUE"
-        subtitle="Experiencias privadas a tu propio ritmo con transporte ejecutivo hotel a hotel, catering gourmet y video Reel 4K profesional."
+        badge={dict.sections.boutique.badge}
+        title={dict.sections.boutique.title}
+        highlightTitle={dict.sections.boutique.highlightTitle}
+        subtitle={dict.sections.boutique.subtitle}
         routes={expeditionBoutique}
         isBoutique
         cardVariant="cover"
+        lang={lang}
       />
 
       {/* 3. SISTEMA DE NIVELES FUNCIONAL (Limpio, Técnico & Sereno) */}
@@ -175,10 +179,10 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-12">
             <span className="text-white/50 font-mono text-[10px] tracking-[0.3em] uppercase block mb-1">
-              Graduación Técnica · Cuenca Central
+              {dict.levels.badge}
             </span>
             <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight">
-              Sistema de Niveles de Montaña
+              {dict.levels.title}
             </h2>
           </div>
 
@@ -189,12 +193,12 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
               <div className="flex items-baseline gap-4 md:w-1/3">
                 <span className="text-white/40 font-mono text-xs font-bold">01</span>
                 <div>
-                  <h4 className="text-white font-bold text-lg uppercase tracking-tight">Iniciación Activa</h4>
-                  <span className="text-[11px] font-mono text-white/45 block">Desnivel &lt;400m+ · 3.5 hrs</span>
+                  <h4 className="text-white font-bold text-lg uppercase tracking-tight">{dict.levels.l1_title}</h4>
+                  <span className="text-[11px] font-mono text-white/45 block">{dict.levels.l1_meta}</span>
                 </div>
               </div>
               <p className="text-white/60 text-xs md:text-sm font-light md:w-1/2 leading-relaxed">
-                Ritmo amable y pausas panorámicas. Ideal para tu primera cumbre, fotografía profesional y café al atardecer sobre la cuenca.
+                {dict.levels.l1_desc}
               </p>
               <div className="md:w-1/6 md:text-right">
                 <span className="text-[11px] font-mono text-amber-300 font-semibold uppercase tracking-wider">Sunset Manquehuito</span>
@@ -206,12 +210,12 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
               <div className="flex items-baseline gap-4 md:w-1/3">
                 <span className="text-white/40 font-mono text-xs font-bold">02</span>
                 <div>
-                  <h4 className="text-white font-bold text-lg uppercase tracking-tight">Cardio & Desconexión</h4>
-                  <span className="text-[11px] font-mono text-white/45 block">Desnivel 400 a 800m+ · 4-5 hrs</span>
+                  <h4 className="text-white font-bold text-lg uppercase tracking-tight">{dict.levels.l2_title}</h4>
+                  <span className="text-[11px] font-mono text-white/45 block">{dict.levels.l2_meta}</span>
                 </div>
               </div>
               <p className="text-white/60 text-xs md:text-sm font-light md:w-1/2 leading-relaxed">
-                Ritmo deportivo sostenido para botar el estrés de la oficina. Exige calzado con buen agarre, respiración constante y energía activa.
+                {dict.levels.l2_desc}
               </p>
               <div className="md:w-1/6 md:text-right">
                 <span className="text-[11px] font-mono text-amber-300 font-semibold uppercase tracking-wider">WildTrek / Pochoco</span>
@@ -223,12 +227,12 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
               <div className="flex items-baseline gap-4 md:w-1/3">
                 <span className="text-white/40 font-mono text-xs font-bold">03</span>
                 <div>
-                  <h4 className="text-white font-bold text-lg uppercase tracking-tight">Desafío Andino</h4>
-                  <span className="text-[11px] font-mono text-white/45 block">Desnivel 800 a 1.400m+ · 6-8 hrs</span>
+                  <h4 className="text-white font-bold text-lg uppercase tracking-tight">{dict.levels.l3_title}</h4>
+                  <span className="text-[11px] font-mono text-white/45 block">{dict.levels.l3_meta}</span>
                 </div>
               </div>
               <p className="text-white/60 text-xs md:text-sm font-light md:w-1/2 leading-relaxed">
-                Terreno técnico, piedras sueltas y exigencia física real. Requiere preparación previa, bastones de trekking y chequeo médico.
+                {dict.levels.l3_desc}
               </p>
               <div className="md:w-1/6 md:text-right">
                 <span className="text-[11px] font-mono text-amber-300 font-semibold uppercase tracking-wider">Manquehue / Provincia</span>
@@ -240,12 +244,12 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
               <div className="flex items-baseline gap-4 md:w-1/3">
                 <span className="text-white/40 font-mono text-xs font-bold">04</span>
                 <div>
-                  <h4 className="text-white font-bold text-lg uppercase tracking-tight">Alta Montaña</h4>
-                  <span className="text-[11px] font-mono text-white/45 block">Altitud &gt;3.800m · Full Day / Campamento</span>
+                  <h4 className="text-white font-bold text-lg uppercase tracking-tight">{dict.levels.l4_title}</h4>
+                  <span className="text-[11px] font-mono text-white/45 block">{dict.levels.l4_meta}</span>
                 </div>
               </div>
               <p className="text-white/60 text-xs md:text-sm font-light md:w-1/2 leading-relaxed">
-                Cumbres mayores sobre los 4.000m. Exposición a altitud, viento y posible campamento base. Guiado estricto con botiquín WFR y satélite.
+                {dict.levels.l4_desc}
               </p>
               <div className="md:w-1/6 md:text-right">
                 <span className="text-[11px] font-mono text-amber-300 font-semibold uppercase tracking-wider">Pintor / El Plomo</span>

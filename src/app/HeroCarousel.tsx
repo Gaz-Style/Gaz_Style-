@@ -39,7 +39,7 @@ export default function HeroCarousel() {
       {HERO_VIDEOS.map((vid, idx) => {
         const isCurrent = idx === current;
         const isNext = idx === (current + 1) % HERO_VIDEOS.length;
-        const preloadStrategy = isCurrent ? 'auto' : isNext ? 'metadata' : 'none';
+        const preloadStrategy = isCurrent ? 'metadata' : isNext ? 'none' : 'none';
 
         return (
           <video

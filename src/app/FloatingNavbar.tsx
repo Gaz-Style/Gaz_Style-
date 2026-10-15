@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Menu, X } from 'lucide-react';
 import LanguageSwitcher from './LanguageSwitcher';
+import { getDictionary } from '@/lib/i18n';
 
 interface Props {
   currentLang: string;
@@ -46,13 +47,15 @@ export default function FloatingNavbar({ currentLang }: Props) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const dict = getDictionary(currentLang);
+
   const navLinks = [
-    { href: '#salidas-grupales', label: 'Grupales' },
-    { href: '#travesias-desafios', label: 'Desafíos' },
-    { href: '#high-mountain', label: 'High Mountain' },
-    { href: '#expedition-boutique', label: 'Boutique' },
-    { href: '#niveles', label: 'Niveles' },
-    { href: '#circulo', label: 'Comunidad' },
+    { href: '#salidas-grupales', label: dict.nav.grupales },
+    { href: '#travesias-desafios', label: dict.nav.desafios },
+    { href: '#high-mountain', label: dict.nav.highMountain },
+    { href: '#expedition-boutique', label: dict.nav.boutique },
+    { href: '#niveles', label: dict.nav.niveles },
+    { href: '#circulo', label: dict.nav.comunidad },
   ];
 
   return (

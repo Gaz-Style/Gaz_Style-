@@ -163,11 +163,9 @@ export default function SwipeCarousel({ children, peekWidth = 24, gap = 12 }: Pr
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  // ── Medición de contenedor para cálculo en píxeles exactos ───────────────
+  // ── Medición de contenedor ágil para cálculo exacto ───────────────────────
   const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(() => 
-    typeof window !== 'undefined' ? (window.innerWidth > 1024 ? 1024 : window.innerWidth) : 0
-  );
+  const [containerWidth, setContainerWidth] = useState(0);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -182,11 +180,12 @@ export default function SwipeCarousel({ children, peekWidth = 24, gap = 12 }: Pr
     return () => ro.disconnect();
   }, []);
 
-  // ── Cálculo de ancho y offset del track ────────────────────────────────────
-  const effectiveContainerWidth = containerWidth > 0 ? containerWidth : (typeof window !== 'undefined' ? window.innerWidth : 390);
-  const slideWidthPx = Math.max(280, effectiveContainerWidth - peekWidth);
-  const slideWidthStyle = `${slideWidthPx}px`;
-  const step = slideWidthPx + gap;
+  // ── Cálculo de ancho y offset del track (Instantáneo con fallback en CSS) ─────
+  const slideWidthStyle = containerWidth > 0 
+    ? `${Math.max(280, containerWidth - peekWidth)}px` 
+    : `calc(100% - ${peekWidth}px)`;
+  
+  const step = containerWidth > 0 ? (containerWidth - peekWidth + gap) : 340;
   const trackOffsetPx = -(currentIndex * step) + live;
   const trackTransform = `translateX(${trackOffsetPx}px)`;
 
@@ -236,8 +235,8 @@ export default function SwipeCarousel({ children, peekWidth = 24, gap = 12 }: Pr
                   flexShrink: 0,
                   display: 'flex',
                   alignItems: 'stretch',
-                  opacity: isCurrent ? 1 : 0.45,
-                  transition: 'opacity 0.35s ease',
+                  opacity: isCurrent ? 1 : 0.85,
+                  transition: 'opacity 0.25s ease',
                   pointerEvents: isCurrent ? 'auto' : 'none',
                 }}
               >

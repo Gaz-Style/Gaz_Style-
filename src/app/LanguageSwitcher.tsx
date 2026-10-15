@@ -21,9 +21,9 @@ export default function LanguageSwitcher({ currentLang }: { currentLang: string 
   const languages = [
     { code: 'es', label: 'Español' },
     { code: 'en', label: 'English' },
+    { code: 'fr', label: 'Français' },
     { code: 'pt', label: 'Português' },
-    { code: 'de', label: 'Deutsch' },
-    { code: 'zh', label: '中文' }
+    { code: 'de', label: 'Deutsch' }
   ];
 
   return (

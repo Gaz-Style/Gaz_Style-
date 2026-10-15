@@ -179,7 +179,15 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
           onClick={() => setIsAllAdventuresOpen(true)}
           className="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-black px-8 sm:px-9 py-4 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all hover:scale-105 shadow-[0_0_20px_rgba(245,158,11,0.35)] cursor-pointer text-center select-none"
         >
-          {isEn ? 'Ver todas las aventuras' : 'Ver todas las aventuras'}
+          {lang === 'en'
+            ? 'Explore All Adventures'
+            : lang === 'fr'
+            ? 'Toutes les Aventures'
+            : lang === 'pt'
+            ? 'Ver Todas as Aventuras'
+            : lang === 'de'
+            ? 'Alle Abenteuer'
+            : 'Ver todas las aventuras'}
         </button>
 
         {/* Botón 2: Ayúdame a elegir (Diseño y Color Cristal Ahumado Oficial + Lógica del Quiz Modal) */}
@@ -198,7 +206,17 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
           }}
         >
           <Lightbulb className="w-4 h-4 text-amber-400 group-hover:rotate-12 transition-transform duration-300" />
-          <span>{isEn ? 'Ayúdame a elegir' : 'Ayúdame a elegir'}</span>
+          <span>
+            {lang === 'en'
+              ? 'Help Me Choose'
+              : lang === 'fr'
+              ? 'Aidez-moi à choisir'
+              : lang === 'pt'
+              ? 'Ajude-me a escolher'
+              : lang === 'de'
+              ? 'Hilf mir bei der Auswahl'
+              : 'Ayúdame a elegir'}
+          </span>
         </button>
       </div>
 
@@ -207,6 +225,7 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
         isOpen={isAllAdventuresOpen}
         onClose={() => setIsAllAdventuresOpen(false)}
         routes={allRoutes}
+        lang={lang}
       />
 
       {/* ── MODAL POPUP CON LA IDENTIDAD EXACTA DE LA WEB: CRISTAL, PÍLDORAS Y VIDEO NATIVO ── */}
