@@ -135,13 +135,13 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
         cardVariant="split"
       />
 
-      {/* ── SECCIÓN: TRAVESÍAS & GRANDES DESAFÍOS ──────────────────────── */}
+      {/* ── SECCIÓN: TRAVESÍAS & DESAFÍOS ─────────────────────────────── */}
       <ExperienceShelfSection
         id="travesias-desafios"
         badge="ENDURANCE FULL DAY"
         title="TRAVESÍAS &"
-        highlightTitle="GRANDES DESAFÍOS"
-        subtitle="Los grandes retos de resistencia física y mental de la cuenca central. Jornadas continuas de +1.500m de desnivel vertical y filos andinos (Sierra de Ramón, Cerro Provincia, La Cruz, Carpa, Triple Corona)."
+        highlightTitle="DESAFÍOS"
+        subtitle="Retos de resistencia física y mental en la cuenca central con +1.500m de desnivel vertical y filos andinos."
         routes={travesiasDesafios}
         cardVariant="cover"
       />
@@ -152,7 +152,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
         badge="GRANDES CUMBRES 5.000M+ · ESTÁNDAR PUMA ADVENTURES"
         title="EXPEDITION"
         highlightTitle="HIGH MOUNTAIN"
-        subtitle="Expediciones técnicas de altura en la alta cordillera (El Plomo 5.424m, Leonera 4.954m, Volcán San José 5.856m). Logística integral con porteo de mulas, arrieros, campamentos de altura y monitoreo satelital Garmin SOS."
+        subtitle="Expediciones técnicas de altura en los Andes (El Plomo, Leonera, San José) con porteo, arrieros y monitoreo satelital."
         routes={expeditionHighMountain}
         isHighMountain
         cardVariant="cover"
@@ -164,7 +164,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
         badge="100% PRIVADO & TAILOR-MADE"
         title="EXPEDITION"
         highlightTitle="BOUTIQUE"
-        subtitle="Experiencias exclusivas a tu propio ritmo con transporte ejecutivo puerta a puerta desde tu hotel en Santiago, catering gourmet de montaña y video Reel 4K profesional editado para tus redes sociales."
+        subtitle="Experiencias privadas a tu propio ritmo con transporte ejecutivo hotel a hotel, catering gourmet y video Reel 4K profesional."
         routes={expeditionBoutique}
         isBoutique
         cardVariant="cover"

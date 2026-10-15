@@ -34,25 +34,99 @@ export default function ExperienceShelfSection({
   const isSplit = cardVariant === 'split' || id === 'salidas-grupales';
 
   return (
-    <section id={id} className="py-12 sm:py-16 md:py-20 bg-transparent relative z-20">
-      <div className="max-w-7xl mx-auto px-6">
+    <section id={id} className="py-6 sm:py-10 md:py-16 bg-transparent relative z-20">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6">
         
         {/* Cabecera Editorial Limpia & Sofisticada */}
-        <div className="mb-6 sm:mb-8 border-b border-white/15 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div className="mb-3 sm:mb-4 border-b border-white/10 pb-2.5 flex flex-col md:flex-row md:items-end justify-between gap-2">
           <div>
             <span className="text-white/50 font-mono text-[10px] tracking-[0.3em] uppercase block mb-1">
               {badge}
             </span>
-            <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight">
-              {title}{' '}
-              {highlightTitle && (
+            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight leading-none">
+              {isBoutique ? (
+                <>
+                  <span
+                    className="text-white"
+                    style={{
+                      WebkitTextStroke: '1.2px #D4AF37',
+                      paintOrder: 'stroke fill',
+                      textShadow: '0 0 18px rgba(212, 175, 55, 0.45)',
+                    }}
+                  >
+                    {title}
+                  </span>{' '}
+                  {highlightTitle && (
+                    <span
+                      className="text-white"
+                      style={{
+                        WebkitTextStroke: '1.2px #D4AF37',
+                        paintOrder: 'stroke fill',
+                        textShadow: '0 0 22px rgba(212, 175, 55, 0.65)',
+                      }}
+                    >
+                      {highlightTitle}
+                    </span>
+                  )}
+                </>
+              ) : isHighMountain ? (
+                <>
+                  <span
+                    className="text-white"
+                    style={{
+                      WebkitTextStroke: '1.2px #C0C0C0',
+                      paintOrder: 'stroke fill',
+                      textShadow: '0 0 18px rgba(226, 232, 240, 0.5)',
+                    }}
+                  >
+                    {title}
+                  </span>{' '}
+                  {highlightTitle && (
+                    <span
+                      className="text-white"
+                      style={{
+                        WebkitTextStroke: '1.2px #E2E8F0',
+                        paintOrder: 'stroke fill',
+                        textShadow: '0 0 24px rgba(248, 250, 252, 0.7)',
+                      }}
+                    >
+                      {highlightTitle}
+                    </span>
+                  )}
+                </>
+              ) : id === 'travesias-desafios' ? (
+                <>
+                  <span
+                    className="text-white"
+                    style={{
+                      WebkitTextStroke: '1.2px #404040',
+                      paintOrder: 'stroke fill',
+                      textShadow: '0 0 16px rgba(0, 0, 0, 0.8)',
+                    }}
+                  >
+                    {title}
+                  </span>{' '}
+                  {highlightTitle && (
+                    <span
+                      className="text-white"
+                      style={{
+                        WebkitTextStroke: '1.2px #525252',
+                        paintOrder: 'stroke fill',
+                        textShadow: '0 0 18px rgba(0, 0, 0, 0.9)',
+                      }}
+                    >
+                      {highlightTitle}
+                    </span>
+                  )}
+                </>
+              ) : (
                 <span className="text-white">
-                  {highlightTitle}
+                  {title} {highlightTitle && <span>{highlightTitle}</span>}
                 </span>
               )}
             </h2>
           </div>
-          <p className="text-white/60 text-xs md:text-sm max-w-md font-light leading-relaxed">
+          <p className="text-white/70 text-xs sm:text-[13px] max-w-md font-light leading-snug">
             {subtitle}
           </p>
         </div>
@@ -169,12 +243,18 @@ export default function ExperienceShelfSection({
                 : 'GRAN DESAFÍO · CUENCA CENTRAL'
             );
 
+            const isTravesia = id === 'travesias-desafios';
+
             return (
               <div
                 key={route.id || idx}
-                className={`relative min-h-[500px] overflow-hidden flex flex-col justify-end p-8 group transition-all duration-500 bg-stone-900 rounded-2xl ${
+                className={`relative min-h-[380px] sm:min-h-[420px] md:min-h-[460px] overflow-hidden flex flex-col justify-end p-5 sm:p-6 md:p-7 group transition-all duration-500 bg-stone-900 rounded-2xl ${
                   isBoutique
-                    ? 'border-2 border-amber-400/70 hover:border-amber-300 shadow-[0_0_30px_rgba(245,158,11,0.22)] hover:shadow-[0_0_50px_rgba(245,158,11,0.40)]'
+                    ? 'border-2 border-[#D4AF37] hover:border-[#F3E5AB] shadow-[0_0_35px_rgba(212,175,55,0.25)] hover:shadow-[0_0_55px_rgba(212,175,55,0.45)] ring-1 ring-inset ring-[#D4AF37]/30'
+                    : isHighMountain
+                    ? 'border-2 border-slate-300 hover:border-white shadow-[0_0_35px_rgba(226,232,240,0.30)] hover:shadow-[0_0_55px_rgba(255,255,255,0.50)] ring-1 ring-inset ring-white/40'
+                    : isTravesia
+                    ? 'border-2 border-stone-700/80 hover:border-stone-500 shadow-[0_0_30px_rgba(0,0,0,0.6)] ring-1 ring-inset ring-stone-600/40'
                     : 'border border-stone-200/20 hover:border-white/30'
                 }`}
               >
@@ -188,44 +268,61 @@ export default function ExperienceShelfSection({
                 />
 
                 {/* Velo Cinematográfico Suave */}
-                <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-stone-950/95 via-stone-950/50 to-transparent pointer-events-none" />
+                <div className="absolute inset-x-0 bottom-0 h-4/5 bg-gradient-to-t from-stone-950/95 via-stone-950/60 to-transparent pointer-events-none" />
 
-                {/* Aura Dorada de Tarjeta Golden Card (Solo Boutique) */}
+                {/* Aura Dorada Metálica (Solo Boutique) */}
                 {isBoutique && (
                   <div
                     className="absolute inset-0 pointer-events-none z-10 opacity-70 group-hover:opacity-100 transition-opacity duration-500"
                     style={{
-                      background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.18) 0%, rgba(217, 119, 6, 0.05) 40%, transparent 70%)',
-                      boxShadow: 'inset 0 0 24px rgba(245, 158, 11, 0.15)',
+                      background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.16) 0%, rgba(197, 160, 40, 0.05) 40%, transparent 70%)',
+                      boxShadow: 'inset 0 0 26px rgba(212, 175, 55, 0.18)',
                     }}
                   />
                 )}
 
-                {/* Contenido Editorial Limpio & Completo */}
-                <div className="relative z-10 space-y-3">
+                {/* Aura Plateada Brillante / Glaciar (Solo High Mountain) */}
+                {isHighMountain && (
+                  <div
+                    className="absolute inset-0 pointer-events-none z-10 opacity-80 group-hover:opacity-100 transition-opacity duration-500"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(248, 250, 252, 0.20) 0%, rgba(203, 213, 225, 0.08) 35%, transparent 65%)',
+                      boxShadow: 'inset 0 0 28px rgba(226, 232, 240, 0.22)',
+                    }}
+                  />
+                )}
+
+                {/* Contenido Editorial Limpio & Completo (Textos Originales Intactos) */}
+                <div className="relative z-10 space-y-2">
                   <span
-                    className={`text-[10px] font-mono tracking-[0.25em] uppercase block ${
-                      isBoutique ? 'text-amber-400 font-bold' : 'text-white/70'
+                    className={`text-[9px] sm:text-[10px] font-mono tracking-[0.25em] uppercase block ${
+                      isBoutique
+                        ? 'text-[#D4AF37] font-bold'
+                        : isHighMountain
+                        ? 'text-slate-200 font-bold tracking-[0.3em]'
+                        : 'text-white/70'
                     }`}
                   >
                     {meta}
                   </span>
 
-                  <h3 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight leading-tight">
+                  <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white uppercase tracking-tight leading-snug">
                     {cleanTitle}
                   </h3>
 
-                  <p className="text-slate-200 text-sm font-light leading-relaxed line-clamp-3">
+                  <p className="text-slate-200 text-xs sm:text-sm font-light leading-relaxed line-clamp-2">
                     {route.description || 'Expedición técnica guiada en la Cordillera de los Andes de Santiago.'}
                   </p>
 
-                  <div className="pt-2">
+                  <div className="pt-1.5">
                     <Link
                       href={targetUrl}
-                      className={`inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold border-b pb-1 transition-all ${
+                      className={`inline-flex items-center gap-1.5 text-[11px] sm:text-xs uppercase tracking-[0.18em] font-bold border-b pb-0.5 transition-all ${
                         isBoutique
-                          ? 'text-amber-300 border-amber-400/80 hover:text-amber-200 hover:border-amber-300'
-                          : 'text-white border-white/60 hover:border-white hover:text-amber-300'
+                          ? 'text-[#F3E5AB] border-[#D4AF37] hover:text-white hover:border-white'
+                          : isHighMountain
+                          ? 'text-slate-100 border-slate-300 hover:text-white hover:border-white'
+                          : 'text-white border-white/60 hover:border-white hover:text-stone-300'
                       }`}
                     >
                       Ver Detalles y Ficha Técnica &rarr;
