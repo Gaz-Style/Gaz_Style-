@@ -6,7 +6,7 @@ import {
   Clock, Users, Trash2, Power, Search, Filter, Activity,
   Calculator, Bus, Ticket, ChefHat, UserCircle, Upload, ImagePlus, X, Edit,
   Compass, Flame, Home, UtensilsCrossed, Star, Sparkles, Navigation, ShieldCheck, CheckCircle2,
-  Trophy, Layers, Crown, ShieldAlert, Loader2
+  Trophy, Layers, Crown, ShieldAlert, Loader2, Copy
 } from 'lucide-react';
 import { createAdventureWithCosts, updateAdventureWithCosts, toggleAdventureStatus, deleteAdventure, requestAdventureDeletionAuthorizationAction, AdventureCost } from './actions';
 
@@ -158,6 +158,34 @@ export default function RoutesClient({
     setIsModalOpen(true);
   }
 
+  // Duplicar experiencia existente para no redactar desde cero
+  function openCloneModal(route: any) {
+    const clonedRoute = {
+      ...route,
+      id: undefined, // Sin ID para que el submit cree un nuevo registro
+      title: `${route.title} (Copia)`,
+      number_code: route.number_code ? `${route.number_code}-B` : '02',
+    };
+    setEditingRoute(clonedRoute);
+    setVerticalType(route.vertical_type || 'salidas_grupales');
+    setCustomDiscipline(route.custom_discipline || '');
+    setCerroPrincipal(route.category || '');
+    setMacizoCordillera(route.category || 'Cordón Manquehue & San Cristóbal');
+    setActiveTab('identidad');
+    setBasePrice(route.base_price || 0);
+    setMinPax(route.min_pax || 2);
+    setImageUrl(route.image_url || '');
+    
+    // Clonamos la plantilla de costos de proveedores
+    const clonedCosts = (route.adventure_costs_template || []).map((c: any) => ({
+      cost_name: c.cost_name,
+      expected_amount: c.expected_amount,
+      cost_type: c.cost_type
+    }));
+    setCosts(clonedCosts);
+    setIsModalOpen(true);
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsSubmitting(true);
@@ -198,7 +226,7 @@ export default function RoutesClient({
       }
       
       let res: { success: boolean; error?: string; id?: string };
-      if (editingRoute) {
+      if (editingRoute && editingRoute.id) {
         res = await updateAdventureWithCosts(editingRoute.id, formData, costs);
       } else {
         res = await createAdventureWithCosts(formData, costs);
@@ -803,6 +831,14 @@ export default function RoutesClient({
                       <div className="flex items-center gap-1.5">
                         <button
                           type="button"
+                          onClick={() => openCloneModal(route)}
+                          className="p-2 bg-stone-900/90 hover:bg-amber-950/80 text-stone-300 hover:text-amber-400 rounded-lg border border-white/10 transition-colors"
+                          title="Duplicar / Copiar Experiencia (Plantilla Pre-llenada)"
+                        >
+                          <Copy className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
                           onClick={() => openEditModal(route)}
                           className="p-2 bg-stone-900/90 hover:bg-stone-800 text-stone-200 hover:text-white rounded-lg border border-white/10 transition-colors"
                           title="Editar Ficha"
@@ -860,7 +896,7 @@ export default function RoutesClient({
                 </span>
                 <h2 className="text-2xl font-bold text-white flex items-center gap-2">
                   <Compass className="w-5 h-5 text-amber-400" />
-                  {editingRoute ? `Editar: ${editingRoute.title}` : 'Nueva Creación en Catálogo'}
+                  {editingRoute?.id ? `Editar: ${editingRoute.title}` : (editingRoute ? `Duplicar: ${editingRoute.title}` : 'Nueva Creación en Catálogo')}
                 </h2>
               </div>
               <button 
@@ -916,7 +952,7 @@ export default function RoutesClient({
               ))}
             </div>
             
-            <form key={editingRoute?.id || "new_adventure"} onSubmit={handleSubmit} className="flex flex-col md:flex-row flex-grow overflow-hidden">
+            <form key={editingRoute?.id || (editingRoute ? `clone_${editingRoute.title}` : "new_adventure")} onSubmit={handleSubmit} className="flex flex-col md:flex-row flex-grow overflow-hidden">
               
               {/* Columna Izquierda: Formulario Modular de la Experiencia */}
               <div className="p-6 w-full md:w-3/5 space-y-5 border-r border-stone-800 overflow-y-auto">
@@ -1424,7 +1460,7 @@ export default function RoutesClient({
                     disabled={isSubmitting} 
                     className="flex-1 btn-arcteryx-primary !py-2.5 text-xs font-mono font-bold text-center justify-center disabled:opacity-50"
                   >
-                    {isSubmitting ? 'Guardando...' : (editingRoute ? 'Guardar Cambios' : 'Confirmar Producto')}
+                    {isSubmitting ? 'Guardando...' : (editingRoute?.id ? 'Guardar Cambios' : (editingRoute ? 'Confirmar Nueva Copia' : 'Confirmar Producto'))}
                   </button>
                 </div>
               </div>
