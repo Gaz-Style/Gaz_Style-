@@ -44,13 +44,13 @@ export default async function CumbresPage() {
   const peaks = await getPeaks();
 
   return (
-    <div className="min-h-screen bg-[#0a0d0f] text-white selection:bg-amber-400 selection:text-black">
+    <div className="bg-stone-950 topographic-pattern topographic-contours min-h-screen text-stone-100 font-sans selection:bg-amber-500/30">
       <Navbar />
 
       <main className="pt-28 pb-20">
         {/* HERO SECTION */}
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-          <div className="relative rounded-3xl overflow-hidden p-8 sm:p-12 md:p-16 border border-white/10 bg-gradient-to-b from-white/[0.04] to-transparent">
+          <div className="relative rounded-3xl overflow-hidden p-8 sm:p-12 md:p-16 border" style={{ backgroundColor: 'rgba(0, 0, 0, 0.35)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.10)' }}>
             {/* Ambient blur */}
             <div className="absolute top-0 right-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-[100px] pointer-events-none" />
 

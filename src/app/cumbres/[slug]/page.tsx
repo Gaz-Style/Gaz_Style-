@@ -70,7 +70,7 @@ export default async function PeakDetailPage({ params }: Props) {
   const weather = await getMountainWeather(peak.latitude, peak.longitude, peak.altitude_msnm);
 
   return (
-    <div className="min-h-screen bg-[#0a0d0f] text-white selection:bg-amber-400 selection:text-black">
+    <div className="bg-stone-950 topographic-pattern topographic-contours min-h-screen text-stone-100 font-sans selection:bg-amber-500/30">
       <Navbar />
 
       <main className="pt-24 pb-20">
@@ -87,7 +87,7 @@ export default async function PeakDetailPage({ params }: Props) {
 
         {/* HERO DEL CERRO */}
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
-          <div className="relative rounded-3xl overflow-hidden border border-white/10 min-h-[360px] sm:min-h-[440px] flex flex-col justify-end p-6 sm:p-10 md:p-12">
+          <div className="relative rounded-3xl overflow-hidden min-h-[360px] sm:min-h-[440px] flex flex-col justify-end p-6 sm:p-10 md:p-12" style={{ backgroundColor: 'rgba(0, 0, 0, 0.35)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.10)' }}>
             <Image
               src={peak.cover_image_url}
               alt={peak.name}
@@ -97,7 +97,7 @@ export default async function PeakDetailPage({ params }: Props) {
               className="object-cover -z-10"
             />
             {/* Dark gradient overlays */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0d0f] via-[#0a0d0f]/60 to-transparent -z-10" />
+            <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/70 to-transparent -z-10" />
 
             <div className="max-w-3xl">
               <div className="flex flex-wrap items-center gap-2 mb-3">

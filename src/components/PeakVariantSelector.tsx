@@ -72,10 +72,8 @@ export default function PeakVariantSelector({ peak }: PeakVariantSelectorProps) 
                   setSelectedThIndex(index);
                   setSelectedRouteIndex(0);
                 }}
-                className={`p-3.5 rounded-2xl text-left transition-all border relative overflow-hidden flex flex-col justify-between ${
-                  isSelected
-                    ? 'bg-amber-500/10 border-amber-400/60 shadow-lg shadow-amber-500/10'
-                    : 'bg-white/[0.03] border-white/10 hover:bg-white/[0.06] hover:border-white/20'
+                style={{ backgroundColor: isSelected ? 'rgba(245, 158, 11, 0.12)' : 'rgba(0, 0, 0, 0.35)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: isSelected ? '1px solid rgba(245, 158, 11, 0.5)' : '1px solid rgba(255, 255, 255, 0.10)' }} className={`p-3.5 rounded-2xl text-left transition-all relative overflow-hidden flex flex-col justify-between ${
+                  isSelected ? 'border-amber-400/60 shadow-lg shadow-amber-500/15' : 'hover:border-white/25'
                 }`}
               >
                 {isSelected && (
@@ -134,8 +132,7 @@ export default function PeakVariantSelector({ peak }: PeakVariantSelectorProps) 
       <div 
         className="rounded-3xl p-6 sm:p-8 backdrop-blur-xl border transition-all"
         style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.03)',
-          borderColor: 'rgba(255, 255, 255, 0.08)'
+          backgroundColor: 'rgba(0, 0, 0, 0.35)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.10)'
         }}
       >
         {/* Cabecera de la variante */}

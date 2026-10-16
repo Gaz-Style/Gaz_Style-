@@ -67,8 +67,7 @@ export default function ElevationProfileWidget({
     <div 
       className="rounded-2xl p-6 backdrop-blur-xl transition-all"
       style={{ 
-        backgroundColor: 'rgba(255, 255, 255, 0.04)', 
-        border: '1px solid rgba(255, 255, 255, 0.09)' 
+        backgroundColor: 'rgba(0, 0, 0, 0.35)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.10)' 
       }}
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-white/8 gap-3">

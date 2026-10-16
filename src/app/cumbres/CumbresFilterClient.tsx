@@ -56,8 +56,7 @@ export default function CumbresFilterClient({ initialPeaks }: CumbresFilterClien
       <div 
         className="p-4 sm:p-6 rounded-2xl border backdrop-blur-xl transition-all"
         style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.03)',
-          borderColor: 'rgba(255, 255, 255, 0.08)'
+          backgroundColor: 'rgba(0, 0, 0, 0.35)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.10)'
         }}
       >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
@@ -131,7 +130,7 @@ export default function CumbresFilterClient({ initialPeaks }: CumbresFilterClien
             return (
               <div
                 key={peak.id}
-                className="group relative rounded-3xl overflow-hidden border border-white/10 bg-white/[0.02] hover:bg-white/[0.04] transition-all hover:border-amber-400/40 hover:shadow-xl hover:shadow-amber-500/5 flex flex-col justify-between"
+                className="group relative rounded-3xl overflow-hidden transition-all hover:border-amber-400/50 hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col justify-between" style={{ backgroundColor: 'rgba(0, 0, 0, 0.35)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.10)' }}
               >
                 <div>
                   {/* Imagen de Portada con Badges */}
@@ -143,7 +142,7 @@ export default function CumbresFilterClient({ initialPeaks }: CumbresFilterClien
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0d0f] via-transparent to-black/30" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/40 to-black/30" />
 
                     {/* Altitud Badge */}
                     <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-white font-mono text-xs font-bold flex items-center gap-1.5">

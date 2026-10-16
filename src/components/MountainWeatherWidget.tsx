@@ -17,8 +17,7 @@ export default function MountainWeatherWidget({
     <div 
       className="rounded-2xl p-6 backdrop-blur-xl transition-all"
       style={{ 
-        backgroundColor: 'rgba(255, 255, 255, 0.04)', 
-        border: '1px solid rgba(255, 255, 255, 0.09)' 
+        backgroundColor: 'rgba(0, 0, 0, 0.35)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.10)' 
       }}
     >
       <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/8">
@@ -47,14 +46,14 @@ export default function MountainWeatherWidget({
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
         {/* Temperatura */}
-        <div className="p-3 rounded-xl text-center" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+        <div className="p-3 rounded-xl text-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.25)', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
           <p className="text-[10px] font-mono uppercase tracking-widest text-white/40 mb-0.5">Temp. Cumbre</p>
           <p className="text-xl font-black font-mono text-white">{weather.temperature}°C</p>
           <p className="text-[10px] font-mono text-white/40">Sens. {weather.apparentTemperature}°C</p>
         </div>
 
         {/* Viento */}
-        <div className="p-3 rounded-xl text-center" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+        <div className="p-3 rounded-xl text-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.25)', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
           <p className="text-[10px] font-mono uppercase tracking-widest text-white/40 mb-0.5 flex items-center justify-center gap-1">
             <Wind className="w-3 h-3 text-amber-400/80" /> Viento
           </p>
@@ -63,7 +62,7 @@ export default function MountainWeatherWidget({
         </div>
 
         {/* Amanecer */}
-        <div className="p-3 rounded-xl text-center" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+        <div className="p-3 rounded-xl text-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.25)', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
           <p className="text-[10px] font-mono uppercase tracking-widest text-white/40 mb-0.5 flex items-center justify-center gap-1">
             <Sunrise className="w-3 h-3 text-amber-400" /> Alba
           </p>
@@ -72,7 +71,7 @@ export default function MountainWeatherWidget({
         </div>
 
         {/* Puesta de Sol */}
-        <div className="p-3 rounded-xl text-center" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+        <div className="p-3 rounded-xl text-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.25)', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
           <p className="text-[10px] font-mono uppercase tracking-widest text-white/40 mb-0.5 flex items-center justify-center gap-1">
             <Sunset className="w-3 h-3 text-rose-400" /> Ocaso
           </p>

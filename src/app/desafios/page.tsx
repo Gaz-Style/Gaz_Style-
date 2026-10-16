@@ -12,7 +12,7 @@ export default function DesafiosHubPage() {
   const challenges: ChallengeDetail[] = Object.values(challengesData);
 
   return (
-    <main className="min-h-screen bg-stone-950 text-stone-100 flex flex-col font-sans selection:bg-amber-500 selection:text-black">
+    <main className="bg-stone-950 topographic-pattern topographic-contours min-h-screen text-stone-100 font-sans selection:bg-amber-500/30 flex flex-col">
       <Navbar />
 
       <header className="relative pt-32 pb-20 px-6 border-b border-stone-800/80 bg-gradient-to-b from-stone-900 via-stone-950 to-stone-950 overflow-hidden">
@@ -36,7 +36,7 @@ export default function DesafiosHubPage() {
           {challenges.map((desafio) => (
             <div
               key={desafio.slug}
-              className="group relative bg-stone-900/60 border border-stone-800 hover:border-amber-500/40 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col"
+              className="group relative rounded-2xl overflow-hidden transition-all duration-300 hover:border-amber-500/40 hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col" style={{ backgroundColor: 'rgba(0, 0, 0, 0.35)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.10)' }}
             >
               <div className="h-56 relative overflow-hidden bg-stone-800">
                 <img
