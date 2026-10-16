@@ -22,6 +22,7 @@ import PeakVariantSelector from '@/components/PeakVariantSelector';
 import { getAllPeaks } from '@/data/peaksDirectory';
 import { getPeakBySlug } from '@/lib/peaksService';
 import { getMountainWeather } from '@/lib/weather';
+import HeroCarousel from '@/app/HeroCarousel';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -73,15 +74,8 @@ export default async function PeakDetailPage({ params }: Props) {
     <div className="relative min-h-screen text-white font-sans selection:bg-amber-500/30 bg-stone-950">
       {/* ── FONDO OFICIAL DEL CERRO FIJO A PANTALLA COMPLETA ── */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <Image
-          src={peak.cover_image_url}
-          alt={peak.name}
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center filter brightness-[0.25] contrast-[1.08]"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-stone-950/85 via-stone-950/50 to-stone-950/95 pointer-events-none" />
+        <HeroCarousel />
+        <div className="absolute inset-0 bg-gradient-to-b from-stone-950/80 via-stone-950/45 to-stone-950/90 pointer-events-none" />
       </div>
 
       <Navbar />

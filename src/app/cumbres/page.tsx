@@ -18,6 +18,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { getPeaks } from '@/lib/peaksService';
 import CumbresFilterClient from './CumbresFilterClient';
+import HeroCarousel from '@/app/HeroCarousel';
 
 export const metadata: Metadata = {
   title: 'Cumbres y Senderos de Santiago | Guía Oficial de Rutas y Accesos',
@@ -47,15 +48,8 @@ export default async function CumbresPage() {
     <div className="relative min-h-screen text-white font-sans selection:bg-amber-500/30 bg-stone-950">
       {/* ── FONDO OFICIAL DE MONTAÑA FIJO (ESTILO OFICIAL SANTIAGO HIKING) ── */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <Image
-          src="/images/wildtrek_sunset.png"
-          alt="Cordillera de los Andes Santiago"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center filter brightness-[0.28] contrast-[1.1]"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-stone-950/85 via-stone-950/50 to-stone-950/95 pointer-events-none" />
+        <HeroCarousel />
+        <div className="absolute inset-0 bg-gradient-to-b from-stone-950/80 via-stone-950/45 to-stone-950/90 pointer-events-none" />
       </div>
 
       <Navbar />
