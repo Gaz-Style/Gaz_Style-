@@ -16,6 +16,7 @@ import SwipeCarousel from "./SwipeCarousel";
 import ScrollToTopButton from "./ScrollToTopButton";
 import ExperienceFilterableGrid from "./ExperienceFilterableGrid";
 import ExperienceShelfSection from "./ExperienceShelfSection";
+import Footer from '@/components/Footer';
 import { createClient } from '@supabase/supabase-js';
 import { getDictionary } from '@/lib/i18n';
 
@@ -451,80 +452,8 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
         </div>
       </section>
 
-      {/* 8. FOOTER CARTOGRÁFICO (Inspirado en Roark) */}
-      <footer className="pt-16 pb-12 font-mono text-xs relative z-20" style={{backgroundColor:'rgba(0, 0, 0, 0.35)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',borderTop:'1px solid rgba(255, 255, 255, 0.10)'}}>
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 pb-12" style={{borderBottom:'1px solid rgba(255,255,255,0.08)'}}>
-            
-            {/* Columna Marca */}
-            <div className="space-y-4">
-              <div className="flex items-center">
-                <Image
-                  src="/logotipo blanco.png"
-                  alt="Santiago Hiking"
-                  width={340}
-                  height={80}
-                  className="h-10 sm:h-12 w-auto object-contain"
-                />
-              </div>
-              <p className="text-white/50 text-xs font-sans font-light leading-relaxed">
-                {lang === 'en'
-                  ? 'Expeditions in the Chilean Andes, backcountry safety, and summits above Santiago. Guided by Gaz.'
-                  : 'Expediciones en los Andes chilenos, seguridad en montaña y cumbres sobre el valle de Santiago. Guiado por Gaz.'}
-              </p>
-              <p className="text-[11px] text-white/30 font-mono">
-                CORDILLERA DE LOS ANDES · SANTIAGO DE CHILE <br />
-                LAT -33.35° S · LON -70.51° W <br />
-                <span className="text-amber-400/80 font-bold">PRESTADOR TURÍSTICO REGISTRADO SERNATUR</span> · CERTIFICACIÓN WFR / SOS
-              </p>
-            </div>
-
-            {/* Columna Rutas */}
-            <div>
-              <p className="text-white text-xs font-bold uppercase tracking-widest mb-4">Expediciones</p>
-              <ul className="space-y-2 text-xs">
-                <li><Link href="/desafios/desafio-5am" className="hover:text-amber-600 transition-colors">Desafío 5:00 AM</Link></li>
-                <li><Link href="/desafios/triple-corona" className="hover:text-amber-600 transition-colors">Triple Corona Santiago</Link></li>
-                <li><Link href="/desafios/sierra-de-ramon" className="hover:text-amber-600 transition-colors">Sierra de Ramón (3.250m)</Link></li>
-                <li><Link href="/desafios/desbloqueando-santiago" className="hover:text-amber-600 transition-colors">Desbloqueando Santiago</Link></li>
-                <li><a href="#rutas" className="hover:text-amber-600 transition-colors">Sunset Manquehuito</a></li>
-              </ul>
-            </div>
-
-            {/* Columna Alianzas */}
-            <div>
-              <p className="text-white text-xs font-bold uppercase tracking-widest mb-4">Ecosistema</p>
-              <ul className="space-y-2 text-xs">
-                <li><a href="#alianzas" className="hover:text-amber-600 transition-colors">Cielo, Mar y Tierra</a></li>
-                <li><a href="#alianzas" className="hover:text-amber-600 transition-colors">Hoteles & Refugios Aliados</a></li>
-                <li><a href="#alianzas" className="hover:text-amber-600 transition-colors">Gastronomía & Tercer Tiempo</a></li>
-                <li><a href="#alianzas" className="hover:text-amber-600 transition-colors">Expediciones B2B / Empresas</a></li>
-                <li><Link href="/faq" className="hover:text-amber-600 transition-colors">Protocolo WFR & Seguridad</Link></li>
-              </ul>
-            </div>
-
-            {/* Columna Contacto */}
-            <div>
-              <p className="text-white text-xs font-bold uppercase tracking-widest mb-4">Contacto Directo</p>
-              <ul className="space-y-2 text-xs">
-                <li>WhatsApp Oficial: <a href="https://wa.me/56957958467" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:underline font-semibold">+56 9 5795 8467</a></li>
-                <li>Instagram: <a href="https://instagram.com/santiagohiking" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:underline font-semibold">@santiagohiking</a></li>
-                <li>Asistente IA: Activo 24/7 en WhatsApp</li>
-              </ul>
-            </div>
-
-          </div>
-
-          <div className="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] text-white/35">
-            <p>&copy; 2026 GAZ_STYLE · SANTIAGO HIKING. TODOS LOS DERECHOS RESERVADOS.</p>
-            <div className="flex gap-6">
-              <Link href="/faq" className="hover:text-stone-900 transition-colors">FAQ & Montaña</Link>
-              <Link href="/reservar" className="hover:text-stone-900 transition-colors">Checkout</Link>
-              <Link href="/llms.txt" className="hover:text-stone-900 transition-colors">LLMs Protocol</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      {/* 8. FOOTER OFICIAL SANTIAGO HIKING */}
+      <Footer />
 
     </div>
   );
