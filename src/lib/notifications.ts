@@ -8,9 +8,9 @@ export async function sendWelcomeNotifications(customer: { id: string; full_name
   // 1. Email Simulation
   const emailBody = `Estimada ${firstName},
 
-Es un privilegio darte la bienvenida al atelier.
+Es un privilegio darte la bienvenida al Hiking.
 
-A partir de hoy, tu perfil está activo en ELENA La Guía. Cada prenda que trabajemos juntas quedará registrada aquí, con la atención y el cuidado que cada pieza merece.
+A partir de hoy, tu perfil está activo en Santiago Hiking La Guía. Cada prenda que trabajemos juntas quedará registrada aquí, con la atención y el cuidado que cada pieza merece.
 
 Nuestro espacio en Av. Tabancura 1091, Vitacura, siempre está disponible para ti.
 
@@ -19,7 +19,7 @@ https://g.page/r/Cfv2lRZLdYUuEBM/review
 
 Con cariño,
 Gaz Rojas
-ELENA La Guía`;
+Santiago Hiking La Guía`;
 
   console.log('--- ENVIANDO CORREO ELECTRÓNICO ---');
   console.log('Para:', customer.email);
@@ -33,7 +33,7 @@ ELENA La Guía`;
   });
 
   // 2. WhatsApp Simulation
-  const whatsappMessage = `Hola ${firstName} ✨\n\nBienvenida a ELENA La Guía. Tu perfil ya está activo en nuestro atelier.\n\nEstamos aquí para acompañarte en cada pieza.\n\n— ELENA La Guía\nAv. Tabancura 1091, Vitacura`;
+  const whatsappMessage = `Hola ${firstName} ✨\n\nBienvenida a Santiago Hiking La Guía. Tu perfil ya está activo en nuestro Hiking.\n\nEstamos aquí para acompañarte en cada pieza.\n\n— Santiago Hiking La Guía\nAv. Tabancura 1091, Vitacura`;
 
   console.log('--- ENVIANDO WHATSAPP ---');
   console.log('Para:', customer.phone);

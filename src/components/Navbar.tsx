@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
-import { Menu, X, ArrowLeft } from 'lucide-react';
+import { Menu, X, ArrowLeft, Mountain, Compass, Sparkles } from 'lucide-react';
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -14,74 +14,76 @@ export default function Navbar() {
     if (pathname.startsWith('/admin')) return null;
 
     const navLinks = [
-        { href: '/aventureros', label: 'Alta Costura' },
-        { href: '/costuras', label: 'Composturas' },
-        { href: '/sastreria', label: 'Sastrería & Bespoke' },
-        { href: '/faq', label: 'Historia & FAQ' },
-        { href: '/portafolio', label: 'Portafolio' },
+        { href: '/cumbres', label: 'Cumbres & Rutas', badge: 'Nuevo' },
+        { href: '/desafios', label: 'Desafíos' },
+        { href: '/faq', label: 'FAQ & Seguridad' },
+        { href: '/modelo-negocio', label: 'Nosotros' },
     ];
 
     const isHome = pathname === '/';
 
     return (
         <>
-            <nav className="fixed top-0 w-full z-50 bg-black/30 backdrop-blur-md md:backdrop-blur-xl border-b border-white/10 transition-all duration-300">
-                <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between relative">
+            <nav className="fixed top-0 w-full z-50 bg-[#0a0d0f]/80 backdrop-blur-xl border-b border-white/10 transition-all duration-300">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between relative">
                     {/* Left Area: Back Button (History) & Brand Logo */}
                     <div className="flex items-center gap-4">
                         {!isHome && (
                             <button 
                                 onClick={() => router.back()}
-                                className="flex items-center justify-center p-2 -ml-2 text-white hover:text-zinc-50 transition-all duration-300 z-50 group"
+                                className="flex items-center justify-center p-2 -ml-2 text-white/70 hover:text-white transition-all duration-300 z-50 group"
                                 aria-label="Volver atrás"
                             >
-                                <ArrowLeft className="w-6 h-6 md:w-5 md:h-5 text-white stroke-[2.5px] group-hover:scale-115 transition-transform duration-300" />
+                                <ArrowLeft className="w-5 h-5 text-white/80 group-hover:scale-110 transition-transform duration-300" />
                             </button>
                         )}
                         
-                        <Link href="/" className={`${!isHome ? 'hidden md:flex' : 'flex'} flex-col items-stretch justify-center w-max`}>
-                            <div className="flex justify-between w-full font-serif text-2xl md:text-3xl font-black uppercase text-white leading-none drop-shadow-sm">
-                                <span>E</span><span>L</span><span>E</span><span>N</span><span>A</span>
+                        <Link href="/" className="flex items-center gap-3 group">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-black font-black shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
+                                <Mountain className="w-5 h-5 stroke-[2.5]" />
                             </div>
-                            <div 
-                                className="font-sans text-[0.65rem] md:text-[0.75rem] font-bold uppercase text-white/70 mt-1 text-center"
-                                style={{ letterSpacing: '0.35em', marginRight: '-0.35em' }}
-                            >
-                                La Guía
+                            <div className="flex flex-col">
+                                <span className="font-sans text-base md:text-lg font-black uppercase text-white tracking-wider leading-none">
+                                    Santiago<span className="text-amber-400">Hiking</span>
+                                </span>
+                                <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-white/50 mt-1">
+                                    by Gaz_Style
+                                </span>
                             </div>
                         </Link>
                     </div>
-
-                    {/* Centered Logo on Mobile when Back Button is active */}
-                    {!isHome && (
-                        <Link href="/" className="flex md:hidden flex-col items-stretch justify-center w-max absolute left-1/2 -translate-x-1/2">
-                            <div className="flex justify-between w-full font-serif text-2xl font-black uppercase text-white leading-none drop-shadow-sm gap-1">
-                                <span>E</span><span>L</span><span>E</span><span>N</span><span>A</span>
-                            </div>
-                            <div 
-                                className="font-sans text-[0.55rem] font-bold uppercase text-white/70 mt-0.5 text-center"
-                                style={{ letterSpacing: '0.3em', marginRight: '-0.3em' }}
-                            >
-                                La Guía
-                            </div>
-                        </Link>
-                    )}
 
                     {/* Desktop Menu */}
-                    <div className="hidden md:flex items-center gap-8 text-xs uppercase tracking-[0.2em] font-sans text-white/80 font-semibold">
+                    <div className="hidden md:flex items-center gap-7 text-xs uppercase tracking-[0.15em] font-mono text-white/70 font-semibold">
                         {navLinks.map((link) => (
-                            <Link key={link.href} href={link.href} className="hover:text-zinc-50 transition-all duration-300">
-                                {link.label}
+                            <Link 
+                                key={link.href} 
+                                href={link.href} 
+                                className={`transition-colors flex items-center gap-1.5 ${
+                                    pathname.startsWith(link.href) 
+                                        ? 'text-amber-400 font-bold' 
+                                        : 'hover:text-white'
+                                }`}
+                            >
+                                <span>{link.label}</span>
+                                {link.badge && (
+                                    <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                        {link.badge}
+                                    </span>
+                                )}
                             </Link>
                         ))}
-                        <Link href="/agenda" className="glass-btn px-6 py-2.5 border-[0.5px] border-white/20 border-t-white/40 border-l-white/40 border-b-white/10 border-r-white/10 text-white font-sans text-xs uppercase tracking-[0.2em] font-semibold bg-white/[0.08] backdrop-blur-[10px] transition-all duration-[500ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-[#f5f2eb]/90 hover:text-[#121212] hover:border-[#f5f2eb] hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] rounded-[1px] whitespace-nowrap">
-                            Agendar Cita
+                        <Link 
+                            href="/reservar" 
+                            className="py-2.5 px-5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-bold font-mono text-xs uppercase tracking-wider transition-all shadow-lg shadow-amber-500/20 active:scale-95 whitespace-nowrap"
+                        >
+                            Reservar Salida
                         </Link>
                     </div>
- 
+
                     {/* Mobile Menu Toggle */}
                     <button
-                        className="md:hidden p-2 text-white z-50"
+                        className="md:hidden p-2 text-white/80 hover:text-white z-50"
                         onClick={() => setIsOpen(!isOpen)}
                         aria-label="Toggle menu"
                     >
@@ -89,7 +91,7 @@ export default function Navbar() {
                     </button>
                 </div>
             </nav>
- 
+
             {/* Mobile Menu Overlay */}
             <AnimatePresence>
                 {isOpen && (
@@ -97,24 +99,31 @@ export default function Navbar() {
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        className="fixed top-20 left-0 w-full bg-black/90 backdrop-blur-md border-b border-white/10 p-6 flex flex-col gap-6 shadow-xl z-40"
+                        className="fixed top-20 left-0 w-full bg-[#0a0d0f]/95 backdrop-blur-2xl border-b border-white/10 p-6 flex flex-col gap-5 shadow-2xl z-40 md:hidden"
                     >
                         {navLinks.map((link) => (
                             <Link
                                 key={link.href}
                                 href={link.href}
                                 onClick={() => setIsOpen(false)}
-                                className="text-sm uppercase tracking-[0.2em] font-semibold text-white hover:text-zinc-50 transition-all duration-300"
+                                className={`text-sm font-mono uppercase tracking-wider font-semibold transition-colors flex items-center justify-between py-2 border-b border-white/5 ${
+                                    pathname.startsWith(link.href) ? 'text-amber-400' : 'text-white/80'
+                                }`}
                             >
-                                {link.label}
+                                <span>{link.label}</span>
+                                {link.badge && (
+                                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                        {link.badge}
+                                    </span>
+                                )}
                             </Link>
                         ))}
                         <Link
-                            href="/agenda"
+                            href="/reservar"
                             onClick={() => setIsOpen(false)}
-                            className="glass-btn block w-full py-4 border-[0.5px] border-white/20 border-t-white/40 border-l-white/40 border-b-white/10 border-r-white/10 text-white font-sans text-xs uppercase tracking-[0.2em] font-semibold bg-white/[0.08] backdrop-blur-[10px] transition-all duration-[500ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-[#f5f2eb]/90 hover:text-[#121212] hover:border-[#f5f2eb] hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] rounded-[1px] text-center whitespace-nowrap"
+                            className="mt-2 w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-black font-mono font-bold text-xs uppercase tracking-wider text-center shadow-lg shadow-amber-500/20"
                         >
-                            Agendar Cita
+                            Reservar Salida al Atardecer
                         </Link>
                     </motion.div>
                 )}

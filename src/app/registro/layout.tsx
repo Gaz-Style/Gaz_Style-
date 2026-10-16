@@ -1,11 +1,11 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Registro VIP & Círculo Atelier | Gaz La Guía',
-    description: 'Únete a nuestra comunidad exclusiva. Digitaliza tus medidas y obtén acceso prioritario a nuestro servicio de alta costura y sastrería.',
+    title: 'Registro de Aventureros | Santiago Hiking by Gaz_Style',
+    description: 'Únete a nuestra comunidad de montaña. Obtén acceso prioritario a expediciones, salidas al atardecer y grandes desafíos andinos.',
     openGraph: {
-        title: 'Registro VIP & Círculo Atelier | Gaz La Guía',
-        description: 'Únete a nuestra comunidad exclusiva para acceso prioritario.',
+        title: 'Registro de Aventureros | Santiago Hiking by Gaz_Style',
+        description: 'Únete a la comunidad de Santiago Hiking para acceso prioritario a expediciones de montaña.',
     }
 };
 
