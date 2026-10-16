@@ -70,15 +70,28 @@ export default async function PeakDetailPage({ params }: Props) {
   const weather = await getMountainWeather(peak.latitude, peak.longitude, peak.altitude_msnm);
 
   return (
-    <div className="bg-stone-950 topographic-pattern topographic-contours min-h-screen text-stone-100 font-sans selection:bg-amber-500/30">
+    <div className="relative min-h-screen text-white font-sans selection:bg-amber-500/30 bg-stone-950">
+      {/* ── FONDO OFICIAL DEL CERRO FIJO A PANTALLA COMPLETA ── */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <Image
+          src={peak.cover_image_url}
+          alt={peak.name}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center filter brightness-[0.25] contrast-[1.08]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-stone-950/85 via-stone-950/50 to-stone-950/95 pointer-events-none" />
+      </div>
+
       <Navbar />
 
-      <main className="pt-24 pb-20">
+      <main className="relative z-10 pt-24 pb-20">
         {/* BREADCRUMB & BACK LINK */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-6">
           <Link
             href="/cumbres"
-            className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-white/60 hover:text-amber-400 transition-colors"
+            className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-stone-300 hover:text-amber-400 transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Volver al Catálogo de Cumbres</span>
@@ -86,18 +99,26 @@ export default async function PeakDetailPage({ params }: Props) {
         </div>
 
         {/* HERO DEL CERRO */}
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
-          <div className="relative rounded-3xl overflow-hidden min-h-[360px] sm:min-h-[440px] flex flex-col justify-end p-6 sm:p-10 md:p-12" style={{ backgroundColor: 'rgba(0, 0, 0, 0.35)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.10)' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
+          <div 
+            className="relative rounded-3xl overflow-hidden min-h-[360px] sm:min-h-[440px] flex flex-col justify-end p-6 sm:p-10 md:p-12 transition-all shadow-2xl"
+            style={{ 
+              backgroundColor: 'rgba(0, 0, 0, 0.40)', 
+              backdropFilter: 'blur(20px)', 
+              WebkitBackdropFilter: 'blur(20px)', 
+              border: '1px solid rgba(255, 255, 255, 0.12)' 
+            }}
+          >
             <Image
               src={peak.cover_image_url}
               alt={peak.name}
               fill
               priority
               sizes="100vw"
-              className="object-cover -z-10"
+              className="object-cover -z-10 filter brightness-90"
             />
             {/* Dark gradient overlays */}
-            <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/70 to-transparent -z-10" />
+            <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/60 to-transparent -z-10" />
 
             <div className="max-w-3xl">
               <div className="flex flex-wrap items-center gap-2 mb-3">
@@ -116,15 +137,15 @@ export default async function PeakDetailPage({ params }: Props) {
                 )}
               </div>
 
-              <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight leading-tight mb-4">
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight uppercase leading-tight mb-4">
                 {peak.name}
               </h1>
 
-              <p className="text-sm sm:text-base text-white/80 leading-relaxed mb-4">
+              <p className="text-sm sm:text-base text-stone-200 leading-relaxed font-light mb-4">
                 {peak.summary}
               </p>
 
-              <div className="flex items-center gap-2 text-xs font-mono text-white/60">
+              <div className="flex items-center gap-2 text-xs font-mono text-stone-400">
                 <MapPin className="w-3.5 h-3.5 text-amber-400" />
                 <span>Comunas: {peak.comunas.join(' · ')}</span>
               </div>
@@ -139,79 +160,53 @@ export default async function PeakDetailPage({ params }: Props) {
             <MountainWeatherWidget
               weather={weather}
               locationName={`Cumbre ${peak.name}`}
-              elevationText={`${peak.altitude_msnm} msnm`}
+              elevationText={`${peak.altitude_msnm}m`}
             />
           </div>
 
-          {/* Panorama Visual */}
-          <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/8">
-            <h3 className="text-xs font-mono uppercase tracking-widest text-amber-400 font-bold mb-1">
-              Vista Panorámica en Cumbre
-            </h3>
-            <p className="text-sm text-white/80 leading-relaxed">
-              {peak.panoramic_summary}
-            </p>
-          </div>
-
-          {/* EL SELECTOR INTERACTIVO DE VARIANTES */}
+          {/* Selector Interactivo de Accesos y Variantes */}
           <div>
-            <div className="mb-4">
-              <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-amber-400 font-bold block mb-1">
-                Cartografía & Desglose
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                Accesos y Variantes de Ascenso
-              </h2>
-              <p className="text-xs text-white/60 mt-1">
-                Elige el punto de partida que más te acomode para ver la distancia, estacionamiento y perfil altimétrico.
-              </p>
-            </div>
-
             <PeakVariantSelector peak={peak} />
           </div>
 
-          {/* GARANTÍA Y PILARES SANTIAGO HIKING */}
-          <div className="pt-8 border-t border-white/10">
-            <div className="text-center max-w-xl mx-auto mb-8">
-              <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-amber-400 font-bold block mb-1">
-                Estándar Santiago Hiking
+          {/* BANNER DE CONVERSIÓN A SALIDA GUIADA SANTIAGO HIKING */}
+          <div 
+            className="rounded-3xl p-8 sm:p-12 relative overflow-hidden transition-all shadow-2xl"
+            style={{ 
+              backgroundColor: 'rgba(0, 0, 0, 0.45)', 
+              backdropFilter: 'blur(20px)', 
+              WebkitBackdropFilter: 'blur(20px)', 
+              border: '1px solid rgba(245, 158, 11, 0.25)' 
+            }}
+          >
+            <div className="relative z-10 max-w-2xl">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-mono uppercase tracking-wider font-bold mb-4">
+                <Sparkles className="w-3 h-3 text-amber-400" />
+                Salidas Guiadas con Seguridad
               </span>
-              <h3 className="text-2xl font-black text-white tracking-tight">
-                ¿Por qué subir con nosotros?
+              <h3 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight mb-3">
+                ¿Prefieres subir el {peak.name} con un guía profesional?
               </h3>
-            </div>
+              <p className="text-stone-300 text-sm leading-relaxed font-light mb-6">
+                Te guiamos a ritmo amable con certificación WFR, botiquín de trauma, radios VHF, 
+                café de especialidad en la cima y fotografía profesional de alta definición incluida.
+              </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 text-center">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center mx-auto mb-3">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
-                <h4 className="text-sm font-bold text-white mb-1">Guías WFR Certificados</h4>
-                <p className="text-xs text-white/60">Primeros auxilios avanzados en zonas remotas y cordillera.</p>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 text-center">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center mx-auto mb-3">
-                  <Radio className="w-5 h-5" />
-                </div>
-                <h4 className="text-sm font-bold text-white mb-1">Com. Satelital & VHF</h4>
-                <p className="text-xs text-white/60">Conexión de emergencia continua con base y socorro andino.</p>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 text-center">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center mx-auto mb-3">
-                  <Camera className="w-5 h-5" />
-                </div>
-                <h4 className="text-sm font-bold text-white mb-1">Fotografía Pro Incluida</h4>
-                <p className="text-xs text-white/60">Cámara profesional al atardecer para tus mejores recuerdos.</p>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 text-center">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center mx-auto mb-3">
-                  <HeartHandshake className="w-5 h-5" />
-                </div>
-                <h4 className="text-sm font-bold text-white mb-1">Ritmo Amable & Grupo</h4>
-                <p className="text-xs text-white/60">Nadie se queda atrás. Grupos reducidos y buena vibra.</p>
+              <div className="flex flex-wrap items-center gap-4">
+                <Link
+                  href="/reservar"
+                  className="px-6 py-3.5 rounded-full bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold font-mono text-xs uppercase tracking-wider transition-all shadow-lg shadow-amber-500/25 active:scale-95"
+                >
+                  Ver Próximas Salidas al {peak.name}
+                </Link>
+                <a
+                  href={`https://wa.me/56957958467?text=${encodeURIComponent(`Hola Santiago Hiking! Quisiera consultar por salidas guiadas privadas o grupales al ${peak.name}.`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-6 py-3.5 rounded-full bg-stone-900/90 hover:bg-stone-800 text-white font-mono text-xs font-semibold uppercase tracking-wider border border-white/15 transition-all"
+                >
+                  Coordinar por WhatsApp
+                </a>
               </div>
             </div>
           </div>

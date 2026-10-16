@@ -12,7 +12,7 @@ export default function DesafiosHubPage() {
   const challenges: ChallengeDetail[] = Object.values(challengesData);
 
   return (
-    <main className="bg-stone-950 topographic-pattern topographic-contours min-h-screen text-stone-100 font-sans selection:bg-amber-500/30 flex flex-col">
+    <main className="relative min-h-screen text-white font-sans selection:bg-amber-500/30 bg-stone-950 flex flex-col">
       <Navbar />
 
       <header className="relative pt-32 pb-20 px-6 border-b border-stone-800/80 bg-gradient-to-b from-stone-900 via-stone-950 to-stone-950 overflow-hidden">

@@ -44,34 +44,55 @@ export default async function CumbresPage() {
   const peaks = await getPeaks();
 
   return (
-    <div className="bg-stone-950 topographic-pattern topographic-contours min-h-screen text-stone-100 font-sans selection:bg-amber-500/30">
+    <div className="relative min-h-screen text-white font-sans selection:bg-amber-500/30 bg-stone-950">
+      {/* ── FONDO OFICIAL DE MONTAÑA FIJO (ESTILO OFICIAL SANTIAGO HIKING) ── */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <Image
+          src="/images/wildtrek_sunset.png"
+          alt="Cordillera de los Andes Santiago"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center filter brightness-[0.28] contrast-[1.1]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-stone-950/85 via-stone-950/50 to-stone-950/95 pointer-events-none" />
+      </div>
+
       <Navbar />
 
-      <main className="pt-28 pb-20">
+      <main className="relative z-10 pt-28 pb-20">
         {/* HERO SECTION */}
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-          <div className="relative rounded-3xl overflow-hidden p-8 sm:p-12 md:p-16 border" style={{ backgroundColor: 'rgba(0, 0, 0, 0.35)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.10)' }}>
-            {/* Ambient blur */}
-            <div className="absolute top-0 right-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-[100px] pointer-events-none" />
-
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+          <div 
+            className="rounded-3xl overflow-hidden p-8 sm:p-12 md:p-16 transition-all"
+            style={{ 
+              backgroundColor: 'rgba(0, 0, 0, 0.45)', 
+              backdropFilter: 'blur(20px)', 
+              WebkitBackdropFilter: 'blur(20px)', 
+              border: '1px solid rgba(255, 255, 255, 0.12)' 
+            }}
+          >
             <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono uppercase tracking-widest font-semibold mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-mono uppercase tracking-widest font-semibold mb-6">
                 <Compass className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '10s' }} />
                 <span>Explorador de la Cordillera Central</span>
               </div>
 
-              <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight leading-[1.1] mb-6">
-                Cumbres & Senderos <br className="hidden sm:block" />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500">
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight uppercase leading-[1.05] mb-6">
+                Cumbres & Senderos <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-500">
                   de Santiago de Chile
                 </span>
               </h1>
 
-              <p className="text-sm sm:text-base text-white/70 leading-relaxed max-w-2xl">
-                La guía más completa y moderna de la precordillera urbana. Compara los diferentes <strong className="text-white">accesos vehiculares, estacionamientos y variantes técnicas</strong> de cada cerro para elegir cómo y por dónde subir.
+              <p className="text-stone-300 text-sm sm:text-base md:text-lg leading-relaxed font-light mb-8 max-w-2xl">
+                La guía más completa y moderna de la precordillera urbana. Compara los diferentes 
+                <strong className="text-white font-semibold"> accesos vehiculares, estacionamientos y variantes técnicas</strong> de 
+                cada cerro para elegir cómo y por dónde subir.
               </p>
 
-              <div className="flex flex-wrap items-center gap-6 mt-8 pt-6 border-t border-white/10 text-xs font-mono text-white/50">
+              {/* Stat badges */}
+              <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-stone-400 pt-4 border-t border-white/10">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-400" />
                   <span>5 Cumbres Principales Mapeadas</span>
@@ -89,7 +110,7 @@ export default async function CumbresPage() {
           </div>
         </div>
 
-        {/* COMPONENTE INTERACTIVO DE FILTROS Y TARJETAS */}
+        {/* CATÁLOGO DE CERROS CON FILTRO EN TIEMPO REAL */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <CumbresFilterClient initialPeaks={peaks} />
         </div>

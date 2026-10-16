@@ -55,9 +55,7 @@ export default function CumbresFilterClient({ initialPeaks }: CumbresFilterClien
       {/* BARRA DE BÚSQUEDA Y FILTROS */}
       <div 
         className="p-4 sm:p-6 rounded-2xl border backdrop-blur-xl transition-all"
-        style={{
-          backgroundColor: 'rgba(0, 0, 0, 0.35)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.10)'
-        }}
+        style={{ backgroundColor: 'rgba(0, 0, 0, 0.45)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.12)' }}
       >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
           {/* Input de búsqueda */}
@@ -130,7 +128,7 @@ export default function CumbresFilterClient({ initialPeaks }: CumbresFilterClien
             return (
               <div
                 key={peak.id}
-                className="group relative rounded-3xl overflow-hidden transition-all hover:border-amber-400/50 hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col justify-between" style={{ backgroundColor: 'rgba(0, 0, 0, 0.35)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.10)' }}
+                className="group relative rounded-3xl overflow-hidden transition-all hover:border-amber-400/50 hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col justify-between" style={{ backgroundColor: 'rgba(0, 0, 0, 0.45)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.12)' }}
               >
                 <div>
                   {/* Imagen de Portada con Badges */}

@@ -49,7 +49,7 @@ html {
 
 body {
   background: #ffffff;
-  color: #0f172a;
+  color: #f1f5f9;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -109,7 +109,7 @@ nextjs-portal,
 
 /* Arc'teryx & Roark Functional Minimalism - Pure White Editorial (Alba & Paz) */
 .topographic-pattern {
-  background-color: #faf9f6;
+  background-color: #0c0f12;
   background-image: 
     radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.04) 0%, transparent 60%),
     linear-gradient(rgba(15, 23, 42, 0.035) 1px, transparent 1px),
