@@ -38,7 +38,7 @@ export default function GpxLeadModal({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: fullName || 'Aventurero Anónimo',
+          name: fullName || 'Montañista',
           phone: whatsapp,
           email: email || '',
           source: `descarga_gpx_${peakName}_${routeName}`.toLowerCase().replace(/\s+/g, '_'),
@@ -161,7 +161,7 @@ export default function GpxLeadModal({
 
               <div className="flex items-center gap-2 pt-1 text-[11px] text-white/50">
                 <Shield className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>Cero spam. Te avisaremos cuando organicemos salidas grupales.</span>
+                <span>Datos encriptados bajo protocolo de seguridad y confidencialidad.</span>
               </div>
 
               <button
@@ -174,7 +174,7 @@ export default function GpxLeadModal({
                 ) : (
                   <>
                     <Download className="w-4 h-4" />
-                    <span>Descargar Track GPX Gratis</span>
+                    <span>Descargar Track GPX Verificado</span>
                   </>
                 )}
               </button>

@@ -10,7 +10,7 @@ import {
   Mountain, Users, Sun, Compass
 } from 'lucide-react';
 import { trackLeadGuide } from '@/lib/analytics';
-import AllAdventuresModal from './AllAdventuresModal';
+import GlobalSearchModal from '@/components/GlobalSearchModal';
 
 interface Props {
   lang?: string;
@@ -173,21 +173,21 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
     <>
       {/* ── BOTONES HERO PÍLDORA CON GLASSMORPHISM & TRANSPARENCIA ── */}
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5 w-full max-w-lg mx-auto">
-        {/* Botón 1: Ver todas las aventuras (Despliega Lista de Aventuras por Categoría) */}
+        {/* Botón 1: Ver cumbres y aventuras (Abre catálogo maestro con buscador en vivo) */}
         <button
           type="button"
           onClick={() => setIsAllAdventuresOpen(true)}
           className="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-black px-8 sm:px-9 py-4 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all hover:scale-105 shadow-[0_0_20px_rgba(245,158,11,0.35)] cursor-pointer text-center select-none"
         >
           {lang === 'en'
-            ? 'Explore All Adventures'
+            ? 'Peaks & Adventures'
             : lang === 'fr'
-            ? 'Toutes les Aventures'
+            ? 'Sommets & Aventures'
             : lang === 'pt'
-            ? 'Ver Todas as Aventuras'
+            ? 'Cumes e Aventuras'
             : lang === 'de'
-            ? 'Alle Abenteuer'
-            : 'Ver todas las aventuras'}
+            ? 'Gipfel & Abenteuer'
+            : 'Ver cumbres y aventuras'}
         </button>
 
         {/* Botón 2: Ayúdame a elegir (Diseño y Color Cristal Ahumado Oficial + Lógica del Quiz Modal) */}
@@ -220,11 +220,10 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
         </button>
       </div>
 
-      {/* ── MODAL: CATÁLOGO MAESTRO CON TODAS LAS AVENTURAS EN LISTA POR CATEGORÍA ── */}
-      <AllAdventuresModal
+      {/* ── MODAL MAESTRO: CUMBRES DEL ATLAS & AVENTURAS GUIADAS CON BUSCADOR ── */}
+      <GlobalSearchModal
         isOpen={isAllAdventuresOpen}
         onClose={() => setIsAllAdventuresOpen(false)}
-        routes={allRoutes}
         lang={lang}
       />
 

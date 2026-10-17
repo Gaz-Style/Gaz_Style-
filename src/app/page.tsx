@@ -16,6 +16,7 @@ import SwipeCarousel from "./SwipeCarousel";
 import ScrollToTopButton from "./ScrollToTopButton";
 import ExperienceFilterableGrid from "./ExperienceFilterableGrid";
 import ExperienceShelfSection from "./ExperienceShelfSection";
+import AtlasShowcaseSection from '@/components/AtlasShowcaseSection';
 import Footer from '@/components/Footer';
 import { createClient } from '@supabase/supabase-js';
 import { getDictionary } from '@/lib/i18n';
@@ -104,20 +105,32 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
 
         <div className="relative z-10 max-w-5xl mx-auto text-center mt-6 sm:mt-10">
           {/* 1. Trust & Reviews Badge Superior (Flotante limpio y con buena separación) */}
-          <div className="inline-flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 mb-8 sm:mb-12 text-[11px] sm:text-[13px] font-mono tracking-wider text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.85)]">
-            <div className="flex items-center gap-1.5 bg-black/40 px-3 py-1 rounded-full border border-white/10 backdrop-blur-md">
-              <span className="text-amber-400 font-black text-sm sm:text-base tracking-tight drop-shadow-sm">★★★★★</span>
+          <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-8 sm:mb-12 text-[11px] sm:text-[12px] font-mono tracking-wider text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.85)]">
+            <div className="flex items-center gap-1.5 bg-black/50 px-3 py-1.5 rounded-full border border-white/15 backdrop-blur-md shadow-sm">
+              <span className="text-amber-400 font-black text-sm tracking-tight drop-shadow-sm">★★★★★</span>
               <span className="font-bold text-white">4.9/5 Google</span>
             </div>
-            <div className="flex items-center gap-1.5 text-white/95 bg-black/40 px-3 py-1 rounded-full border border-white/10 backdrop-blur-md">
-              <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-              <span>{dict.hero.trust_wfr}</span>
+            <div className="flex items-center gap-2 text-white/95 bg-black/50 px-3 py-1.5 rounded-full border border-white/15 backdrop-blur-md shadow-sm">
+              <Image 
+                src="/logo-sernatur.png" 
+                alt="Sernatur Servicio Turístico Registrado" 
+                width={18} 
+                height={18} 
+                className="w-4 h-4 object-contain rounded-full bg-white p-[1px]" 
+              />
+              <span className="font-semibold">Sernatur Registrado</span>
             </div>
-            <div className="flex items-center gap-1.5 text-white/95 bg-black/40 px-3 py-1 rounded-full border border-white/10 backdrop-blur-md">
-              <Award className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Sernatur Registrado</span>
+            <div className="flex items-center gap-2 text-white/95 bg-black/50 px-3 py-1.5 rounded-full border border-white/15 backdrop-blur-md shadow-sm">
+              <Image 
+                src="/logo-wfr-graupel.webp" 
+                alt="Certificación Primeros Auxilios WFR Graupel" 
+                width={18} 
+                height={18} 
+                className="w-4 h-4 object-contain rounded-full" 
+              />
+              <span className="font-semibold">Certificación WFR</span>
             </div>
-            <div className="hidden md:flex items-center gap-1.5 text-white/95 bg-black/40 px-3 py-1 rounded-full border border-white/10 backdrop-blur-md">
+            <div className="hidden md:flex items-center gap-1.5 text-white/95 bg-black/50 px-3 py-1.5 rounded-full border border-white/15 backdrop-blur-md shadow-sm">
               <Compass className="w-3.5 h-3.5 text-amber-400" />
               <span>{dict.hero.trust_sos}</span>
             </div>
@@ -191,7 +204,10 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
         lang={lang}
       />
 
-            {/* 3. SISTEMA DE NIVELES FUNCIONAL (Limpio, Técnico & Sereno) */}
+            {/* ── SECCIÓN: ATLAS ANDINO DE SANTIAGO (47 CUMBRES OFICIALES) ── */}
+      <AtlasShowcaseSection />
+
+      {/* 3. SISTEMA DE NIVELES FUNCIONAL (Limpio, Técnico & Sereno) */}
       <section id="niveles" className="py-24 bg-transparent relative z-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-12">

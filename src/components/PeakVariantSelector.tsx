@@ -321,7 +321,7 @@ export default function PeakVariantSelector({ peak }: PeakVariantSelectorProps) 
                 ¿Prefieres subir acompañado y con fotos pro?
               </h3>
               <p className="text-xs text-white/70 max-w-xl mt-1 leading-relaxed">
-                Subimos esta ruta al atardecer en grupos reducidos. Incluye guía certificado WFR, linternas frontales Petzl profesionales, botiquín de montaña y sesión fotográfica profesional en la cumbre.
+                Subimos esta ruta al atardecer en grupos reducidos. Incluye liderazgo de montaña, linternas frontales profesionales, botiquín de expedición y registro fotográfico en la cumbre.
               </p>
             </div>
 

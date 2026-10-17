@@ -62,7 +62,7 @@ export const challengesData: Record<string, ChallengeDetail> = {
     badge: 'SERIE ALBA · COTA 1.638M',
     number: '01',
     title: 'Desafío 5:00 AM',
-    subtitle: 'Ascenso nocturno al Manquehuito para conquistar la cumbre al romper el alba con café de especialidad caliente sobre el mar de nubes.',
+    subtitle: 'Ascenso nocturno al Manquehuito para conquistar la cumbre al romper el alba sobre el mar de nubes de Santiago.',
     tagline: 'Sube antes de que despierte la ciudad. Vuelve a tu día transformado.',
     coverImage: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=85',
     gallery: [
@@ -72,7 +72,7 @@ export const challengesData: Record<string, ChallengeDetail> = {
       },
       {
         url: 'https://images.unsplash.com/photo-1517824806704-9040b037703b?auto=format&fit=crop&w=1000&q=85',
-        caption: 'Café de especialidad recién filtrado en la cumbre'
+        caption: 'Amanecer dorado en la cruz cumbrera'
       },
       {
         url: 'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=1000&q=85',
@@ -92,7 +92,7 @@ export const challengesData: Record<string, ChallengeDetail> = {
     descripcion: {
       parrafo1: 'El Desafío 5:00 AM es la experiencia insignia de desconexión temprana en Santiago. Mientras la ciudad duerme en silencio, nos reunimos al pie de la montaña con linternas frontales encendidas para iniciar una caminata pausada, rítmica y consciente bajo el cielo estrellado.',
       parrafo2: 'Subir de noche agudiza los sentidos: el sonido del viento andino en los matorrales esclerófilos, la vista de la cuenca iluminada como un mapa de luces titilantes y el aire frío de la madrugada que despeja la mente de toda carga laboral.',
-      parrafo3: 'La cumbre nos recibe justo cuando el horizonte cordillerano comienza a teñirse de tonos ámbar, violeta y dorado. Allí, en la cruz del Manquehuito, preparamos café de especialidad caliente servido en taza térmica, celebramos la cumbre y descendemos antes de las 9:00 AM para que comiences tu día con la energía de la montaña.'
+      parrafo3: 'La cumbre nos recibe justo cuando el horizonte cordillerano comienza a teñirse de tonos ámbar, violeta y dorado. Allí, en la cruz del Manquehuito, contemplamos el amanecer, celebramos la cumbre y descendemos antes de las 9:00 AM para que comiences tu día con la energía de la montaña.'
     },
     dondeEsta: {
       sector: 'Sector El Golf Manquehue / Los Trapenses, Comuna de Lo Barnechea.',
@@ -106,8 +106,8 @@ export const challengesData: Record<string, ChallengeDetail> = {
         descripcion: 'Durante gran parte del año, la vaguada costera cubre Santiago de una alfombra blanca de nubes sobre la cual asoman únicamente las cumbres andinas.'
       },
       {
-        titulo: 'Café de Especialidad en Cumbre',
-        descripcion: 'Filtramos café de grano recién molido a 1.600 metros de altura para disfrutar con calma mientras el sol ilumina la cordillera.'
+        titulo: 'Celebración en Cumbre',
+        descripcion: 'Contemplamos los primeros rayos de sol sobre la cordillera a 1.600 metros de altura.'
       },
       {
         titulo: 'Vista 360° de la Cuenca Andina',
@@ -136,8 +136,8 @@ export const challengesData: Record<string, ChallengeDetail> = {
       },
       {
         hora: '07:00 AM',
-        titulo: 'Ritual de Cumbre & Café Caliente',
-        descripcion: 'Degustación de café de especialidad, ración de marcha energética y sesión de fotos profesionales.'
+        titulo: 'Ritual de Cumbre al Amanecer',
+        descripcion: 'Ración de marcha energética, hidratación y sesión de fotos profesionales.'
       },
       {
         hora: '07:45 AM',
@@ -152,8 +152,8 @@ export const challengesData: Record<string, ChallengeDetail> = {
     ],
     incluye: [
       'Guía profesional certificado Wilderness First Responder (WFR)',
-      'Café de especialidad en cumbre y snack de marcha premium',
-      'Bastones de trekking técnicos de aluminio',
+      'Ración de marcha energética premium',
+      'Equipamiento técnico de apoyo para la marcha',
       'Linterna frontal de alta potencia disponible para quien la requiera',
       'Botiquín de trauma y primeros auxilios avanzado en ruta',
       'Comunicación satelital y radios VHF de montaña',
@@ -176,7 +176,7 @@ export const challengesData: Record<string, ChallengeDetail> = {
     precioCLP: 45000,
     precioText: '$45.000 CLP',
     precioUSD: 'US$ 50',
-    precioBajada: 'Por persona · Guía WFR + café de cumbre + fotos profesionales incluidos',
+    precioBajada: 'Por persona · Guía profesional + fotos en alta resolución incluidas',
     fechasDisponibles: [
       {
         id: '5am-oct24',
@@ -299,7 +299,7 @@ export const challengesData: Record<string, ChallengeDetail> = {
       'Monitoreo constante de hidratación, pulsaciones y bienestar en ruta',
       'Ración de marcha técnica especializada (electrolitos, frutos secos, barritas bio)',
       'Apoyo logístico y de enlace entre cumbres',
-      'Bastones de trekking telescópicos',
+      'Equipamiento de apoyo para la marcha',
       'Botiquín de trauma y radios de alta potencia',
       'Fotografía editorial del reto en alta resolución',
       'Insignia / Certificado de cumplimiento de La Triple Corona'
@@ -312,7 +312,7 @@ export const challengesData: Record<string, ChallengeDetail> = {
     equipoRequerido: [
       'Botas o zapatillas de trail running con excelente tracción',
       'Mochila técnica de 20-30L con sistema de hidratación de mínimo 3 litros',
-      'Bastones de trekking (imprescindibles para los descensos)',
+      'Equipamiento de apoyo para los descensos',
       'Cortaviento liviano, polar y camiseta de cambio',
       'Gafas de sol con filtro UV categoría 3 o 4 y gorro legionaria/visera'
     ],
@@ -440,7 +440,7 @@ export const challengesData: Record<string, ChallengeDetail> = {
       'Dispositivo satelital Garmin inReach con SOS activo y rastreo en tiempo real',
       'Box lunch de alta energía adaptado a requerimientos (vegano/vegetariano disponible)',
       'Tickets y permisos de acceso a parques cordillera',
-      'Bastones de trekking técnicos',
+      'Equipamiento técnico de apoyo',
       'Botiquín de trauma completo y oxímetro de pulso para control de altitud',
       'Registro fotográfico profesional de expedición',
       'Seguro de rescate y accidentes en montaña'
@@ -554,7 +554,7 @@ export const challengesData: Record<string, ChallengeDetail> = {
       {
         hora: 'Semana 2',
         titulo: 'Nivel 2: Cerro Manquehuito (1.638m)',
-        descripcion: 'Desafío matutino, café de especialidad y aprendizaje de capas de vestimenta.'
+        descripcion: 'Desafío matutino y aprendizaje de técnica de montaña.'
       },
       {
         hora: 'Semana 3',
@@ -581,9 +581,9 @@ export const challengesData: Record<string, ChallengeDetail> = {
       '6 salidas guiadas por Gaz (Guía profesional certificado WFR)',
       'Pasaporte físico oficial "Desbloqueando Santiago" para timbrar cada cumbre',
       'Plan semanal de preparación física complementaria para hacer en casa',
-      'Bastones de trekking técnicos para las salidas',
+      'Equipamiento de montaña para las salidas',
       'Talleres prácticos en terreno: orientación, armado de mochila, seguridad WFR y no deje rastro',
-      'Snacks de marcha y café de especialidad en cada salida',
+      'Snacks y ración de marcha en cada salida',
       'Registro fotográfico profesional de cada jornada',
       'Seguro de accidentes durante todas las salidas del programa'
     ],

@@ -36,11 +36,40 @@ export default function Footer() {
             <p className="text-white/50 text-xs font-sans font-light leading-relaxed">
               Expediciones en los Andes chilenos, seguridad en montaña y cumbres sobre el valle de Santiago. Guiado por Gaz.
             </p>
-            <p className="text-[11px] text-white/30 font-mono">
-              CORDILLERA DE LOS ANDES · SANTIAGO DE CHILE <br />
-              LAT -33.35° S · LON -70.51° W <br />
-              <span className="text-amber-400/80 font-bold">PRESTADOR TURÍSTICO REGISTRADO SERNATUR</span> · CERTIFICACIÓN WFR / SOS
-            </p>
+            <div className="space-y-3">
+              <p className="text-[11px] text-white/30 font-mono">
+                CORDILLERA DE LOS ANDES · SANTIAGO DE CHILE <br />
+                LAT -33.35° S · LON -70.51° W
+              </p>
+              <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                <div className="inline-flex items-center gap-2 bg-white/[0.04] border border-white/10 rounded-xl px-2.5 py-1.5 backdrop-blur-sm">
+                  <Image 
+                    src="/logo-sernatur.png" 
+                    alt="Sernatur Servicio Turístico Registrado" 
+                    width={22} 
+                    height={22} 
+                    className="w-5 h-5 object-contain rounded-full bg-white p-[1px]" 
+                  />
+                  <div className="text-[10px] font-mono leading-tight">
+                    <span className="text-white font-bold block">SERNATUR</span>
+                    <span className="text-white/40">Registro Oficial</span>
+                  </div>
+                </div>
+                <div className="inline-flex items-center gap-2 bg-white/[0.04] border border-white/10 rounded-xl px-2.5 py-1.5 backdrop-blur-sm">
+                  <Image 
+                    src="/logo-wfr-graupel.webp" 
+                    alt="Certificación WFR Graupel" 
+                    width={22} 
+                    height={22} 
+                    className="w-5 h-5 object-contain rounded-full" 
+                  />
+                  <div className="text-[10px] font-mono leading-tight">
+                    <span className="text-white font-bold block">WFR / WFA</span>
+                    <span className="text-white/40">Primeros Auxilios</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Columna Cumbres & Rutas */}

@@ -28,7 +28,7 @@ const ROUTES = {
     subtitle:   'Cumbre al romper el alba',
     difficulty: 'Nivel 2 · Cardio & Desconexión',
     meta:       '5 hrs · Manquehuito · Ascenso nocturno',
-    desc:       'Salida con linternas frontales, cumbre al amanecer y café de especialidad sobre el mar de nubes de Santiago. Bajas antes de que despierte la ciudad.',
+    desc:       'Salida con linternas frontales, cumbre al amanecer sobre el mar de nubes de Santiago. Bajas antes de que despierte la ciudad.',
     image:      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=85',
     color:      'from-indigo-900/80',
   },

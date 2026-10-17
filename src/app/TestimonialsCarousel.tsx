@@ -157,7 +157,7 @@ export default function TestimonialsCarousel() {
         <div className="flex flex-wrap items-center gap-4 text-[11px]">
           <span className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-white/80">★ 4.9 / 5.0 Google Reviews</span>
           <span className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-emerald-300">✓ Registro Sernatur Turismo Aventura</span>
-          <span className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-amber-300">🛡️ Guías Certificados WFR</span>
+          <span className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-amber-300">🏔️ Expediciones de Montaña</span>
         </div>
       </div>
     </>

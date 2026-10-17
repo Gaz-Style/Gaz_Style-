@@ -660,11 +660,23 @@ export default function BookingClient({
                                                 <Lock className="w-3.5 h-3.5 text-emerald-400" /> Pago seguro cifrado SSL
                                             </span>
                                             <span>·</span>
-                                            <span>Mercado Pago · Webpay (Transbank) · Transferencia</span>
+                                            <span>Mercado Pago · Webpay · Transferencia</span>
                                             <span>·</span>
                                             <span className="flex items-center gap-1.5">
                                                 <ShieldCheck className="w-3.5 h-3.5 text-amber-400" /> Garantía de reprogramación
                                             </span>
+                                        </div>
+
+                                        <div className="flex items-center justify-center gap-4 pt-3 border-t border-white/5">
+                                            <div className="flex items-center gap-1.5 text-[10px] font-mono text-white/50">
+                                                <Image src="/logo-sernatur.png" alt="Sernatur" width={16} height={16} className="w-3.5 h-3.5 object-contain rounded-full bg-white p-[0.5px]" />
+                                                <span>Prestador SERNATUR</span>
+                                            </div>
+                                            <span className="text-white/20">|</span>
+                                            <div className="flex items-center gap-1.5 text-[10px] font-mono text-white/50">
+                                                <Image src="/logo-wfr-graupel.webp" alt="WFR" width={16} height={16} className="w-3.5 h-3.5 object-contain rounded-full" />
+                                                <span>Primeros Auxilios WFR</span>
+                                            </div>
                                         </div>
                                     </div>
 

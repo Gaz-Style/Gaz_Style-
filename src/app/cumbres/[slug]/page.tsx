@@ -183,7 +183,7 @@ export default async function PeakDetailPage({ params }: Props) {
               </h3>
               <p className="text-stone-300 text-sm leading-relaxed font-light mb-6">
                 Te guiamos a ritmo amable con certificación WFR, botiquín de trauma, radios VHF, 
-                café de especialidad en la cima y fotografía profesional de alta definición incluida.
+                fotografía profesional de alta definición incluida.
               </p>
 
               <div className="flex flex-wrap items-center gap-4">

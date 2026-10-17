@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import {
-  BarChart3, Users, Map, CalendarDays, TrendingUp, TrendingDown,
+  BarChart3, Users, Map, CalendarDays, TrendingUp, TrendingDown, Mountain,
   ArrowRight, Package, Clock, CheckCircle2
 } from 'lucide-react';
 
@@ -130,6 +130,7 @@ export default function DashboardClient({ data }: { data: any }) {
           <h2 className="text-xl font-semibold text-white mb-5">Acceso Rápido</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
+              { label: 'Atlas Andino (47 Cumbres)', href: '/admin/atlas', icon: Mountain },
               { label: 'Nueva Ruta', href: '/admin/creador-rutas', icon: Map },
               { label: 'Registrar Aventurero', href: '/admin/registro-aventurero', icon: Users },
               { label: 'Agendar Salida', href: '/admin/calendario', icon: CalendarDays },

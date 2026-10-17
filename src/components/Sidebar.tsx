@@ -59,6 +59,7 @@ export const sidebarSections = [
         title: 'EXPERIENCIAS & CATÁLOGO',
         items: [
             { name: 'Creador de Experiencias', href: '/admin/creador-rutas', icon: Mountain },
+            { name: 'Catálogo de Cerros (47 Cumbres)', href: '/admin/cerros', icon: Compass },
         ]
     },
     {

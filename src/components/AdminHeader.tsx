@@ -19,6 +19,7 @@ const moduleNames: Record<string, string> = {
   '/admin/crm': 'Aventureros & Clienteling',
   '/admin/agenda': 'Agenda de Expediciones',
   '/admin/catalog': 'Rutas y Servicios',
+  '/admin/atlas': 'Atlas Andino & Cumbres',
   '/admin/inventory': 'Equipamiento & Inventario',
   '/admin/finance': 'Finanzas Operativas',
   '/admin/settings': 'Configuraciones',

@@ -39,7 +39,7 @@ A diferencia de los operadores tradicionales de montaña técnica o excursiones 
 
 1. **Sunset Treks (Atardecer en Manquehuito):**
    - **Ruta:** Cerro Manquehuito (1.304 msnm).
-   - **Formato:** Salida vespertina para contemplar la puesta de sol sobre el valle de Santiago con linternas frontales y café en cumbre.
+   - **Formato:** Salida vespertina para contemplar la puesta de sol sobre el valle de Santiago con linternas frontales.
    - **Dificultad:** Media - Apto para principiantes activos.
    - **Precio Base:** Desde $25.000 CLP por persona.
    - **Ruta en web:** /#rutas
@@ -68,7 +68,7 @@ A diferencia de los operadores tradicionales de montaña técnica o excursiones 
 - Guía certificado WFR (Primeros Auxilios en Áreas Remotas).
 - Pack de fotografías y videos profesionales en alta resolución.
 - Bastones de trekking disponibles a solicitud.
-- Café de especialidad o snack de cumbre.
+- Ración de marcha energética.
 - Gestión de contingencias y botiquín completo.
 - Descuento exclusivo en el restaurante aliado de Lo Barnechea.
 

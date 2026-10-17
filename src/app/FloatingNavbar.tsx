@@ -3,9 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Search } from 'lucide-react';
 import LanguageSwitcher from './LanguageSwitcher';
 import { getDictionary } from '@/lib/i18n';
+import GlobalSearchModal from '@/components/GlobalSearchModal';
 
 interface Props {
   currentLang: string;
@@ -13,6 +14,7 @@ interface Props {
 
 export default function FloatingNavbar({ currentLang }: Props) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
 
@@ -106,8 +108,28 @@ export default function FloatingNavbar({ currentLang }: Props) {
             ))}
           </nav>
 
-          {/* Selector de Idioma & Botón Móvil */}
+          {/* Acciones: Buscador, Selector de Idioma & Menú Móvil */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Buscador Desktop (Cápsula elegante con tecla rápida ⌘K) */}
+            <button
+              onClick={() => setSearchModalOpen(true)}
+              className="hidden lg:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-stone-300 hover:text-white transition-all text-xs group"
+              aria-label="Buscar cumbres o rutas"
+            >
+              <Search className="w-3.5 h-3.5 text-amber-400 group-hover:scale-110 transition-transform" />
+              <span className="font-medium text-stone-300">Buscar...</span>
+              <kbd className="font-mono text-[9px] bg-white/10 px-1.5 py-0.5 rounded text-stone-400 border border-white/10">⌘K</kbd>
+            </button>
+
+            {/* Buscador Móvil / Tablet (Ícono Lupa al estilo Much Better Adventures) */}
+            <button
+              onClick={() => setSearchModalOpen(true)}
+              className="lg:hidden p-2 rounded-xl text-stone-200 hover:text-white hover:bg-white/10 transition-colors"
+              aria-label="Buscar cumbres o rutas"
+            >
+              <Search className="w-5 h-5 text-amber-400" />
+            </button>
+
             <LanguageSwitcher currentLang={currentLang} />
             
             {/* Botón Hamburger Móvil */}
@@ -132,6 +154,18 @@ export default function FloatingNavbar({ currentLang }: Props) {
               border: '1px solid rgba(255, 255, 255, 0.1)',
             }}
           >
+            {/* Acceso directo a búsqueda dentro del menú móvil */}
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setSearchModalOpen(true);
+              }}
+              className="py-2.5 px-3 rounded-lg text-xs uppercase tracking-[0.2em] font-bold text-amber-400 hover:bg-white/10 transition-colors flex items-center gap-2 text-left"
+            >
+              <Search className="w-4 h-4 text-amber-400" />
+              <span>Buscar Cumbres & Rutas</span>
+            </button>
+
             {navLinks.map((link) => (
               <a
                 key={link.href}
@@ -146,6 +180,13 @@ export default function FloatingNavbar({ currentLang }: Props) {
         )}
 
       </div>
+
+      {/* Modal Buscador Instantáneo Global */}
+      <GlobalSearchModal
+        isOpen={searchModalOpen}
+        onClose={() => setSearchModalOpen(false)}
+        lang={currentLang}
+      />
     </header>
   );
 }

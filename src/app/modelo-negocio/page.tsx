@@ -15,7 +15,7 @@ const DEFAULT_CANVAS_DATA = {
   activities: [
     "Operación de logística 'Door-to-Mountain' y arriendo de equipo.",
     "Desarrollo de ecosistema Web e-commerce con reservas de 'Fricción Cero'.",
-    "Guiado premium WFR enfocado en desconexión real, bienestar y educación ambiental."
+    "Guiado de montaña enfocado en desconexión real, cumbres y bienestar."
   ],
   resources: [
     "<strong>Identidad de Marca Gaz_Style:</strong> Foco en wellness, credibilidad y tracción orgánica.",
@@ -35,7 +35,7 @@ const DEFAULT_CANVAS_DATA = {
   ],
   segmentsTarget: [
     "<strong>Sunset Treks:</strong> Jóvenes profesionales que buscan recarga mental rápida (After Office).",
-    "<strong>Full Day Escapades:</strong> Personas que buscan wellness de fin de semana con logística resuelta.",
+    "<strong>Full Day Escapades:</strong> Personas que buscan wellness de fin de semana premium con experiencia integral de cumbre.",
     "<strong>VIP Hikes:</strong> Mercado corporativo B2B (Team Building) y turistas internacionales."
   ],
   segmentsScale: "Crecimiento del canal B2B (Empresas) y escalabilidad territorial a otras montañas de Chile.",
@@ -556,7 +556,7 @@ export default function ModeloNegocioPage() {
                 <span className="bg-amber-500 text-slate-950 font-extrabold px-2 py-0.5 rounded text-[10px] uppercase">Paso 3</span>
                 <h4 className="font-bold text-white mt-2 text-sm">Experiencia Gastronómica Local</h4>
                 <p className="text-slate-300 mt-1">
-                  Cierre de la jornada en el restaurante o café aliado de Lo Barnechea. Canalización directa de gasto hacia el
+                  Cierre de la jornada en restaurante local aliado de Lo Barnechea. Canalización directa de gasto hacia el
                   comercio de la comuna.
                 </p>
               </div>

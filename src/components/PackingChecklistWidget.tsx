@@ -113,42 +113,43 @@ export default function PackingChecklistWidget({ customGear }: { customGear?: st
         Marca los elementos conforme los guardes en tu mochila. Nuestros guías revisarán el equipo esencial en el punto de encuentro antes de comenzar la marcha.
       </p>
 
-      <div className="space-y-3">
+      <div className="divide-y divide-white/10">
         {DEFAULT_GEAR.map((item) => {
           const isDone = Boolean(checked[item.id]);
           return (
             <div
               key={item.id}
               onClick={() => toggle(item.id)}
-              className={`p-4 rounded-2xl flex items-start gap-3.5 cursor-pointer select-none transition-all duration-200 border ${
-                isDone
-                  ? 'bg-emerald-500/10 border-emerald-500/30 text-white'
-                  : 'bg-white/5 border-white/8 hover:bg-white/10 text-white/90'
-              }`}
+              className="py-3.5 flex items-start gap-3.5 cursor-pointer select-none transition-colors group hover:bg-white/[0.02] -mx-2 px-2 rounded-xl"
             >
+              {/* Casilla de relleno / Checkbox interactivo */}
               <div className="pt-0.5 shrink-0">
-                {isDone ? (
-                  <CheckSquare className="w-5 h-5 text-emerald-400" />
-                ) : (
-                  <Square className="w-5 h-5 text-white/40" />
-                )}
+                <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${
+                  isDone 
+                    ? 'bg-amber-500 border-amber-400 text-stone-950 shadow-[0_0_12px_rgba(245,158,11,0.4)]' 
+                    : 'border-white/30 bg-black/40 group-hover:border-amber-400/70'
+                }`}>
+                  {isDone && <CheckSquare className="w-4 h-4 text-stone-950 stroke-[3]" />}
+                </div>
               </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className={`text-sm font-bold uppercase tracking-tight ${isDone ? 'line-through text-white/50' : 'text-white'}`}>
+
+              {/* Información directa sin tarjeta */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-baseline justify-between gap-2 flex-wrap">
+                  <span className={`text-xs sm:text-sm font-bold uppercase tracking-tight ${
+                    isDone ? 'line-through text-white/40' : 'text-white'
+                  }`}>
                     {item.name}
                   </span>
-                  {item.required ? (
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                      Obligatorio
-                    </span>
-                  ) : (
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-white/60">
-                      Recomendado
-                    </span>
-                  )}
+                  <span className={`text-[9px] font-mono uppercase tracking-wider ${
+                    item.required ? 'text-amber-400/90 font-bold' : 'text-white/40'
+                  }`}>
+                    {item.required ? 'Obligatorio' : 'Recomendado'}
+                  </span>
                 </div>
-                <p className="text-xs text-white/60 font-light mt-1 leading-relaxed">
+                <p className={`text-[11px] sm:text-xs font-light mt-0.5 leading-relaxed ${
+                  isDone ? 'text-white/30' : 'text-white/65'
+                }`}>
                   {item.description}
                 </p>
               </div>

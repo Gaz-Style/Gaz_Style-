@@ -1071,7 +1071,7 @@ export default function RoutesClient({
                         name="description"
                         rows={2}
                         defaultValue={editingRoute?.description || ''}
-                        placeholder="Ascenso nocturno al Manquehuito para conquistar la cumbre al romper el alba con café de especialidad..."
+                        placeholder="Ascenso nocturno al Manquehuito para conquistar la cumbre al romper el alba con vistas panorámicas sobre los Andes..."
                         className="w-full bg-stone-950 border border-stone-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-400 transition-colors resize-none"
                       />
                     </div>
@@ -1258,7 +1258,7 @@ export default function RoutesClient({
                         name="itinerary"
                         rows={4}
                         defaultValue={editingRoute?.itinerary?.map((i:any)=>i.title).join('\n') || ''}
-                        placeholder="05:00 AM Punto de Encuentro&#10;05:20 AM Inicio del Ascenso&#10;06:40 AM Cumbre & Café Caliente&#10;08:45 AM Cierre de Jornada"
+                        placeholder="05:00 AM Punto de Encuentro&#10;05:20 AM Inicio del Ascenso&#10;06:40 AM Cumbre y Amanecer sobre los Andes&#10;08:45 AM Cierre de Jornada"
                         className="w-full bg-stone-950 border border-stone-800 rounded-lg px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-amber-400 transition-colors resize-none"
                       />
                     </div>
@@ -1270,7 +1270,7 @@ export default function RoutesClient({
                           name="included"
                           rows={4}
                           defaultValue={editingRoute?.included?.join('\n') || ''}
-                          placeholder="Guía certificado WFR&#10;Café de especialidad en cumbre&#10;Bastones de trekking técnicos&#10;Seguro de accidentes"
+                          placeholder="Liderazgo de cordada&#10;Registro fotográfico en cumbre&#10;Equipamiento de apoyo de montaña&#10;Seguro de expedición"
                           className="w-full bg-stone-950 border border-stone-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-400 transition-colors resize-none"
                         />
                       </div>

@@ -100,23 +100,23 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
 
     const included = isExpeditionPass ? [
         'Pick-up y Drop-off privado en tu hotel o domicilio en Santiago (SUV / 4x4)',
-        'Guía de montaña profesional bilingüe certificado WFR dedicado a tu ritmo',
+        'Liderazgo de montaña bilingüe dedicado al ritmo de tu cordada',
         'Registro audiovisual cinematográfico: Video Reel vertical 4K editado para tus redes',
-        'Box lunch ancestral gourmet + frutos secos andinos y café de cumbre',
+        'Box lunch ancestral gourmet + ración de marcha energética',
         'Bebida helada de cortesía al descender de la montaña',
-        'Bastones de trekking de préstamo + botiquín WAFA',
+        'Equipamiento de apoyo de montaña + botiquín de expedición',
         'Comunicación satelital Garmin InReach SOS activa'
     ] : (isHighMountain ? [
         'Arrieros y mulas de carga para transporte de equipo pesado a campamento base',
         'Campamento base montado con carpas 4 estaciones resistentes al viento',
-        'Guías de alta montaña certificados WFR con protocolo estricto de aclimatación',
+        'Liderazgo de alta montaña con protocolo estricto de aclimatación',
         'Monitoreo diario de oximetría (SpO2) y balón de oxígeno medicinal de emergencia',
         'Transporte 4x4 Santiago - Cordillera ida y vuelta',
         'Comunicación satelital Garmin SOS y radios VHF',
         'Todas las raciones de marcha y comidas calientes de campamento'
     ] : (route.included?.length > 0 ? route.included : [
         'Expedition Pass Digital con coordenadas GPS y voucher oficial',
-        'Guía profesional de montaña WFR certificado',
+        'Liderazgo profesional de cordada',
         'Fotografía profesional en ruta y cumbre',
         'Botiquín de primeros auxilios de alta montaña',
         'Radios VHF y comunicación satelital Garmin SOS',
@@ -320,6 +320,8 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                 maxAltitude={route.max_altitude || '1.638m'}
                                 elevationGain={elevation}
                                 distance={route.distance || '6 km'}
+                                difficulty={(route.difficulty || 'Moderada').replace(/_/g, " ").trim()}
+                                routeType={route.route_type === 'travesia' ? 'point_to_point' : 'out_and_back'}
                                 stravaUrl={route.strava_url}
                                 gpxTrackUrl={route.gpx_track_url}
                             />
@@ -439,7 +441,7 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                         </p>
                                         <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 pt-2 text-xs font-mono text-white/50">
                                             <span className="flex items-center gap-1.5">
-                                                <ShieldCheck className="w-3.5 h-3.5 text-amber-400" /> Certificación WFR
+                                                <ShieldCheck className="w-3.5 h-3.5 text-amber-400" /> Protocolo de Seguridad
                                             </span>
                                             <span className="flex items-center gap-1.5">
                                                 <HeartPulse className="w-3.5 h-3.5 text-emerald-400" /> Protocolo Cardioprotegido
@@ -481,7 +483,7 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                             <div className="flex flex-wrap gap-4 pt-1 text-xs font-mono text-white/60">
                                                 <span className="flex items-center gap-1.5"><Car className="w-3.5 h-3.5 text-amber-400" /> Pick-up Puerta a Puerta</span>
                                                 <span className="flex items-center gap-1.5"><Video className="w-3.5 h-3.5 text-amber-400" /> Reel 4K de Cumbre</span>
-                                                <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Guía WFR Exclusivo</span>
+                                                <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Guía y Liderazgo Exclusivo</span>
                                             </div>
                                         </div>
 
@@ -534,7 +536,7 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                             <span className="text-[11px] text-white/60">Edición profesional incluida</span>
                                         </div>
                                         <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex flex-col gap-1">
-                                            <span className="text-amber-400 font-bold flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5" /> WFR / SOS</span>
+                                            <span className="text-amber-400 font-bold flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5" /> Seguridad & SOS</span>
                                             <span className="text-[11px] text-white/60">Garmin InReach satelital</span>
                                         </div>
                                         <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex flex-col gap-1">
@@ -628,7 +630,7 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                                 </span>
                                             </div>
                                             <span className="text-[10px] font-mono text-emerald-400 block mt-1">
-                                                Garantía de tarifa oficial · Guías UIAGM/WFR
+                                                Garantía de tarifa oficial · Liderazgo de Montaña
                                             </span>
                                         </div>
                                     ) : (
@@ -690,7 +692,7 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
 
                                 <div className="pt-4 border-t border-white/10 space-y-2 text-[11px] font-mono text-white/40">
                                     <p className="flex items-center gap-2">
-                                        <ShieldCheck className="w-3.5 h-3.5 text-amber-400" /> Guiado certificado WFR
+                                        <ShieldCheck className="w-3.5 h-3.5 text-amber-400" /> Liderazgo de cordada profesional
                                     </p>
                                     <p className="flex items-center gap-2">
                                         <Ticket className="w-3.5 h-3.5 text-amber-400" /> Expedition Pass digital inmediato

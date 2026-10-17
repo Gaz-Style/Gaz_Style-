@@ -11,7 +11,7 @@ Identidad de la marca:
 
 Catálogo de Experiencias:
 1. Sunset Treks (Cerro Manquehuito):
-   - Atardecer sobre Santiago, descenso nocturno con linternas frontales y café en cumbre.
+   - Atardecer sobre Santiago, descenso nocturno con linternas frontales.
    - Nivel: Medio-Iniciación (apto para principiantes activos).
    - Precio: Desde $25.000 CLP.
 2. Networking Manquehuito:
