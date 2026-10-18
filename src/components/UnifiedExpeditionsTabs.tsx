@@ -72,11 +72,11 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
 
         {/* ── SELECTOR DE PESTAÑAS EN LÍNEA ESTILO MUCH BETTER ADVENTURES (Directo a las tarjetas) ── */}
         <div className="w-full border-b border-white/10 mb-6 sm:mb-8">
-          <div className="flex items-center justify-start sm:justify-center gap-5 sm:gap-8 overflow-x-auto no-scrollbar whitespace-nowrap px-4 sm:px-6 pb-2 scroll-smooth">
+          <div className="flex items-center justify-start sm:justify-center gap-6 sm:gap-10 overflow-x-auto no-scrollbar whitespace-nowrap px-4 sm:px-6 pb-2.5 scroll-smooth">
             <button
               type="button"
               onClick={() => setActiveTab('trekking')}
-              className={`relative pb-2.5 text-xs sm:text-sm font-mono font-bold uppercase tracking-wider transition-all select-none cursor-pointer shrink-0 ${
+              className={`relative pb-2.5 text-sm sm:text-base md:text-lg font-mono font-bold uppercase tracking-wider transition-all select-none cursor-pointer shrink-0 ${
                 activeTab === 'trekking'
                   ? 'text-white'
                   : 'text-white/45 hover:text-white/80'
@@ -84,14 +84,14 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
             >
               <span>TREKKING</span>
               {activeTab === 'trekking' && (
-                <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-amber-400 rounded-full shadow-[0_0_14px_rgba(251,191,36,0.9)]" />
+                <span className="absolute bottom-0 left-0 right-0 h-[3.5px] bg-amber-400 rounded-full shadow-[0_0_14px_rgba(251,191,36,0.9)]" />
               )}
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab('travesias_desafios')}
-              className={`relative pb-2.5 text-xs sm:text-sm font-mono font-bold uppercase tracking-wider transition-all select-none cursor-pointer shrink-0 ${
+              className={`relative pb-2.5 text-sm sm:text-base md:text-lg font-mono font-bold uppercase tracking-wider transition-all select-none cursor-pointer shrink-0 ${
                 activeTab === 'travesias_desafios'
                   ? 'text-white'
                   : 'text-white/45 hover:text-white/80'
@@ -99,14 +99,14 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
             >
               <span>TRAVESÍAS</span>
               {activeTab === 'travesias_desafios' && (
-                <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-amber-400 rounded-full shadow-[0_0_14px_rgba(251,191,36,0.9)]" />
+                <span className="absolute bottom-0 left-0 right-0 h-[3.5px] bg-amber-400 rounded-full shadow-[0_0_14px_rgba(251,191,36,0.9)]" />
               )}
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab('expediciones')}
-              className={`relative pb-2.5 text-xs sm:text-sm font-mono font-bold uppercase tracking-wider transition-all select-none cursor-pointer shrink-0 ${
+              className={`relative pb-2.5 text-sm sm:text-base md:text-lg font-mono font-bold uppercase tracking-wider transition-all select-none cursor-pointer shrink-0 ${
                 activeTab === 'expediciones'
                   ? 'text-white'
                   : 'text-white/45 hover:text-white/80'
@@ -114,7 +114,7 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
             >
               <span>EXPEDICIONES</span>
               {activeTab === 'expediciones' && (
-                <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-amber-400 rounded-full shadow-[0_0_14px_rgba(251,191,36,0.9)]" />
+                <span className="absolute bottom-0 left-0 right-0 h-[3.5px] bg-amber-400 rounded-full shadow-[0_0_14px_rgba(251,191,36,0.9)]" />
               )}
             </button>
           </div>
