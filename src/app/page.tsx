@@ -54,7 +54,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
       <ScrollToTopButton />
 
       {/* 1. HERO SECTION CINEMATOGRÁFICO (Estándar MBA: Limpio, Aireado y Solo-Friendly) */}
-      <section className="relative min-h-[85vh] sm:min-h-screen flex items-center justify-center pt-16 sm:pt-24 pb-8 sm:pb-16 px-5 sm:px-6 overflow-hidden">
+      <section className="relative min-h-[75vh] sm:min-h-screen flex items-center justify-center pt-16 sm:pt-24 pb-4 sm:pb-12 px-5 sm:px-6 overflow-hidden">
         <HeroCarousel />
 
         <div className="relative z-10 max-w-5xl mx-auto text-center w-full mt-0 sm:mt-2">
@@ -66,7 +66,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
           </div>
           
           {/* Título Hero de Mayor Impacto y Proporción */}
-          <h1 className="text-5xl xs:text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black uppercase tracking-tight text-white leading-[0.92] mb-5 sm:mb-7 drop-shadow-[0_8px_30px_rgba(0,0,0,0.8)]">
+          <h1 className="text-5xl xs:text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black uppercase tracking-tight text-white leading-[0.92] mb-4 sm:mb-6 drop-shadow-[0_8px_30px_rgba(0,0,0,0.8)]">
             {dict.hero.title_line1} <br />
             <span className="font-edo tracking-wider text-amber-400 drop-shadow-[0_6px_24px_rgba(0,0,0,0.7)]">
               {dict.hero.title_line2}
@@ -74,7 +74,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
           </h1>
           
           {/* Subtítulo con Mayor Legibilidad y Amplitud */}
-          <p className="text-base sm:text-xl md:text-2xl text-white/95 max-w-2xl mx-auto font-normal leading-snug sm:leading-relaxed mb-8 sm:mb-10 drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] px-2">
+          <p className="text-base sm:text-xl md:text-2xl text-white/95 max-w-2xl mx-auto font-normal leading-snug sm:leading-relaxed mb-6 sm:mb-8 drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] px-2">
             {lang === 'en' 
               ? 'Expedition and adventure across Santiago summits. Get ready to experience freedom · Solo-Friendly.' 
               : lang === 'pt' 

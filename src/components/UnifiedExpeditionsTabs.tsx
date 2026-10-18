@@ -67,7 +67,7 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
   };
 
   return (
-    <section id="expediciones" className="py-6 sm:py-12 relative z-20 scroll-mt-20">
+    <section id="expediciones" className="pt-2 sm:pt-6 pb-6 sm:pb-12 relative z-20 scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
         {/* ── SELECTOR DE PESTAÑAS EN LÍNEA ESTILO MUCH BETTER ADVENTURES (Directo a las tarjetas) ── */}
