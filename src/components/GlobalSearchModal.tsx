@@ -13,16 +13,24 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   lang?: string;
+  initialTab?: 'peaks' | 'adventures' | 'packages';
 }
 
-export default function GlobalSearchModal({ isOpen, onClose, lang = 'es' }: Props) {
+export default function GlobalSearchModal({ isOpen, onClose, lang = 'es', initialTab = 'peaks' }: Props) {
   const [mounted, setMounted] = useState(false);
   const [query, setQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'peaks' | 'adventures' | 'packages'>('peaks');
+  const [activeTab, setActiveTab] = useState<'peaks' | 'adventures' | 'packages'>(initialTab);
   const [peaks, setPeaks] = useState<any[]>([]);
   const [adventures, setAdventures] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Sincronizar tab si cambia initialTab al abrir el modal
+  useEffect(() => {
+    if (isOpen && initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [isOpen, initialTab]);
 
   useEffect(() => {
     setMounted(true);

@@ -183,8 +183,9 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
     <>
       {/* ── BOTÓN HERO CÁPSULA GLASSMORPHISM ANCHO Y PROMINENTE ── */}
       <div className="flex items-center justify-center w-full px-4">
-        <a
-          href="#expediciones"
+        <button
+          type="button"
+          onClick={() => setIsAllAdventuresOpen(true)}
           className="group inline-flex items-center justify-center gap-4 w-full max-w-xs sm:max-w-md py-4 sm:py-5 rounded-full text-sm sm:text-base font-bold uppercase tracking-widest transition-all duration-300 hover:scale-[1.02] active:scale-95 cursor-pointer text-center select-none font-mono text-amber-300 hover:text-white"
           style={{
             backgroundColor: 'rgba(245, 158, 11, 0.22)',
@@ -202,14 +203,15 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
               : 'Ver Aventura'}
           </span>
           <span className="text-amber-400 text-lg sm:text-xl group-hover:translate-y-1 transition-transform duration-200">↓</span>
-        </a>
+        </button>
       </div>
 
-      {/* ── MODAL MAESTRO: CUMBRES DEL ATLAS & AVENTURAS GUIADAS CON BUSCADOR ── */}
+      {/* ── MODAL MAESTRO: CUMBRES DEL ATLAS & AVENTURAS GUIADAS CON BUSCADOR (ABRE EN EXPEDICIONES CON PRECIO) ── */}
       <GlobalSearchModal
         isOpen={isAllAdventuresOpen}
         onClose={() => setIsAllAdventuresOpen(false)}
         lang={lang}
+        initialTab="packages"
       />
 
       {/* ── MODAL POPUP CON LA IDENTIDAD EXACTA DE LA WEB: CRISTAL, PÍLDORAS Y VIDEO NATIVO ── */}
