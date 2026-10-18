@@ -154,17 +154,14 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
                   {/* Gradiente Cinematográfico para legibilidad de textos */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/30 group-hover:via-black/20 transition-colors" />
 
-                  {/* Insignia Superior: Categoría o Nivel */}
-                  <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between">
-                    <span className="bg-black/60 backdrop-blur-md px-2 py-0.5 text-[9px] font-mono tracking-wider uppercase font-bold text-white/90 rounded border border-white/10">
-                      {route.badge || route.custom_discipline || 'EXPEDICIÓN'}
-                    </span>
-                    <span className="text-[10px] font-mono font-bold text-amber-400 drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)] tracking-widest select-none">
+                  {/* Insignia Superior Derecha: Barras de Nivel */}
+                  <div className="absolute top-2.5 right-2.5 flex items-center">
+                    <span className="bg-black/60 backdrop-blur-md px-2 py-0.5 rounded border border-white/10 text-[10px] font-mono font-bold text-amber-400 drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)] tracking-widest select-none">
                       {lvl.bars}
                     </span>
                   </div>
 
-                  {/* Contenido Inferior: Título en mayúsculas impactante, Altitud y Precio Desde */}
+                  {/* Contenido Inferior: Nivel, Título, Altura y Desnivel */}
                   <div className="absolute bottom-3 left-3 right-3 flex flex-col gap-1 text-white">
                     <span className="text-[9px] sm:text-[10px] font-mono text-amber-400 font-bold uppercase tracking-wider line-clamp-1">
                       {lvl.name.split('·')[1]?.trim() || lvl.name}
@@ -173,12 +170,13 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
                       {cleanTitle}
                     </h3>
 
-                    <div className="pt-1.5 mt-1 border-t border-white/15 flex items-center justify-between text-[10px] sm:text-xs font-mono">
-                      <span className="text-white/70">
-                        {route.max_altitude ? (String(route.max_altitude).includes('m') ? route.max_altitude : `${route.max_altitude}m`) : 'Andes'}
+                    {/* Fila Inferior: Altura Cumbre y Desnivel */}
+                    <div className="pt-1.5 mt-1 border-t border-white/15 flex items-center justify-between text-[10px] sm:text-xs font-mono text-white/80">
+                      <span>
+                        {route.max_altitude ? (String(route.max_altitude).includes('m') ? route.max_altitude : `${route.max_altitude}m`) : '1.638m'}
                       </span>
-                      <span className="font-bold text-amber-400">
-                        ${formattedClp}
+                      <span className="text-white/60">
+                        {route.elevation_gain_m ? `+${route.elevation_gain_m}m D+` : '+850m D+'}
                       </span>
                     </div>
                   </div>
