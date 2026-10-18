@@ -154,9 +154,9 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
                   {/* Gradiente Cinematográfico para legibilidad de textos */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/30 group-hover:via-black/20 transition-colors" />
 
-                  {/* Insignia Superior Derecha: Barras de Nivel */}
+                  {/* Barras de Nivel Directas (Sin fondo ni contenedor) */}
                   <div className="absolute top-2.5 right-2.5 flex items-center">
-                    <span className="bg-black/60 backdrop-blur-md px-2 py-0.5 rounded border border-white/10 text-[10px] font-mono font-bold text-amber-400 drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)] tracking-widest select-none">
+                    <span className="text-xs sm:text-sm font-mono font-bold text-amber-400 drop-shadow-[0_2px_8px_rgba(0,0,0,1)] tracking-widest select-none">
                       {lvl.bars}
                     </span>
                   </div>
