@@ -181,28 +181,28 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
 
   return (
     <>
-      {/* ── BOTÓN HERO CÁPSULA GLASSMORPHISM ANCHO Y PROMINENTE ── */}
+      {/* ── BOTÓN HERO CÁPSULA GLASSMORPHISM COMPACTO Y EQUILIBRADO ── */}
       <div className="flex items-center justify-center w-full px-4">
         <button
           type="button"
           onClick={() => setIsAllAdventuresOpen(true)}
-          className="group inline-flex items-center justify-center gap-4 w-full max-w-xs sm:max-w-md py-4 sm:py-5 rounded-full text-sm sm:text-base font-bold uppercase tracking-widest transition-all duration-300 hover:scale-[1.02] active:scale-95 cursor-pointer text-center select-none font-mono text-amber-300 hover:text-white"
+          className="group inline-flex items-center justify-center gap-2.5 w-auto px-7 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer text-center select-none font-mono text-amber-300 hover:text-white"
           style={{
             backgroundColor: 'rgba(245, 158, 11, 0.22)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
             border: '1.5px solid rgba(245, 158, 11, 0.50)',
-            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.40)',
+            boxShadow: '0 6px 20px rgba(0, 0, 0, 0.35)',
           }}
         >
-          <span className="tracking-[0.18em]">
+          <span className="tracking-[0.16em]">
             {lang === 'en' 
               ? 'View Adventures' 
               : lang === 'pt' 
               ? 'Ver Aventuras' 
               : 'Ver Aventura'}
           </span>
-          <span className="text-amber-400 text-lg sm:text-xl group-hover:translate-y-1 transition-transform duration-200">↓</span>
+          <span className="text-amber-400 text-sm sm:text-base group-hover:translate-y-0.5 transition-transform duration-200">↓</span>
         </button>
       </div>
 
