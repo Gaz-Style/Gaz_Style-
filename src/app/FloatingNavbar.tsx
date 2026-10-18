@@ -49,6 +49,27 @@ export default function FloatingNavbar({ currentLang }: Props) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const [valueIndex, setValueIndex] = useState(0);
+  const [fadeState, setFadeState] = useState(true);
+
+  // Mensajes que rotan suavemente cada 4.5 segundos
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFadeState(false);
+      setTimeout(() => {
+        setValueIndex((prev) => (prev + 1) % 3);
+        setFadeState(true);
+      }, 400); // 400ms de desvanecimiento
+    }, 4500);
+    return () => clearInterval(interval);
+  }, []);
+
+  const VALUES_TICKER = [
+    { icon: '🌿', text: 'Cuidamos el planeta · Sin Dejar Rastro', accent: 'text-emerald-400' },
+    { icon: '🤝', text: 'Apoyamos y fortalecemos economías locales', accent: 'text-amber-400' },
+    { icon: '🏔️', text: 'Conservación activa de la cordillera andina', accent: 'text-sky-400' },
+  ];
+
   const dict = getDictionary(currentLang);
 
   const navLinks = [
@@ -177,6 +198,30 @@ export default function FloatingNavbar({ currentLang }: Props) {
             ))}
           </div>
         )}
+
+        {/* BANDA ANIMADA TIPO TICKER FLOTANTE DEBAJO DEL MENÚ (Cambia suavemente cada 4.5s) */}
+        <div className="flex justify-center mt-2 pointer-events-auto">
+          <div 
+            className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-[10px] sm:text-xs font-mono select-none shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-300"
+            style={{
+              backgroundColor: 'rgba(0, 0, 0, 0.45)',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+            }}
+          >
+            <span className="text-xs transition-transform duration-300 hover:scale-110">
+              {VALUES_TICKER[valueIndex].icon}
+            </span>
+            <span 
+              className={`transition-all duration-400 ease-in-out font-medium tracking-wide ${
+                fadeState ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1'
+              } ${VALUES_TICKER[valueIndex].accent}`}
+            >
+              {VALUES_TICKER[valueIndex].text}
+            </span>
+          </div>
+        </div>
 
       </div>
 
