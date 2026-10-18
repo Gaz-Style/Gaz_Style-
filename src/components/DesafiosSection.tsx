@@ -24,15 +24,18 @@ export default function DesafiosSection({ lang = 'es' }: Props) {
         <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-950/40 border border-red-600/60 text-red-400 text-xs font-mono font-bold uppercase tracking-widest mb-4">
             <span className="text-sm">💀</span>
-            <span>ALTO RENDIMIENTO & SUPERACIÓN</span>
+            <span>ALTO RENDIMIENTO & RESISTENCIA</span>
           </div>
 
           <h2 className="text-3xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight text-white leading-tight">
-            DESAFÍOS CORDILLERA <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-red-500 to-amber-500">SANTIAGO</span>
+            DESAFÍO EXTREMO <br className="hidden sm:inline" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-red-500 to-amber-500">
+              ENTRENAMIENTO & MENTALIDAD
+            </span>
           </h2>
 
           <p className="text-white/70 text-sm sm:text-base font-light font-mono mt-3 max-w-2xl mx-auto leading-relaxed">
-            Formatos diseñados para quienes buscan más que un paseo tradicional. Cumbres nocturnas al alba, retos multicumbre y travesías de resistencia con liderazgo técnico de cordada.
+            Formatos de exigencia real para forjar carácter, resistencia física y templanza en la montaña. Cumbres al alba con frontales, circuitos multicumbre y travesías de alta intensidad.
           </p>
         </div>
 
@@ -130,7 +133,7 @@ export default function DesafiosSection({ lang = 'es' }: Props) {
             className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-stone-900/90 hover:bg-stone-800 text-white border border-white/20 hover:border-amber-400/80 font-mono font-bold text-xs sm:text-sm uppercase tracking-widest transition-all duration-300 shadow-xl hover:scale-105"
           >
             <span className="text-base">💀</span>
-            <span>Explorar Todos los Desafíos</span>
+            <span>Explorar Desafíos Extremos</span>
             <ArrowRight className="w-4 h-4 text-amber-400" />
           </Link>
         </div>
