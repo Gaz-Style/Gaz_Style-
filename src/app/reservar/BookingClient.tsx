@@ -355,8 +355,8 @@ export default function BookingClient({
                                                 Tarifa por persona
                                             </span>
                                             {isPromoActive && (
-                                                <span className="px-1.5 py-0.5 rounded bg-rose-600 text-white font-mono font-bold text-[9px] uppercase tracking-wider animate-pulse">
-                                                    🔥 {discountBadge}
+                                                <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono font-bold text-[9px] uppercase tracking-wider shadow-sm">
+                                                    {discountBadge}
                                                 </span>
                                             )}
                                         </div>
@@ -371,7 +371,7 @@ export default function BookingClient({
                                                     </span>
                                                 </div>
                                                 <div className="flex items-baseline gap-2 justify-start sm:justify-end">
-                                                    <span className="text-xl sm:text-2xl font-black font-mono text-rose-400">
+                                                    <span className="text-xl sm:text-2xl font-black font-mono text-amber-300">
                                                         ${unitPrice.toLocaleString('es-CL')} <span className="text-xs text-white/50">CLP</span>
                                                     </span>
                                                     <span className="text-xs font-mono text-white/70">
@@ -621,7 +621,7 @@ export default function BookingClient({
                                                         ${(originalUnitPrice * paxCount).toLocaleString('es-CL')} CLP
                                                     </span>
                                                 )}
-                                                <span className={`text-2xl sm:text-3xl font-black font-mono block ${isPromoActive ? 'text-rose-400' : 'text-amber-400'}`}>
+                                                <span className="text-2xl sm:text-3xl font-black font-mono block text-amber-400">
                                                     ${total.toLocaleString('es-CL')} <span className="text-xs font-normal text-white/60">CLP</span>
                                                 </span>
                                                 <span className="text-xs font-mono text-white/45 block mt-0.5">

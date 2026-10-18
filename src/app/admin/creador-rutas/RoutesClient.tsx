@@ -1416,7 +1416,7 @@ export default function RoutesClient({
                           </span>
                         </label>
                         {isDiscountActive && (
-                          <span className="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-mono font-bold uppercase tracking-wider animate-pulse">
+                          <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-mono font-bold uppercase tracking-wider">
                             Oferta Activa
                           </span>
                         )}
@@ -1439,7 +1439,7 @@ export default function RoutesClient({
                                 value={discountPrice}
                                 onChange={e => setDiscountPrice(e.target.value === '' ? '' : parseFloat(e.target.value) || 0)}
                                 placeholder={`Ej: ${basePrice > 0 ? Math.round(basePrice * 0.8) : 20000}`}
-                                className="w-full bg-stone-950 border border-rose-500/50 rounded-lg px-3 py-2 text-sm font-bold text-rose-400 focus:outline-none focus:border-rose-400 font-mono"
+                                className="w-full bg-stone-950 border border-amber-500/50 rounded-lg px-3 py-2 text-sm font-bold text-amber-300 focus:outline-none focus:border-amber-400 font-mono"
                               />
                             </div>
                             <div className="space-y-1.5">

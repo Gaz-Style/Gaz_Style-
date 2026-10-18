@@ -629,8 +629,8 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                     </span>
                                     {isPromoActive && (
                                         <div className="mb-2">
-                                            <span className="px-2.5 py-1 rounded-full bg-rose-600/90 text-white font-mono font-bold text-[10px] uppercase tracking-wider inline-flex items-center gap-1.5 animate-pulse shadow-md">
-                                                🔥 {discountBadgeText}
+                                            <span className="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono font-bold text-[10px] uppercase tracking-wider inline-flex items-center gap-1.5 shadow-sm">
+                                                {discountBadgeText}
                                             </span>
                                         </div>
                                     )}
@@ -661,7 +661,7 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                                 </div>
                                             )}
                                             <div className="flex items-baseline justify-between">
-                                                <p className={`text-4xl font-black font-mono ${isPromoActive ? 'text-rose-400' : 'text-white'}`}>
+                                                <p className={`text-4xl font-black font-mono ${isPromoActive ? 'text-amber-300' : 'text-white'}`}>
                                                     ${Number(effectivePriceNumber).toLocaleString('es-CL')}
                                                 </p>
                                                 <span className="text-sm text-white/60 font-mono">
@@ -763,13 +763,13 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                                 <span className="text-[10px] line-through text-white/40 font-mono">
                                                     ${Number(originalPriceNumber).toLocaleString('es-CL')}
                                                 </span>
-                                                <span className="text-[8px] bg-rose-600/90 text-white font-bold px-1 rounded uppercase">
+                                                <span className="text-[8px] bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold px-1.5 py-0.5 rounded uppercase">
                                                     OFF
                                                 </span>
                                             </div>
                                         )}
                                         <div className="flex items-baseline gap-1.5">
-                                            <span className={`text-xl font-black font-mono ${isPromoActive ? 'text-rose-400' : 'text-white'}`}>
+                                            <span className={`text-xl font-black font-mono ${isPromoActive ? 'text-amber-300' : 'text-white'}`}>
                                                 ${Number(effectivePriceNumber).toLocaleString('es-CL')}
                                             </span>
                                             <span className="text-[11px] text-white/40 font-mono">

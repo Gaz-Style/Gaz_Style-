@@ -167,8 +167,8 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
                   <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-1 pointer-events-none z-10">
                     {(Boolean(route.is_discount_active ?? route.logistics?.is_discount_active) && 
                       Number(route.discount_price ?? route.logistics?.discount_price) > 0) ? (
-                      <span className="px-2 py-0.5 rounded-full bg-rose-600 text-white font-black text-[8px] sm:text-[9px] uppercase tracking-wider font-mono shadow-md animate-pulse">
-                        🔥 {route.discount_badge || route.logistics?.discount_badge || 'CUPOS OFF'}
+                      <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold text-[8px] sm:text-[9px] uppercase tracking-wider font-mono shadow-sm">
+                        {route.discount_badge || route.logistics?.discount_badge || 'CUPOS OFF'}
                       </span>
                     ) : <span />}
                     <span className="text-xs sm:text-sm font-mono font-bold text-amber-400 drop-shadow-[0_2px_8px_rgba(0,0,0,1)] tracking-widest select-none">

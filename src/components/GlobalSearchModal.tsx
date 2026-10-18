@@ -405,8 +405,8 @@ export default function GlobalSearchModal({ isOpen, onClose, lang = 'es', initia
                           {diffLabel}
                         </span>
                         {isPromoActive && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-rose-600 text-white font-black text-[9px] uppercase tracking-wider font-mono shadow-md animate-pulse">
-                            🔥 {urgencyBadge}
+                          <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold text-[9px] uppercase tracking-wider font-mono shadow-sm">
+                            {urgencyBadge}
                           </span>
                         )}
                       </div>
@@ -449,7 +449,7 @@ export default function GlobalSearchModal({ isOpen, onClose, lang = 'es', initia
                                   {originalUsdText && <span className="text-[9px] text-white/30 line-through">({originalUsdText})</span>}
                                 </div>
                                 <div className="flex items-baseline gap-1.5 justify-end">
-                                  <span className="text-base sm:text-lg font-black text-rose-400 drop-shadow">{clpText}</span>
+                                  <span className="text-base sm:text-lg font-black text-amber-300 drop-shadow">{clpText}</span>
                                   <span className="text-[11px] text-white/80 font-semibold">{usdText}</span>
                                 </div>
                               </div>
