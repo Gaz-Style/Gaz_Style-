@@ -359,18 +359,20 @@ export default function GlobalSearchModal({ isOpen, onClose, lang = 'es', initia
                 const altitude = adv.max_altitude ? (String(adv.max_altitude).includes('m') ? adv.max_altitude : `${adv.max_altitude}m`) : null;
                 
                 // Descuento administrable (directo o via logistics)
-                const hasDiscount = Boolean(adv.is_discount_active ?? adv.logistics?.is_discount_active);
-                const discountPriceNumber = Number(adv.discount_price ?? adv.logistics?.discount_price);
+                const rawLogistics = typeof adv.logistics === 'string' ? (() => { try { return JSON.parse(adv.logistics); } catch { return {}; } })() : (adv.logistics || {});
+                const rawActive = adv.is_discount_active ?? rawLogistics.is_discount_active;
+                const hasDiscount = rawActive === true || rawActive === 'true' || rawActive === 1 || rawActive === '1';
+                const discountPriceNumber = Number(adv.discount_price ?? rawLogistics.discount_price);
                 const originalClpPriceNumber = Number(adv.base_price || 25000);
                 
-                const isPromoActive = hasDiscount && discountPriceNumber > 0 && discountPriceNumber < originalClpPriceNumber;
+                const isPromoActive = hasDiscount && !isNaN(discountPriceNumber) && discountPriceNumber > 0 && discountPriceNumber < originalClpPriceNumber;
                 const effectiveClpPrice = isPromoActive ? discountPriceNumber : originalClpPriceNumber;
                 
                 const clpText = `$${effectiveClpPrice.toLocaleString('es-CL')}`;
                 const originalClpText = `$${originalClpPriceNumber.toLocaleString('es-CL')}`;
                 const usdText = getUsdPrice(adv, effectiveClpPrice);
                 const originalUsdText = isPromoActive ? getUsdPrice(adv, originalClpPriceNumber) : null;
-                const urgencyBadge = adv.discount_badge || adv.logistics?.discount_badge || 'ÚLTIMOS CUPOS OFF';
+                const urgencyBadge = adv.discount_badge || rawLogistics.discount_badge || 'ÚLTIMOS CUPOS OFF';
 
                 const diffScore = getDifficultyScore(adv);
                 const diffLabel = 

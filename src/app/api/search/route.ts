@@ -58,7 +58,7 @@ export async function GET(request: Request) {
       try {
         const { data: advData, error: aErr } = await supabase
           .from('adventures_catalog')
-          .select('id, title, category, description, difficulty_level, vertical_type, image_url, base_price, duration_text, max_altitude')
+          .select('id, title, category, description, difficulty_level, vertical_type, image_url, base_price, duration_text, max_altitude, price_usd, logistics')
           .eq('is_active', true)
           .order('created_at', { ascending: false });
 
