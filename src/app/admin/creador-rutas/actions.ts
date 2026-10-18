@@ -161,9 +161,15 @@ export async function createAdventureWithCosts(formData: FormData, costs: Advent
             .select('id')
             .single();
 
-        // Si da error por columnas faltantes en Supabase, reintentamos con basePayload seguro
-        if (adventureError && adventureError.message.includes('does not exist')) {
-            console.warn('Columnas extendidas no encontradas, insertando con basePayload:', adventureError.message);
+        // Si da error por columnas faltantes o no encontradas en el schema cache de Supabase
+        const isColumnMissingError = adventureError && (
+            adventureError.message.includes('does not exist') ||
+            adventureError.message.includes('schema cache') ||
+            adventureError.message.includes('Could not find')
+        );
+
+        if (isColumnMissingError) {
+            console.warn('Columnas extendidas no encontradas, insertando con basePayload (que incluye logistics JSON con el descuento):', adventureError?.message);
             const retry = await supabase
                 .from('adventures_catalog')
                 .insert(basePayload)
@@ -489,8 +495,14 @@ export async function updateAdventureWithCosts(id: string, formData: FormData, c
             .update(extendedUpdatePayload)
             .eq('id', id);
 
-        if (adventureError && adventureError.message.includes('does not exist')) {
-            console.warn('Columnas extendidas no encontradas al actualizar, guardando basePayload:', adventureError.message);
+        const isUpdateColumnMissingError = adventureError && (
+            adventureError.message.includes('does not exist') ||
+            adventureError.message.includes('schema cache') ||
+            adventureError.message.includes('Could not find')
+        );
+
+        if (isUpdateColumnMissingError) {
+            console.warn('Columnas extendidas no encontradas al actualizar, guardando baseUpdatePayload (con logistics JSON que preserva el descuento):', adventureError?.message);
             const retry = await supabase
                 .from('adventures_catalog')
                 .update(baseUpdatePayload)
