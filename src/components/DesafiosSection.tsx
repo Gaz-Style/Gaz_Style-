@@ -23,7 +23,7 @@ export default function DesafiosSection({ lang = 'es' }: Props) {
         {/* Encabezado Épico de la Sección */}
         <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
           <span className="text-red-500 font-mono text-xs uppercase tracking-[0.28em] font-bold block mb-2">
-            💀 ALTO RENDIMIENTO & RESISTENCIA
+            ALTO RENDIMIENTO & RESISTENCIA
           </span>
 
           <h2 className="text-3xl sm:text-5xl font-black text-white uppercase tracking-tight leading-tight">
@@ -131,7 +131,6 @@ export default function DesafiosSection({ lang = 'es' }: Props) {
             href="/desafios"
             className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-stone-900/90 hover:bg-stone-800 text-white border border-white/20 hover:border-amber-400/80 font-mono font-bold text-xs sm:text-sm uppercase tracking-widest transition-all duration-300 shadow-xl hover:scale-105"
           >
-            <span className="text-base">💀</span>
             <span>Explorar Desafíos Extremos</span>
             <ArrowRight className="w-4 h-4 text-amber-400" />
           </Link>

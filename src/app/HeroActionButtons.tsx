@@ -218,7 +218,6 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
             boxShadow: '0 8px 24px rgba(0, 0, 0, 0.40)',
           }}
         >
-          <span className="text-base group-hover:scale-125 transition-transform">💀</span>
           <span className="tracking-[0.16em]">
             {lang === 'en' 
               ? 'CHALLENGES' 
