@@ -22,17 +22,16 @@ export default function DesafiosSection({ lang = 'es' }: Props) {
         
         {/* Encabezado Épico de la Sección */}
         <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-950/40 border border-red-600/60 text-red-400 text-xs font-mono font-bold uppercase tracking-widest mb-4">
-            <span className="text-sm">💀</span>
-            <span>ALTO RENDIMIENTO & RESISTENCIA</span>
-          </div>
+          <span className="text-red-500 font-mono text-xs uppercase tracking-[0.28em] font-bold block mb-2">
+            💀 ALTO RENDIMIENTO & RESISTENCIA
+          </span>
 
-          <h2 className="text-3xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight text-white leading-tight">
-            DESAFÍO EXTREMO <br className="hidden sm:inline" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-red-500 to-amber-500">
-              ENTRENAMIENTO & MENTALIDAD
-            </span>
+          <h2 className="text-3xl sm:text-5xl font-black text-white uppercase tracking-tight leading-tight">
+            DESAFÍO EXTREMO
           </h2>
+          <p className="text-xl sm:text-3xl font-extrabold text-white/95 uppercase tracking-tight mt-1 sm:mt-1.5">
+            ENTRENAMIENTO & MENTALIDAD
+          </p>
 
           <p className="text-white/70 text-sm sm:text-base font-light font-mono mt-3 max-w-2xl mx-auto leading-relaxed">
             Formatos de exigencia real para forjar carácter, resistencia física y templanza en la montaña. Cumbres al alba con frontales, circuitos multicumbre y travesías de alta intensidad.
