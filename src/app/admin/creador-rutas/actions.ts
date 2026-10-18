@@ -114,7 +114,7 @@ export async function createAdventureWithCosts(formData: FormData, costs: Advent
         const reqEquipStr = (formData.get('required_equipment') as string) || '';
         const required_equipment = reqEquipStr ? reqEquipStr.split('\n').filter(s=>s.trim()) : [];
 
-        // Payload base garantizado
+        // Payload base garantizado (incluye columnas de descuento soportadas por Supabase)
         const basePayload: Record<string, any> = {
             title,
             category,
@@ -133,6 +133,9 @@ export async function createAdventureWithCosts(formData: FormData, costs: Advent
             included,
             not_included,
             logistics,
+            is_discount_active,
+            discount_price,
+            discount_badge,
             is_active: true
         };
 
@@ -152,8 +155,7 @@ export async function createAdventureWithCosts(formData: FormData, costs: Advent
             required_equipment,
             is_discount_active,
             discount_price,
-            discount_badge,
-            discount_color
+            discount_badge
         };
 
         // 1. Intentamos insertar con todas las columnas extendidas
@@ -473,7 +475,10 @@ export async function updateAdventureWithCosts(id: string, formData: FormData, c
             itinerary,
             included,
             not_included,
-            logistics
+            logistics,
+            is_discount_active,
+            discount_price,
+            discount_badge
         };
 
         const extendedUpdatePayload = {
@@ -491,8 +496,7 @@ export async function updateAdventureWithCosts(id: string, formData: FormData, c
             required_equipment,
             is_discount_active,
             discount_price,
-            discount_badge,
-            discount_color
+            discount_badge
         };
 
         // 1. Update Adventure (intentamos con todas las columnas y caemos a base si faltan)

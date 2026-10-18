@@ -167,25 +167,34 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
 
                   {/* Barras de Nivel & Badge de Oferta Urgente */}
                   <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-1 pointer-events-none z-10">
-                    {(Boolean(route.is_discount_active ?? route.logistics?.is_discount_active) && 
-                      Number(route.discount_price ?? route.logistics?.discount_price) > 0) ? (
-                      (() => {
-                        const cTheme = route.discount_color || route.logistics?.discount_color || 'rose';
-                        const cClass = 
-                          cTheme === 'rose'    ? 'bg-[#e11d48] text-white' :
-                          cTheme === 'red'     ? 'bg-[#dc2626] text-white' :
-                          cTheme === 'amber'   ? 'bg-[#f59e0b] text-stone-950 font-black' :
-                          cTheme === 'purple'  ? 'bg-[#7c3aed] text-white' :
-                          cTheme === 'cyan'    ? 'bg-[#06b6d4] text-stone-950 font-black' :
-                          cTheme === 'emerald' ? 'bg-[#10b981] text-stone-950 font-black' :
-                          'bg-[#e11d48] text-white';
-                        return (
-                          <span className={`px-2 py-0.5 rounded-full font-bold text-[8px] sm:text-[9px] uppercase tracking-wider font-mono shadow-sm ${cClass}`}>
-                            {route.discount_badge || route.logistics?.discount_badge || 'CUPOS OFF'}
-                          </span>
-                        );
-                      })()
-                    ) : <span />}
+                    {(() => {
+                      const rawLogistics = typeof route.logistics === 'string' 
+                        ? (JSON.parse(route.logistics || '{}')) 
+                        : (route.logistics || {});
+                      const hasDiscount = Boolean(route.is_discount_active || rawLogistics.is_discount_active);
+                      const discountPrice = Number(route.discount_price || rawLogistics.discount_price || 0);
+                      const isPromo = hasDiscount && discountPrice > 0;
+
+                      if (!isPromo) return <span />;
+
+                      const cTheme = route.discount_color || rawLogistics.discount_color || 'rose';
+                      const cClass = 
+                        cTheme === 'rose'    ? 'bg-[#e11d48] text-white' :
+                        cTheme === 'red'     ? 'bg-[#dc2626] text-white' :
+                        cTheme === 'amber'   ? 'bg-[#f59e0b] text-stone-950 font-black' :
+                        cTheme === 'purple'  ? 'bg-[#7c3aed] text-white' :
+                        cTheme === 'cyan'    ? 'bg-[#06b6d4] text-stone-950 font-black' :
+                        cTheme === 'emerald' ? 'bg-[#10b981] text-stone-950 font-black' :
+                        'bg-[#e11d48] text-white';
+
+                      const badgeText = route.discount_badge || rawLogistics.discount_badge || 'ÚLTIMOS CUPOS OFF';
+
+                      return (
+                        <span className={`px-2 py-0.5 rounded-full font-bold text-[8px] sm:text-[9px] uppercase tracking-wider font-mono shadow-sm ${cClass}`}>
+                          {badgeText}
+                        </span>
+                      );
+                    })()}
                     <span className="text-xs sm:text-sm font-mono font-bold text-amber-400 drop-shadow-[0_2px_8px_rgba(0,0,0,1)] tracking-widest select-none">
                       {lvl.bars}
                     </span>

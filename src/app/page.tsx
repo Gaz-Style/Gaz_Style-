@@ -30,7 +30,7 @@ async function getPublicData() {
   );
   const [{ data: routes }, { data: departures }] = await Promise.all([
     supabase.from('adventures_catalog').select('*').eq('is_active', true).order('created_at', { ascending: false }),
-    supabase.from('agenda_departures').select('*, adventures_catalog(title, base_price, max_pax)').in('status', ['scheduled', 'confirmed']).gte('start_date', new Date().toISOString().split('T')[0]).order('start_date', { ascending: true }).limit(6),
+    supabase.from('agenda_departures').select('*, adventures_catalog(*)').in('status', ['scheduled', 'confirmed']).gte('start_date', new Date().toISOString().split('T')[0]).order('start_date', { ascending: true }).limit(6),
   ]);
   return { routes: routes || [], departures: departures || [] };
 }
@@ -112,6 +112,37 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
               {departures.map((dep: any) => {
                 const adv = dep.adventures_catalog;
                 const spots = (adv?.max_pax || 0) - (dep.current_pax || 0);
+
+                const rawLogistics = typeof adv?.logistics === 'string' 
+                  ? (JSON.parse(adv.logistics || '{}')) 
+                  : (adv?.logistics || {});
+
+                const hasDiscount = Boolean(adv?.is_discount_active || rawLogistics.is_discount_active);
+                const discountPriceNumber = Number(adv?.discount_price || rawLogistics.discount_price || 0);
+                const originalPriceNumber = Number(((adv?.base_price || 0) >= 5000) ? adv.base_price : 25000);
+                const isPromoActive = hasDiscount && discountPriceNumber > 0 && discountPriceNumber < originalPriceNumber;
+                const effectivePriceNumber = isPromoActive ? discountPriceNumber : originalPriceNumber;
+                const discountBadgeText = adv?.discount_badge || rawLogistics.discount_badge || 'CUPOS OFF';
+                const discountColor = adv?.discount_color || rawLogistics.discount_color || 'rose';
+
+                const badgeColorClass = 
+                  discountColor === 'rose'    ? 'bg-[#e11d48] text-white' :
+                  discountColor === 'red'     ? 'bg-[#dc2626] text-white' :
+                  discountColor === 'amber'   ? 'bg-[#f59e0b] text-stone-950 font-black' :
+                  discountColor === 'purple'  ? 'bg-[#7c3aed] text-white' :
+                  discountColor === 'cyan'    ? 'bg-[#06b6d4] text-stone-950 font-black' :
+                  discountColor === 'emerald' ? 'bg-[#10b981] text-stone-950 font-black' :
+                  'bg-[#e11d48] text-white';
+
+                const priceColorClass = 
+                  discountColor === 'rose'    ? 'text-[#f43f5e]' :
+                  discountColor === 'red'     ? 'text-[#ef4444]' :
+                  discountColor === 'amber'   ? 'text-[#fbbf24]' :
+                  discountColor === 'purple'  ? 'text-[#a78bfa]' :
+                  discountColor === 'cyan'    ? 'text-[#22d3ee]' :
+                  discountColor === 'emerald' ? 'text-[#34d399]' :
+                  'text-[#f43f5e]';
+
                 return (
                   <div key={dep.id} className="p-5 sm:p-6 flex items-center gap-5 hover:bg-white/10 transition-all rounded-3xl font-mono border border-white/10 shadow-lg" style={{backgroundColor:'rgba(12, 14, 18, 0.70)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)'}}>
                     <div className="text-center min-w-[56px] border-r border-white/10 pr-4">
@@ -131,8 +162,18 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
                       </p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="font-bold text-white text-sm">
-                        ${Number(((adv?.base_price || 0) >= 5000) ? adv.base_price : 25000).toLocaleString('es-CL')}
+                      {isPromoActive && (
+                        <div className="flex items-center justify-end gap-1.5 mb-0.5">
+                          <span className="text-[10px] line-through text-white/40">
+                            ${Number(originalPriceNumber).toLocaleString('es-CL')}
+                          </span>
+                          <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded uppercase ${badgeColorClass}`}>
+                            {discountBadgeText}
+                          </span>
+                        </div>
+                      )}
+                      <p className={`font-bold text-sm ${isPromoActive ? priceColorClass : 'text-white'}`}>
+                        ${Number(effectivePriceNumber).toLocaleString('es-CL')}
                       </p>
                       <Link href={`/reservar?route=${adv?.id || ''}&fecha=${dep.id}`} className="text-[11px] text-amber-400 hover:text-white hover:underline uppercase tracking-wider block mt-1 font-bold">
                         Reservar &rarr;
