@@ -92,7 +92,7 @@ export default function FloatingNavbar({ currentLang }: Props) {
         
         {/* Cápsula Flotante Cristal Esmerilado Puro (True Frosted Glass) */}
         <div 
-          className="rounded-2xl md:rounded-full px-3.5 sm:px-7 min-h-[72px] sm:min-h-[82px] py-1.5 flex justify-between items-center transition-all duration-300 shadow-[0_8px_30px_rgba(0,0,0,0.15)] hover:bg-white/10"
+          className="rounded-2xl md:rounded-full px-3.5 sm:px-7 min-h-[58px] sm:min-h-[72px] py-1 flex justify-between items-center transition-all duration-300 shadow-[0_8px_30px_rgba(0,0,0,0.15)] hover:bg-white/10"
           style={{
             backgroundColor: scrolled ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.05)',
             backdropFilter: 'blur(16px)',
