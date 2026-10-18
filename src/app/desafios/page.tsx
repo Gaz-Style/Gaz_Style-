@@ -26,7 +26,7 @@ export default function DesafiosHubPage() {
             Desafíos Cordillera <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600">Santiago</span>
           </h1>
           <p className="text-lg md:text-xl text-stone-400 max-w-2xl mx-auto font-light leading-relaxed">
-            Hitos diseñados para superar tus límites con soporte técnico de alta montaña, guías certificados WFR, seguridad satelital y logística integral.
+            Hitos diseñados para superar tus límites con soporte técnico de alta montaña, liderazgo de cordada, seguridad satelital y protocolos WFR.
           </p>
         </div>
       </header>

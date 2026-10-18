@@ -52,12 +52,11 @@ export default function FloatingNavbar({ currentLang }: Props) {
   const dict = getDictionary(currentLang);
 
   const navLinks = [
-    { href: '#salidas-grupales', label: dict.nav.grupales },
-    { href: '#travesias-desafios', label: dict.nav.desafios },
-    { href: '#high-mountain', label: dict.nav.highMountain },
-    { href: '#expedition-boutique', label: dict.nav.boutique },
-    { href: '#niveles', label: dict.nav.niveles },
-    { href: '#circulo', label: dict.nav.comunidad },
+    { href: '#expediciones', label: currentLang === 'en' ? 'Expeditions' : 'Expediciones' },
+    { href: '#niveles', label: currentLang === 'en' ? 'Levels' : 'Niveles' },
+    { href: '#fechas-abiertas', label: currentLang === 'en' ? 'Departures' : 'Fechas Abiertas' },
+    { href: '#atlas', label: 'Atlas' },
+    { href: '#circulo', label: currentLang === 'en' ? 'Community' : 'Comunidad' },
   ];
 
   return (

@@ -43,8 +43,8 @@ export const SantiagoHikingSchema = {
             '@type': 'Offer',
             'itemOffered': {
               '@type': 'TouristTrip',
-              'name': 'Trekking Guiado Grupal con Certificación WFR',
-              'description': 'Ascensos grupales seguros con guías certificados WFR, radios VHF, botiquín de trauma y bajada gastronómica en Lo Barnechea.',
+              'name': 'Trekking Guiado Grupal con Protocolos WFR',
+              'description': 'Ascensos grupales seguros con liderazgo de cordada WFR, radios VHF, botiquín de trauma y bajada gastronómica en Lo Barnechea.',
             },
           },
           {
@@ -62,11 +62,11 @@ export const SantiagoHikingSchema = {
       '@type': 'Person',
       '@id': 'https://www.santiagohiking.com/#founder',
       'name': 'Gaz',
-      'jobTitle': 'Guía de Montaña & Fundador de Santiago Hiking',
+      'jobTitle': 'Líder de Montaña & Fundador de Santiago Hiking',
       'worksFor': {
         '@id': 'https://www.santiagohiking.com/#organization',
       },
-      'description': 'Líder de expediciones en la Cordillera de los Andes, certificado en primeros auxilios en áreas silvestres (WFR), comprometido con la conexión mental y la seguridad en la montaña.',
+      'description': 'Líder de expediciones en la Cordillera de los Andes, con entrenamiento en primeros auxilios en áreas silvestres (WFR), comprometido con la conexión mental y la seguridad en la montaña.',
       'knowsAbout': ['Montañismo', 'Trekking Técnico', 'Primeros Auxilios WFR', 'Cordillera de los Andes', 'Seguridad en Montaña'],
     },
   ],

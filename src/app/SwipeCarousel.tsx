@@ -247,17 +247,18 @@ export default function SwipeCarousel({ children, peekWidth = 24, gap = 12 }: Pr
         </div>
       </div>
 
-      {/* Flechas desktop con loop infinito activo */}
+      {/* Flechas circulares con loop infinito activo (estilo MBA) */}
       <button
+        type="button"
         onClick={() => {
           setIsTransitioning(true);
           setCurrentIndex(c => c - 1);
         }}
-        className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110 hidden sm:flex cursor-pointer"
+        className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all hover:scale-110 cursor-pointer shadow-lg active:scale-95"
         style={{
-          backgroundColor: 'rgba(0,0,0,0.55)',
+          backgroundColor: 'rgba(0,0,0,0.65)',
           backdropFilter: 'blur(12px)',
-          border: '1px solid rgba(255,255,255,0.22)',
+          border: '1px solid rgba(255,255,255,0.20)',
         }}
         aria-label="Anterior"
       >
@@ -265,15 +266,16 @@ export default function SwipeCarousel({ children, peekWidth = 24, gap = 12 }: Pr
       </button>
 
       <button
+        type="button"
         onClick={() => {
           setIsTransitioning(true);
           setCurrentIndex(c => c + 1);
         }}
-        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110 hidden sm:flex cursor-pointer"
+        className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all hover:scale-110 cursor-pointer shadow-lg active:scale-95"
         style={{
-          backgroundColor: 'rgba(0,0,0,0.55)',
+          backgroundColor: 'rgba(0,0,0,0.65)',
           backdropFilter: 'blur(12px)',
-          border: '1px solid rgba(255,255,255,0.22)',
+          border: '1px solid rgba(255,255,255,0.20)',
         }}
         aria-label="Siguiente"
       >
@@ -285,6 +287,7 @@ export default function SwipeCarousel({ children, peekWidth = 24, gap = 12 }: Pr
         {children.map((_, i) => (
           <button
             key={i}
+            type="button"
             onClick={() => {
               setIsTransitioning(true);
               setCurrentIndex(i + 1);

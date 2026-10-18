@@ -43,7 +43,7 @@ export default function GuideRadioWidget() {
 
   return (
     <aside 
-      className={`fixed right-0 top-1/2 -translate-y-1/2 z-40 transition-all duration-350 ease-out transform ${
+      className={`fixed right-0 top-1/2 -translate-y-1/2 z-40 transition-all duration-350 ease-out transform hidden md:flex ${
         isVisible 
           ? 'translate-x-0 opacity-100 pointer-events-auto' 
           : 'translate-x-full opacity-0 pointer-events-none'

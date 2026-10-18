@@ -169,55 +169,40 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
       : `¡Hola Santiago Hiking! Hice el test en la web y me recomendó "${route.title}". ¿Tienen cupos disponibles para próximas salidas?`
   );
 
+  // Escuchar evento global para abrir el Quiz desde la sección de niveles o cualquier parte
+  useEffect(() => {
+    const handleOpenQuiz = () => {
+      handleReset();
+      setIsOpen(true);
+    };
+    window.addEventListener('open-hiking-quiz', handleOpenQuiz);
+    return () => window.removeEventListener('open-hiking-quiz', handleOpenQuiz);
+  }, []);
+
   return (
     <>
-      {/* ── BOTONES HERO PÍLDORA CON GLASSMORPHISM & TRANSPARENCIA ── */}
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5 w-full max-w-lg mx-auto">
-        {/* Botón 1: Ver cumbres y aventuras (Abre catálogo maestro con buscador en vivo) */}
-        <button
-          type="button"
-          onClick={() => setIsAllAdventuresOpen(true)}
-          className="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-black px-8 sm:px-9 py-4 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all hover:scale-105 shadow-[0_0_20px_rgba(245,158,11,0.35)] cursor-pointer text-center select-none"
-        >
-          {lang === 'en'
-            ? 'Peaks & Adventures'
-            : lang === 'fr'
-            ? 'Sommets & Aventures'
-            : lang === 'pt'
-            ? 'Cumes e Aventuras'
-            : lang === 'de'
-            ? 'Gipfel & Abenteuer'
-            : 'Ver cumbres y aventuras'}
-        </button>
-
-        {/* Botón 2: Ayúdame a elegir (Diseño y Color Cristal Ahumado Oficial + Lógica del Quiz Modal) */}
-        <button
-          type="button"
-          onClick={() => {
-            handleReset();
-            setIsOpen(true);
-          }}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 text-white px-8 sm:px-9 py-4 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all hover:scale-105 hover:bg-white/10 cursor-pointer text-center select-none group"
+      {/* ── BOTÓN HERO CÁPSULA GLASSMORPHISM (SIN BRILLO / SIN GLOW) ── */}
+      <div className="flex items-center justify-center w-full">
+        <a
+          href="#expediciones"
+          className="group inline-flex items-center justify-center gap-2.5 px-8 py-3.5 sm:px-10 sm:py-4 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer text-center select-none font-mono text-amber-300 hover:text-white"
           style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            backgroundColor: 'rgba(245, 158, 11, 0.20)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            border: '1px solid rgba(245, 158, 11, 0.45)',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
           }}
         >
-          <Lightbulb className="w-4 h-4 text-amber-400 group-hover:rotate-12 transition-transform duration-300" />
           <span>
-            {lang === 'en'
-              ? 'Help Me Choose'
-              : lang === 'fr'
-              ? 'Aidez-moi à choisir'
-              : lang === 'pt'
-              ? 'Ajude-me a escolher'
-              : lang === 'de'
-              ? 'Hilf mir bei der Auswahl'
-              : 'Ayúdame a elegir'}
+            {lang === 'en' 
+              ? 'View Adventures' 
+              : lang === 'pt' 
+              ? 'Ver Aventuras' 
+              : 'Ver Aventura'}
           </span>
-        </button>
+          <span className="text-amber-400 group-hover:translate-y-0.5 transition-transform duration-200">↓</span>
+        </a>
       </div>
 
       {/* ── MODAL MAESTRO: CUMBRES DEL ATLAS & AVENTURAS GUIADAS CON BUSCADOR ── */}

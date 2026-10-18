@@ -67,8 +67,8 @@ export default function HeroCarousel() {
         );
       })}
 
-      {/* Overlay sutil y luminoso: mantiene la luz natural de los videos sin oscurecer */}
-      <div className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-b from-black/35 via-transparent to-black/45" />
+      {/* Overlay oscuro homogéneo de 40% para contraste y legibilidad óptima */}
+      <div className="absolute inset-0 z-20 pointer-events-none bg-black/40" />
 
       {/* Indicadores Minimalistas de Clips (Píldoras de cristal para interactuar o ver avance) */}
       <div className="absolute bottom-6 right-6 z-30 hidden sm:flex items-center gap-2 pointer-events-auto">

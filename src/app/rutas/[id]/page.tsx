@@ -437,7 +437,7 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                             Guiado por Mario Cruz & Equipo de Montaña
                                         </h3>
                                         <p className="text-white/70 text-xs sm:text-sm font-light leading-relaxed">
-                                            Montañista y fundador de Santiago Hiking. Certificado en primeros auxilios en áreas remotas (WFR) y conocedor de cada filo, quebrada y mirador de la Cordillera de los Andes sobre el valle central. Nuestra prioridad es tu seguridad, el ritmo pausado y la hospitalidad de montaña.
+                                            Montañista y fundador de Santiago Hiking. Entrenado en primeros auxilios en áreas remotas (WFR) y conocedor de cada filo, quebrada y mirador de la Cordillera de los Andes sobre el valle central. Nuestra prioridad es tu seguridad, el ritmo pausado y la hospitalidad de montaña.
                                         </p>
                                         <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 pt-2 text-xs font-mono text-white/50">
                                             <span className="flex items-center gap-1.5">

@@ -76,7 +76,7 @@ export default function MasterUnifiedSandboxPage() {
 
           {/* ── NAVBAR FLOTANTE CON LOGOTIPO LIMPIO ── */}
           <header className="fixed top-3 sm:top-5 left-0 right-0 z-50 px-4 sm:px-8 pointer-events-none">
-            <div className="max-w-6xl mx-auto flex items-center justify-between pointer-events-auto">
+            <div className="max-w-4xl mx-auto flex items-center justify-between pointer-events-auto">
               <Link 
                 href="/cumbres" 
                 className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-white/80 hover:text-white transition-all hover:-translate-x-1 py-1 drop-shadow-[0_2px_10px_rgba(0,0,0,0.85)]"
@@ -109,7 +109,7 @@ export default function MasterUnifiedSandboxPage() {
 
           {/* ── BLOQUE 1 & 2: HERO DE LA RUTA + 4 MÉTRICAS + ACTION BAR ── */}
           <header className="relative min-h-[68vh] sm:min-h-[72vh] flex flex-col justify-end pt-20">
-            <div className="max-w-6xl mx-auto px-6 pb-10 w-full">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-10 w-full">
               
               <div className="mb-3">
                 <span className="bg-stone-900/80 backdrop-blur px-3 py-1 text-[10px] font-mono tracking-widest uppercase font-bold text-white rounded border border-white/10 inline-block">
@@ -131,7 +131,7 @@ export default function MasterUnifiedSandboxPage() {
 
               {/* ── TELEMETRÍA METEOROLÓGICA INTEGRAL EN CUMBRE (UNIFICADA) ── */}
               <div 
-                className="rounded-2xl p-4 sm:p-5 font-mono max-w-2xl mt-4 shadow-2xl space-y-3"
+                className="rounded-3xl p-5 sm:p-6 font-mono w-full mt-4 shadow-2xl space-y-3"
                 style={{
                   backgroundColor: 'rgba(10, 10, 10, 0.75)',
                   backdropFilter: 'blur(24px)',
@@ -189,7 +189,7 @@ export default function MasterUnifiedSandboxPage() {
               </div>
 
               {/* ── PERFIL DE ELEVACIÓN & ALTIMETRÍA INTERACTIVO BAJO EL CLIMA ── */}
-              <div className="mt-5 max-w-2xl">
+              <div className="mt-5 w-full">
                 <ElevationProfileWidget
                   maxAltitude={`${entity.altitude_msnm}m`}
                   elevationGain={`+${activeVariant.elevation_gain_m}m D+`}
@@ -205,7 +205,7 @@ export default function MasterUnifiedSandboxPage() {
 
 
           {/* ── CUERPO PRINCIPAL (2 COLUMNAS: EDITORIAL/CARTOGRAFÍA + SIDEBAR COMERCIAL) ── */}
-          <main className="max-w-4xl mx-auto px-6 py-6">
+          <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
 
             {/* COLUMNA IZQUIERDA: BLOQUES 3 A 11 */}
             <div className="space-y-10">

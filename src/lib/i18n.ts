@@ -94,11 +94,11 @@ export const DICTIONARY: Record<SupportedLang, Translations> = {
     hero: {
       trust_wfr: 'Expediciones Guiadas',
       trust_sos: 'SOS Satelital Garmin',
-      title_line1: 'SANTIAGO DESDE',
+      title_line1: 'CONQUISTA',
       title_line2: 'LA CIMA.',
       subtitle: 'Expediciones de montaña, ascensos al atardecer y cumbres en los Andes centrales. Salidas grupales y privadas por los cerros más icónicos de Santiago, desde rutas clásicas hasta desafíos de alta exigencia.',
-      btn_all_adventures: 'Ver todas las aventuras',
-      btn_help_choose: 'Ayúdame a elegir',
+      btn_all_adventures: 'Explorar Todos',
+      btn_help_choose: '¿Cuál es mi cumbre?',
     },
     sections: {
       grupales: {
@@ -178,8 +178,8 @@ export const DICTIONARY: Record<SupportedLang, Translations> = {
       title_line1: 'UNLOCK',
       title_line2: 'THE SUMMIT.',
       subtitle: 'Guided mountain expeditions, sunset ascents, and summits in the central Andes. Group and private treks across Santiago’s most iconic peaks, from classic day hikes to demanding endurance challenges.',
-      btn_all_adventures: 'Explore All Adventures',
-      btn_help_choose: 'Help Me Choose',
+      btn_all_adventures: 'Explore All',
+      btn_help_choose: "What's My Summit?",
     },
     sections: {
       grupales: {
@@ -219,7 +219,7 @@ export const DICTIONARY: Record<SupportedLang, Translations> = {
       title: 'Mountain Level System',
       l1_title: 'Active Initiation',
       l1_meta: 'Elevation Gain <400m+ · 3.5 hrs',
-      l1_desc: 'Gentle pace with scenic resting stops. Ideal for your first Andean summit, pro photo shots, and sunset coffee over the valley.',
+      l1_desc: 'Gentle pace with scenic resting stops. Ideal for your first Andean summit, pro photo shots, and sunset views over the valley.',
       l2_title: 'Cardio & Reset',
       l2_meta: 'Elevation Gain 400 to 800m+ · 4-5 hrs',
       l2_desc: 'Sustained athletic mountain pace to shake off city stress. Requires trail shoes with great grip, steady breathing, and energy.',
@@ -259,8 +259,8 @@ export const DICTIONARY: Record<SupportedLang, Translations> = {
       title_line1: 'DÉBLOQUEZ',
       title_line2: 'LE SOMMET.',
       subtitle: 'Expéditions en montagne, ascensions au coucher du soleil et sommets dans les Andes centrales. Sorties en groupe et privées sur les sommets les plus emblématiques de Santiago.',
-      btn_all_adventures: 'Voir toutes les aventures',
-      btn_help_choose: 'Aidez-moi à choisir',
+      btn_all_adventures: 'Tout Explorer',
+      btn_help_choose: 'Quel est mon sommet ?',
     },
     sections: {
       grupales: {
@@ -340,8 +340,8 @@ export const DICTIONARY: Record<SupportedLang, Translations> = {
       title_line1: 'DESBLOQUEIE',
       title_line2: 'O CUME.',
       subtitle: 'Expedições de montanha, subidas ao pôr do sol e cumes nos Andes centrais. Saídas em grupo e privadas pelas montanhas mais emblemáticas de Santiago.',
-      btn_all_adventures: 'Ver todas as aventuras',
-      btn_help_choose: 'Ajude-me a escolher',
+      btn_all_adventures: 'Explorar Todos',
+      btn_help_choose: 'Qual é meu cume?',
     },
     sections: {
       grupales: {
@@ -421,8 +421,8 @@ export const DICTIONARY: Record<SupportedLang, Translations> = {
       title_line1: 'EROBERE',
       title_line2: 'DEN GIPFEL.',
       subtitle: 'Geführte Bergexpeditionen, Sonnenuntergangstouren und Gipfel in den zentralen Anden. Gruppen- und Privattouren auf den bekanntesten Bergen Santiagos.',
-      btn_all_adventures: 'Alle Abenteuer entdecken',
-      btn_help_choose: 'Hilf mir bei der Auswahl',
+      btn_all_adventures: 'Alle Entdecken',
+      btn_help_choose: 'Was ist mein Gipfel?',
     },
     sections: {
       grupales: {

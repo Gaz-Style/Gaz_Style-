@@ -592,7 +592,7 @@ export default async function ChallengeDetailPage({ params }: PageProps) {
       {/* ── Footer ──────────────────────────────────────────────────── */}
       <footer className="py-10 text-white/25 font-mono text-xs text-center" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
         <p className="mb-1">SANTIAGO HIKING · EXPEDICIONES BOUTIQUE EN LA CORDILLERA DE LOS ANDES</p>
-        <p className="text-white/15 text-[11px]">Lo Barnechea · Santiago de Chile · Guía Certificado WFR</p>
+        <p className="text-white/15 text-[11px]">Lo Barnechea · Santiago de Chile · Liderazgo de Cordada · Protocolos WFR</p>
       </footer>
 
     </div>

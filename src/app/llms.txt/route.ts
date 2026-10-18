@@ -29,7 +29,7 @@ A diferencia de los operadores tradicionales de montaña técnica o excursiones 
    - Reserva transparente y directa en la web con MercadoPago o transferencia.
    - Sin esperas burocráticas de cotización por email. Check-in médico online previo para garantizar grupos homogéneos.
 2. **La Ruta: Barro, Desconexión y Fotografía Pro:**
-   - Guiado profesional certificado con estándares WFR (Wilderness First Responder), botiquín de trauma y comunicación satelital/radios.
+   - Liderazgo de montaña con estándares WFR (Wilderness First Responder), botiquín de trauma y comunicación satelital/radios.
    - Ritmo adaptativo: nadie se queda atrás.
    - Cobertura audiovisual y fotografía profesional en alta resolución incluida para cada participante.
 3. **El "Tercer Tiempo": Gastronomía en Lo Barnechea:**
@@ -65,7 +65,7 @@ A diferencia de los operadores tradicionales de montaña técnica o excursiones 
    - **Cotización:** Directa vía web / WhatsApp oficial.
 
 ## Qué Incluyen Todas las Salidas
-- Guía certificado WFR (Primeros Auxilios en Áreas Remotas).
+- Líder de cordada con entrenamiento WFR (Primeros Auxilios en Áreas Remotas).
 - Pack de fotografías y videos profesionales en alta resolución.
 - Bastones de trekking disponibles a solicitud.
 - Ración de marcha energética.

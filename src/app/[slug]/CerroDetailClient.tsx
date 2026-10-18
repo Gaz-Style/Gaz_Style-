@@ -182,7 +182,7 @@ export default function CerroDetailClient({ peak, weather, currentLang }: Props)
 
           {/* ── NAVBAR FLOTANTE CON LOGOTIPO LIMPIO ── */}
           <header className="fixed top-3 sm:top-5 left-0 right-0 z-50 px-4 sm:px-8 pointer-events-none">
-            <div className="max-w-6xl mx-auto flex items-center justify-between pointer-events-auto">
+            <div className="max-w-4xl mx-auto flex items-center justify-between pointer-events-auto">
               <Link 
                 href="/#cerros" 
                 className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-white/80 hover:text-white transition-all hover:-translate-x-1 py-1 drop-shadow-[0_2px_10px_rgba(0,0,0,0.85)]"
@@ -213,7 +213,7 @@ export default function CerroDetailClient({ peak, weather, currentLang }: Props)
 
           {/* ── BLOQUE 1 & 2: HERO DE LA RUTA + 4 MÉTRICAS + ACTION BAR ── */}
           <header className="relative min-h-[68vh] sm:min-h-[72vh] flex flex-col justify-end pt-20">
-            <div className="max-w-6xl mx-auto px-6 pb-10 w-full">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-10 w-full">
               
               <div className="mb-3">
                 <span className="bg-stone-900/80 backdrop-blur px-3 py-1 text-[10px] font-mono tracking-widest uppercase font-bold text-white rounded border border-white/10 inline-block">
@@ -231,7 +231,7 @@ export default function CerroDetailClient({ peak, weather, currentLang }: Props)
 
               {/* ── TELEMETRÍA METEOROLÓGICA INTEGRAL EN CUMBRE (UNIFICADA) ── */}
               <div 
-                className="rounded-2xl p-4 sm:p-5 font-mono max-w-2xl mt-4 shadow-2xl space-y-3"
+                className="rounded-3xl p-5 sm:p-6 font-mono w-full mt-4 shadow-2xl space-y-3"
                 style={{
                   backgroundColor: 'rgba(10, 10, 10, 0.75)',
                   backdropFilter: 'blur(24px)',
@@ -289,7 +289,7 @@ export default function CerroDetailClient({ peak, weather, currentLang }: Props)
               </div>
 
               {/* ── PERFIL DE ELEVACIÓN & ALTIMETRÍA INTERACTIVO BAJO EL CLIMA ── */}
-              <div className="mt-5 max-w-2xl">
+              <div className="mt-5 w-full">
                 <ElevationProfileWidget
                   points={activeTrail?.elevation_profile}
                   maxAltitude={`${peak.altitude_msnm}m`}
@@ -303,7 +303,7 @@ export default function CerroDetailClient({ peak, weather, currentLang }: Props)
           </header>
 
           {/* ── CUERPO PRINCIPAL (EDITORIAL/CARTOGRAFÍA + COMERCIAL) ── */}
-          <main className="max-w-4xl mx-auto px-6 py-6">
+          <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
 
             <div className="space-y-10">
 
@@ -879,7 +879,7 @@ export default function CerroDetailClient({ peak, weather, currentLang }: Props)
           <div 
             className="fixed bottom-0 left-0 right-0 z-40 lg:hidden px-4 py-3 border-t border-white/[0.12] bg-[#0c0f12]/95 backdrop-blur-2xl shadow-[0_-10px_35px_rgba(0,0,0,0.9)]"
           >
-            <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+            <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
               <div className="min-w-0">
                 <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-white/50 block">
                   Ficha Técnica Oficial
