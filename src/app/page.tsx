@@ -59,10 +59,10 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
 
         <div className="relative z-10 max-w-5xl mx-auto text-center w-full mt-4 sm:mt-8">
           
-          {/* Trust & Reviews: Solo Google sin contenedor de cápsula ni Sernatur */}
-          <div className="inline-flex items-center justify-center gap-2 mb-4 sm:mb-6 text-xs sm:text-sm font-mono text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] select-none whitespace-nowrap">
-            <span className="text-amber-400 font-bold tracking-widest text-sm sm:text-base">★★★★★</span>
-            <span className="font-bold text-white tracking-wide">4.9/5 Google</span>
+          {/* Trust & Reviews: Solo Google sin contenedor de cápsula ni Sernatur (Tamaño aumentado) */}
+          <div className="inline-flex items-center justify-center gap-2.5 sm:gap-3 mb-5 sm:mb-7 text-sm sm:text-base md:text-lg font-mono text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)] select-none whitespace-nowrap">
+            <span className="text-amber-400 font-bold tracking-widest text-base sm:text-xl md:text-2xl drop-shadow-[0_2px_10px_rgba(251,191,36,0.6)]">★★★★★</span>
+            <span className="font-bold text-white tracking-wider">4.9/5 Google</span>
           </div>
           
           {/* Título Hero de Mayor Impacto y Proporción */}
