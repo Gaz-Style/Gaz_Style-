@@ -54,7 +54,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
       <ScrollToTopButton />
 
       {/* 1. HERO SECTION CINEMATOGRÁFICO (Estándar MBA: Limpio, Aireado y Solo-Friendly) */}
-      <section className="relative min-h-[82vh] sm:min-h-screen flex items-center justify-center pt-28 sm:pt-36 pb-10 sm:pb-16 px-5 sm:px-6 overflow-hidden">
+      <section className="relative min-h-[72vh] sm:min-h-screen flex items-center justify-center pt-24 sm:pt-32 pb-2 sm:pb-12 px-5 sm:px-6 overflow-hidden">
         <HeroCarousel />
 
         <div className="relative z-10 max-w-5xl mx-auto text-center w-full my-auto">
