@@ -16,6 +16,7 @@ import ScrollToTopButton from "./ScrollToTopButton";
 import AtlasShowcaseSection from '@/components/AtlasShowcaseSection';
 import TopTickerBar from '@/components/TopTickerBar';
 import UnifiedExpeditionsTabs from '@/components/UnifiedExpeditionsTabs';
+import DesafiosSection from '@/components/DesafiosSection';
 import VisualLevelsSection from '@/components/VisualLevelsSection';
 import Footer from '@/components/Footer';
 import { createClient } from '@supabase/supabase-js';
@@ -83,6 +84,9 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
 
       {/* 2. EL MOTOR DE EXPEDICIONES EN 3 PESTAÑAS (Estándar MBA: Elimina el scroll masivo) */}
       <UnifiedExpeditionsTabs routes={routes} lang={lang} />
+
+      {/* 2.5 SECCIÓN EXCLUSIVA: DESAFÍOS CORDILLERA 💀 (Retos de Alto Rendimiento & Retención Récord) */}
+      <DesafiosSection lang={lang} />
 
       {/* 3. SISTEMA DE NIVELES TIPO MBA: "Distintos Niveles, Todas Cumbres Épicas" + Quiz */}
       <VisualLevelsSection lang={lang} />

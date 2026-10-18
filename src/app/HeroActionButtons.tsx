@@ -181,12 +181,13 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
 
   return (
     <>
-      {/* ── BOTÓN HERO CÁPSULA GLASSMORPHISM EN PUNTO MEDIO EXACTO ── */}
-      <div className="flex items-center justify-center w-full px-4">
+      {/* ── BOTONES HERO CÁPSULA GLASSMORPHISM: QUIERO TREKKING + DESAFÍOS ── */}
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full max-w-xl mx-auto px-4">
+        {/* Botón 1: QUIERO TREKKING (Abre el buscador/catálogo completo como hasta ahora) */}
         <button
           type="button"
           onClick={() => setIsAllAdventuresOpen(true)}
-          className="group inline-flex items-center justify-center gap-3 w-full max-w-[260px] sm:max-w-[290px] py-3.5 sm:py-4 px-6 rounded-full text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:scale-[1.02] active:scale-95 cursor-pointer text-center select-none font-mono text-amber-300 hover:text-white"
+          className="group inline-flex items-center justify-center gap-2.5 w-full sm:w-auto sm:min-w-[210px] py-3.5 sm:py-4 px-6 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer text-center select-none font-mono text-amber-300 hover:text-white"
           style={{
             backgroundColor: 'rgba(245, 158, 11, 0.22)',
             backdropFilter: 'blur(16px)',
@@ -197,13 +198,36 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
         >
           <span className="tracking-[0.16em]">
             {lang === 'en' 
-              ? 'View Adventures' 
+              ? 'I WANT TREKKING' 
               : lang === 'pt' 
-              ? 'Ver Aventuras' 
-              : 'Ver Aventura'}
+              ? 'QUERO TREKKING' 
+              : 'QUIERO TREKKING'}
           </span>
-          <span className="text-amber-400 text-base sm:text-lg group-hover:translate-y-0.5 transition-transform duration-200">↓</span>
+          <span className="text-amber-400 text-sm group-hover:translate-y-0.5 transition-transform duration-200">↓</span>
         </button>
+
+        {/* Botón 2: DESAFÍOS 💀 (Desplaza suavemente a la nueva sección exclusiva de Desafíos) */}
+        <a
+          href="#desafios"
+          className="group inline-flex items-center justify-center gap-2.5 w-full sm:w-auto sm:min-w-[210px] py-3.5 sm:py-4 px-6 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer text-center select-none font-mono text-white hover:text-amber-300"
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            border: '1.5px solid rgba(255, 255, 255, 0.22)',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.38)',
+          }}
+        >
+          <span className="text-base group-hover:scale-125 transition-transform">💀</span>
+          <span className="tracking-[0.16em]">
+            {lang === 'en' 
+              ? 'CHALLENGES' 
+              : lang === 'pt' 
+              ? 'DESAFIOS' 
+              : 'DESAFÍOS'}
+          </span>
+          <span className="text-amber-400 group-hover:translate-x-1 transition-transform duration-200">→</span>
+        </a>
       </div>
 
       {/* ── MODAL MAESTRO: CUMBRES DEL ATLAS & AVENTURAS GUIADAS CON BUSCADOR (ABRE EN AVENTURAS) ── */}
