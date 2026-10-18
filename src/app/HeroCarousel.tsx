@@ -13,6 +13,7 @@ const HERO_VIDEOS = [
 
 export default function HeroCarousel() {
   const [current, setCurrent] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   const playVideo = useCallback((index: number) => {
@@ -21,7 +22,15 @@ export default function HeroCarousel() {
       video.defaultMuted = true;
       video.muted = true;
       video.currentTime = 0;
-      video.play().catch(() => {});
+      const promise = video.play();
+      if (promise !== undefined) {
+        promise
+          .then(() => setIsPlaying(true))
+          .catch(() => {
+            // Safari iOS Low Power Mode bloqueó el autoplay
+            setIsPlaying(false);
+          });
+      }
     }
   }, []);
 
@@ -33,8 +42,30 @@ export default function HeroCarousel() {
     playVideo(current);
   }, [current, playVideo]);
 
+  // Desbloqueo suave para iOS en caso de modo de bajo consumo: al primer toque o scroll intenta reproducir
+  useEffect(() => {
+    const unlockPlay = () => {
+      const activeVideo = videoRefs.current[current];
+      if (activeVideo && activeVideo.paused) {
+        activeVideo.play().then(() => setIsPlaying(true)).catch(() => {});
+      }
+    };
+    window.addEventListener('touchstart', unlockPlay, { once: true, passive: true });
+    window.addEventListener('scroll', unlockPlay, { once: true, passive: true });
+    return () => {
+      window.removeEventListener('touchstart', unlockPlay);
+      window.removeEventListener('scroll', unlockPlay);
+    };
+  }, [current]);
+
   return (
     <div className="fixed inset-0 z-0 w-full h-full overflow-hidden bg-stone-950 pointer-events-none">
+      {/* Fondo de respaldo de alta calidad oficial (sin fotos genéricas ni botones de play rotos) */}
+      <div 
+        className="absolute inset-0 z-0 bg-cover bg-center transition-opacity duration-1000"
+        style={{ backgroundImage: "url('/images/wildtrek_sunset.png')" }}
+      />
+
       {/* Carrusel de Videos con Crossfade Cinematográfico */}
       {HERO_VIDEOS.map((vid, idx) => {
         const isCurrent = idx === current;
@@ -51,15 +82,18 @@ export default function HeroCarousel() {
             loop={false}
             muted
             playsInline
+            {...({ 'webkit-playsinline': 'true' } as Record<string, string>)}
             preload={preloadStrategy}
+            onPlaying={() => {
+              if (idx === current) setIsPlaying(true);
+            }}
             onEnded={handleNext}
             onError={() => {
               // Si un clip falla o no es compatible, salta fluidamente al siguiente
               if (idx === current) handleNext();
             }}
-            poster="https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=2000&q=80"
             className={`absolute inset-0 w-full h-full object-cover object-center scale-105 transition-opacity duration-1000 ease-in-out ${
-              isCurrent ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+              isCurrent && isPlaying ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
             }`}
           >
             <source src={vid.src} type="video/mp4" />
