@@ -99,7 +99,35 @@ export default function GlobalSearchModal({ isOpen, onClose, lang = 'es', initia
     );
   };
 
-  const regularAdventures = useMemo(() => adventures.filter(a => !isPackage(a)), [adventures]);
+  // Helper para nivel numérico de dificultad (1: Iniciación a 4: Gran Altitud)
+  const getDifficultyScore = (adv: any) => {
+    const diff = (adv.difficulty_level || '').toLowerCase();
+    const alt = Number(String(adv.max_altitude || '').replace(/[^0-9]/g, '')) || 0;
+    if (alt >= 3800 || diff.includes('experto') || diff.includes('muy alta')) return 4;
+    if (alt >= 2400 || diff.includes('alta') || diff.includes('avanzad') || diff.includes('exigente')) return 3;
+    if (alt >= 1800 || diff.includes('media') || diff.includes('intermedio')) return 2;
+    return 1;
+  };
+
+  // Helper de conversión a USD
+  const getUsdPrice = (adv: any, clpPrice: number) => {
+    if (adv.price_usd && !isNaN(Number(adv.price_usd))) return `$${Number(adv.price_usd)} USD`;
+    const usd = Math.round(clpPrice / 950);
+    return `~$${usd} USD`;
+  };
+
+  const regularAdventures = useMemo(() => {
+    const list = adventures.filter(a => !isPackage(a));
+    return list.sort((a, b) => {
+      const diffA = getDifficultyScore(a);
+      const diffB = getDifficultyScore(b);
+      if (diffA !== diffB) return diffA - diffB;
+      const altA = Number(String(a.max_altitude || '').replace(/[^0-9]/g, '')) || 0;
+      const altB = Number(String(b.max_altitude || '').replace(/[^0-9]/g, '')) || 0;
+      return altA - altB;
+    });
+  }, [adventures]);
+
   const allInclusivePackages = useMemo(() => adventures.filter(a => isPackage(a)), [adventures]);
 
   if (!isOpen || !mounted || typeof document === 'undefined') return null;
@@ -310,77 +338,117 @@ export default function GlobalSearchModal({ isOpen, onClose, lang = 'es', initia
             </div>
           )}
 
-          {/* ── 2. VISTA DE AVENTURAS GRUPALES & TRAVESÍAS ── */}
+          {/* ── 2. VISTA DE AVENTURAS GRUPALES & TRAVESÍAS (ORDENADAS DE MENOR A MAYOR DIFICULTAD) ── */}
           {activeTab === 'adventures' && regularAdventures.length > 0 && (
-            <div className="space-y-2">
-              <div className="flex items-baseline justify-between mb-2 pb-1.5 border-b border-white/10">
-                <h3 className="text-sm font-black text-white uppercase tracking-tight flex items-center gap-1.5">
-                  <Compass className="w-3.5 h-3.5 text-emerald-400" /> Salidas Grupales & Travesías
-                </h3>
-                <span className="text-[9px] font-mono tracking-widest text-white/45 uppercase">
-                  {regularAdventures.length} AVENTURAS
+            <div className="space-y-3">
+              <div className="flex items-baseline justify-between mb-2 pb-1.5 border-b border-amber-500/20">
+                <div className="flex items-center gap-2">
+                  <Compass className="w-4 h-4 text-amber-400" />
+                  <h3 className="text-sm font-black text-white uppercase tracking-tight">
+                    Aventuras & Travesías Guiadas
+                  </h3>
+                </div>
+                <span className="text-[9px] font-mono tracking-widest text-amber-400 uppercase font-bold">
+                  {regularAdventures.length} ACTIVAS · DE MENOR A MAYOR
                 </span>
               </div>
 
               {regularAdventures.map((adv) => {
                 let cleanTitle = (adv.title || '').split('·')[0].trim().replace(/^cerro\s+/i, '');
-                const duration = adv.duration_text || '3 - 5h';
+                const duration = adv.duration_text || (adv.duration_days ? `${adv.duration_days} Días` : 'Full Day');
                 const altitude = adv.max_altitude ? (String(adv.max_altitude).includes('m') ? adv.max_altitude : `${adv.max_altitude}m`) : null;
-                const price = adv.base_price ? `$${Number(adv.base_price).toLocaleString('es-CL')}` : null;
+                const clpPriceNumber = Number(adv.base_price || 25000);
+                const clpText = `$${clpPriceNumber.toLocaleString('es-CL')}`;
+                const usdText = getUsdPrice(adv, clpPriceNumber);
+                const diffScore = getDifficultyScore(adv);
+                const diffLabel = 
+                  diffScore === 1 ? 'NIVEL 1 · INICIACIÓN' :
+                  diffScore === 2 ? 'NIVEL 2 · INTERMEDIO' :
+                  diffScore === 3 ? 'NIVEL 3 · DESAFÍO ANDINO' :
+                  'NIVEL 4 · ALTA MONTAÑA';
 
                 return (
-                  <Link
+                  <div
                     key={adv.id}
-                    href={`/rutas/${adv.id}`}
-                    onClick={onClose}
-                    className="group relative rounded-xl overflow-hidden flex items-stretch border border-white/15 transition-all duration-300 hover:scale-[1.01] hover:border-emerald-400/50"
+                    className="group relative rounded-2xl overflow-hidden flex flex-col sm:flex-row items-stretch border border-white/15 hover:border-amber-400/60 transition-all duration-300 shadow-[0_4px_25px_rgba(0,0,0,0.35)]"
                     style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.06)',
-                      backdropFilter: 'blur(16px)',
-                      WebkitBackdropFilter: 'blur(16px)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                      backdropFilter: 'blur(20px)',
+                      WebkitBackdropFilter: 'blur(20px)',
                     }}
                   >
-                    <div className="relative w-24 sm:w-28 shrink-0 overflow-hidden bg-stone-900">
+                    {/* Foto Panorámica con Badge de Nivel */}
+                    <div className="relative w-full sm:w-44 h-36 sm:h-auto shrink-0 overflow-hidden bg-stone-900">
                       <Image
                         src={adv.image_url || 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80'}
                         alt={cleanTitle}
                         fill
-                        sizes="112px"
-                        className="object-cover group-hover:scale-110 transition-transform duration-500 pointer-events-none"
+                        sizes="180px"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/40 pointer-events-none" />
+                      <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-black/70 to-transparent pointer-events-none" />
+                      <div className="absolute top-2.5 left-2.5">
+                        <span className="px-2.5 py-0.5 rounded-full bg-amber-400 text-stone-950 font-black text-[9px] uppercase tracking-wider font-mono shadow">
+                          {diffLabel}
+                        </span>
+                      </div>
                     </div>
 
-                    <div className="p-3 sm:p-3.5 flex-1 min-w-0 flex flex-col justify-between">
+                    {/* Contenido Técnico y Botón de Agendar */}
+                    <div className="p-4 sm:p-4.5 flex-1 min-w-0 flex flex-col justify-between gap-3">
                       <div>
                         <div className="flex items-center justify-between gap-2 mb-1">
-                          <h4 className="text-sm font-bold text-white uppercase tracking-tight group-hover:text-emerald-400 transition-colors truncate">
+                          <Link
+                            href={`/rutas/${adv.id}`}
+                            onClick={onClose}
+                            className="text-base font-black text-white uppercase tracking-tight group-hover:text-amber-300 transition-colors hover:underline"
+                          >
                             {cleanTitle}
-                          </h4>
-                          <ArrowRight className="w-3.5 h-3.5 text-white/40 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all shrink-0" />
+                          </Link>
+                          <Link
+                            href={`/rutas/${adv.id}`}
+                            onClick={onClose}
+                            className="text-xs text-white/50 hover:text-white flex items-center gap-1 font-mono shrink-0"
+                          >
+                            <span>Ficha</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </Link>
                         </div>
-                        <p className="text-[11px] text-white/70 font-light leading-snug line-clamp-2">
-                          {adv.description || 'Expedición y ascenso guiado con el equipo oficial de Santiago Hiking.'}
+                        <p className="text-xs text-white/75 font-light leading-relaxed line-clamp-2">
+                          {adv.description || 'Ascenso de montaña guiado por senderos andinos de Santiago con liderazgo de cordada.'}
                         </p>
                       </div>
 
-                      <div className="flex items-center gap-2 pt-2 text-[10px] font-mono text-white/50">
-                        <span>{duration}</span>
-                        {altitude && (
-                          <>
-                            <span>·</span>
-                            <span>{altitude}</span>
-                          </>
-                        )}
-                        {price && (
-                          <>
-                            <span>·</span>
-                            <span className="text-white font-bold ml-auto">{price}</span>
-                          </>
-                        )}
+                      {/* Métricas y Precios Duales (CLP + USD) + Botón Agendar */}
+                      <div className="pt-2.5 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 font-mono">
+                        <div className="flex items-center gap-2.5 text-[11px] text-white/70">
+                          {altitude && <span className="font-bold text-white">{altitude}</span>}
+                          {altitude && <span>·</span>}
+                          <span>{duration}</span>
+                        </div>
+
+                        <div className="flex items-center gap-4 ml-auto">
+                          {/* Precios en CLP y USD */}
+                          <div className="text-right">
+                            <div className="flex items-baseline gap-1.5 justify-end">
+                              <span className="text-sm sm:text-base font-black text-amber-400">{clpText}</span>
+                              <span className="text-[10px] text-white/60 font-semibold">{usdText}</span>
+                            </div>
+                            <span className="text-[9px] text-white/40 uppercase block">Por persona</span>
+                          </div>
+
+                          {/* Botón Agendar / Reservar Directo */}
+                          <Link
+                            href={`/reservar?route=${adv.id}`}
+                            onClick={onClose}
+                            className="btn-arcteryx-primary !py-2 !px-4 text-[10px] sm:text-xs font-mono font-bold tracking-wider shrink-0 uppercase shadow-md"
+                          >
+                            AGENDAR
+                          </Link>
+                        </div>
                       </div>
                     </div>
-                  </Link>
+                  </div>
                 );
               })}
             </div>

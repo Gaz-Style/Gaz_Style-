@@ -206,12 +206,12 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
         </button>
       </div>
 
-      {/* ── MODAL MAESTRO: CUMBRES DEL ATLAS & AVENTURAS GUIADAS CON BUSCADOR (ABRE EN EXPEDICIONES CON PRECIO) ── */}
+      {/* ── MODAL MAESTRO: CUMBRES DEL ATLAS & AVENTURAS GUIADAS CON BUSCADOR (ABRE EN AVENTURAS) ── */}
       <GlobalSearchModal
         isOpen={isAllAdventuresOpen}
         onClose={() => setIsAllAdventuresOpen(false)}
         lang={lang}
-        initialTab="packages"
+        initialTab="adventures"
       />
 
       {/* ── MODAL POPUP CON LA IDENTIDAD EXACTA DE LA WEB: CRISTAL, PÍLDORAS Y VIDEO NATIVO ── */}
