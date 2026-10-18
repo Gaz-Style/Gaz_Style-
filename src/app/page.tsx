@@ -54,13 +54,13 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
       <ScrollToTopButton />
 
       {/* 1. HERO SECTION CINEMATOGRÁFICO (Estándar MBA: Limpio, Aireado y Solo-Friendly) */}
-      <section className="relative min-h-[92vh] sm:min-h-screen flex items-center justify-center pt-24 sm:pt-32 pb-14 sm:pb-20 px-5 sm:px-6 overflow-hidden">
+      <section className="relative min-h-[85vh] sm:min-h-screen flex items-center justify-center pt-16 sm:pt-24 pb-8 sm:pb-16 px-5 sm:px-6 overflow-hidden">
         <HeroCarousel />
 
-        <div className="relative z-10 max-w-5xl mx-auto text-center w-full mt-4 sm:mt-8">
+        <div className="relative z-10 max-w-5xl mx-auto text-center w-full mt-0 sm:mt-2">
           
           {/* Trust & Reviews: Solo Google sin contenedor de cápsula ni Sernatur (Tamaño aumentado) */}
-          <div className="inline-flex items-center justify-center gap-2.5 sm:gap-3 mb-5 sm:mb-7 text-sm sm:text-base md:text-lg font-mono text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)] select-none whitespace-nowrap">
+          <div className="inline-flex items-center justify-center gap-2.5 sm:gap-3 mb-3 sm:mb-5 text-sm sm:text-base md:text-lg font-mono text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)] select-none whitespace-nowrap">
             <span className="text-amber-400 font-bold tracking-widest text-base sm:text-xl md:text-2xl drop-shadow-[0_2px_10px_rgba(251,191,36,0.6)]">★★★★★</span>
             <span className="font-bold text-white tracking-wider">4.9/5 Google</span>
           </div>
