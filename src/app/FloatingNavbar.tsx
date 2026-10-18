@@ -199,8 +199,9 @@ export default function FloatingNavbar({ currentLang }: Props) {
           </div>
         )}
 
-        {/* BANDA ANIMADA TIPO TICKER FLOTANTE DEBAJO DEL MENÚ (Cambia suavemente cada 4.5s) */}
-        <div className="flex justify-center mt-2 pointer-events-auto">
+        {/* BANDA ANIMADA TIPO TICKER FLOTANTE DEBAJO DEL MENÚ + BADGE DE GOOGLE */}
+        <div className="flex flex-col items-center gap-1.5 mt-2 pointer-events-auto">
+          {/* Ticker de Valores Ambientales y Locales */}
           <div 
             className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-[10px] sm:text-xs font-mono select-none shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-300"
             style={{
@@ -220,6 +221,12 @@ export default function FloatingNavbar({ currentLang }: Props) {
             >
               {VALUES_TICKER[valueIndex].text}
             </span>
+          </div>
+
+          {/* Badge de Google ubicado justo debajo de la banda ambiental */}
+          <div className="inline-flex items-center justify-center gap-2 text-xs sm:text-sm font-mono text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] select-none whitespace-nowrap">
+            <span className="text-amber-400 font-bold tracking-widest text-sm sm:text-base drop-shadow-[0_2px_8px_rgba(251,191,36,0.6)]">★★★★★</span>
+            <span className="font-bold text-white tracking-wider">4.9/5 Google</span>
           </div>
         </div>
 

@@ -181,27 +181,27 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
 
   return (
     <>
-      {/* ── BOTÓN HERO CÁPSULA GLASSMORPHISM (SIN BRILLO / SIN GLOW) ── */}
-      <div className="flex items-center justify-center w-full">
+      {/* ── BOTÓN HERO CÁPSULA GLASSMORPHISM ANCHO Y PROMINENTE ── */}
+      <div className="flex items-center justify-center w-full px-4">
         <a
           href="#expediciones"
-          className="group inline-flex items-center justify-center gap-3 px-9 py-4 sm:px-12 sm:py-4.5 rounded-full text-sm sm:text-base font-bold uppercase tracking-widest transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer text-center select-none font-mono text-amber-300 hover:text-white"
+          className="group inline-flex items-center justify-center gap-4 w-full max-w-xs sm:max-w-md py-4 sm:py-5 rounded-full text-sm sm:text-base font-bold uppercase tracking-widest transition-all duration-300 hover:scale-[1.02] active:scale-95 cursor-pointer text-center select-none font-mono text-amber-300 hover:text-white"
           style={{
             backgroundColor: 'rgba(245, 158, 11, 0.22)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
             border: '1.5px solid rgba(245, 158, 11, 0.50)',
-            boxShadow: '0 6px 24px rgba(0, 0, 0, 0.35)',
+            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.40)',
           }}
         >
-          <span>
+          <span className="tracking-[0.18em]">
             {lang === 'en' 
               ? 'View Adventures' 
               : lang === 'pt' 
               ? 'Ver Aventuras' 
               : 'Ver Aventura'}
           </span>
-          <span className="text-amber-400 text-base sm:text-lg group-hover:translate-y-0.5 transition-transform duration-200">↓</span>
+          <span className="text-amber-400 text-lg sm:text-xl group-hover:translate-y-1 transition-transform duration-200">↓</span>
         </a>
       </div>
 
