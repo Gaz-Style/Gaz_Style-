@@ -16,19 +16,19 @@ export default function DesafiosSection({ lang = 'es' }: Props) {
   return (
     <section id="desafios" className="py-20 sm:py-28 relative z-20 scroll-mt-20 overflow-hidden">
       {/* Luz ambiental sutil de fondo */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-rose-500/5 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-red-600/5 rounded-full blur-[140px] pointer-events-none" />
 
       <div className="max-w-6xl mx-auto px-5 sm:px-6 relative z-10">
         
         {/* Encabezado Épico de la Sección */}
         <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/25 text-rose-400 text-xs font-mono font-bold uppercase tracking-widest mb-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-950/40 border border-red-600/60 text-red-400 text-xs font-mono font-bold uppercase tracking-widest mb-4">
             <span className="text-sm">💀</span>
             <span>ALTO RENDIMIENTO & SUPERACIÓN</span>
           </div>
 
           <h2 className="text-3xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight text-white leading-tight">
-            DESAFÍOS CORDILLERA <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-rose-500 to-amber-500">SANTIAGO</span>
+            DESAFÍOS CORDILLERA <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-red-500 to-amber-500">SANTIAGO</span>
           </h2>
 
           <p className="text-white/70 text-sm sm:text-base font-light font-mono mt-3 max-w-2xl mx-auto leading-relaxed">

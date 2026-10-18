@@ -206,16 +206,16 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
           <span className="text-amber-400 text-sm group-hover:translate-y-0.5 transition-transform duration-200">↓</span>
         </button>
 
-        {/* Botón 2: DESAFÍOS 💀 (Con borde rojo y tinte idéntico al badge de Alto Rendimiento) */}
+        {/* Botón 2: DESAFÍOS 💀 (Fondo oscuro ahumado, texto blanco y SOLO el borde rojo) */}
         <a
           href="#desafios"
-          className="group inline-flex items-center justify-center gap-2.5 w-full sm:w-auto sm:min-w-[210px] py-3.5 sm:py-4 px-6 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer text-center select-none font-mono text-rose-300 hover:text-white"
+          className="group inline-flex items-center justify-center gap-2.5 w-full sm:w-auto sm:min-w-[210px] py-3.5 sm:py-4 px-6 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer text-center select-none font-mono text-white hover:text-red-400"
           style={{
-            backgroundColor: 'rgba(244, 63, 94, 0.16)',
+            backgroundColor: 'rgba(12, 14, 18, 0.72)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
-            border: '1.5px solid rgba(244, 63, 94, 0.55)',
-            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.38)',
+            border: '1.5px solid rgba(220, 38, 38, 0.65)',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.40)',
           }}
         >
           <span className="text-base group-hover:scale-125 transition-transform">💀</span>
@@ -226,7 +226,7 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
               ? 'DESAFIOS' 
               : 'DESAFÍOS'}
           </span>
-          <span className="text-rose-400 group-hover:translate-x-1 transition-transform duration-200">→</span>
+          <span className="text-red-500 group-hover:translate-x-1 transition-transform duration-200">→</span>
         </a>
       </div>
 
