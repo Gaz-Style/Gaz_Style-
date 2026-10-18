@@ -97,6 +97,21 @@ export default function BookingClient({
         ? Number(adv?.discount_price ?? rawLogistics.discount_price) 
         : originalUnitPrice;
     const discountBadge = adv?.discount_badge || rawLogistics.discount_badge || 'ÚLTIMOS CUPOS OFF';
+    const discountColor = adv?.discount_color || rawLogistics.discount_color || 'amber';
+
+    const badgeColorClass = 
+        discountColor === 'emerald' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' :
+        discountColor === 'orange'  ? 'bg-orange-500/20 text-orange-300 border-orange-500/40' :
+        discountColor === 'stone'   ? 'bg-white/10 text-white/80 border-white/20' :
+        discountColor === 'red'     ? 'bg-red-950/70 text-red-300 border-red-800/60' :
+        'bg-amber-500/20 text-amber-300 border-amber-500/40';
+
+    const priceColorClass = 
+        discountColor === 'emerald' ? 'text-emerald-300' :
+        discountColor === 'orange'  ? 'text-orange-300' :
+        discountColor === 'stone'   ? 'text-white' :
+        discountColor === 'red'     ? 'text-red-300' :
+        'text-amber-300';
 
     const total = selected ? unitPrice * paxCount : 0;
     const availableSpots = selected
@@ -355,7 +370,7 @@ export default function BookingClient({
                                                 Tarifa por persona
                                             </span>
                                             {isPromoActive && (
-                                                <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono font-bold text-[9px] uppercase tracking-wider shadow-sm">
+                                                <span className={`px-2 py-0.5 rounded-full border font-mono font-bold text-[9px] uppercase tracking-wider shadow-sm ${badgeColorClass}`}>
                                                     {discountBadge}
                                                 </span>
                                             )}
@@ -371,7 +386,7 @@ export default function BookingClient({
                                                     </span>
                                                 </div>
                                                 <div className="flex items-baseline gap-2 justify-start sm:justify-end">
-                                                    <span className="text-xl sm:text-2xl font-black font-mono text-amber-300">
+                                                    <span className={`text-xl sm:text-2xl font-black font-mono ${priceColorClass}`}>
                                                         ${unitPrice.toLocaleString('es-CL')} <span className="text-xs text-white/50">CLP</span>
                                                     </span>
                                                     <span className="text-xs font-mono text-white/70">

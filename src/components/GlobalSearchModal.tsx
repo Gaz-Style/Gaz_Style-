@@ -373,6 +373,21 @@ export default function GlobalSearchModal({ isOpen, onClose, lang = 'es', initia
                 const usdText = getUsdPrice(adv, effectiveClpPrice);
                 const originalUsdText = isPromoActive ? getUsdPrice(adv, originalClpPriceNumber) : null;
                 const urgencyBadge = adv.discount_badge || rawLogistics.discount_badge || 'ÚLTIMOS CUPOS OFF';
+                const colorTheme = adv.discount_color || rawLogistics.discount_color || 'amber';
+
+                const badgeColorClass = 
+                  colorTheme === 'emerald' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' :
+                  colorTheme === 'orange'  ? 'bg-orange-500/20 text-orange-300 border-orange-500/40' :
+                  colorTheme === 'stone'   ? 'bg-white/10 text-white/80 border-white/20' :
+                  colorTheme === 'red'     ? 'bg-red-950/70 text-red-300 border-red-800/60' :
+                  'bg-amber-500/20 text-amber-300 border-amber-500/40';
+
+                const priceColorClass = 
+                  colorTheme === 'emerald' ? 'text-emerald-300' :
+                  colorTheme === 'orange'  ? 'text-orange-300' :
+                  colorTheme === 'stone'   ? 'text-white' :
+                  colorTheme === 'red'     ? 'text-red-300' :
+                  'text-amber-300';
 
                 const diffScore = getDifficultyScore(adv);
                 const diffLabel = 
@@ -405,7 +420,7 @@ export default function GlobalSearchModal({ isOpen, onClose, lang = 'es', initia
                           {diffLabel}
                         </span>
                         {isPromoActive && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold text-[9px] uppercase tracking-wider font-mono shadow-sm">
+                          <span className={`px-2.5 py-0.5 rounded-full border font-bold text-[9px] uppercase tracking-wider font-mono shadow-sm ${badgeColorClass}`}>
                             {urgencyBadge}
                           </span>
                         )}
@@ -449,7 +464,7 @@ export default function GlobalSearchModal({ isOpen, onClose, lang = 'es', initia
                                   {originalUsdText && <span className="text-[9px] text-white/30 line-through">({originalUsdText})</span>}
                                 </div>
                                 <div className="flex items-baseline gap-1.5 justify-end">
-                                  <span className="text-base sm:text-lg font-black text-amber-300 drop-shadow">{clpText}</span>
+                                  <span className={`text-base sm:text-lg font-black drop-shadow ${priceColorClass}`}>{clpText}</span>
                                   <span className="text-[11px] text-white/80 font-semibold">{usdText}</span>
                                 </div>
                               </div>

@@ -97,6 +97,7 @@ export async function createAdventureWithCosts(formData: FormData, costs: Advent
         const is_discount_active = formData.get('is_discount_active') === 'true' || formData.get('is_discount_active') === 'on';
         const discount_price = parseFloat(formData.get('discount_price') as string) || null;
         const discount_badge = (formData.get('discount_badge') as string || '').trim();
+        const discount_color = (formData.get('discount_color') as string || 'amber').trim();
 
         const logistics = {
             sector: (formData.get('logistics_sector') as string) || '',
@@ -106,7 +107,8 @@ export async function createAdventureWithCosts(formData: FormData, costs: Advent
             // Guardamos también en logistics para persistencia garantizada en caso de columnas SQL no migradas
             is_discount_active,
             discount_price,
-            discount_badge
+            discount_badge,
+            discount_color
         };
 
         const reqEquipStr = (formData.get('required_equipment') as string) || '';
@@ -436,6 +438,7 @@ export async function updateAdventureWithCosts(id: string, formData: FormData, c
         const is_discount_active = formData.get('is_discount_active') === 'true' || formData.get('is_discount_active') === 'on';
         const discount_price = parseFloat(formData.get('discount_price') as string) || null;
         const discount_badge = (formData.get('discount_badge') as string || '').trim();
+        const discount_color = (formData.get('discount_color') as string || 'amber').trim();
 
         const logistics = {
             sector: (formData.get('logistics_sector') as string) || '',
@@ -445,7 +448,8 @@ export async function updateAdventureWithCosts(id: string, formData: FormData, c
             // Guardamos también en logistics para persistencia garantizada
             is_discount_active,
             discount_price,
-            discount_badge
+            discount_badge,
+            discount_color
         };
 
         const reqEquipStr = (formData.get('required_equipment') as string) || '';

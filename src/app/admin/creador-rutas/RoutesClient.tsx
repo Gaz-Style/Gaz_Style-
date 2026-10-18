@@ -92,6 +92,7 @@ export default function RoutesClient({
   const [isDiscountActive, setIsDiscountActive] = useState(false);
   const [discountPrice, setDiscountPrice] = useState<number | ''>('');
   const [discountBadge, setDiscountBadge] = useState('ÚLTIMOS CUPOS OFF');
+  const [discountColor, setDiscountColor] = useState<'amber' | 'emerald' | 'orange' | 'stone' | 'red'>('amber');
   const [minPax, setMinPax] = useState(2);
   const [imageUrl, setImageUrl] = useState('');
   const [imageUploading, setImageUploading] = useState(false);
@@ -168,14 +169,15 @@ export default function RoutesClient({
     setBasePrice(p);
     setPriceUsd(route.price_usd || (p ? `US$ ${Math.round(p / 950)}` : 'US$ 50'));
 
-    // Descuento desde columnas directas o embebido en logistics
     const hasDiscount = Boolean(route.is_discount_active ?? route.logistics?.is_discount_active);
     const discPrice = route.discount_price ?? route.logistics?.discount_price ?? '';
     const discBadge = route.discount_badge ?? route.logistics?.discount_badge ?? 'ÚLTIMOS CUPOS OFF';
+    const discColor = route.discount_color ?? route.logistics?.discount_color ?? 'amber';
 
     setIsDiscountActive(hasDiscount);
     setDiscountPrice(discPrice);
     setDiscountBadge(discBadge);
+    setDiscountColor(discColor);
 
     setMinPax(route.min_pax || 2);
     setImageUrl(route.image_url || '');
@@ -204,10 +206,12 @@ export default function RoutesClient({
     const hasDiscount = Boolean(route.is_discount_active ?? route.logistics?.is_discount_active);
     const discPrice = route.discount_price ?? route.logistics?.discount_price ?? '';
     const discBadge = route.discount_badge ?? route.logistics?.discount_badge ?? 'ÚLTIMOS CUPOS OFF';
+    const discColor = route.discount_color ?? route.logistics?.discount_color ?? 'amber';
 
     setIsDiscountActive(hasDiscount);
     setDiscountPrice(discPrice);
     setDiscountBadge(discBadge);
+    setDiscountColor(discColor);
 
     setMinPax(route.min_pax || 2);
     setImageUrl(route.image_url || '');
@@ -236,9 +240,11 @@ export default function RoutesClient({
       if (isDiscountActive && discountPrice) {
         formData.set('discount_price', String(discountPrice));
         formData.set('discount_badge', discountBadge);
+        formData.set('discount_color', discountColor);
       } else {
         formData.delete('discount_price');
         formData.delete('discount_badge');
+        formData.delete('discount_color');
       }
       
       const title = (formData.get('title') as string || '').trim();
@@ -1463,10 +1469,37 @@ export default function RoutesClient({
                               value={discountBadge}
                               onChange={e => setDiscountBadge(e.target.value)}
                               placeholder="Ej: ÚLTIMOS 3 CUPOS OFF · 20% DTO CORDADA"
-                              className="w-full bg-stone-950 border border-amber-500/40 rounded-lg px-3 py-2 text-xs font-mono text-amber-300 focus:outline-none focus:border-amber-400"
+                              className="w-full bg-stone-950 border border-stone-700 rounded-lg px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-amber-400"
                             />
-                            <p className="text-[10px] text-stone-500 font-mono">
-                              * El precio original se mostrará tachado (strikethrough) en la web junto a este mensaje.
+                          </div>
+
+                          {/* Selector de Color Sobrio de Marca */}
+                          <div className="space-y-1.5 pt-1">
+                            <label className="text-xs font-mono text-stone-400 uppercase font-semibold block">
+                              Color del Badge & Destacado
+                            </label>
+                            <div className="grid grid-cols-5 gap-2 font-mono text-[10px]">
+                              {[
+                                { id: 'amber', label: 'Ámbar Andino', bg: 'bg-amber-500/20 text-amber-300 border-amber-500/40' },
+                                { id: 'emerald', label: 'Verde Bosque', bg: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' },
+                                { id: 'orange', label: 'Ocre Cordillera', bg: 'bg-orange-500/20 text-orange-300 border-orange-500/40' },
+                                { id: 'stone', label: 'Piedra / Humo', bg: 'bg-white/10 text-white/80 border-white/20' },
+                                { id: 'red', label: 'Carmín Sobrio', bg: 'bg-red-950/70 text-red-300 border-red-800/60' },
+                              ].map(c => (
+                                <button
+                                  key={c.id}
+                                  type="button"
+                                  onClick={() => setDiscountColor(c.id as any)}
+                                  className={`py-1.5 px-1 rounded-lg border text-center transition-all cursor-pointer font-bold uppercase truncate ${c.bg} ${
+                                    discountColor === c.id ? 'ring-2 ring-white ring-offset-2 ring-offset-stone-900 shadow-md scale-105' : 'opacity-70 hover:opacity-100'
+                                  }`}
+                                >
+                                  {c.label}
+                                </button>
+                              ))}
+                            </div>
+                            <p className="text-[10px] text-stone-500 font-mono mt-1">
+                              * El badge de urgencia y el precio se mostrarán en la web con el tono que selecciones.
                             </p>
                           </div>
                         </div>
