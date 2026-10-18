@@ -24,7 +24,7 @@ export default function DesafiosSection({ lang = 'es' }: Props) {
         <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/25 text-rose-400 text-xs font-mono font-bold uppercase tracking-widest mb-4">
             <span className="text-sm">💀</span>
-            <span>ALTO RENDIMIENTO & SUPERACIÓN ANDINA</span>
+            <span>ALTO RENDIMIENTO & SUPERACIÓN</span>
           </div>
 
           <h2 className="text-3xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight text-white leading-tight">
@@ -130,7 +130,7 @@ export default function DesafiosSection({ lang = 'es' }: Props) {
             className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-stone-900/90 hover:bg-stone-800 text-white border border-white/20 hover:border-amber-400/80 font-mono font-bold text-xs sm:text-sm uppercase tracking-widest transition-all duration-300 shadow-xl hover:scale-105"
           >
             <span className="text-base">💀</span>
-            <span>Explorar Todos los Desafíos Andinos</span>
+            <span>Explorar Todos los Desafíos</span>
             <ArrowRight className="w-4 h-4 text-amber-400" />
           </Link>
         </div>
