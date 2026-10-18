@@ -223,9 +223,9 @@ export default function FloatingNavbar({ currentLang }: Props) {
             </span>
           </div>
 
-          {/* Badge de Google ubicado justo debajo de la banda ambiental (Agrandado) */}
-          <div className="inline-flex items-center justify-center gap-2 sm:gap-2.5 text-sm sm:text-base font-mono text-white drop-shadow-[0_2px_12px_rgba(0,0,0,1)] select-none whitespace-nowrap mt-0.5">
-            <span className="text-amber-400 font-bold tracking-widest text-base sm:text-lg drop-shadow-[0_2px_10px_rgba(251,191,36,0.7)]">★★★★★</span>
+          {/* Badge de Google ubicado justo debajo de la banda ambiental (Mate sin brillo) */}
+          <div className="inline-flex items-center justify-center gap-2 sm:gap-2.5 text-sm sm:text-base font-mono text-white/90 select-none whitespace-nowrap mt-0.5">
+            <span className="text-amber-400 font-bold tracking-widest text-base sm:text-lg">★★★★★</span>
             <span className="font-bold text-white tracking-wider">4.9/5 Google</span>
           </div>
         </div>
