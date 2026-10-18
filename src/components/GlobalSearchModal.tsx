@@ -373,21 +373,26 @@ export default function GlobalSearchModal({ isOpen, onClose, lang = 'es', initia
                 const usdText = getUsdPrice(adv, effectiveClpPrice);
                 const originalUsdText = isPromoActive ? getUsdPrice(adv, originalClpPriceNumber) : null;
                 const urgencyBadge = adv.discount_badge || rawLogistics.discount_badge || 'ÚLTIMOS CUPOS OFF';
-                const colorTheme = adv.discount_color || rawLogistics.discount_color || 'amber';
+                const colorTheme = adv.discount_color || rawLogistics.discount_color || 'rose';
 
+                // Colores Intensos Planos (Flat / Matte) sin brillos, neón ni degradados
                 const badgeColorClass = 
-                  colorTheme === 'emerald' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' :
-                  colorTheme === 'orange'  ? 'bg-orange-500/20 text-orange-300 border-orange-500/40' :
-                  colorTheme === 'stone'   ? 'bg-white/10 text-white/80 border-white/20' :
-                  colorTheme === 'red'     ? 'bg-red-950/70 text-red-300 border-red-800/60' :
-                  'bg-amber-500/20 text-amber-300 border-amber-500/40';
+                  colorTheme === 'rose'    ? 'bg-[#e11d48] text-white border-transparent' :
+                  colorTheme === 'red'     ? 'bg-[#dc2626] text-white border-transparent' :
+                  colorTheme === 'amber'   ? 'bg-[#f59e0b] text-stone-950 font-black border-transparent' :
+                  colorTheme === 'purple'  ? 'bg-[#7c3aed] text-white border-transparent' :
+                  colorTheme === 'cyan'    ? 'bg-[#06b6d4] text-stone-950 font-black border-transparent' :
+                  colorTheme === 'emerald' ? 'bg-[#10b981] text-stone-950 font-black border-transparent' :
+                  'bg-[#e11d48] text-white border-transparent';
 
                 const priceColorClass = 
-                  colorTheme === 'emerald' ? 'text-emerald-300' :
-                  colorTheme === 'orange'  ? 'text-orange-300' :
-                  colorTheme === 'stone'   ? 'text-white' :
-                  colorTheme === 'red'     ? 'text-red-300' :
-                  'text-amber-300';
+                  colorTheme === 'rose'    ? 'text-[#f43f5e]' :
+                  colorTheme === 'red'     ? 'text-[#ef4444]' :
+                  colorTheme === 'amber'   ? 'text-[#fbbf24]' :
+                  colorTheme === 'purple'  ? 'text-[#a78bfa]' :
+                  colorTheme === 'cyan'    ? 'text-[#22d3ee]' :
+                  colorTheme === 'emerald' ? 'text-[#34d399]' :
+                  'text-[#f43f5e]';
 
                 const diffScore = getDifficultyScore(adv);
                 const diffLabel = 

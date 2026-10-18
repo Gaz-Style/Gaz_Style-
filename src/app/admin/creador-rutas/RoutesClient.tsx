@@ -92,7 +92,7 @@ export default function RoutesClient({
   const [isDiscountActive, setIsDiscountActive] = useState(false);
   const [discountPrice, setDiscountPrice] = useState<number | ''>('');
   const [discountBadge, setDiscountBadge] = useState('ÚLTIMOS CUPOS OFF');
-  const [discountColor, setDiscountColor] = useState<'amber' | 'emerald' | 'orange' | 'stone' | 'red'>('amber');
+  const [discountColor, setDiscountColor] = useState<'rose' | 'red' | 'amber' | 'purple' | 'cyan' | 'emerald'>('rose');
   const [minPax, setMinPax] = useState(2);
   const [imageUrl, setImageUrl] = useState('');
   const [imageUploading, setImageUploading] = useState(false);
@@ -145,6 +145,7 @@ export default function RoutesClient({
     setIsDiscountActive(false);
     setDiscountPrice('');
     setDiscountBadge('ÚLTIMOS CUPOS OFF');
+    setDiscountColor('rose');
     setMinPax(v === 'expediciones' || v === 'high_mountain' ? 1 : 2);
     setImageUrl('');
     setCosts([]);
@@ -172,7 +173,7 @@ export default function RoutesClient({
     const hasDiscount = Boolean(route.is_discount_active ?? route.logistics?.is_discount_active);
     const discPrice = route.discount_price ?? route.logistics?.discount_price ?? '';
     const discBadge = route.discount_badge ?? route.logistics?.discount_badge ?? 'ÚLTIMOS CUPOS OFF';
-    const discColor = route.discount_color ?? route.logistics?.discount_color ?? 'amber';
+    const discColor = route.discount_color ?? route.logistics?.discount_color ?? 'rose';
 
     setIsDiscountActive(hasDiscount);
     setDiscountPrice(discPrice);
@@ -206,7 +207,7 @@ export default function RoutesClient({
     const hasDiscount = Boolean(route.is_discount_active ?? route.logistics?.is_discount_active);
     const discPrice = route.discount_price ?? route.logistics?.discount_price ?? '';
     const discBadge = route.discount_badge ?? route.logistics?.discount_badge ?? 'ÚLTIMOS CUPOS OFF';
-    const discColor = route.discount_color ?? route.logistics?.discount_color ?? 'amber';
+    const discColor = route.discount_color ?? route.logistics?.discount_color ?? 'rose';
 
     setIsDiscountActive(hasDiscount);
     setDiscountPrice(discPrice);
@@ -1473,33 +1474,34 @@ export default function RoutesClient({
                             />
                           </div>
 
-                          {/* Selector de Color Sobrio de Marca */}
+                          {/* Selector de Color Intenso Mate (Sin brillo / flat) */}
                           <div className="space-y-1.5 pt-1">
-                            <label className="text-xs font-mono text-stone-400 uppercase font-semibold block">
-                              Color del Badge & Destacado
+                            <label className="text-xs font-mono text-stone-300 uppercase font-bold block">
+                              Color del Badge & Destacado (Intenso sin brillo)
                             </label>
-                            <div className="grid grid-cols-5 gap-2 font-mono text-[10px]">
+                            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 font-mono text-[10px]">
                               {[
-                                { id: 'amber', label: 'Ámbar Andino', bg: 'bg-amber-500/20 text-amber-300 border-amber-500/40' },
-                                { id: 'emerald', label: 'Verde Bosque', bg: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' },
-                                { id: 'orange', label: 'Ocre Cordillera', bg: 'bg-orange-500/20 text-orange-300 border-orange-500/40' },
-                                { id: 'stone', label: 'Piedra / Humo', bg: 'bg-white/10 text-white/80 border-white/20' },
-                                { id: 'red', label: 'Carmín Sobrio', bg: 'bg-red-950/70 text-red-300 border-red-800/60' },
+                                { id: 'rose', label: 'Rosado Intenso', bg: 'bg-[#e11d48] text-white border-transparent' },
+                                { id: 'red', label: 'Rojo Fuego', bg: 'bg-[#dc2626] text-white border-transparent' },
+                                { id: 'amber', label: 'Ámbar Solar', bg: 'bg-[#f59e0b] text-stone-950 font-black border-transparent' },
+                                { id: 'purple', label: 'Púrpura / Morado', bg: 'bg-[#7c3aed] text-white border-transparent' },
+                                { id: 'cyan', label: 'Cyan Glaciar', bg: 'bg-[#06b6d4] text-stone-950 font-black border-transparent' },
+                                { id: 'emerald', label: 'Verde Eléctrico', bg: 'bg-[#10b981] text-stone-950 font-black border-transparent' },
                               ].map(c => (
                                 <button
                                   key={c.id}
                                   type="button"
                                   onClick={() => setDiscountColor(c.id as any)}
-                                  className={`py-1.5 px-1 rounded-lg border text-center transition-all cursor-pointer font-bold uppercase truncate ${c.bg} ${
-                                    discountColor === c.id ? 'ring-2 ring-white ring-offset-2 ring-offset-stone-900 shadow-md scale-105' : 'opacity-70 hover:opacity-100'
+                                  className={`py-2 px-1.5 rounded-lg text-center transition-all cursor-pointer font-black uppercase tracking-tight truncate shadow-sm ${c.bg} ${
+                                    discountColor === c.id ? 'ring-2 ring-white ring-offset-2 ring-offset-stone-950 scale-105' : 'opacity-85 hover:opacity-100 hover:scale-102'
                                   }`}
                                 >
                                   {c.label}
                                 </button>
                               ))}
                             </div>
-                            <p className="text-[10px] text-stone-500 font-mono mt-1">
-                              * El badge de urgencia y el precio se mostrarán en la web con el tono que selecciones.
+                            <p className="text-[10px] text-stone-400 font-mono mt-1">
+                              * Tonos intensos planos (flat/matte), sin brillos artificiales ni degradados excesivos.
                             </p>
                           </div>
                         </div>

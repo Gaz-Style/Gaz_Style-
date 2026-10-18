@@ -105,6 +105,25 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
     const isPromoActive = hasDiscount && discountPriceNumber > 0 && discountPriceNumber < originalPriceNumber;
     const effectivePriceNumber = isPromoActive ? discountPriceNumber : originalPriceNumber;
     const discountBadgeText = route.discount_badge || route.logistics?.discount_badge || 'ÚLTIMOS CUPOS OFF';
+    const discountColor = route.discount_color || route.logistics?.discount_color || 'rose';
+
+    const badgeColorClass = 
+        discountColor === 'rose'    ? 'bg-[#e11d48] text-white' :
+        discountColor === 'red'     ? 'bg-[#dc2626] text-white' :
+        discountColor === 'amber'   ? 'bg-[#f59e0b] text-stone-950 font-black' :
+        discountColor === 'purple'  ? 'bg-[#7c3aed] text-white' :
+        discountColor === 'cyan'    ? 'bg-[#06b6d4] text-stone-950 font-black' :
+        discountColor === 'emerald' ? 'bg-[#10b981] text-stone-950 font-black' :
+        'bg-[#e11d48] text-white';
+
+    const priceColorClass = 
+        discountColor === 'rose'    ? 'text-[#f43f5e]' :
+        discountColor === 'red'     ? 'text-[#ef4444]' :
+        discountColor === 'amber'   ? 'text-[#fbbf24]' :
+        discountColor === 'purple'  ? 'text-[#a78bfa]' :
+        discountColor === 'cyan'    ? 'text-[#22d3ee]' :
+        discountColor === 'emerald' ? 'text-[#34d399]' :
+        'text-[#f43f5e]';
 
     const included = isExpeditionPass ? [
         'Pick-up y Drop-off privado en tu hotel o domicilio en Santiago (SUV / 4x4)',
@@ -629,7 +648,7 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                     </span>
                                     {isPromoActive && (
                                         <div className="mb-2">
-                                            <span className="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono font-bold text-[10px] uppercase tracking-wider inline-flex items-center gap-1.5 shadow-sm">
+                                            <span className={`px-2.5 py-1 rounded-full font-mono font-bold text-[10px] uppercase tracking-wider inline-flex items-center gap-1.5 shadow-sm ${badgeColorClass}`}>
                                                 {discountBadgeText}
                                             </span>
                                         </div>
@@ -661,7 +680,7 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                                 </div>
                                             )}
                                             <div className="flex items-baseline justify-between">
-                                                <p className={`text-4xl font-black font-mono ${isPromoActive ? 'text-amber-300' : 'text-white'}`}>
+                                                <p className={`text-4xl font-black font-mono ${isPromoActive ? priceColorClass : 'text-white'}`}>
                                                     ${Number(effectivePriceNumber).toLocaleString('es-CL')}
                                                 </p>
                                                 <span className="text-sm text-white/60 font-mono">
@@ -763,13 +782,13 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                                 <span className="text-[10px] line-through text-white/40 font-mono">
                                                     ${Number(originalPriceNumber).toLocaleString('es-CL')}
                                                 </span>
-                                                <span className="text-[8px] bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold px-1.5 py-0.5 rounded uppercase">
+                                                <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded uppercase ${badgeColorClass}`}>
                                                     OFF
                                                 </span>
                                             </div>
                                         )}
                                         <div className="flex items-baseline gap-1.5">
-                                            <span className={`text-xl font-black font-mono ${isPromoActive ? 'text-amber-300' : 'text-white'}`}>
+                                            <span className={`text-xl font-black font-mono ${isPromoActive ? priceColorClass : 'text-white'}`}>
                                                 ${Number(effectivePriceNumber).toLocaleString('es-CL')}
                                             </span>
                                             <span className="text-[11px] text-white/40 font-mono">

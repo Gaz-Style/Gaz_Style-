@@ -97,21 +97,25 @@ export default function BookingClient({
         ? Number(adv?.discount_price ?? rawLogistics.discount_price) 
         : originalUnitPrice;
     const discountBadge = adv?.discount_badge || rawLogistics.discount_badge || 'ÚLTIMOS CUPOS OFF';
-    const discountColor = adv?.discount_color || rawLogistics.discount_color || 'amber';
+    const discountColor = adv?.discount_color || rawLogistics.discount_color || 'rose';
 
     const badgeColorClass = 
-        discountColor === 'emerald' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' :
-        discountColor === 'orange'  ? 'bg-orange-500/20 text-orange-300 border-orange-500/40' :
-        discountColor === 'stone'   ? 'bg-white/10 text-white/80 border-white/20' :
-        discountColor === 'red'     ? 'bg-red-950/70 text-red-300 border-red-800/60' :
-        'bg-amber-500/20 text-amber-300 border-amber-500/40';
+        discountColor === 'rose'    ? 'bg-[#e11d48] text-white border-transparent' :
+        discountColor === 'red'     ? 'bg-[#dc2626] text-white border-transparent' :
+        discountColor === 'amber'   ? 'bg-[#f59e0b] text-stone-950 font-black border-transparent' :
+        discountColor === 'purple'  ? 'bg-[#7c3aed] text-white border-transparent' :
+        discountColor === 'cyan'    ? 'bg-[#06b6d4] text-stone-950 font-black border-transparent' :
+        discountColor === 'emerald' ? 'bg-[#10b981] text-stone-950 font-black border-transparent' :
+        'bg-[#e11d48] text-white border-transparent';
 
     const priceColorClass = 
-        discountColor === 'emerald' ? 'text-emerald-300' :
-        discountColor === 'orange'  ? 'text-orange-300' :
-        discountColor === 'stone'   ? 'text-white' :
-        discountColor === 'red'     ? 'text-red-300' :
-        'text-amber-300';
+        discountColor === 'rose'    ? 'text-[#f43f5e]' :
+        discountColor === 'red'     ? 'text-[#ef4444]' :
+        discountColor === 'amber'   ? 'text-[#fbbf24]' :
+        discountColor === 'purple'  ? 'text-[#a78bfa]' :
+        discountColor === 'cyan'    ? 'text-[#22d3ee]' :
+        discountColor === 'emerald' ? 'text-[#34d399]' :
+        'text-[#f43f5e]';
 
     const total = selected ? unitPrice * paxCount : 0;
     const availableSpots = selected
