@@ -18,7 +18,7 @@ export async function getPublicDepartures() {
         .from('agenda_departures')
         .select(`
             id, start_date, end_date, current_pax, status,
-            adventures_catalog (id, title, category, difficulty_level, duration_days, duration_text, base_price, max_pax, description, image_url)
+            adventures_catalog (id, title, category, difficulty_level, duration_days, duration_text, base_price, max_pax, description, image_url, price_usd, logistics)
         `)
         .in('status', ['scheduled', 'confirmed'])
         .gte('start_date', new Date().toISOString().split('T')[0])

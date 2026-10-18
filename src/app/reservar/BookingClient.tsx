@@ -83,7 +83,22 @@ export default function BookingClient({
         });
     };
 
-    const total = selected ? (selected.adventures_catalog?.base_price || 0) * paxCount : 0;
+    const adv = selected?.adventures_catalog;
+    const rawLogistics = typeof adv?.logistics === 'string' 
+        ? (() => { try { return JSON.parse(adv.logistics); } catch { return {}; } })() 
+        : (adv?.logistics || {});
+    const rawActive = adv?.is_discount_active ?? rawLogistics.is_discount_active;
+    const isPromoActive = (rawActive === true || rawActive === 'true' || rawActive === 1 || rawActive === '1')
+        && Number(adv?.discount_price ?? rawLogistics.discount_price) > 0
+        && Number(adv?.discount_price ?? rawLogistics.discount_price) < Number(adv?.base_price || 0);
+
+    const originalUnitPrice = Number(adv?.base_price || 0);
+    const unitPrice = isPromoActive 
+        ? Number(adv?.discount_price ?? rawLogistics.discount_price) 
+        : originalUnitPrice;
+    const discountBadge = adv?.discount_badge || rawLogistics.discount_badge || 'ÚLTIMOS CUPOS OFF';
+
+    const total = selected ? unitPrice * paxCount : 0;
     const availableSpots = selected
         ? Math.max(1, (selected.adventures_catalog?.max_pax || 10) - (selected.current_pax || 0))
         : 10;
@@ -162,7 +177,7 @@ export default function BookingClient({
                 departure_id: selected.id,
                 pax_count: paxCount,
                 adventure_title: selected.adventures_catalog?.title || 'Expedición Andes',
-                unit_price: selected.adventures_catalog?.base_price || 0,
+                unit_price: unitPrice,
                 additional_participants: additionalParticipants.slice(0, Math.max(0, paxCount - 1)),
             });
             if (result.payment_url) {
@@ -335,17 +350,45 @@ export default function BookingClient({
                                     </div>
 
                                     <div className="text-left sm:text-right pt-3 sm:pt-0 border-t sm:border-t-0 border-white/10">
-                                        <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
-                                            Tarifa por persona
-                                        </span>
-                                        <div className="flex items-baseline gap-2 justify-start sm:justify-end">
-                                            <span className="text-xl font-black font-mono text-amber-400">
-                                                ${Number(selected.adventures_catalog?.base_price || 0).toLocaleString('es-CL')} <span className="text-xs text-white/50">CLP</span>
+                                        <div className="flex items-center gap-1.5 justify-start sm:justify-end mb-1">
+                                            <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block">
+                                                Tarifa por persona
                                             </span>
-                                            <span className="text-xs font-mono text-white/45">
-                                                US${Math.round(Number(selected.adventures_catalog?.base_price || 0) / 950).toLocaleString('en-US')}
-                                            </span>
+                                            {isPromoActive && (
+                                                <span className="px-1.5 py-0.5 rounded bg-rose-600 text-white font-mono font-bold text-[9px] uppercase tracking-wider animate-pulse">
+                                                    🔥 {discountBadge}
+                                                </span>
+                                            )}
                                         </div>
+                                        {isPromoActive ? (
+                                            <div>
+                                                <div className="flex items-baseline gap-1.5 justify-start sm:justify-end">
+                                                    <span className="text-xs line-through text-white/40 font-mono">
+                                                        ${originalUnitPrice.toLocaleString('es-CL')}
+                                                    </span>
+                                                    <span className="text-[10px] line-through text-white/30 font-mono">
+                                                        US${Math.round(originalUnitPrice / 950).toLocaleString('en-US')}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-baseline gap-2 justify-start sm:justify-end">
+                                                    <span className="text-xl sm:text-2xl font-black font-mono text-rose-400">
+                                                        ${unitPrice.toLocaleString('es-CL')} <span className="text-xs text-white/50">CLP</span>
+                                                    </span>
+                                                    <span className="text-xs font-mono text-white/70">
+                                                        US${Math.round(unitPrice / 950).toLocaleString('en-US')}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-baseline gap-2 justify-start sm:justify-end">
+                                                <span className="text-xl font-black font-mono text-amber-400">
+                                                    ${originalUnitPrice.toLocaleString('es-CL')} <span className="text-xs text-white/50">CLP</span>
+                                                </span>
+                                                <span className="text-xs font-mono text-white/45">
+                                                    US${Math.round(originalUnitPrice / 950).toLocaleString('en-US')}
+                                                </span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
@@ -573,7 +616,12 @@ export default function BookingClient({
                                                 </span>
                                             </div>
                                             <div className="text-right">
-                                                <span className="text-2xl sm:text-3xl font-black font-mono text-amber-400 block">
+                                                {isPromoActive && (
+                                                    <span className="text-xs font-mono line-through text-white/40 block">
+                                                        ${(originalUnitPrice * paxCount).toLocaleString('es-CL')} CLP
+                                                    </span>
+                                                )}
+                                                <span className={`text-2xl sm:text-3xl font-black font-mono block ${isPromoActive ? 'text-rose-400' : 'text-amber-400'}`}>
                                                     ${total.toLocaleString('es-CL')} <span className="text-xs font-normal text-white/60">CLP</span>
                                                 </span>
                                                 <span className="text-xs font-mono text-white/45 block mt-0.5">
