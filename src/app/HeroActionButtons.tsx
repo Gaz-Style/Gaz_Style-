@@ -185,13 +185,13 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
       <div className="flex items-center justify-center w-full">
         <a
           href="#expediciones"
-          className="group inline-flex items-center justify-center gap-2.5 px-8 py-3.5 sm:px-10 sm:py-4 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer text-center select-none font-mono text-amber-300 hover:text-white"
+          className="group inline-flex items-center justify-center gap-3 px-9 py-4 sm:px-12 sm:py-4.5 rounded-full text-sm sm:text-base font-bold uppercase tracking-widest transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer text-center select-none font-mono text-amber-300 hover:text-white"
           style={{
-            backgroundColor: 'rgba(245, 158, 11, 0.20)',
+            backgroundColor: 'rgba(245, 158, 11, 0.22)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
-            border: '1px solid rgba(245, 158, 11, 0.45)',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
+            border: '1.5px solid rgba(245, 158, 11, 0.50)',
+            boxShadow: '0 6px 24px rgba(0, 0, 0, 0.35)',
           }}
         >
           <span>
@@ -201,7 +201,7 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
               ? 'Ver Aventuras' 
               : 'Ver Aventura'}
           </span>
-          <span className="text-amber-400 group-hover:translate-y-0.5 transition-transform duration-200">↓</span>
+          <span className="text-amber-400 text-base sm:text-lg group-hover:translate-y-0.5 transition-transform duration-200">↓</span>
         </a>
       </div>
 

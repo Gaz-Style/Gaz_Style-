@@ -54,29 +54,29 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
       <ScrollToTopButton />
 
       {/* 1. HERO SECTION CINEMATOGRÁFICO (Estándar MBA: Limpio, Aireado y Solo-Friendly) */}
-      <section className="relative min-h-[85vh] sm:min-h-screen flex items-center justify-center pt-20 sm:pt-28 pb-12 px-6 overflow-hidden">
+      <section className="relative min-h-[92vh] sm:min-h-screen flex items-center justify-center pt-24 sm:pt-32 pb-14 sm:pb-20 px-5 sm:px-6 overflow-hidden">
         <HeroCarousel />
 
-        <div className="relative z-10 max-w-4xl mx-auto text-center mt-2 sm:mt-6">
+        <div className="relative z-10 max-w-5xl mx-auto text-center w-full mt-4 sm:mt-8">
           
-          {/* Trust & Reviews: 1 sola línea limpia idéntica al estándar MBA (★★★★★ 4.9/5 Google · Sernatur Registrado) */}
-          <div className="inline-flex items-center justify-center gap-1.5 sm:gap-2 mb-4 sm:mb-6 text-[11px] sm:text-xs md:text-sm font-mono text-white/90 drop-shadow-md select-none whitespace-nowrap">
-            <span className="text-amber-400 font-bold tracking-widest">★★★★★</span>
-            <span className="font-bold text-white">4.9/5 Google</span>
+          {/* Trust & Reviews: Badge con mejor jerarquía y presencia */}
+          <div className="inline-flex items-center justify-center gap-2 mb-5 sm:mb-7 px-3.5 py-1.5 rounded-full bg-black/25 backdrop-blur-md border border-white/10 text-xs sm:text-sm font-mono text-white/95 drop-shadow-md select-none whitespace-nowrap">
+            <span className="text-amber-400 font-bold tracking-widest text-sm sm:text-base">★★★★★</span>
+            <span className="font-bold text-white tracking-wide">4.9/5 Google</span>
             <span className="text-white/40">·</span>
-            <span className="text-white/80">Sernatur Registrado</span>
+            <span className="text-white/85">Sernatur Registrado</span>
           </div>
           
-          {/* Título Hero Limpio e Impactante */}
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-black uppercase tracking-tight text-white leading-[0.95] mb-4 sm:mb-5 drop-shadow-lg">
+          {/* Título Hero de Mayor Impacto y Proporción */}
+          <h1 className="text-5xl xs:text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black uppercase tracking-tight text-white leading-[0.92] mb-5 sm:mb-7 drop-shadow-[0_8px_30px_rgba(0,0,0,0.8)]">
             {dict.hero.title_line1} <br />
-            <span className="font-edo tracking-wider text-amber-400 drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]">
+            <span className="font-edo tracking-wider text-amber-400 drop-shadow-[0_6px_24px_rgba(0,0,0,0.7)]">
               {dict.hero.title_line2}
             </span>
           </h1>
           
-          {/* Subtítulo Breve y Directo (Estándar MBA: 1 línea limpia) */}
-          <p className="text-sm sm:text-base md:text-lg text-white/90 max-w-lg mx-auto font-normal leading-relaxed mb-6 sm:mb-8 drop-shadow">
+          {/* Subtítulo con Mayor Legibilidad y Amplitud */}
+          <p className="text-base sm:text-xl md:text-2xl text-white/95 max-w-2xl mx-auto font-normal leading-snug sm:leading-relaxed mb-8 sm:mb-10 drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] px-2">
             {lang === 'en' 
               ? 'Expedition and adventure across Santiago summits. Get ready to experience freedom · Solo-Friendly.' 
               : lang === 'pt' 
@@ -84,7 +84,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
               : 'Expedición y aventura en las cumbres de Santiago. Prepárate para vivir la libertad Solo-Friendly.'}
           </p>
 
-          {/* Botón de Acción Principal (Estándar MBA: Botón único, limpio y centrado) */}
+          {/* Botón de Acción Principal */}
           <HeroActionButtons lang={lang} allRoutes={routes} />
         </div>
       </section>
