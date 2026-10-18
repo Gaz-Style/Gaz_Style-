@@ -203,12 +203,10 @@ export default function FloatingNavbar({ currentLang }: Props) {
         <div className="flex flex-col items-center gap-1.5 mt-2 pointer-events-auto">
           {/* Ticker de Valores Ambientales y Locales */}
           <div 
-            className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-[10px] sm:text-xs font-mono select-none shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-300"
+            className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-[10px] sm:text-xs font-mono select-none transition-all duration-300"
             style={{
-              backgroundColor: 'rgba(0, 0, 0, 0.45)',
-              backdropFilter: 'blur(12px)',
-              WebkitBackdropFilter: 'blur(12px)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              backgroundColor: 'rgba(20, 20, 20, 0.70)',
+              border: '1px solid rgba(255, 255, 255, 0.04)',
             }}
           >
             <span className="text-xs transition-transform duration-300 hover:scale-110">
