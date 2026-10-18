@@ -13,7 +13,7 @@ import { createAdventureWithCosts, updateAdventureWithCosts, toggleAdventureStat
 // Definición de las 3 Categorías Oficiales de Santiago Hiking (Sincronizadas 1:1 con la Home)
 export const INITIAL_VERTICAL_DEFINITIONS = [
   { id: 'trekking', label: 'TREKKING', icon: Mountain, shortLabel: 'Trekking' },
-  { id: 'travesias_desafios', label: 'TRAVESÍAS & DESAFÍOS', icon: Trophy, shortLabel: 'Travesías & Desafíos' },
+  { id: 'travesias_desafios', label: 'TRAVESÍAS', icon: Trophy, shortLabel: 'Travesías' },
   { id: 'expediciones', label: 'EXPEDICIONES', icon: Crown, shortLabel: 'Expediciones' },
 ];
 

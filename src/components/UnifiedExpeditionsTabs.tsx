@@ -97,7 +97,7 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
                   : 'text-white/45 hover:text-white/80'
               }`}
             >
-              <span>TRAVESÍAS & DESAFÍOS</span>
+              <span>TRAVESÍAS</span>
               {activeTab === 'travesias_desafios' && (
                 <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-amber-400 rounded-full shadow-[0_0_14px_rgba(251,191,36,0.9)]" />
               )}
