@@ -85,8 +85,8 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
       {/* 2. EL MOTOR DE EXPEDICIONES EN 3 PESTAÑAS (Estándar MBA: Elimina el scroll masivo) */}
       <UnifiedExpeditionsTabs routes={routes} lang={lang} />
 
-      {/* 2.5 SECCIÓN EXCLUSIVA: DESAFÍOS CORDILLERA 💀 (Retos de Alto Rendimiento & Retención Récord) */}
-      <DesafiosSection lang={lang} />
+      {/* 2.5 SECCIÓN EXCLUSIVA: DESAFÍOS CORDILLERA (Retos de Alto Rendimiento & Retención Récord) */}
+      <DesafiosSection lang={lang} routes={routes} />
 
       {/* 3. SISTEMA DE NIVELES TIPO MBA: "Distintos Niveles, Todas Cumbres Épicas" + Quiz */}
       <VisualLevelsSection lang={lang} />

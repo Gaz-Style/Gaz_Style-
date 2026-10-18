@@ -20,9 +20,24 @@ export default function FloatingNavbar({ currentLang }: Props) {
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
+    let lockVisibleUntil = 0;
+
+    const handleForceShow = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      const duration = customEvent?.detail?.duration || 1500;
+      lockVisibleUntil = Date.now() + duration;
+      setIsVisible(true);
+    };
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
+
+      // Si está bloqueado para mantenerse visible (ej: al presionar el botón de desafíos)
+      if (Date.now() < lockVisibleUntil) {
+        setIsVisible(true);
+        lastScrollY = currentScrollY > 0 ? currentScrollY : 0;
+        return;
+      }
 
       // Al estar en el tope de la página, siempre visible
       if (currentScrollY < 40) {
@@ -46,7 +61,11 @@ export default function FloatingNavbar({ currentLang }: Props) {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('show-floating-navbar', handleForceShow);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('show-floating-navbar', handleForceShow);
+    };
   }, []);
 
   const [valueIndex, setValueIndex] = useState(0);

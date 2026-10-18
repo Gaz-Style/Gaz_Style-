@@ -179,15 +179,37 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
     return () => window.removeEventListener('open-hiking-quiz', handleOpenQuiz);
   }, []);
 
+  const handleScrollToDesafios = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (typeof window === 'undefined') return;
+
+    // Mantener la navbar y el badge de Google visibles durante y después del scroll
+    window.dispatchEvent(new CustomEvent('show-floating-navbar', { detail: { duration: 1800 } }));
+
+    const target = document.getElementById('desafios');
+    if (target) {
+      const headerEl = document.querySelector('header');
+      const headerHeight = headerEl ? headerEl.getBoundingClientRect().height : (window.innerWidth < 640 ? 142 : 160);
+
+      // Posicionar exactamente con el badge de google arriba y el título de la sección debajo
+      const offsetPosition = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - 6;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   return (
     <>
-      {/* ── BOTONES HERO CÁPSULA GLASSMORPHISM: QUIERO TREKKING + DESAFÍOS ── */}
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full max-w-xl mx-auto px-4">
-        {/* Botón 1: QUIERO TREKKING (Abre el buscador/catálogo completo como hasta ahora) */}
+      {/* ── BOTONES HERO CÁPSULA GLASSMORPHISM: EXACTAMENTE DEL MISMO TAMAÑO ── */}
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full px-4">
+        {/* Botón 1: QUIERO TREKKING */}
         <button
           type="button"
           onClick={() => setIsAllAdventuresOpen(true)}
-          className="group inline-flex items-center justify-center gap-2.5 w-full sm:w-auto sm:min-w-[210px] py-3.5 sm:py-4 px-6 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer text-center select-none font-mono text-amber-300 hover:text-white"
+          className="group inline-flex items-center justify-center gap-2.5 w-[260px] sm:w-[260px] h-[50px] sm:h-[52px] rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer text-center select-none font-mono text-amber-300 hover:text-white shrink-0"
           style={{
             backgroundColor: 'rgba(245, 158, 11, 0.22)',
             backdropFilter: 'blur(16px)',
@@ -206,15 +228,16 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
           <span className="text-amber-400 text-sm group-hover:translate-y-0.5 transition-transform duration-200">↓</span>
         </button>
 
-        {/* Botón 2: DESAFÍOS 💀 (Fondo oscuro ahumado, texto blanco y SOLO el borde rojo) */}
+        {/* Botón 2: DESAFÍOS (Mismas dimensiones exactas que el Botón 1) */}
         <a
           href="#desafios"
-          className="group inline-flex items-center justify-center gap-2.5 w-full sm:w-auto sm:min-w-[210px] py-3.5 sm:py-4 px-6 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer text-center select-none font-mono text-white hover:text-red-400"
+          onClick={handleScrollToDesafios}
+          className="group inline-flex items-center justify-center gap-2.5 w-[260px] sm:w-[260px] h-[50px] sm:h-[52px] rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer text-center select-none font-mono text-white hover:text-amber-300 shrink-0"
           style={{
             backgroundColor: 'rgba(12, 14, 18, 0.35)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
-            border: '1.5px solid rgba(220, 38, 38, 0.65)',
+            border: '1.5px solid rgba(245, 158, 11, 0.60)',
             boxShadow: '0 8px 24px rgba(0, 0, 0, 0.40)',
           }}
         >
@@ -225,7 +248,7 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
               ? 'DESAFIOS' 
               : 'DESAFÍOS'}
           </span>
-          <span className="text-red-500 group-hover:translate-x-1 transition-transform duration-200">→</span>
+          <span className="text-amber-400 text-sm group-hover:translate-x-1 transition-transform duration-200">→</span>
         </a>
       </div>
 

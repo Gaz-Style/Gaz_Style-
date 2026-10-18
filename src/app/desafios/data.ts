@@ -64,7 +64,7 @@ export const challengesData: Record<string, ChallengeDetail> = {
     title: 'Desafío 5:00 AM',
     subtitle: 'Ascenso nocturno al Manquehuito para conquistar la cumbre al romper el alba sobre el mar de nubes de Santiago.',
     tagline: 'Sube antes de que despierte la ciudad. Vuelve a tu día transformado.',
-    coverImage: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=85',
+    coverImage: 'https://gbigguuhpzjqvfjgypmi.supabase.co/storage/v1/object/public/route-images/route-1792315417753.webp',
     gallery: [
       {
         url: 'https://images.unsplash.com/photo-1470246973918-29a93221c455?auto=format&fit=crop&w=1000&q=85',

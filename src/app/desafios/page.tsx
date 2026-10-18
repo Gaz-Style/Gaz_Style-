@@ -18,15 +18,14 @@ export default function DesafiosHubPage() {
       <header className="relative pt-32 pb-20 px-6 border-b border-stone-800/80 bg-gradient-to-b from-stone-900 via-stone-950 to-stone-950 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(245,158,11,0.08),transparent_50%)] pointer-events-none" />
         <div className="max-w-6xl mx-auto relative z-10 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-6">
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-            Formatos de Gran Desafío
-          </div>
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-white mb-6 uppercase">
-            Desafíos Cordillera <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600">Santiago</span>
+          <span className="text-amber-400 font-mono text-xs uppercase tracking-[0.28em] font-bold block mb-3">
+            ENTRENAMIENTO & RESISTENCIA
+          </span>
+          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-white mb-4 uppercase">
+            DESAFÍA TU MENTALIDAD
           </h1>
-          <p className="text-lg md:text-xl text-stone-400 max-w-2xl mx-auto font-light leading-relaxed">
-            Hitos diseñados para superar tus límites con soporte técnico de alta montaña, liderazgo de cordada, seguridad satelital y protocolos WFR.
+          <p className="text-sm md:text-base text-stone-300 max-w-2xl mx-auto font-light font-mono leading-relaxed">
+            Formatos de exigencia real para forjar carácter, resistencia física y templanza en la montaña. Cumbres al alba con frontales, circuitos multicumbre y travesías de alta intensidad.
           </p>
         </div>
       </header>
