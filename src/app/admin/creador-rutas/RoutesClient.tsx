@@ -88,6 +88,10 @@ export default function RoutesClient({
   const [activeTab, setActiveTab] = useState<'identidad' | 'tecnica' | 'storytelling' | 'operaciones' | 'costos'>('identidad');
 
   const [basePrice, setBasePrice] = useState(28000);
+  const [priceUsd, setPriceUsd] = useState('US$ 29');
+  const [isDiscountActive, setIsDiscountActive] = useState(false);
+  const [discountPrice, setDiscountPrice] = useState<number | ''>('');
+  const [discountBadge, setDiscountBadge] = useState('ÚLTIMOS CUPOS OFF');
   const [minPax, setMinPax] = useState(2);
   const [imageUrl, setImageUrl] = useState('');
   const [imageUploading, setImageUploading] = useState(false);
@@ -132,11 +136,14 @@ export default function RoutesClient({
     setCerroPrincipal('');
     setMacizoCordillera('Cordón Manquehue & San Cristóbal');
     setActiveTab('identidad');
-    setBasePrice(
-      v === 'expediciones' || v === 'high_mountain' ? 280000 : 
+    const initialPrice = v === 'expediciones' || v === 'high_mountain' ? 280000 : 
       v === 'travesias_desafios' ? 49000 : 
-      28000
-    );
+      28000;
+    setBasePrice(initialPrice);
+    setPriceUsd(`US$ ${Math.round(initialPrice / 950)}`);
+    setIsDiscountActive(false);
+    setDiscountPrice('');
+    setDiscountBadge('ÚLTIMOS CUPOS OFF');
     setMinPax(v === 'expediciones' || v === 'high_mountain' ? 1 : 2);
     setImageUrl('');
     setCosts([]);
@@ -157,7 +164,19 @@ export default function RoutesClient({
     setCerroPrincipal(route.category || '');
     setMacizoCordillera(route.category || 'Cordón Manquehue & San Cristóbal');
     setActiveTab('identidad');
-    setBasePrice(route.base_price || 0);
+    const p = route.base_price || 0;
+    setBasePrice(p);
+    setPriceUsd(route.price_usd || (p ? `US$ ${Math.round(p / 950)}` : 'US$ 50'));
+
+    // Descuento desde columnas directas o embebido en logistics
+    const hasDiscount = Boolean(route.is_discount_active ?? route.logistics?.is_discount_active);
+    const discPrice = route.discount_price ?? route.logistics?.discount_price ?? '';
+    const discBadge = route.discount_badge ?? route.logistics?.discount_badge ?? 'ÚLTIMOS CUPOS OFF';
+
+    setIsDiscountActive(hasDiscount);
+    setDiscountPrice(discPrice);
+    setDiscountBadge(discBadge);
+
     setMinPax(route.min_pax || 2);
     setImageUrl(route.image_url || '');
     setCosts(route.adventure_costs_template || []);
@@ -178,7 +197,18 @@ export default function RoutesClient({
     setCerroPrincipal(route.category || '');
     setMacizoCordillera(route.category || 'Cordón Manquehue & San Cristóbal');
     setActiveTab('identidad');
-    setBasePrice(route.base_price || 0);
+    const p = route.base_price || 0;
+    setBasePrice(p);
+    setPriceUsd(route.price_usd || (p ? `US$ ${Math.round(p / 950)}` : 'US$ 50'));
+
+    const hasDiscount = Boolean(route.is_discount_active ?? route.logistics?.is_discount_active);
+    const discPrice = route.discount_price ?? route.logistics?.discount_price ?? '';
+    const discBadge = route.discount_badge ?? route.logistics?.discount_badge ?? 'ÚLTIMOS CUPOS OFF';
+
+    setIsDiscountActive(hasDiscount);
+    setDiscountPrice(discPrice);
+    setDiscountBadge(discBadge);
+
     setMinPax(route.min_pax || 2);
     setImageUrl(route.image_url || '');
     
@@ -200,6 +230,15 @@ export default function RoutesClient({
       formData.set('vertical_type', verticalType);
       if (verticalType === 'action_sports') {
         formData.set('custom_discipline', customDiscipline);
+      }
+      formData.set('price_usd', priceUsd);
+      formData.set('is_discount_active', String(isDiscountActive));
+      if (isDiscountActive && discountPrice) {
+        formData.set('discount_price', String(discountPrice));
+        formData.set('discount_badge', discountBadge);
+      } else {
+        formData.delete('discount_price');
+        formData.delete('discount_badge');
       }
       
       const title = (formData.get('title') as string || '').trim();
@@ -1331,20 +1370,107 @@ export default function RoutesClient({
                         <input name="base_price" 
                           type="number" 
                           value={basePrice} 
-                          onChange={e => setBasePrice(parseFloat(e.target.value)||0)} 
+                          onChange={e => {
+                            const newClp = parseFloat(e.target.value) || 0;
+                            setBasePrice(newClp);
+                            setPriceUsd(newClp > 0 ? `US$ ${Math.round(newClp / 950)}` : 'US$ 0');
+                          }} 
                           className="w-full bg-stone-950 border border-amber-500/40 rounded-lg px-3 py-2 text-sm font-bold text-amber-400 focus:outline-none focus:border-amber-400 font-mono" 
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <label className="text-xs font-mono text-stone-400 uppercase font-semibold">Precio Referencia USD</label>
+                        <div className="flex items-center justify-between">
+                          <label className="text-xs font-mono text-stone-400 uppercase font-semibold">Precio Referencia USD</label>
+                          <span className="text-[10px] text-amber-400/80 font-mono">Auto (TC ~$950)</span>
+                        </div>
                         <input 
                           name="price_usd" 
                           type="text" 
-                          defaultValue={editingRoute?.price_usd || 'US$ 50'} 
+                          value={priceUsd} 
+                          onChange={e => setPriceUsd(e.target.value)}
                           placeholder="Ej: US$ 50" 
                           className="w-full bg-stone-950 border border-stone-800 rounded-lg px-3 py-2 text-sm font-mono text-white focus:outline-none focus:border-amber-400" 
                         />
                       </div>
+                    </div>
+
+                    {/* ── SECCIÓN DE DESCUENTO Y OFERTA DE URGENCIA ── */}
+                    <div className="p-4 rounded-xl bg-stone-900/60 border border-stone-800 space-y-3.5 transition-all">
+                      <div className="flex items-center justify-between">
+                        <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                          <input 
+                            type="checkbox"
+                            checked={isDiscountActive}
+                            onChange={e => {
+                              const checked = e.target.checked;
+                              setIsDiscountActive(checked);
+                              if (checked && !discountPrice && basePrice > 0) {
+                                // Sugerir un 20% off por defecto
+                                setDiscountPrice(Math.round(basePrice * 0.8));
+                              }
+                            }}
+                            className="w-4 h-4 rounded border-stone-700 bg-stone-950 text-amber-500 focus:ring-0 focus:ring-offset-0 cursor-pointer accent-amber-500"
+                          />
+                          <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
+                            Activar Descuento / Oferta Especial
+                          </span>
+                        </label>
+                        {isDiscountActive && (
+                          <span className="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-mono font-bold uppercase tracking-wider animate-pulse">
+                            Oferta Activa
+                          </span>
+                        )}
+                      </div>
+
+                      {isDiscountActive && (
+                        <div className="space-y-3 pt-2 border-t border-stone-800 animate-in fade-in slide-in-from-top-1 duration-200">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-mono text-stone-300 uppercase font-semibold flex items-center justify-between">
+                                <span>Precio con Descuento (CLP)</span>
+                                {basePrice > 0 && Number(discountPrice) > 0 && (
+                                  <span className="text-emerald-400 text-[10px] font-mono font-bold">
+                                    -{Math.round((1 - (Number(discountPrice) / basePrice)) * 100)}% OFF
+                                  </span>
+                                )}
+                              </label>
+                              <input 
+                                type="number"
+                                value={discountPrice}
+                                onChange={e => setDiscountPrice(e.target.value === '' ? '' : parseFloat(e.target.value) || 0)}
+                                placeholder={`Ej: ${basePrice > 0 ? Math.round(basePrice * 0.8) : 20000}`}
+                                className="w-full bg-stone-950 border border-rose-500/50 rounded-lg px-3 py-2 text-sm font-bold text-rose-400 focus:outline-none focus:border-rose-400 font-mono"
+                              />
+                            </div>
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-mono text-stone-300 uppercase font-semibold">Equivalente USD Descuento</label>
+                              <input 
+                                type="text"
+                                disabled
+                                value={Number(discountPrice) > 0 ? `US$ ${Math.round(Number(discountPrice) / 950)}` : '—'}
+                                className="w-full bg-stone-950/60 border border-stone-800/80 rounded-lg px-3 py-2 text-sm font-mono text-stone-400 select-none cursor-not-allowed"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-mono text-stone-300 uppercase font-semibold flex items-center justify-between">
+                              <span>Mensaje de Urgencia / Badge Promocional</span>
+                              <span className="text-white/40 text-[10px]">Editable para clientes</span>
+                            </label>
+                            <input 
+                              type="text"
+                              value={discountBadge}
+                              onChange={e => setDiscountBadge(e.target.value)}
+                              placeholder="Ej: ÚLTIMOS 3 CUPOS OFF · 20% DTO CORDADA"
+                              className="w-full bg-stone-950 border border-amber-500/40 rounded-lg px-3 py-2 text-xs font-mono text-amber-300 focus:outline-none focus:border-amber-400"
+                            />
+                            <p className="text-[10px] text-stone-500 font-mono">
+                              * El precio original se mostrará tachado (strikethrough) en la web junto a este mensaje.
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">

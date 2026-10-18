@@ -94,11 +94,19 @@ export async function createAdventureWithCosts(formData: FormData, costs: Advent
         const p3 = (formData.get('story_p3') as string) || '';
         const story_paragraphs = [p1, p2, p3].filter(Boolean);
 
+        const is_discount_active = formData.get('is_discount_active') === 'true' || formData.get('is_discount_active') === 'on';
+        const discount_price = parseFloat(formData.get('discount_price') as string) || null;
+        const discount_badge = (formData.get('discount_badge') as string || '').trim();
+
         const logistics = {
             sector: (formData.get('logistics_sector') as string) || '',
             acceso: (formData.get('logistics_acceso') as string) || '',
             puntoEncuentro: (formData.get('logistics_punto') as string) || '',
-            coordenadas: (formData.get('logistics_coordenadas') as string) || ''
+            coordenadas: (formData.get('logistics_coordenadas') as string) || '',
+            // Guardamos también en logistics para persistencia garantizada en caso de columnas SQL no migradas
+            is_discount_active,
+            discount_price,
+            discount_badge
         };
 
         const reqEquipStr = (formData.get('required_equipment') as string) || '';
@@ -122,6 +130,7 @@ export async function createAdventureWithCosts(formData: FormData, costs: Advent
             itinerary,
             included,
             not_included,
+            logistics,
             is_active: true
         };
 
@@ -138,7 +147,10 @@ export async function createAdventureWithCosts(formData: FormData, costs: Advent
             gpx_track_url,
             story_paragraphs,
             logistics,
-            required_equipment
+            required_equipment,
+            is_discount_active,
+            discount_price,
+            discount_badge
         };
 
         // 1. Intentamos insertar con todas las columnas extendidas
@@ -415,11 +427,19 @@ export async function updateAdventureWithCosts(id: string, formData: FormData, c
         const p3 = (formData.get('story_p3') as string) || '';
         const story_paragraphs = [p1, p2, p3].filter(Boolean);
 
+        const is_discount_active = formData.get('is_discount_active') === 'true' || formData.get('is_discount_active') === 'on';
+        const discount_price = parseFloat(formData.get('discount_price') as string) || null;
+        const discount_badge = (formData.get('discount_badge') as string || '').trim();
+
         const logistics = {
             sector: (formData.get('logistics_sector') as string) || '',
             acceso: (formData.get('logistics_acceso') as string) || '',
             puntoEncuentro: (formData.get('logistics_punto') as string) || '',
-            coordenadas: (formData.get('logistics_coordenadas') as string) || ''
+            coordenadas: (formData.get('logistics_coordenadas') as string) || '',
+            // Guardamos también en logistics para persistencia garantizada
+            is_discount_active,
+            discount_price,
+            discount_badge
         };
 
         const reqEquipStr = (formData.get('required_equipment') as string) || '';
@@ -441,7 +461,8 @@ export async function updateAdventureWithCosts(id: string, formData: FormData, c
             distance,
             itinerary,
             included,
-            not_included
+            not_included,
+            logistics
         };
 
         const extendedUpdatePayload = {
@@ -456,7 +477,10 @@ export async function updateAdventureWithCosts(id: string, formData: FormData, c
             gpx_track_url,
             story_paragraphs,
             logistics,
-            required_equipment
+            required_equipment,
+            is_discount_active,
+            discount_price,
+            discount_badge
         };
 
         // 1. Update Adventure (intentamos con todas las columnas y caemos a base si faltan)

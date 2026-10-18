@@ -23,6 +23,15 @@ interface RouteItem {
   description?: string;
   badge?: string;
   custom_discipline?: string;
+  is_discount_active?: boolean;
+  discount_price?: number;
+  discount_badge?: string;
+  logistics?: {
+    is_discount_active?: boolean;
+    discount_price?: number;
+    discount_badge?: string;
+    [key: string]: any;
+  };
 }
 
 interface Props {
@@ -154,8 +163,14 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
                   {/* Gradiente Cinematográfico para legibilidad de textos */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/30 group-hover:via-black/20 transition-colors" />
 
-                  {/* Barras de Nivel Directas (Sin fondo ni contenedor) */}
-                  <div className="absolute top-2.5 right-2.5 flex items-center">
+                  {/* Barras de Nivel & Badge de Oferta Urgente */}
+                  <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-1 pointer-events-none z-10">
+                    {(Boolean(route.is_discount_active ?? route.logistics?.is_discount_active) && 
+                      Number(route.discount_price ?? route.logistics?.discount_price) > 0) ? (
+                      <span className="px-2 py-0.5 rounded-full bg-rose-600 text-white font-black text-[8px] sm:text-[9px] uppercase tracking-wider font-mono shadow-md animate-pulse">
+                        🔥 {route.discount_badge || route.logistics?.discount_badge || 'CUPOS OFF'}
+                      </span>
+                    ) : <span />}
                     <span className="text-xs sm:text-sm font-mono font-bold text-amber-400 drop-shadow-[0_2px_8px_rgba(0,0,0,1)] tracking-widest select-none">
                       {lvl.bars}
                     </span>

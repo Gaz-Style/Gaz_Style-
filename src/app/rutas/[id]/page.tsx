@@ -98,6 +98,14 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
     const isExpeditionPass = (route.category || '').toLowerCase() === 'expedition_pass' || (route.title || '').toLowerCase().includes('expedition pass');
     const isHighMountain = (route.category || '').toLowerCase() === 'high_mountain' || (route.title || '').toLowerCase().includes('5.424m') || (route.title || '').toLowerCase().includes('5.856m') || (route.title || '').toLowerCase().includes('4.954m');
 
+    // Descuento administrable (directo o via logistics)
+    const hasDiscount = Boolean(route.is_discount_active ?? route.logistics?.is_discount_active);
+    const discountPriceNumber = Number(route.discount_price ?? route.logistics?.discount_price);
+    const originalPriceNumber = Number(route.base_price || 25000);
+    const isPromoActive = hasDiscount && discountPriceNumber > 0 && discountPriceNumber < originalPriceNumber;
+    const effectivePriceNumber = isPromoActive ? discountPriceNumber : originalPriceNumber;
+    const discountBadgeText = route.discount_badge || route.logistics?.discount_badge || 'ÚLTIMOS CUPOS OFF';
+
     const included = isExpeditionPass ? [
         'Pick-up y Drop-off privado en tu hotel o domicilio en Santiago (SUV / 4x4)',
         'Liderazgo de montaña bilingüe dedicado al ritmo de tu cordada',
@@ -619,14 +627,21 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                     <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-white/40 block mb-1">
                                         {isHighMountain ? 'Tarifa Expedition High Mountain' : (isExpeditionPass ? 'Tarifa Expedition Boutique' : 'Valor por persona')}
                                     </span>
+                                    {isPromoActive && (
+                                        <div className="mb-2">
+                                            <span className="px-2.5 py-1 rounded-full bg-rose-600/90 text-white font-mono font-bold text-[10px] uppercase tracking-wider inline-flex items-center gap-1.5 animate-pulse shadow-md">
+                                                🔥 {discountBadgeText}
+                                            </span>
+                                        </div>
+                                    )}
                                     {isHighMountain ? (
                                         <div>
                                             <div className="flex items-baseline justify-between">
                                                 <p className="text-4xl font-black text-amber-400 font-mono">
-                                                    US${Math.round((route.base_price || 1460000) / 975).toLocaleString('en-US')}
+                                                    US${Math.round(effectivePriceNumber / 975).toLocaleString('en-US')}
                                                 </p>
                                                 <span className="text-sm text-white/60 font-mono">
-                                                    ${Number(route.base_price || 1460000).toLocaleString('es-CL')} CLP
+                                                    ${Number(effectivePriceNumber).toLocaleString('es-CL')} CLP
                                                 </span>
                                             </div>
                                             <span className="text-[10px] font-mono text-emerald-400 block mt-1">
@@ -634,13 +649,25 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                             </span>
                                         </div>
                                     ) : (
-                                        <div className="flex items-baseline justify-between">
-                                            <p className="text-4xl font-black text-white font-mono">
-                                                ${Number(route.base_price || 25000).toLocaleString('es-CL')}
-                                            </p>
-                                            <span className="text-sm text-white/45 font-mono">
-                                                US${Math.round((route.base_price || 25000) / 950).toLocaleString('en-US')}
-                                            </span>
+                                        <div>
+                                            {isPromoActive && (
+                                                <div className="flex items-baseline gap-2 mb-0.5">
+                                                    <span className="text-sm line-through text-white/40 font-mono">
+                                                        ${Number(originalPriceNumber).toLocaleString('es-CL')}
+                                                    </span>
+                                                    <span className="text-xs line-through text-white/30 font-mono">
+                                                        US${Math.round(originalPriceNumber / 950).toLocaleString('en-US')}
+                                                    </span>
+                                                </div>
+                                            )}
+                                            <div className="flex items-baseline justify-between">
+                                                <p className={`text-4xl font-black font-mono ${isPromoActive ? 'text-rose-400' : 'text-white'}`}>
+                                                    ${Number(effectivePriceNumber).toLocaleString('es-CL')}
+                                                </p>
+                                                <span className="text-sm text-white/60 font-mono">
+                                                    US${Math.round(effectivePriceNumber / 950).toLocaleString('en-US')}
+                                                </span>
+                                            </div>
                                         </div>
                                     )}
                                 </div>
@@ -723,20 +750,32 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                 {isHighMountain ? (
                                     <div className="flex items-baseline gap-1.5">
                                         <span className="text-xl font-black text-amber-400 font-mono">
-                                            US${Math.round((route.base_price || 1460000) / 975).toLocaleString('en-US')}
+                                            US${Math.round(effectivePriceNumber / 975).toLocaleString('en-US')}
                                         </span>
                                         <span className="text-[11px] text-white/50 font-mono">
-                                            ${Number(route.base_price || 1460000).toLocaleString('es-CL')}
+                                            ${Number(effectivePriceNumber).toLocaleString('es-CL')}
                                         </span>
                                     </div>
                                 ) : (
-                                    <div className="flex items-baseline gap-1.5">
-                                        <span className="text-xl font-black text-white font-mono">
-                                            ${Number(route.base_price || 25000).toLocaleString('es-CL')}
-                                        </span>
-                                        <span className="text-[11px] text-white/40 font-mono">
-                                            US${Math.round((route.base_price || 25000) / 950).toLocaleString('en-US')}
-                                        </span>
+                                    <div>
+                                        {isPromoActive && (
+                                            <div className="flex items-baseline gap-1.5">
+                                                <span className="text-[10px] line-through text-white/40 font-mono">
+                                                    ${Number(originalPriceNumber).toLocaleString('es-CL')}
+                                                </span>
+                                                <span className="text-[8px] bg-rose-600/90 text-white font-bold px-1 rounded uppercase">
+                                                    OFF
+                                                </span>
+                                            </div>
+                                        )}
+                                        <div className="flex items-baseline gap-1.5">
+                                            <span className={`text-xl font-black font-mono ${isPromoActive ? 'text-rose-400' : 'text-white'}`}>
+                                                ${Number(effectivePriceNumber).toLocaleString('es-CL')}
+                                            </span>
+                                            <span className="text-[11px] text-white/40 font-mono">
+                                                US${Math.round(effectivePriceNumber / 950).toLocaleString('en-US')}
+                                            </span>
+                                        </div>
                                     </div>
                                 )}
                             </div>

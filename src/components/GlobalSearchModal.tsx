@@ -357,9 +357,21 @@ export default function GlobalSearchModal({ isOpen, onClose, lang = 'es', initia
                 let cleanTitle = (adv.title || '').split('·')[0].trim().replace(/^cerro\s+/i, '');
                 const duration = adv.duration_text || (adv.duration_days ? `${adv.duration_days} Días` : 'Full Day');
                 const altitude = adv.max_altitude ? (String(adv.max_altitude).includes('m') ? adv.max_altitude : `${adv.max_altitude}m`) : null;
-                const clpPriceNumber = Number(adv.base_price || 25000);
-                const clpText = `$${clpPriceNumber.toLocaleString('es-CL')}`;
-                const usdText = getUsdPrice(adv, clpPriceNumber);
+                
+                // Descuento administrable (directo o via logistics)
+                const hasDiscount = Boolean(adv.is_discount_active ?? adv.logistics?.is_discount_active);
+                const discountPriceNumber = Number(adv.discount_price ?? adv.logistics?.discount_price);
+                const originalClpPriceNumber = Number(adv.base_price || 25000);
+                
+                const isPromoActive = hasDiscount && discountPriceNumber > 0 && discountPriceNumber < originalClpPriceNumber;
+                const effectiveClpPrice = isPromoActive ? discountPriceNumber : originalClpPriceNumber;
+                
+                const clpText = `$${effectiveClpPrice.toLocaleString('es-CL')}`;
+                const originalClpText = `$${originalClpPriceNumber.toLocaleString('es-CL')}`;
+                const usdText = getUsdPrice(adv, effectiveClpPrice);
+                const originalUsdText = isPromoActive ? getUsdPrice(adv, originalClpPriceNumber) : null;
+                const urgencyBadge = adv.discount_badge || adv.logistics?.discount_badge || 'ÚLTIMOS CUPOS OFF';
+
                 const diffScore = getDifficultyScore(adv);
                 const diffLabel = 
                   diffScore === 1 ? 'NIVEL 1 · INICIACIÓN' :
@@ -384,15 +396,22 @@ export default function GlobalSearchModal({ isOpen, onClose, lang = 'es', initia
                     {/* Gradiente Cinematográfico para máxima legibilidad de textos */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-black/35 pointer-events-none" />
 
-                    {/* Insignia Superior: Nivel de Dificultad y Acceso a Ficha */}
-                    <div className="relative z-10 p-3.5 sm:p-4 flex items-center justify-between">
-                      <span className="px-2.5 py-0.5 rounded-full bg-amber-400 text-stone-950 font-black text-[9px] uppercase tracking-wider font-mono shadow-md">
-                        {diffLabel}
-                      </span>
+                    {/* Insignia Superior: Nivel de Dificultad, Badge de Urgencia y Acceso a Ficha */}
+                    <div className="relative z-10 p-3.5 sm:p-4 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="px-2.5 py-0.5 rounded-full bg-amber-400 text-stone-950 font-black text-[9px] uppercase tracking-wider font-mono shadow-md">
+                          {diffLabel}
+                        </span>
+                        {isPromoActive && (
+                          <span className="px-2.5 py-0.5 rounded-full bg-rose-600 text-white font-black text-[9px] uppercase tracking-wider font-mono shadow-md animate-pulse">
+                            🔥 {urgencyBadge}
+                          </span>
+                        )}
+                      </div>
                       <Link
                         href={`/rutas/${adv.id}`}
                         onClick={onClose}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/60 hover:bg-black/90 backdrop-blur-md border border-white/20 text-[11px] font-mono text-white transition-colors"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/60 hover:bg-black/90 backdrop-blur-md border border-white/20 text-[11px] font-mono text-white transition-colors shrink-0"
                       >
                         <span>Ver Ficha</span>
                         <ArrowRight className="w-3 h-3 text-amber-400" />
@@ -419,12 +438,25 @@ export default function GlobalSearchModal({ isOpen, onClose, lang = 'es', initia
                         </div>
 
                         <div className="flex items-center gap-4 ml-auto">
-                          {/* Precios en CLP y USD */}
+                          {/* Precios en CLP y USD (con Strikethrough si tiene Descuento Activo) */}
                           <div className="text-right">
-                            <div className="flex items-baseline gap-1.5 justify-end">
-                              <span className="text-base sm:text-lg font-black text-amber-400 drop-shadow">{clpText}</span>
-                              <span className="text-[11px] text-white/70 font-semibold">{usdText}</span>
-                            </div>
+                            {isPromoActive ? (
+                              <div>
+                                <div className="flex items-baseline gap-1.5 justify-end">
+                                  <span className="text-[11px] text-white/40 line-through font-semibold">{originalClpText}</span>
+                                  {originalUsdText && <span className="text-[9px] text-white/30 line-through">({originalUsdText})</span>}
+                                </div>
+                                <div className="flex items-baseline gap-1.5 justify-end">
+                                  <span className="text-base sm:text-lg font-black text-rose-400 drop-shadow">{clpText}</span>
+                                  <span className="text-[11px] text-white/80 font-semibold">{usdText}</span>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="flex items-baseline gap-1.5 justify-end">
+                                <span className="text-base sm:text-lg font-black text-amber-400 drop-shadow">{clpText}</span>
+                                <span className="text-[11px] text-white/70 font-semibold">{usdText}</span>
+                              </div>
+                            )}
                             <span className="text-[9px] text-white/50 uppercase block">Por persona</span>
                           </div>
 
