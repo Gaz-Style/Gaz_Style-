@@ -166,7 +166,7 @@ export default function CerroDetailClient({ peak, weather, currentLang }: Props)
         {/* ── FONDO OFICIAL DE LA RUTA A PANTALLA COMPLETA ── */}
         <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
           <Image
-            src={peak.cover_image_url || '/images/wildtrek_sunset.png'}
+            src={peak.cover_image_url || '/images/andes_cordillera_hero.jpg'}
             alt={`${peak.name} - Santiago Hiking`}
             fill
             priority

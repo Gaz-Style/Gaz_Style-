@@ -60,7 +60,7 @@ export default function MasterUnifiedSandboxPage() {
         {/* ── FONDO OFICIAL DE LA RUTA A PANTALLA COMPLETA ── */}
         <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
           <Image
-            src="/images/wildtrek_sunset.png"
+            src="/images/andes_cordillera_hero.jpg"
             alt="Cerro Carbón - Santiago Hiking"
             fill
             priority

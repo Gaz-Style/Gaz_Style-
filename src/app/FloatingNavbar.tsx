@@ -220,14 +220,8 @@ export default function FloatingNavbar({ currentLang }: Props) {
 
         {/* BANDA ANIMADA TIPO TICKER FLOTANTE DEBAJO DEL MENÚ + BADGE DE GOOGLE */}
         <div className="flex flex-col items-center gap-1.5 mt-2 pointer-events-auto">
-          {/* Ticker de Valores Ambientales y Locales */}
-          <div 
-            className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-[10px] sm:text-xs font-mono select-none transition-all duration-300"
-            style={{
-              backgroundColor: 'rgba(20, 20, 20, 0.70)',
-              border: '1px solid rgba(255, 255, 255, 0.04)',
-            }}
-          >
+          {/* Ticker de Valores Ambientales y Locales (Solo texto limpio sin fondo ni contenedor) */}
+          <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-mono select-none transition-all duration-300 drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
             <span className="text-xs transition-transform duration-300 hover:scale-110">
               {VALUES_TICKER[valueIndex].icon}
             </span>

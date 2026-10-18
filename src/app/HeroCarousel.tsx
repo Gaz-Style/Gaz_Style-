@@ -60,10 +60,10 @@ export default function HeroCarousel() {
 
   return (
     <div className="fixed inset-0 z-0 w-full h-full overflow-hidden bg-stone-950 pointer-events-none">
-      {/* Fondo de respaldo de alta calidad oficial (sin fotos genéricas ni botones de play rotos) */}
+      {/* Fondo de respaldo real de alta montaña (fotografía auténtica de la cordillera) */}
       <div 
         className="absolute inset-0 z-0 bg-cover bg-center transition-opacity duration-1000"
-        style={{ backgroundImage: "url('/images/wildtrek_sunset.png')" }}
+        style={{ backgroundImage: "url('/images/andes_cordillera_hero.jpg')" }}
       />
 
       {/* Carrusel de Videos con Crossfade Cinematográfico */}

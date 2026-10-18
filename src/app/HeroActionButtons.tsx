@@ -64,7 +64,7 @@ const ROUTES = {
     duration: 'Full Day',
     max_pax: '6 pax',
     desc: 'Aristas técnicas de alta montaña sobre los 3.250m. Protocolo de ritmo y conquista física sobre los glaciares.',
-    image: '/images/wildtrek_sunset.png',
+    image: '/images/andes_cordillera_hero.jpg',
     tag: 'ALTA MONTAÑA',
   },
 } as const;
@@ -228,17 +228,17 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
           <span className="text-amber-400 text-sm group-hover:translate-y-0.5 transition-transform duration-200">↓</span>
         </button>
 
-        {/* Botón 2: DESAFÍOS (Mismas dimensiones exactas que el Botón 1) */}
+        {/* Botón 2: DESAFÍOS (Mismo fondo y estilo frosted glass que el menú superior) */}
         <a
           href="#desafios"
           onClick={handleScrollToDesafios}
-          className="group inline-flex items-center justify-center gap-2.5 w-[260px] sm:w-[260px] h-[50px] sm:h-[52px] rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer text-center select-none font-mono text-white hover:text-amber-300 shrink-0"
+          className="group inline-flex items-center justify-center gap-2.5 w-[260px] sm:w-[260px] h-[50px] sm:h-[52px] rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer text-center select-none font-mono text-white hover:text-amber-300 hover:bg-white/10 shrink-0"
           style={{
-            backgroundColor: 'rgba(12, 14, 18, 0.35)',
+            backgroundColor: 'rgba(255, 255, 255, 0.08)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
-            border: '1.5px solid rgba(245, 158, 11, 0.60)',
-            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.40)',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.25)',
           }}
         >
           <span className="tracking-[0.16em]">
