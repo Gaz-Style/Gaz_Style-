@@ -80,8 +80,8 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
             {lang === 'en' 
               ? 'Expedition and adventure across Santiago summits. Get ready to experience freedom · Solo-Friendly.' 
               : lang === 'pt' 
-              ? 'Expedição e aventura nos cumes de Santiago. Prepare-se para viver a liberdade · Solo-Friendly.' 
-              : 'Expedición y aventura en las cumbres de Santiago. Prepárate para vivir la libertad Solo-Friendly.'}
+              ? 'Expedição e aventura nos cumes de Santiago. Prepare-se para viver a experiência Solo-Friendly.' 
+              : 'Expedición y aventura en las cumbres de Santiago. Prepárate para vivir la experiencia Solo-Friendly.'}
           </p>
 
           {/* Botón de Acción Principal */}
