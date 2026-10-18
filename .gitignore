@@ -40,7 +40,13 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# credentials & keys
+*credentials*.json
+*analytics*.json
+*.key.json
+
 # scratch test scripts
 test_wa_send.js
 verify_livechat_db.js
+test_ga4_connection.js
 seed_challenges_to_supabase.js
