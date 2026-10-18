@@ -132,77 +132,57 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
               const imgSrc = route.image_url || 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80';
               const cleanTitle = (route.title || '').replace(/^cerro\s+/i, '').trim();
 
+              // Enlace directo a la ficha completa de la ruta
+              const routeUrl = `/rutas/${route.id || route.slug || ''}`;
+
               return (
-                <div
+                <Link
                   key={route.id || idx}
-                  className="rounded-3xl overflow-hidden flex flex-col justify-between border border-white/10 shrink-0 snap-start
-                             w-[78vw] max-w-[320px] sm:w-[320px] shadow-2xl transition-all duration-300"
-                  style={{
-                    backgroundColor: 'rgba(12, 14, 18, 0.75)',
-                    backdropFilter: 'blur(20px)',
-                    WebkitBackdropFilter: 'blur(20px)',
-                  }}
+                  href={routeUrl}
+                  className="group relative rounded-2xl sm:rounded-3xl overflow-hidden shrink-0 snap-start
+                             w-[160px] sm:w-[220px] md:w-[240px] aspect-[9/14] sm:aspect-[3/4.5] shadow-2xl transition-all duration-300 hover:scale-[1.02] border border-white/10"
                 >
-                  {/* Foto Superior */}
-                  <div className="aspect-[16/10] relative overflow-hidden bg-stone-900 shrink-0">
-                    <Image
-                      src={imgSrc}
-                      alt={cleanTitle}
-                      fill
-                      sizes="(max-width: 640px) 78vw, 320px"
-                      className="object-cover pointer-events-none"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30 pointer-events-none" />
+                  {/* Foto de Fondo Completa (Full Bleed) */}
+                  <Image
+                    src={imgSrc}
+                    alt={cleanTitle}
+                    fill
+                    sizes="(max-width: 640px) 160px, 240px"
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                  />
 
-                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                      <span className="bg-stone-950/80 backdrop-blur-md px-2.5 py-1 text-[10px] font-mono tracking-wider uppercase font-bold text-white rounded border border-white/10">
-                        {route.badge || route.custom_discipline || 'EXPEDITION PASS'}
-                      </span>
-                      <span className="text-xs font-mono font-bold text-amber-400 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] tracking-widest select-none">
-                        {lvl.bars}
-                      </span>
-                    </div>
+                  {/* Gradiente Cinematográfico para legibilidad de textos */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/30 group-hover:via-black/20 transition-colors" />
 
-                    <div className="absolute bottom-2.5 left-3.5 right-3.5 flex items-center justify-between text-[11px] font-mono text-white/90">
-                      <span className="font-bold flex items-center gap-1.5">
-                        <Mountain className="w-3.5 h-3.5 text-amber-400" />
-                        {route.max_altitude ? (String(route.max_altitude).includes('m') ? route.max_altitude : `${route.max_altitude}m`) : '1.638m'}
+                  {/* Insignia Superior: Categoría o Nivel */}
+                  <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between">
+                    <span className="bg-black/60 backdrop-blur-md px-2 py-0.5 text-[9px] font-mono tracking-wider uppercase font-bold text-white/90 rounded border border-white/10">
+                      {route.badge || route.custom_discipline || 'EXPEDICIÓN'}
+                    </span>
+                    <span className="text-[10px] font-mono font-bold text-amber-400 drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)] tracking-widest select-none">
+                      {lvl.bars}
+                    </span>
+                  </div>
+
+                  {/* Contenido Inferior: Título en mayúsculas impactante, Altitud y Precio Desde */}
+                  <div className="absolute bottom-3 left-3 right-3 flex flex-col gap-1 text-white">
+                    <span className="text-[9px] sm:text-[10px] font-mono text-amber-400 font-bold uppercase tracking-wider line-clamp-1">
+                      {lvl.name.split('·')[1]?.trim() || lvl.name}
+                    </span>
+                    <h3 className="text-sm sm:text-base md:text-lg font-black uppercase tracking-tight leading-tight group-hover:text-amber-300 transition-colors drop-shadow-md">
+                      {cleanTitle}
+                    </h3>
+
+                    <div className="pt-1.5 mt-1 border-t border-white/15 flex items-center justify-between text-[10px] sm:text-xs font-mono">
+                      <span className="text-white/70">
+                        {route.max_altitude ? (String(route.max_altitude).includes('m') ? route.max_altitude : `${route.max_altitude}m`) : 'Andes'}
                       </span>
-                      <span className="text-white/70 text-[10px]">
-                        {route.duration_text || `${route.duration_days || 1} jornada`}
+                      <span className="font-bold text-amber-400">
+                        ${formattedClp}
                       </span>
                     </div>
                   </div>
-
-                  {/* Cuerpo */}
-                  <div className="p-5 flex flex-col flex-1 justify-between gap-3">
-                    <div>
-                      <div className="flex items-center justify-between mb-1.5 text-[10px] font-mono">
-                        <span className="text-amber-400 font-bold uppercase tracking-wider">{lvl.name}</span>
-                        <span className="text-white/40">{route.difficulty_level || 'Media'}</span>
-                      </div>
-                      <h3 className="text-lg sm:text-xl font-black text-white uppercase tracking-tight leading-snug mb-1.5">
-                        {cleanTitle}
-                      </h3>
-                      <p className="text-xs text-white/70 line-clamp-2 leading-relaxed font-light">
-                        {route.description || 'Ascenso guiado por senderos andinos de Santiago con liderazgo de cordada.'}
-                      </p>
-                    </div>
-
-                    <div className="pt-2 border-t border-white/10 flex items-center justify-between font-mono">
-                      <div>
-                        <span className="text-[9px] text-white/40 uppercase block">Desde</span>
-                        <span className="text-base font-black text-amber-400">${formattedClp}</span>
-                      </div>
-                      <Link
-                        href={`/reservar?route=${route.id || route.slug || ''}`}
-                        className="btn-arcteryx-primary !py-2 !px-4 text-[10px] sm:text-xs font-mono font-bold tracking-wider"
-                      >
-                        RESERVAR
-                      </Link>
-                    </div>
-                  </div>
-                </div>
+                </Link>
               );
             })}
           </div>
