@@ -211,7 +211,7 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
           href="#desafios"
           className="group inline-flex items-center justify-center gap-2.5 w-full sm:w-auto sm:min-w-[210px] py-3.5 sm:py-4 px-6 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer text-center select-none font-mono text-white hover:text-red-400"
           style={{
-            backgroundColor: 'rgba(12, 14, 18, 0.72)',
+            backgroundColor: 'rgba(12, 14, 18, 0.35)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
             border: '1.5px solid rgba(220, 38, 38, 0.65)',
