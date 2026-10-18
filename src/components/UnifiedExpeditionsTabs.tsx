@@ -70,13 +70,13 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
     <section id="expediciones" className="pt-2 sm:pt-6 pb-6 sm:pb-12 relative z-20 scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
-        {/* ── SELECTOR DE PESTAÑAS EN LÍNEA ESTILO MUCH BETTER ADVENTURES (Directo a las tarjetas) ── */}
+        {/* ── SELECTOR DE PESTAÑAS EN LÍNEA ESTILO MUCH BETTER ADVENTURES (Centrado y distribuido) ── */}
         <div className="w-full border-b border-white/10 mb-6 sm:mb-8">
-          <div className="flex items-center justify-start sm:justify-center gap-6 sm:gap-10 overflow-x-auto no-scrollbar whitespace-nowrap px-4 sm:px-6 pb-2.5 scroll-smooth">
+          <div className="flex items-center justify-center gap-6 sm:gap-12 md:gap-16 overflow-x-auto no-scrollbar whitespace-nowrap px-2 sm:px-6 pb-2.5">
             <button
               type="button"
               onClick={() => setActiveTab('trekking')}
-              className={`relative pb-2.5 text-sm sm:text-base md:text-lg font-mono font-bold uppercase tracking-wider transition-all select-none cursor-pointer shrink-0 ${
+              className={`relative pb-2.5 text-sm sm:text-base md:text-lg font-mono font-bold uppercase tracking-wider transition-all select-none cursor-pointer shrink-0 text-center ${
                 activeTab === 'trekking'
                   ? 'text-white'
                   : 'text-white/45 hover:text-white/80'
@@ -91,7 +91,7 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
             <button
               type="button"
               onClick={() => setActiveTab('travesias_desafios')}
-              className={`relative pb-2.5 text-sm sm:text-base md:text-lg font-mono font-bold uppercase tracking-wider transition-all select-none cursor-pointer shrink-0 ${
+              className={`relative pb-2.5 text-sm sm:text-base md:text-lg font-mono font-bold uppercase tracking-wider transition-all select-none cursor-pointer shrink-0 text-center ${
                 activeTab === 'travesias_desafios'
                   ? 'text-white'
                   : 'text-white/45 hover:text-white/80'
@@ -106,7 +106,7 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
             <button
               type="button"
               onClick={() => setActiveTab('expediciones')}
-              className={`relative pb-2.5 text-sm sm:text-base md:text-lg font-mono font-bold uppercase tracking-wider transition-all select-none cursor-pointer shrink-0 ${
+              className={`relative pb-2.5 text-sm sm:text-base md:text-lg font-mono font-bold uppercase tracking-wider transition-all select-none cursor-pointer shrink-0 text-center ${
                 activeTab === 'expediciones'
                   ? 'text-white'
                   : 'text-white/45 hover:text-white/80'
