@@ -120,6 +120,26 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
           </div>
         </div>
 
+        {/* ── CINTA / BANDA DE VALORES: CUIDAMOS EL PLANETA & NEGOCIOS LOCALES (Estándar MBA) ── */}
+        <div className="mb-6 overflow-hidden rounded-2xl bg-white/[0.03] border border-white/5 py-2 px-3">
+          <div className="flex items-center justify-center gap-6 sm:gap-10 text-[11px] sm:text-xs font-mono text-white/70 select-none flex-wrap">
+            <span className="inline-flex items-center gap-1.5 text-emerald-400/90 font-medium">
+              <span>🌿</span>
+              <span>Cuidamos el planeta · Sin Dejar Rastro</span>
+            </span>
+            <span className="hidden xs:inline text-white/20">·</span>
+            <span className="inline-flex items-center gap-1.5 text-amber-400/90 font-medium">
+              <span>🤝</span>
+              <span>Impulsamos negocios & economías locales</span>
+            </span>
+            <span className="hidden md:inline text-white/20">·</span>
+            <span className="hidden md:inline-flex items-center gap-1.5 text-sky-400/90 font-medium">
+              <span>🏔️</span>
+              <span>Conservación activa de la cordillera</span>
+            </span>
+          </div>
+        </div>
+
         {/* ── LISTADO DE TARJETAS TIPO MUCH BETTER ADVENTURES (Sin espacio vacío al borde derecho) ── */}
         <div className="relative -mr-4 sm:mr-0">
           <div 
