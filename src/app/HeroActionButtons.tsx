@@ -206,15 +206,15 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
           <span className="text-amber-400 text-sm group-hover:translate-y-0.5 transition-transform duration-200">↓</span>
         </button>
 
-        {/* Botón 2: DESAFÍOS 💀 (Desplaza suavemente a la nueva sección exclusiva de Desafíos) */}
+        {/* Botón 2: DESAFÍOS 💀 (Con borde rojo y tinte idéntico al badge de Alto Rendimiento) */}
         <a
           href="#desafios"
-          className="group inline-flex items-center justify-center gap-2.5 w-full sm:w-auto sm:min-w-[210px] py-3.5 sm:py-4 px-6 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer text-center select-none font-mono text-white hover:text-amber-300"
+          className="group inline-flex items-center justify-center gap-2.5 w-full sm:w-auto sm:min-w-[210px] py-3.5 sm:py-4 px-6 rounded-full text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer text-center select-none font-mono text-rose-300 hover:text-white"
           style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+            backgroundColor: 'rgba(244, 63, 94, 0.16)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
-            border: '1.5px solid rgba(255, 255, 255, 0.22)',
+            border: '1.5px solid rgba(244, 63, 94, 0.55)',
             boxShadow: '0 8px 24px rgba(0, 0, 0, 0.38)',
           }}
         >
@@ -226,7 +226,7 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
               ? 'DESAFIOS' 
               : 'DESAFÍOS'}
           </span>
-          <span className="text-amber-400 group-hover:translate-x-1 transition-transform duration-200">→</span>
+          <span className="text-rose-400 group-hover:translate-x-1 transition-transform duration-200">→</span>
         </a>
       </div>
 
