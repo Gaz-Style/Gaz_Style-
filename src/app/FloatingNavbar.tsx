@@ -65,9 +65,9 @@ export default function FloatingNavbar({ currentLang }: Props) {
   }, []);
 
   const VALUES_TICKER = [
-    { icon: '🌿', text: 'Cuidamos el planeta · Sin Dejar Rastro', accent: 'text-emerald-400' },
-    { icon: '🤝', text: 'Apoyamos y fortalecemos economías locales', accent: 'text-amber-400' },
-    { icon: '🏔️', text: 'Conservación activa de la cordillera andina', accent: 'text-sky-400' },
+    { icon: '🌿', text: 'Cuidamos el planeta · Sin Dejar Rastro', accent: 'text-emerald-200/90' },
+    { icon: '🤝', text: 'Apoyamos y fortalecemos economías locales', accent: 'text-amber-200/90' },
+    { icon: '🏔️', text: 'Conservación activa de la cordillera andina', accent: 'text-sky-200/90' },
   ];
 
   const dict = getDictionary(currentLang);
