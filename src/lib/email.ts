@@ -2,19 +2,33 @@ import nodemailer from 'nodemailer';
 import fs from 'fs';
 import path from 'path';
 
-// Setup Nodemailer transporter using Google Workspace SMTP settings from .env.local
+// Setup Nodemailer transporter using Santiago Hiking Google App Password from .env.local
+const rawSmtpUser = process.env.GMAIL_SMTP_USER || process.env.SMTP_USER || 'gazstylechile@gmail.com';
+const rawSmtpPass = process.env.GMAIL_SMTP_APP_PASSWORD || process.env.SMTP_PASSWORD || '';
+const smtpUser = rawSmtpUser.replace(/^["']|["']$/g, '').trim();
+const smtpPass = rawSmtpPass.replace(/^["']|["']$/g, '').trim();
+
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
   port: 465,
   secure: true,
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASSWORD,
+    user: smtpUser,
+    pass: smtpPass,
   },
 });
 
-const smtpUser = process.env.SMTP_USER || '';
-const fromAddress = smtpUser.includes('gmail.com') ? 'contacto@elenalaguía.cl' : smtpUser;
+// Sender oficial según el tipo de comunicación (usando tus alias configurados de Google Workspace)
+export const EMAIL_SENDERS = {
+  booking: `"Santiago Hiking | Booking" <booking@santiagohiking.com>`,
+  contacto: `"Santiago Hiking | Contacto" <contacto@santiagohiking.com>`,
+  info: `"Santiago Hiking | Info" <info@santiagohiking.com>`,
+  pagos: `"Santiago Hiking | Pagos" <pagos@santiagohiking.com>`,
+  mario: `"Santiago Hiking | Mario Cruz" <mario.cruz@santiagohiking.com>`,
+};
+
+export const fromAddress = EMAIL_SENDERS.booking;
+const defaultFrom = EMAIL_SENDERS.booking;
 
 /**
  * Helper to load an HTML template and replace variables
@@ -47,9 +61,9 @@ export const sendWelcomeEmail = async (to: string, name: string) => {
 
   try {
     const info = await transporter.sendMail({
-      from: `"Gaz La Guía" <${fromAddress}>`,
+      from: fromAddress,
       to,
-      subject: 'Bienvenida a Gaz La Guía',
+      subject: 'Bienvenido a Santiago Hiking · Cordada Oficial',
       html,
     });
     return { success: true, messageId: info.messageId };
@@ -355,6 +369,139 @@ export const sendReviewEmail = async (to: string, name: string) => {
   } catch (error) {
     console.error('Error sending review email:', error);
     return { success: false, error };
+  }
+};
+
+/**
+ * Dynamically composites the hero image with the brand logo (top-left),
+ * pass badge (top-right), and the signature Triple Corona degradé (bottom fade).
+ */
+export const generateTicketHeroBuffer = async (shortTicketId: string): Promise<Buffer | null> => {
+  try {
+    const sharp = require('sharp');
+    const inputPath = path.join(process.cwd(), 'public', 'images', 'trail-running-cosa-mi-serve.jpg');
+    const logoPath = path.join(process.cwd(), 'public', 'logotipo blanco.png');
+
+    if (!fs.existsSync(inputPath) || !fs.existsSync(logoPath)) return null;
+
+    const width = 1040;
+    const height = 585;
+
+    const logoBuffer = await sharp(logoPath)
+      .resize({ height: 110 })
+      .toBuffer();
+
+    const passText = `PASS #${shortTicketId}`;
+    const badgeWidth = Math.max(160, passText.length * 13 + 30);
+    const badgeX = width - 40 - badgeWidth;
+    const badgeY = 36;
+
+    const svgOverlay = Buffer.from(`
+      <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="topVignette" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0c0a09" stop-opacity="0.80" />
+            <stop offset="35%" stop-color="#0c0a09" stop-opacity="0.45" />
+            <stop offset="65%" stop-color="#0c0a09" stop-opacity="0.10" />
+            <stop offset="100%" stop-color="#0c0a09" stop-opacity="0.0" />
+          </linearGradient>
+          <linearGradient id="bottomDegrade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0c0a09" stop-opacity="0.0" />
+            <stop offset="45%" stop-color="#0c0a09" stop-opacity="0.20" />
+            <stop offset="68%" stop-color="#0c0a09" stop-opacity="0.60" />
+            <stop offset="88%" stop-color="#0c0a09" stop-opacity="0.92" />
+            <stop offset="100%" stop-color="#0c0a09" stop-opacity="1.0" />
+          </linearGradient>
+        </defs>
+        <rect width="${width}" height="${height * 0.55}" fill="url(#topVignette)" />
+        <rect width="${width}" height="${height}" fill="url(#bottomDegrade)" />
+        <g transform="translate(${badgeX}, ${badgeY})">
+          <rect width="${badgeWidth}" height="42" rx="21" fill="#0c0a09" fill-opacity="0.65" stroke="#f59e0b" stroke-opacity="0.75" stroke-width="1.5" />
+          <text x="${badgeWidth / 2}" y="26" text-anchor="middle" fill="#fbbf24" font-family="'JetBrains Mono', monospace, sans-serif" font-size="14" font-weight="800" letter-spacing="2">${passText}</text>
+        </g>
+      </svg>
+    `);
+
+    return await sharp(inputPath)
+      .resize(width, height, { fit: 'cover', position: 'center' })
+      .composite([
+        { input: svgOverlay, top: 0, left: 0 },
+        { input: logoBuffer, top: 28, left: 36 }
+      ])
+      .jpeg({ quality: 93 })
+      .toBuffer();
+  } catch (err) {
+    console.error('Error generating dynamic composite hero:', err);
+    return null;
+  }
+};
+
+/**
+ * Sends the official Expedition Pass Ticket email for Santiago Hiking
+ */
+export const sendExpeditionTicketEmail = async (payload: {
+  to: string;
+  name: string;
+  adventureTitle: string;
+  departureDate: string;
+  meetingPoint: string;
+  meetingTime: string;
+  totalPaid: string;
+  ticketId: string;
+  whatsappLink: string;
+}) => {
+  const shortTicketId = payload.ticketId.includes('-') 
+    ? payload.ticketId.split('-').pop()?.toUpperCase() || payload.ticketId.slice(0, 8).toUpperCase()
+    : payload.ticketId.slice(0, 8).toUpperCase();
+
+  const html = loadTemplate('expedition_ticket.html', {
+    NAME: payload.name || 'Aventurero',
+    ADVENTURE_TITLE: payload.adventureTitle || 'Expedición Andina',
+    DEPARTURE_DATE: payload.departureDate || 'Fecha a confirmar',
+    MEETING_POINT: payload.meetingPoint || 'Punto de encuentro cordada',
+    MEETING_TIME: payload.meetingTime || '08:00 hrs',
+    TOTAL_PAID: payload.totalPaid || '$0 CLP',
+    TICKET_ID: payload.ticketId || `SH-${Date.now()}`,
+    TICKET_SHORT_ID: shortTicketId,
+    WHATSAPP_LINK: payload.whatsappLink || 'https://wa.me/56957958467'
+  });
+
+  if (!html) throw new Error('Plantilla expedition_ticket.html no encontrada');
+
+  const heroBuffer = await generateTicketHeroBuffer(shortTicketId);
+  const attachments: any[] = [];
+
+  if (heroBuffer) {
+    attachments.push({
+      filename: `expedition-hero-${shortTicketId}.jpg`,
+      content: heroBuffer,
+      cid: 'expeditionHero'
+    });
+  } else {
+    const heroGradientPath = path.join(process.cwd(), 'public', 'images', 'expedition-hero-gradient.jpg');
+    if (fs.existsSync(heroGradientPath)) {
+      attachments.push({
+        filename: 'expedition-hero-gradient.jpg',
+        path: heroGradientPath,
+        cid: 'expeditionHero'
+      });
+    }
+  }
+
+  try {
+    const info = await transporter.sendMail({
+      from: EMAIL_SENDERS.booking,
+      replyTo: 'booking@santiagohiking.com',
+      to: payload.to,
+      subject: `🏔️ Tu Expedition Pass Oficial: ${payload.adventureTitle} - Santiago Hiking`,
+      html,
+      attachments,
+    });
+    console.log(`[EMAIL] Expedition Pass con Imagen enviado exitosamente a ${payload.to} (ID: ${info.messageId})`);
+    return { success: true, messageId: info.messageId };
+  } catch (error: any) {
+    console.error('[EMAIL ERROR] Error enviando Expedition Pass:', error);
+    return { success: false, error: error.message };
   }
 };
 

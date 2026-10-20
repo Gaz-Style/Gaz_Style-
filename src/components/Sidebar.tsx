@@ -35,7 +35,9 @@ import {
     Flame,
     Home,
     UtensilsCrossed,
-    Star
+    Star,
+    Target,
+    Tag
 } from 'lucide-react';
 import { logoutAction } from '@/app/admin/login/actions';
 import { clsx, type ClassValue } from 'clsx';
@@ -51,6 +53,7 @@ export const sidebarSections = [
         title: 'OPERACIONES & AGENDA',
         items: [
             { name: 'Dashboard Central', href: '/admin', icon: LayoutDashboard },
+            { name: 'Punto de Venta (POS)', href: '/admin/pos', icon: ShoppingBag },
             { name: 'Calendario de Salidas', href: '/admin/calendario', icon: CalendarDays },
             { name: 'Manifiestos & Operaciones', href: '/admin/operaciones', icon: ClipboardList },
         ]
@@ -72,8 +75,16 @@ export const sidebarSections = [
     {
         title: 'PRODUCTO & FINANZAS',
         items: [
+            { name: 'Planilla de Ventas', href: '/admin/sales', icon: DollarSign },
+            { name: 'Control Financiero (ERP)', href: '/admin/finance', icon: Wallet },
             { name: 'Inventario (Gear Room)', href: '/admin/inventory', icon: Tent },
-            { name: 'Control de Pagos', href: '/admin/finance', icon: Wallet },
+        ]
+    },
+    {
+        title: 'ESTRATEGIA & CRECIMIENTO',
+        items: [
+            { name: 'Metodología OKRs', href: '/admin/okrs', icon: Target },
+            { name: 'Cupones & Premios', href: '/admin/cupones', icon: Tag },
         ]
     },
     {

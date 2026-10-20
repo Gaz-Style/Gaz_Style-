@@ -4,11 +4,12 @@ import React, { useState } from 'react';
 import {
     Calendar, Users, CreditCard,
     Clock, Shield, ArrowLeft, Loader2, CheckCircle2,
-    Lock, ShieldCheck, Mountain, Compass, AlertCircle
+    Lock, ShieldCheck, Mountain, Compass, AlertCircle, Tag
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { createBookingWithMercadoPago } from './actions';
+import { validateCouponAction } from '@/app/admin/pos/actions';
 import { trackBeginCheckout } from '@/lib/analytics';
 import { challengesData } from '../desafios/data';
 import HeroCarousel from '@/app/HeroCarousel';
@@ -117,7 +118,54 @@ export default function BookingClient({
         discountColor === 'emerald' ? 'text-[#34d399]' :
         'text-[#f43f5e]';
 
-    const total = selected ? unitPrice * paxCount : 0;
+    // Cupones de descuento / Premios & Sorteos
+    const [couponCodeInput, setCouponCodeInput] = useState('');
+    const [appliedCoupon, setAppliedCoupon] = useState<{
+        code: string;
+        campaign_name: string;
+        discount_type: string;
+        discount_value: number;
+        discount_amount: number;
+    } | null>(null);
+    const [couponError, setCouponError] = useState('');
+    const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
+
+    const subtotal = selected ? unitPrice * paxCount : 0;
+    const discountFromCoupon = appliedCoupon ? appliedCoupon.discount_amount : 0;
+    const total = Math.max(0, subtotal - discountFromCoupon);
+
+    const handleApplyCoupon = async () => {
+        if (!couponCodeInput.trim()) return;
+        setIsValidatingCoupon(true);
+        setCouponError('');
+        try {
+            const res = await validateCouponAction(couponCodeInput, subtotal);
+            if (res.valid) {
+                setAppliedCoupon({
+                    code: res.code!,
+                    campaign_name: res.campaign_name!,
+                    discount_type: res.discount_type!,
+                    discount_value: res.discount_value!,
+                    discount_amount: res.discount_amount!
+                });
+                setCouponError('');
+            } else {
+                setCouponError(res.error || 'Código inválido');
+                setAppliedCoupon(null);
+            }
+        } catch (e) {
+            setCouponError('Error al validar cupón');
+        } finally {
+            setIsValidatingCoupon(false);
+        }
+    };
+
+    const handleRemoveCoupon = () => {
+        setAppliedCoupon(null);
+        setCouponCodeInput('');
+        setCouponError('');
+    };
+
     const availableSpots = selected
         ? Math.max(1, (selected.adventures_catalog?.max_pax || 10) - (selected.current_pax || 0))
         : 10;
@@ -197,6 +245,8 @@ export default function BookingClient({
                 pax_count: paxCount,
                 adventure_title: selected.adventures_catalog?.title || 'Expedición Andes',
                 unit_price: unitPrice,
+                discount_coupon: appliedCoupon ? appliedCoupon.code : undefined,
+                discount_amount: appliedCoupon ? appliedCoupon.discount_amount : 0,
                 additional_participants: additionalParticipants.slice(0, Math.max(0, paxCount - 1)),
             });
             if (result.payment_url) {
@@ -618,6 +668,72 @@ export default function BookingClient({
                                             </p>
                                         </div>
 
+                                        {/* Cupón de Descuento / Premios y Sorteos */}
+                                        <div 
+                                            className="p-3.5 rounded-2xl space-y-2.5"
+                                            style={{
+                                                backgroundColor: 'rgba(0, 0, 0, 0.35)',
+                                                border: '1px solid rgba(251, 191, 36, 0.20)',
+                                            }}
+                                        >
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                                                    <Tag className="w-3.5 h-3.5" /> ¿Tienes un código de descuento o premio?
+                                                </span>
+                                                {appliedCoupon && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleRemoveCoupon}
+                                                        className="text-[11px] text-red-400 hover:text-red-300 underline font-mono"
+                                                    >
+                                                        Quitar
+                                                    </button>
+                                                )}
+                                            </div>
+
+                                            {!appliedCoupon ? (
+                                                <div className="space-y-1.5">
+                                                    <div className="flex gap-2">
+                                                        <input 
+                                                            type="text"
+                                                            value={couponCodeInput}
+                                                            onChange={e => setCouponCodeInput(e.target.value.toUpperCase())}
+                                                            placeholder="EJ. SORTEO2026, WILD10K..."
+                                                            className="flex-1 bg-black/60 border border-white/15 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs focus:outline-none focus:border-amber-400 placeholder:text-white/30"
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            disabled={isValidatingCoupon || !couponCodeInput.trim()}
+                                                            onClick={handleApplyCoupon}
+                                                            className="px-4 py-2 bg-amber-400 hover:bg-amber-300 disabled:opacity-50 text-stone-950 font-black rounded-xl text-xs font-mono transition-colors shrink-0"
+                                                        >
+                                                            {isValidatingCoupon ? 'Validando...' : 'Aplicar'}
+                                                        </button>
+                                                    </div>
+                                                    {couponError && (
+                                                        <p className="text-[11px] text-red-400 font-mono pl-1">{couponError}</p>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs font-mono">
+                                                    <div className="space-y-0.5">
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="font-bold text-amber-300">{appliedCoupon.code}</span>
+                                                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">
+                                                                {appliedCoupon.campaign_name}
+                                                            </span>
+                                                        </div>
+                                                        <span className="text-[10px] text-white/50 block">Cupón aplicado con éxito</span>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <span className="text-sm font-bold text-emerald-400">
+                                                            -${appliedCoupon.discount_amount.toLocaleString('es-CL')} CLP
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+
                                         {/* Resumen de Precio Final */}
                                         <div 
                                             className="p-4 sm:p-5 rounded-2xl flex items-center justify-between"
@@ -711,7 +827,12 @@ export default function BookingClient({
                                             {isSubmitting ? (
                                                 <>
                                                     <Loader2 className="w-4 h-4 animate-spin text-stone-950" />
-                                                    <span>Iniciando pasarela de pago...</span>
+                                                    <span>{total <= 0 ? 'Confirmando premio...' : 'Iniciando pasarela de pago...'}</span>
+                                                </>
+                                            ) : total <= 0 ? (
+                                                <>
+                                                    <CheckCircle2 className="w-4 h-4 text-emerald-950" />
+                                                    <span>CANJEAR TICKET 100% GRATUITO →</span>
                                                 </>
                                             ) : (
                                                 <>

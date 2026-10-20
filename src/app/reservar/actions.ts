@@ -2,6 +2,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { createMercadoPagoPreference } from '@/lib/mercadopago';
+import { sendExpeditionTicketEmail } from '@/lib/email';
 import { revalidatePath } from 'next/cache';
 
 function getAdminClient() {
@@ -39,6 +40,8 @@ export async function createBookingWithMercadoPago(formData: {
     pax_count: number;
     adventure_title: string;
     unit_price: number;
+    discount_coupon?: string;
+    discount_amount?: number;
     additional_participants?: { first_name: string; last_name: string; email?: string }[];
 }) {
     const supabase = getAdminClient();
@@ -91,7 +94,9 @@ export async function createBookingWithMercadoPago(formData: {
     }
 
     // 2. Create booking record (status: pending_payment)
-    const total = formData.unit_price * formData.pax_count;
+    const subtotal = formData.unit_price * formData.pax_count;
+    const discount = formData.discount_amount || 0;
+    const total = Math.max(0, subtotal - discount);
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(formData.departure_id);
     let validDepId: string | null = null;
     if (isUuid) {
@@ -99,6 +104,80 @@ export async function createBookingWithMercadoPago(formData: {
         if (dep) validDepId = dep.id;
     }
 
+    // CASO ESPECIAL: CUPÓN 100% GRATIS O PREMIO (Total $0)
+    // MercadoPago no acepta pagos de $0 CLP. Confirmamos la reserva directamente.
+    if (total <= 0) {
+        let bookingId: string = `bk_${Date.now()}`;
+        try {
+            const { data: booking } = await supabase
+                .from('bookings')
+                .insert({
+                    departure_id: validDepId,
+                    adventurer_id: adventurerId,
+                    total_price: 0,
+                    amount_paid: 0,
+                    payment_status: 'paid',
+                    status: 'confirmed',
+                    waiver_signed: formData.accepts_waiver || false,
+                    waiver_signed_at: new Date().toISOString()
+                })
+                .select('id')
+                .single();
+
+            if (booking?.id) bookingId = booking.id;
+
+            // Incrementar current_pax en la salida
+            if (validDepId) {
+                const { count } = await supabase
+                    .from('bookings')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('departure_id', validDepId);
+                
+                await supabase
+                    .from('agenda_departures')
+                    .update({ current_pax: count || formData.pax_count })
+                    .eq('id', validDepId);
+            }
+
+            // Registrar en sales_ledger como canje promocional / sorteo
+            await supabase.from('sales_ledger').insert({
+                internal_id: `SH-PROMO-${Date.now().toString().slice(-6)}`,
+                adventurer_id: adventurerId,
+                booking_id: bookingId,
+                total_amount: 0,
+                paid_amount: 0,
+                status: 'completed',
+                payment_method: 'free_promotional'
+            });
+
+            // Enviar Expedition Pass por correo automáticamente
+            await sendExpeditionTicketEmail({
+                to: formData.email,
+                name: formData.first_name,
+                adventureTitle: formData.adventure_title,
+                departureDate: 'Fecha confirmada por sorteo',
+                meetingPoint: 'Punto oficial de cordada Santiago Hiking',
+                meetingTime: '08:00 hrs',
+                totalPaid: '$0 CLP (Ganador Sorteo / Premio)',
+                ticketId: bookingId,
+                whatsappLink: 'https://wa.me/56957958467'
+            });
+
+            revalidatePath('/admin/calendario');
+            revalidatePath('/admin/sales');
+            revalidatePath('/admin/operaciones');
+        } catch (e) {
+            console.warn('Error confirming free booking:', e);
+        }
+
+        return {
+            booking_id: bookingId,
+            payment_url: `/reserva/confirmada?booking_id=${bookingId}&status=approved&free=true&payment_id=${bookingId}&external_reference=${bookingId}`,
+            is_free: true
+        };
+    }
+
+    // CASO NORMAL: Pago con MercadoPago (> $0 CLP)
     let bookingId: string = `bk_${Date.now()}`;
     try {
         const { data: booking } = await supabase

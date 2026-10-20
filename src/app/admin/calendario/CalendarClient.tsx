@@ -3,9 +3,10 @@
 import React, { useState } from 'react';
 import { 
   CalendarDays, Plus, Mountain, Users, Flag, Trash2, CheckCircle, 
-  Clock, MapPin, UserSquare2, X
+  Clock, MapPin, UserSquare2, X, Ticket, ShieldAlert, Phone, ExternalLink, ShoppingCart
 } from 'lucide-react';
-import { createDeparture, updateDepartureStatus, deleteDeparture, addUnplannedExpense } from './actions';
+import Link from 'next/link';
+import { createDeparture, updateDepartureStatus, deleteDeparture, addUnplannedExpense, removeBooking } from './actions';
 
 export default function CalendarClient({ 
   departures, 
@@ -349,48 +350,198 @@ export default function CalendarClient({
 
         {/* ── MODAL DE DETALLE DE DÍA ─────────────────────────────────── */}
         {selectedDayActivities && (
-          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-stone-900 border border-stone-800 rounded-2xl w-full max-w-lg p-6 space-y-4 shadow-2xl animate-in zoom-in-95">
-              <div className="flex items-center justify-between pb-3 border-b border-stone-800">
+          <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+            <div className="bg-stone-900 border border-stone-800 rounded-2xl w-full max-w-2xl p-6 space-y-5 shadow-2xl animate-in zoom-in-95 max-h-[90vh] flex flex-col">
+              <div className="flex items-center justify-between pb-3 border-b border-stone-800 shrink-0">
                 <div>
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400">Detalle de Salidas</span>
-                  <h3 className="text-xl font-bold text-white font-mono">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400 font-bold">Detalle de Salidas y Pasajeros</span>
+                  <h3 className="text-xl font-black text-white font-mono flex items-center gap-2">
+                    <CalendarDays className="w-5 h-5 text-amber-400" />
                     {selectedDayActivities.date}
                   </h3>
                 </div>
                 <button
                   onClick={() => setSelectedDayActivities(null)}
-                  className="text-stone-500 hover:text-white"
+                  className="p-1.5 text-stone-500 hover:text-white rounded-lg hover:bg-stone-800 transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="space-y-3 max-h-[60vh] overflow-y-auto">
+              <div className="space-y-5 overflow-y-auto pr-1">
                 {selectedDayActivities.items.map(dep => {
                   const adv = dep.adventures_catalog;
                   if (!adv) return null;
+                  const bookings: any[] = dep.bookings || [];
+                  const confirmedPax = bookings.length;
+
                   return (
-                    <div key={dep.id} className="p-4 rounded-xl bg-stone-950 border border-stone-800 space-y-3">
-                      <div className="flex justify-between items-start">
+                    <div key={dep.id} className="p-4 rounded-xl bg-stone-950 border border-stone-800 space-y-4">
+                      {/* Header de la Salida */}
+                      <div className="flex justify-between items-start gap-3">
                         <div>
-                          <span className="text-[10px] font-mono uppercase text-amber-400/80 block">
+                          <span className="text-[10px] font-mono uppercase text-amber-400 font-bold block">
                             {adv.category || 'Experiencia'} · {adv.duration_days} Días
                           </span>
-                          <h4 className="text-base font-bold text-white">{adv.title}</h4>
+                          <h4 className="text-lg font-bold text-white tracking-tight">{adv.title}</h4>
                         </div>
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-mono font-bold border ${getStatusColor(dep.status)}`}>
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-mono font-bold border ${getStatusColor(dep.status)}`}>
                           {getStatusText(dep.status)}
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2 text-xs font-mono text-stone-400">
-                        <div>Ocupación: <strong className="text-white">{dep.current_pax} / {adv.max_pax} Pax</strong></div>
-                        <div>Término: <strong className="text-white">{dep.end_date?.split('T')[0]}</strong></div>
+                      {/* Métricas de Ocupación */}
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 rounded-lg bg-stone-900/60 border border-stone-800/60 text-xs font-mono">
+                        <div>
+                          <span className="text-stone-500 block text-[10px] uppercase">Ocupación Tickets</span>
+                          <strong className="text-amber-400 font-bold text-sm">
+                            {confirmedPax} / {adv.max_pax} Pax
+                          </strong>
+                        </div>
+                        <div>
+                          <span className="text-stone-500 block text-[10px] uppercase">Fin Expedición</span>
+                          <strong className="text-stone-200">{dep.end_date?.split('T')[0]}</strong>
+                        </div>
+                        <div className="col-span-2 sm:col-span-1">
+                          <span className="text-stone-500 block text-[10px] uppercase">Estado Cordada</span>
+                          <strong className={confirmedPax >= (adv.min_pax || 3) ? "text-emerald-400" : "text-amber-400"}>
+                            {confirmedPax >= (adv.min_pax || 3) ? "Quórum OK (Go)" : "Buscando Quórum"}
+                          </strong>
+                        </div>
+                      </div>
+
+                      {/* ── LISTADO DE CLIENTES CON TICKET ── */}
+                      <div className="space-y-2 pt-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-mono uppercase tracking-wider font-bold text-stone-300 flex items-center gap-1.5">
+                            <Ticket className="w-3.5 h-3.5 text-amber-400" />
+                            Aventureros con Ticket ({bookings.length})
+                          </span>
+                          <Link
+                            href={`/admin/operaciones/${dep.id}`}
+                            className="text-[11px] font-mono text-amber-400 hover:text-amber-300 underline flex items-center gap-1 font-semibold"
+                          >
+                            Ver Manifiesto de Campo <ExternalLink className="w-3 h-3" />
+                          </Link>
+                        </div>
+
+                        {bookings.length === 0 ? (
+                          <div className="p-4 rounded-lg bg-stone-900/40 border border-dashed border-stone-800 text-center space-y-2">
+                            <p className="text-xs font-mono text-stone-500">
+                              Aún no hay clientes registrados con ticket para esta fecha.
+                            </p>
+                            <Link
+                              href="/admin/pos"
+                              className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-400/10 text-amber-400 border border-amber-400/30 rounded-lg text-xs font-mono font-bold hover:bg-amber-400/20"
+                            >
+                              <ShoppingCart className="w-3 h-3" /> Inscribir Cliente en POS
+                            </Link>
+                          </div>
+                        ) : (
+                          <div className="divide-y divide-stone-800/60 rounded-lg border border-stone-800 bg-stone-900/40 overflow-hidden">
+                            {bookings.map((booking: any) => {
+                              const advr = booking.crm_adventurers || {};
+                              const isPaid = booking.payment_status === 'paid';
+                              const isPartial = booking.payment_status === 'partial';
+
+                              return (
+                                <div key={booking.id} className="p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-stone-800/30 transition-colors">
+                                  <div className="space-y-0.5">
+                                    <div className="flex items-center gap-2">
+                                      <span className="font-bold text-sm text-white">
+                                        {advr.first_name} {advr.last_name}
+                                      </span>
+                                      {booking.waiver_signed ? (
+                                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+                                          Waiver OK
+                                        </span>
+                                      ) : (
+                                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono">
+                                          Waiver Pendiente
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div className="flex items-center gap-3 text-xs font-mono text-stone-400">
+                                      {advr.phone && (
+                                        <a
+                                          href={`https://wa.me/${advr.phone.replace(/[^0-9]/g, '')}`}
+                                          target="_blank"
+                                          rel="noreferrer"
+                                          className="text-stone-300 hover:text-emerald-400 flex items-center gap-1 underline decoration-dotted"
+                                        >
+                                          <Phone className="w-3 h-3 text-emerald-400" />
+                                          {advr.phone}
+                                        </a>
+                                      )}
+                                      {advr.email && (
+                                        <span className="text-stone-500 hidden md:inline">{advr.email}</span>
+                                      )}
+                                    </div>
+                                    {advr.emergency_contact_name && (
+                                      <div className="text-[11px] font-mono text-stone-500 flex items-center gap-1">
+                                        <ShieldAlert className="w-3 h-3 text-amber-500/70" />
+                                        SOS: {advr.emergency_contact_name} {advr.emergency_contact_phone ? `(${advr.emergency_contact_phone})` : ''}
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  <div className="flex sm:flex-col items-center sm:items-end justify-between gap-1 shrink-0 font-mono">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-sm font-bold text-white">
+                                        ${(booking.total_price || 0).toLocaleString('es-CL')}
+                                      </span>
+                                      <button
+                                        title="Eliminar este ticket / pasajero de la salida"
+                                        onClick={async () => {
+                                          if (confirm(`¿Eliminar ticket de ${advr.first_name || 'este pasajero'} para esta salida?`)) {
+                                            try {
+                                              await removeBooking(booking.id, dep.id);
+                                              window.location.reload();
+                                            } catch (err) {
+                                              alert('Error al eliminar ticket');
+                                            }
+                                          }
+                                        }}
+                                        className="text-stone-500 hover:text-red-400 p-1 hover:bg-stone-800 rounded transition-colors"
+                                      >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                      </button>
+                                    </div>
+                                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold border ${
+                                      isPaid 
+                                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' 
+                                        : isPartial 
+                                        ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                                        : 'bg-red-500/10 text-red-400 border-red-500/30'
+                                    }`}>
+                                      {isPaid ? '100% Pagado' : isPartial ? 'Abono 50%' : 'Pendiente'}
+                                    </span>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
 
                       {/* Acciones del día */}
-                      <div className="flex items-center gap-2 pt-2 border-t border-stone-800/80">
+                      <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-stone-800/80">
+                        <Link
+                          href={`/admin/operaciones/${dep.id}`}
+                          className="px-3 py-1.5 bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold rounded-lg text-xs font-mono flex items-center gap-1.5 shadow-md transition-colors"
+                        >
+                          <Users className="w-3.5 h-3.5" />
+                          Ver Manifiesto / Check-in
+                        </Link>
+
+                        <Link
+                          href="/admin/pos"
+                          className="px-3 py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-200 font-bold rounded-lg text-xs font-mono flex items-center gap-1.5 transition-colors border border-stone-700"
+                        >
+                          <ShoppingCart className="w-3.5 h-3.5 text-amber-400" />
+                          + Inscribir (POS)
+                        </Link>
+
                         {dep.status === 'scheduled' && (
                           <button
                             onClick={async () => {
@@ -402,6 +553,7 @@ export default function CalendarClient({
                             ✓ Confirmar (Go)
                           </button>
                         )}
+
                         <button
                           onClick={() => {
                             setExpenseDepId(dep.id);
@@ -413,6 +565,7 @@ export default function CalendarClient({
                         >
                           + Gasto
                         </button>
+
                         {dep.status !== 'cancelled' && (
                           <button
                             onClick={async () => {
@@ -421,7 +574,7 @@ export default function CalendarClient({
                                 window.location.reload();
                               }
                             }}
-                            className="px-3 py-1.5 bg-stone-800 hover:bg-red-900/40 text-stone-400 hover:text-red-300 rounded-lg text-xs font-mono ml-auto"
+                            className="px-3 py-1.5 bg-stone-800/80 hover:bg-red-900/40 text-stone-400 hover:text-red-300 rounded-lg text-xs font-mono ml-auto"
                           >
                             Cancelar
                           </button>

@@ -20,12 +20,32 @@ function getAdminClient() {
 export async function getDepartures() {
     const supabase = getAdminClient();
     
-    // Obtenemos salidas agendadas con su respectivo molde de aventura
+    // Obtenemos salidas agendadas con su respectivo molde de aventura y pasajeros con ticket
     const { data, error } = await supabase
         .from('agenda_departures')
         .select(`
             *,
-            adventures_catalog (title, category, min_pax, max_pax, duration_days)
+            adventures_catalog (title, category, min_pax, max_pax, duration_days),
+            bookings (
+                id,
+                total_price,
+                amount_paid,
+                payment_status,
+                status,
+                waiver_signed,
+                created_at,
+                crm_adventurers (
+                    id,
+                    first_name,
+                    last_name,
+                    phone,
+                    email,
+                    emergency_contact_name,
+                    emergency_contact_phone,
+                    blood_type,
+                    severe_allergies
+                )
+            )
         `)
         .order('start_date', { ascending: true });
 
@@ -122,12 +142,33 @@ export async function addUnplannedExpense(departure_id: string, description: str
     return { success: true };
 }
 
-export async function getDepartureExpenses(departure_id: string) {
+export async function removeBooking(bookingId: string, departureId: string) {
     const supabase = getAdminClient();
-    const { data } = await supabase
-        .from('general_expenses')
-        .select('*')
-        .eq('departure_id', departure_id)
-        .order('created_at', { ascending: false });
-    return data || [];
+    
+    // Eliminar ticket / booking
+    const { error } = await supabase
+        .from('bookings')
+        .delete()
+        .eq('id', bookingId);
+
+    if (error) {
+        console.error('Error deleting booking:', error);
+        throw new Error('No se pudo eliminar el ticket');
+    }
+
+    // Actualizar current_pax en la salida
+    const { count } = await supabase
+        .from('bookings')
+        .select('*', { count: 'exact', head: true })
+        .eq('departure_id', departureId);
+
+    await supabase
+        .from('agenda_departures')
+        .update({ current_pax: count || 0 })
+        .eq('id', departureId);
+
+    revalidatePath('/admin/calendario');
+    revalidatePath('/admin/sales');
+    revalidatePath('/admin/operaciones');
+    return { success: true };
 }
