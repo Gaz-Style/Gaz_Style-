@@ -13,7 +13,8 @@ interface Props {
 const DEFAULT_HIKE_AND_FLY = [
   {
     slug: 'alto-del-naranjo-hike-and-fly',
-    title: 'Alto del Naranjo Hike & Fly',
+    title: 'Hike & Fly Alto del Naranjo',
+    mountain: 'Alto del Naranjo',
     subtitle: 'Ascenso clásico por Puente Ñilhue hasta la meseta andina y despegue panorámico hacia el valle.',
     badge: 'HIKE & FLY · COTA 1.890M',
     cota: '1.890 m',
@@ -24,7 +25,8 @@ const DEFAULT_HIKE_AND_FLY = [
   },
   {
     slug: 'cerro-manquehue-ridge-fly',
-    title: 'Cerro Manquehue Ridge & Soar',
+    title: 'Hike & Fly Cerro Manquehue',
+    mountain: 'Cerro Manquehue',
     subtitle: 'La cumbre tutelar más icónica. Arista rocosa de trekking y planeo térmico sobre la ciudad.',
     badge: 'HIKE & FLY · ICONO TUTELAR',
     cota: '1.627 m',
@@ -35,7 +37,8 @@ const DEFAULT_HIKE_AND_FLY = [
   },
   {
     slug: 'cerro-provincia-hike-and-fly',
-    title: 'Cerro Provincia High Alpine Flight',
+    title: 'Hike & Fly Cerro Provincia',
+    mountain: 'Cerro Provincia',
     subtitle: 'La gran cumbre andina de Santiago. +1.750m de ascenso a pie y vuelo épico de alta cota.',
     badge: 'HIKE & FLY · ALTA MONTAÑA',
     cota: '2.750 m',
@@ -56,35 +59,40 @@ export default function HikeAndFlySection({ lang = 'es', routes = [] }: Props) {
       (r.category || '').toLowerCase() === 'hike_and_fly'
   );
 
-  const displayAdventures = DEFAULT_HIKE_AND_FLY.map((fallback) => {
-    const matched = dbHikeAndFly.find((r: any) => {
-      const t = (r.title || '').toLowerCase();
-      const s = (r.slug || '').toLowerCase();
-      return (
-        t.includes(fallback.title.toLowerCase()) ||
-        s.includes(fallback.slug) ||
-        (fallback.slug.includes('naranjo') && t.includes('naranjo')) ||
-        (fallback.slug.includes('manquehue') && t.includes('manquehue')) ||
-        (fallback.slug.includes('provincia') && t.includes('provincia'))
-      );
-    });
-
-    if (matched) {
-      return {
-        slug: matched.slug || fallback.slug,
-        title: matched.title || fallback.title,
-        subtitle: matched.description || fallback.subtitle,
-        badge: matched.badge || fallback.badge,
-        cota: matched.max_altitude || fallback.cota,
-        tiempoVuelo: matched.logistics?.tiempoVuelo || fallback.tiempoVuelo,
-        desnivel: matched.elevation_gain || fallback.desnivel,
-        price: matched.base_price || fallback.price,
-        image: matched.image_url || fallback.image,
-      };
-    }
-
+  const getMountainName = (rawTitle: string, fallback: string) => {
+    const lower = (rawTitle || '').toLowerCase();
+    if (lower.includes('naranjo')) return 'Alto del Naranjo';
+    if (lower.includes('manquehue')) return 'Cerro Manquehue';
+    if (lower.includes('provincia')) return 'Cerro Provincia';
+    if (lower.includes('medio')) return 'Cerro del Medio';
     return fallback;
-  });
+  };
+
+  // Si existen rutas activas en la base de datos, mostramos TODAS las publicadas
+  const displayAdventures = dbHikeAndFly.length > 0
+    ? dbHikeAndFly.map((r: any) => {
+        const fallback = DEFAULT_HIKE_AND_FLY.find((f) => 
+          f.slug === r.slug || 
+          (r.title && r.title.toLowerCase().includes(f.mountain.toLowerCase()))
+        );
+        const mountainName = getMountainName(
+          r.title, 
+          fallback?.mountain || r.title?.replace(/hike\s*&\s*fly\s*/gi, '').trim() || 'Andes'
+        );
+        return {
+          slug: r.slug || fallback?.slug || r.id,
+          title: `Hike & Fly ${mountainName}`,
+          mountain: mountainName,
+          subtitle: r.description || fallback?.subtitle || 'Ascenso de trekking andino con retorno planeando en parapente tándem biplaza.',
+          badge: r.badge || fallback?.badge || 'HIKE & FLY · VUELO LIBRE',
+          cota: r.max_altitude || fallback?.cota || '1.450 m',
+          tiempoVuelo: r.logistics?.tiempoVuelo || fallback?.tiempoVuelo || '20 a 25 min',
+          desnivel: r.elevation_gain || fallback?.desnivel || '+600 m',
+          price: r.base_price || fallback?.price || 145000,
+          image: r.image_url || fallback?.image || '/images/hike-and-fly-andes.jpg',
+        };
+      })
+    : DEFAULT_HIKE_AND_FLY;
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
@@ -148,163 +156,66 @@ export default function HikeAndFlySection({ lang = 'es', routes = [] }: Props) {
           </div>
         </div>
 
-        {/* ── CONTENEDOR: GRID 4 COLUMNAS EN ESCRITORIO / CARRUSEL EN MÓVIL ── */}
+        {/* ── CONTENEDOR: GRID 3 COLUMNAS EN ESCRITORIO / CARRUSEL EN MÓVIL ── */}
         <div className="relative -mr-4 sm:mr-0">
           <div
             ref={scrollRef}
-            className="flex lg:grid lg:grid-cols-4 overflow-x-auto lg:overflow-visible no-scrollbar snap-x snap-mandatory lg:snap-none gap-4 sm:gap-6 pb-4 scroll-smooth pr-4 sm:pr-0 pl-0.5"
+            className={`flex lg:grid ${displayAdventures.length <= 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} overflow-x-auto lg:overflow-visible no-scrollbar snap-x snap-mandatory lg:snap-none gap-4 sm:gap-6 pb-4 scroll-smooth pr-4 sm:pr-0 pl-0.5`}
           >
-            {/* ── TARJETA 1 (PRINCIPAL INFORMATIVA: TÍTULO ADENTRO Y LINK A PÁGINA COMPLETA) ── */}
-            <Link
-              href="/hike-and-fly"
-              className="w-[84vw] max-w-[340px] sm:max-w-[360px] lg:w-auto lg:max-w-none shrink-0 lg:shrink snap-start group relative rounded-3xl overflow-hidden border border-amber-400/40 hover:border-amber-400/80 transition-all duration-500 flex flex-col justify-between min-h-[460px] sm:min-h-[480px] lg:min-h-[490px] shadow-[0_16px_50px_rgba(0,0,0,0.7)]"
-              style={{
-                backgroundColor: 'rgba(12, 14, 18, 0.85)',
-                backdropFilter: 'blur(24px)',
-                WebkitBackdropFilter: 'blur(24px)',
-              }}
-            >
-              {/* Foto de Fondo Cinematográfica */}
-              <div className="absolute inset-0 z-0">
-                <Image
-                  src="/images/hike-and-fly-andes.jpg"
-                  alt="Hike and Fly parapente biplaza en los Andes"
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 84vw, 300px"
-                  className="object-cover group-hover:scale-105 transition-transform duration-700 brightness-[0.45] group-hover:brightness-[0.55]"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/75 to-black/45" />
-              </div>
-
-              {/* Header de la Tarjeta Principal */}
-              <div className="relative z-10 p-5 sm:p-6 flex items-start justify-between gap-2">
-                <span className="px-2.5 py-1 rounded-full bg-stone-900/90 backdrop-blur-md border border-amber-400/30 text-[9px] sm:text-[10px] font-mono font-bold text-amber-400 uppercase tracking-wider">
-                  PARAPENTE TÁNDEM
-                </span>
-                <span className="px-2 py-1 rounded-full bg-stone-950/80 border border-white/10 font-mono text-[9px] sm:text-[10px] font-bold text-stone-300">
-                  PILOTO PRO
-                </span>
-              </div>
-
-              {/* Contenido Central & Inferior con el Título ADENTRO */}
-              <div className="relative z-10 p-5 sm:p-6 space-y-3.5">
-                <div>
-                  <span className="text-amber-400 font-mono text-[10px] uppercase tracking-[0.25em] font-bold block mb-1">
-                    CUMBRES Y DESPEGUES OFICIALES
-                  </span>
-                  <h3 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight leading-tight group-hover:text-amber-300 transition-colors">
-                    ELIGE TU CUMBRE DE DESPEGUE
-                  </h3>
-                  <p className="text-xs text-stone-300 font-mono font-light mt-2 line-clamp-3 leading-relaxed">
-                    Asciende la arista a pie con la cordada y despliega las alas en cumbre para regresar planeando en parapente biplaza sobre Santiago.
-                  </p>
-                </div>
-
-                {/* Especificaciones Rápidas */}
-                <div
-                  className="grid grid-cols-2 gap-2 py-2 px-2.5 rounded-xl font-mono text-center text-xs"
-                  style={{
-                    backgroundColor: 'rgba(0, 0, 0, 0.60)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255, 255, 255, 0.10)',
-                  }}
-                >
-                  <div>
-                    <span className="text-[9px] uppercase tracking-wider text-stone-400 block">MODALIDAD</span>
-                    <span className="text-xs font-bold text-white">Tándem Biplaza</span>
-                  </div>
-                  <div>
-                    <span className="text-[9px] uppercase tracking-wider text-stone-400 block">PLANEO</span>
-                    <span className="text-xs font-bold text-amber-400">15 a 30 min</span>
-                  </div>
-                </div>
-
-                {/* Botón Acceso a la Página Completa */}
-                <div className="pt-1">
-                  <span className="w-full py-3 rounded-xl bg-amber-500 group-hover:bg-amber-400 text-stone-950 font-mono text-xs uppercase tracking-wider font-black transition-all shadow-lg shadow-amber-500/25 flex items-center justify-center gap-1.5">
-                    <span>Ver Información</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                </div>
-              </div>
-            </Link>
-
-            {/* ── TARJETAS 2, 3 Y 4 (LAS CUMBRES HABILITADAS) ───────────────── */}
+            {/* ── LAS CUMBRES HABILITADAS ───────────────── */}
             {displayAdventures.map((adv) => (
               <Link
                 key={adv.slug}
                 href={`/hike-and-fly/${adv.slug}`}
-                className="w-[84vw] max-w-[340px] sm:max-w-[360px] lg:w-auto lg:max-w-none shrink-0 lg:shrink snap-start group relative rounded-3xl overflow-hidden border border-white/10 hover:border-amber-400/60 transition-all duration-500 flex flex-col justify-between min-h-[460px] sm:min-h-[480px] lg:min-h-[490px] shadow-[0_12px_40px_rgba(0,0,0,0.6)]"
-                style={{
-                  backgroundColor: 'rgba(12, 14, 18, 0.80)',
-                  backdropFilter: 'blur(20px)',
-                  WebkitBackdropFilter: 'blur(20px)',
-                }}
+                className="group relative rounded-3xl overflow-hidden min-h-[440px] sm:min-h-[460px] w-[78vw] max-w-[320px] lg:w-full lg:max-w-none shrink-0 snap-start flex flex-col justify-between border border-white/10 hover:border-amber-400/50 transition-all duration-500 shadow-xl hover:shadow-[0_20px_45px_rgba(0,0,0,0.7)]"
               >
-                {/* Imagen de Fondo Cinematográfica */}
-                <div className="absolute inset-0 z-0">
-                  <Image
-                    src={adv.image}
-                    alt={adv.title}
-                    fill
-                    sizes="(max-width: 1024px) 84vw, 300px"
-                    className="object-cover group-hover:scale-105 transition-transform duration-700 brightness-[0.55] group-hover:brightness-[0.70]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/65 to-black/35" />
-                </div>
+                {/* Foto inmersiva de fondo */}
+                <Image
+                  src={adv.image}
+                  alt={adv.title}
+                  fill
+                  sizes="(max-width: 640px) 78vw, (max-width: 1024px) 50vw, 25vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-700 pointer-events-none"
+                />
+                {/* Gradiente oscuro profundo para legibilidad */}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/50 to-black/95 pointer-events-none" />
 
-                {/* Header de la Tarjeta: Badge Superior */}
-                <div className="relative z-10 p-5 sm:p-6 flex items-start justify-between gap-2">
-                  <span className="px-2.5 py-1 rounded-full bg-stone-900/85 backdrop-blur-md border border-white/15 text-[9px] sm:text-[10px] font-mono font-bold text-amber-400 uppercase tracking-wider shadow-md">
+                {/* Parte superior de la tarjeta: Encabezado */}
+                <div className="relative z-10 p-5 sm:p-6 flex items-center justify-between border-b border-white/10">
+                  <span className="font-mono text-xs font-bold uppercase tracking-widest text-white/90">
                     {adv.badge}
                   </span>
-                  <span className="px-2 py-1 rounded-full bg-stone-950/80 border border-white/10 font-mono text-[10px] font-bold text-stone-200">
+                  <span className="font-mono text-xs tracking-widest font-black text-amber-400 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] select-none">
                     {adv.tiempoVuelo}
                   </span>
                 </div>
 
-                {/* Contenido Inferior: Título, Métricas y Botón */}
-                <div className="relative z-10 p-5 sm:p-6 space-y-3.5">
+                {/* Parte inferior de la tarjeta: Título, Métricas y Descripción */}
+                <div className="relative z-10 p-5 sm:p-6 space-y-3">
                   <div>
-                    <h3 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight group-hover:text-amber-300 transition-colors drop-shadow-md">
-                      {adv.title}
+                    <h3 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight group-hover:text-amber-300 transition-colors leading-tight">
+                      <span className="block">HIKE & FLY</span>
+                      <span className="block">{adv.mountain || adv.title.replace(/hike\s*&\s*fly\s*/gi, '').trim()}</span>
                     </h3>
-                    <p className="text-xs text-stone-300 font-mono font-light mt-1.5 line-clamp-2 leading-relaxed">
-                      {adv.subtitle}
-                    </p>
+                    <span className="text-[11px] font-mono text-amber-300/80 block mt-0.5">
+                      Cupo Tándem ${Number(adv.price).toLocaleString('es-CL')}
+                    </span>
                   </div>
 
-                  {/* Telemetría Técnica de la Cumbre */}
-                  <div
-                    className="grid grid-cols-2 gap-2 py-2 px-2.5 rounded-xl font-mono text-center"
-                    style={{
-                      backgroundColor: 'rgba(0, 0, 0, 0.55)',
-                      backdropFilter: 'blur(10px)',
-                      border: '1px solid rgba(255, 255, 255, 0.10)',
-                    }}
-                  >
-                    <div>
-                      <span className="text-[9px] uppercase tracking-wider text-stone-400 block">DESPEGUE</span>
-                      <span className="text-xs font-bold text-white">{adv.cota}</span>
-                    </div>
-                    <div>
-                      <span className="text-[9px] uppercase tracking-wider text-stone-400 block">DESNIVEL</span>
-                      <span className="text-xs font-bold text-white">{adv.desnivel}</span>
-                    </div>
+                  <div className="flex items-center gap-3 text-[11px] font-mono text-white/70 py-1 border-y border-white/10">
+                    <span>Despegue {adv.cota}</span>
+                    <span>•</span>
+                    <span>Desnivel {adv.desnivel}</span>
                   </div>
 
-                  {/* Barra de Precio y CTA */}
-                  <div className="pt-2 flex items-center justify-between border-t border-white/10 font-mono text-xs">
-                    <div>
-                      <span className="text-[10px] text-stone-400 block uppercase">Cupo Tándem</span>
-                      <span className="text-sm sm:text-base font-black text-amber-400 font-mono">
-                        ${Number(adv.price).toLocaleString('es-CL')}
-                      </span>
-                    </div>
-                    <span className="px-3.5 py-2 rounded-xl bg-amber-500 group-hover:bg-amber-400 text-stone-950 font-mono text-xs font-bold transition-all shadow-md flex items-center gap-1.5">
-                      <span>Ver Ficha</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                  <p className="text-xs text-white/75 font-light leading-relaxed line-clamp-3">
+                    {adv.subtitle}
+                  </p>
+
+                  <div className="pt-2 border-t border-white/10">
+                    <span className="w-full py-2.5 rounded-xl bg-amber-500 group-hover:bg-amber-400 text-stone-950 font-mono text-xs font-black uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 group-hover:shadow-amber-500/20">
+                      <span>GO!</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </span>
                   </div>
                 </div>

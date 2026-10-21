@@ -152,10 +152,10 @@ export default function DesafiosSection({ lang = 'es', routes = [] }: Props) {
                       {meta.desc}
                     </p>
 
-                    <div className="pt-2 flex items-center justify-between text-[11px] font-mono text-amber-400 font-semibold">
-                      <span className="truncate max-w-[160px] sm:max-w-[180px]">Ejemplos: {meta.summits}</span>
-                      <span className="shrink-0 flex items-center gap-1 group-hover:translate-x-1 transition-transform text-white/80 group-hover:text-amber-300">
-                        Ver Ficha <ArrowRight className="w-3.5 h-3.5" />
+                    <div className="pt-2 border-t border-white/10">
+                      <span className="w-full py-2.5 rounded-xl bg-amber-500 group-hover:bg-amber-400 text-stone-950 font-mono text-xs font-black uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 group-hover:shadow-amber-500/20">
+                        <span>Go!</span>
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </span>
                     </div>
                   </div>
