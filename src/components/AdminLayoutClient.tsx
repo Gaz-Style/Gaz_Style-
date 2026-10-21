@@ -20,6 +20,7 @@ const moduleNames: Record<string, string> = {
   '/admin/cerros': 'Catálogo de Cerros & Cumbres (47 IGM)',
   '/admin/inventory': 'Equipamiento & Inventario',
   '/admin/finance': 'Finanzas Operativas',
+  '/admin/media': 'Gestor de Medios WebP',
   '/admin/settings': 'Configuraciones',
 };
 

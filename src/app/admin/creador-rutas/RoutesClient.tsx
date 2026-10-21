@@ -1161,11 +1161,14 @@ export default function RoutesClient({
                       {imageUrl ? (
                         <div className="relative rounded-xl overflow-hidden border border-stone-700 h-40 bg-stone-950 group">
                           <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                          <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-emerald-500 text-stone-950 font-mono text-[9px] font-black uppercase tracking-wider shadow">
+                            WEBP OPTIMIZADO
+                          </div>
                           <div className="absolute inset-0 bg-stone-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                             <button
                               type="button"
                               onClick={() => setImageUrl('')}
-                              className="flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-3 py-2 rounded-lg transition-colors font-mono"
+                              className="flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-3 py-2 rounded-lg transition-colors font-mono cursor-pointer"
                             >
                               <X className="w-3.5 h-3.5" /> Cambiar Imagen
                             </button>
@@ -1178,13 +1181,13 @@ export default function RoutesClient({
                           {imageUploading ? (
                             <div className="text-center">
                               <div className="w-6 h-6 border-2 border-amber-400 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-                              <p className="text-xs text-amber-400 font-mono">Subiendo fotografía...</p>
+                              <p className="text-xs text-amber-400 font-mono">Optimizando y convirtiendo a WebP...</p>
                             </div>
                           ) : (
                             <div className="text-center">
-                              <ImagePlus className="w-8 h-8 text-stone-600 mx-auto mb-2" />
-                              <p className="text-xs text-stone-400 font-medium">Subir foto de alta definición</p>
-                              <p className="text-[10px] text-stone-600 font-mono mt-0.5">JPG, PNG, WEBP · Hasta 5MB</p>
+                              <ImagePlus className="w-8 h-8 text-amber-400/80 mx-auto mb-2" />
+                              <p className="text-xs text-stone-200 font-medium">Subir foto (Conversión WebP Automática)</p>
+                              <p className="text-[10px] text-amber-400/80 font-mono mt-0.5">JPG, PNG, HEIC ➔ WebP Ultra-Optimizado</p>
                             </div>
                           )}
                           <input
