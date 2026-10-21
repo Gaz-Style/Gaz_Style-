@@ -42,11 +42,12 @@ interface Props {
 }
 
 export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Props) {
-  const [activeTab, setActiveTab] = useState<'trekking' | 'travesias_desafios' | 'expediciones'>('trekking');
+  const [activeTab, setActiveTab] = useState<'trekking' | 'travesias_desafios' | 'expediciones' | 'hike_and_fly'>('trekking');
 
   // ── CLASIFICACIÓN PURA SEGÚN LO DEFINIDO EN EL PANEL ADMIN (Sin heurísticas ni precios) ──
-  const getCategoryOfRoute = (r: RouteItem): 'trekking' | 'travesias_desafios' | 'expediciones' => {
+  const getCategoryOfRoute = (r: RouteItem): 'trekking' | 'travesias_desafios' | 'expediciones' | 'hike_and_fly' => {
     const v = (r.vertical_type || '').toLowerCase().trim();
+    if (v === 'hike_and_fly' || v === 'hike_fly' || v === 'parapente') return 'hike_and_fly';
     if (v === 'trekking' || v === 'salidas_grupales' || v === 'grupales') return 'trekking';
     if (v === 'travesias_desafios' || v === 'challenges' || v === 'desafios') return 'travesias_desafios';
     if (v === 'expediciones' || v === 'high_mountain' || v === 'expedition_pass' || v === 'boutique') return 'expediciones';
@@ -125,6 +126,21 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
             >
               <span>EXPEDICIONES</span>
               {activeTab === 'expediciones' && (
+                <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-amber-400 rounded-full" />
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab('hike_and_fly')}
+              className={`relative pb-2.5 text-sm sm:text-base md:text-lg font-mono font-bold uppercase tracking-wider transition-all select-none cursor-pointer shrink-0 text-center ${
+                activeTab === 'hike_and_fly'
+                  ? 'text-white'
+                  : 'text-white/45 hover:text-white/80'
+              }`}
+            >
+              <span>HIKE & FLY</span>
+              {activeTab === 'hike_and_fly' && (
                 <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-amber-400 rounded-full" />
               )}
             </button>

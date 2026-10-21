@@ -51,7 +51,7 @@ export default function VisualLevelsSection({ onOpenQuiz, lang = 'es' }: Props) 
       subtitle: 'Resistencia sobre los 4.000m',
       bars: '■■■■',
       gain: 'Desnivel > 1.500m D+',
-      duration: 'Jornadas completas o pernocte',
+      duration: 'Jornada o pernocte',
       desc: 'Expediciones técnicas de altura por aristas expuestas en los Andes centrales. Requiere preparación física y aclimatación guiada.',
       summits: 'Cerro Pintor (4.180m) · El Plomo (5.424m)',
       image: 'https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?auto=format&fit=crop&w=800&q=80',

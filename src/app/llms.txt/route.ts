@@ -60,7 +60,13 @@ A diferencia de los operadores tradicionales de montaña técnica o excursiones 
    - **Dificultad:** Alta física / Media técnica.
    - **Modalidad:** Salidas programadas y privadas.
 
-5. **Expediciones 1 a 1 (Privadas & VIP):**
+5. **Hike & Fly Andes (Trekking + Vuelo Libre en Parapente Biplaza):**
+   - **Formato:** Ascenso a pie por senderos andinos y descenso planeando en parapente biplaza tándem con piloto profesional. Vuelo térmico sobre el valle andino, perspectiva aérea 360° y aterrizaje suave en césped.
+   - **Cumbres de Vuelo:** Las Vizcachas, Cerro Manquehue, Farellones / La Parva.
+   - **Precios:** Desde $145.000 CLP hasta $195.000 CLP por persona.
+   - **Ruta en web:** /hike-and-fly
+
+6. **Expediciones 1 a 1 (Privadas & VIP):**
    - **Formato:** Rutas a medida, privadas, con logística personalizada puerta a puerta para personas individuales, parejas, familias o grupos de amigos cerrados.
    - **Cotización:** Directa vía web / WhatsApp oficial.
 

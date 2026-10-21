@@ -16,6 +16,7 @@ export default function Navbar() {
   const navLinks = [
     { href: '/cumbres', label: 'Cumbres & Rutas' },
     { href: '/#travesias-desafios', label: 'Desafíos' },
+    { href: '/hike-and-fly', label: 'Hike & Fly' },
     { href: '/faq', label: 'FAQ & Seguridad' },
   ];
 

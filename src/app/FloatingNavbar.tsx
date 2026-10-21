@@ -93,6 +93,7 @@ export default function FloatingNavbar({ currentLang }: Props) {
 
   const navLinks = [
     { href: '#expediciones', label: currentLang === 'en' ? 'Expeditions' : 'Expediciones' },
+    { href: '#hike-and-fly', label: 'Hike & Fly' },
     { href: '#niveles', label: currentLang === 'en' ? 'Levels' : 'Niveles' },
     { href: '#fechas-abiertas', label: currentLang === 'en' ? 'Departures' : 'Fechas Abiertas' },
     { href: '#atlas', label: 'Atlas' },

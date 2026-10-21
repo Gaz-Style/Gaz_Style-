@@ -15,6 +15,7 @@ export const INITIAL_VERTICAL_DEFINITIONS = [
   { id: 'trekking', label: 'TREKKING', icon: Mountain, shortLabel: 'Trekking' },
   { id: 'travesias_desafios', label: 'DESAFÍOS & TRAVESÍAS', icon: Trophy, shortLabel: 'Desafíos' },
   { id: 'expediciones', label: 'EXPEDICIONES', icon: Crown, shortLabel: 'Expediciones' },
+  { id: 'hike_and_fly', label: 'HIKE & FLY (VUELO LIBRE)', icon: Sparkles, shortLabel: 'Hike & Fly' },
 ];
 
 export const VERTICAL_DEFINITIONS = INITIAL_VERTICAL_DEFINITIONS;
@@ -304,6 +305,7 @@ export default function RoutesClient({
     if (rawV === 'salidas_grupales' || rawV === 'grupales') rVertical = 'trekking';
     if (rawV === 'challenges' || rawV === 'desafios') rVertical = 'travesias_desafios';
     if (rawV === 'high_mountain' || rawV === 'expedition_pass' || rawV === 'boutique') rVertical = 'expediciones';
+    if (rawV === 'hike_and_fly' || rawV === 'hike_fly' || rawV === 'parapente') rVertical = 'hike_and_fly';
 
     const matchesVertical = selectedFilter === 'all' || 
       rVertical === selectedFilter ||
@@ -367,6 +369,13 @@ export default function RoutesClient({
       highlight: 'Boutique VIP',
       desc: 'Salidas privadas y personalizadas a tu ritmo con pick-up y guía exclusivo.',
       createBtn: '+ Crear Expedición'
+    },
+    hike_and_fly: {
+      tag: 'HIKE & FLY · VUELO LIBRE',
+      title: 'Hike & Fly: Ascenso &',
+      highlight: 'Vuelo Libre',
+      desc: 'Ascenso a pie a cumbres andinas y retorno planeando en parapente biplaza en silencio térmico sobre Santiago.',
+      createBtn: '+ Crear Salida Hike & Fly'
     },
     all: {
       tag: 'CATÁLOGO SANTIAGO HIKING',
@@ -764,6 +773,7 @@ export default function RoutesClient({
 
               // Enlace dinámico según tipología
               const liveUrl = 
+                route.vertical_type === 'hike_and_fly' || route.category === 'hike_and_fly' ? `/hike-and-fly` :
                 route.title.toLowerCase().includes('5:00 am') ? '/desafios/desafio-5am' :
                 route.title.toLowerCase().includes('triple corona') ? '/desafios/triple-corona' :
                 route.title.toLowerCase().includes('sierra de ramón') || route.title.toLowerCase().includes('sierra de ramon') ? '/desafios/sierra-de-ramon' :
@@ -771,6 +781,7 @@ export default function RoutesClient({
                 `/rutas/${route.id}`;
 
               const verticalLabel = 
+                route.vertical_type === 'hike_and_fly' || route.category === 'hike_and_fly' ? 'Hike & Fly' :
                 route.vertical_type === 'high_mountain' || route.category === 'high_mountain' ? 'Expedition High Mountain' :
                 route.vertical_type === 'expedition_pass' || route.category === 'expedition_pass' ? 'Expedition Boutique' :
                 route.vertical_type === 'travesias_desafios' || route.vertical_type === 'challenges' || route.category === 'desafios' ? 'Travesías & Grandes Desafíos' :

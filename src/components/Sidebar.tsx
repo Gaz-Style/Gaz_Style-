@@ -37,7 +37,8 @@ import {
     UtensilsCrossed,
     Star,
     Target,
-    Tag
+    Tag,
+    Sparkles
 } from 'lucide-react';
 import { logoutAction } from '@/app/admin/login/actions';
 import { clsx, type ClassValue } from 'clsx';
@@ -62,6 +63,7 @@ export const sidebarSections = [
         title: 'EXPERIENCIAS & CATÁLOGO',
         items: [
             { name: 'Creador de Experiencias', href: '/admin/creador-rutas', icon: Mountain },
+            { name: 'Hike & Fly (Vuelo Libre)', href: '/admin/creador-rutas?vertical=hike_and_fly', icon: Sparkles },
             { name: 'Catálogo de Cerros (47 Cumbres)', href: '/admin/cerros', icon: Compass },
         ]
     },
