@@ -4,6 +4,7 @@ import { useRef, useEffect, useState, useCallback } from 'react';
 
 const HERO_VIDEOS = [
   { id: 'manquehue', src: '/contenido/hiking-manquehue.mp4', label: 'Cerro Manquehue' },
+  { id: 'hike-and-fly', src: '/contenido/hike-and-fly.mp4', label: 'Hike & Fly Andes' },
   { id: 'img-6160', src: '/contenido/img_6160.mp4', label: 'Ruta & Naturaleza' },
   { id: 'img-6705', src: '/contenido/img_6705.mp4', label: 'Expedición Cordillera' },
   { id: 'img-8505', src: '/contenido/img_8505.mp4', label: 'Cumbre & Aventura' },
