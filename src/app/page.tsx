@@ -237,7 +237,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
               <span className="text-amber-400 font-mono text-xs uppercase tracking-widest block mb-2 font-bold">01 · CORDILLERA</span>
               <h3 className="text-lg font-bold text-white uppercase mb-2">Refugios & Ascensos</h3>
               <p className="text-white/60 text-xs sm:text-sm font-light leading-relaxed">
-                Alojamiento en refugios de montaña y glampings boutique en Farellones y Cajón del Maipo. Salidas al atardecer, avistamiento astronómico y protocolos de primeros auxilios WFR.
+                Alojamiento en refugios de montaña y glampings boutique en Farellones y Cajón del Maipo. Salidas al atardecer, avistamiento astronómico y protocolos de seguridad en áreas remotas.
               </p>
             </div>
 

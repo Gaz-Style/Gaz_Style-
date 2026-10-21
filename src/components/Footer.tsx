@@ -89,12 +89,13 @@ export default function Footer() {
           <div>
             <p className="text-white text-xs font-bold uppercase tracking-widest mb-4">Expediciones</p>
             <ul className="space-y-2 text-xs text-white/70">
+              <li><Link href="/hike-and-fly" className="text-amber-400 font-bold hover:underline">Hike & Fly Andes (Vuelo Libre) ⚡</Link></li>
               <li><Link href="/desafios/desafio-5am" className="hover:text-amber-400 transition-colors">Desafío 5:00 AM</Link></li>
               <li><Link href="/desafios/triple-corona" className="hover:text-amber-400 transition-colors">Triple Corona Santiago</Link></li>
               <li><Link href="/desafios/sierra-de-ramon" className="hover:text-amber-400 transition-colors">Sierra de Ramón (3.250m)</Link></li>
               <li><Link href="/desafios/desbloqueando-santiago" className="hover:text-amber-400 transition-colors">Desbloqueando Santiago</Link></li>
               <li><Link href="/reservar" className="hover:text-amber-400 transition-colors">Calendario de Salidas</Link></li>
-              <li><Link href="/faq" className="hover:text-amber-400 transition-colors">Protocolo WFR & Seguridad</Link></li>
+              <li><Link href="/faq" className="hover:text-amber-400 transition-colors">Protocolo de Seguridad & FAQ</Link></li>
             </ul>
           </div>
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 import { ArrowLeft, Clock, Users, HeartPulse, Mountain, CheckCircle2, XCircle, Map, Calendar, MessageCircle, ShieldCheck, Ticket, Award, Sparkles, Navigation, Car, Video, Crown } from 'lucide-react';
@@ -57,6 +58,64 @@ async function getUpcomingDepartures(adventureId: string) {
     } catch (_) {
         return [];
     }
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+    const { id } = await params;
+    if (challengesData[id]) {
+        const c = challengesData[id];
+        return {
+            title: `${c.title} | Santiago Hiking`,
+            description: c.subtitle,
+            openGraph: {
+                title: `${c.title} · Andes Expeditions`,
+                description: c.subtitle,
+                images: [{ url: c.coverImage }],
+            },
+        };
+    }
+
+    const route = await getRouteData(id);
+    if (!route) {
+        return {
+            title: 'Ruta no encontrada | Santiago Hiking',
+            description: 'La experiencia de montaña seleccionada no se encuentra disponible.'
+        };
+    }
+
+    const title = `${route.title} · Trekking Guiado en Santiago | Santiago Hiking`;
+    const description = route.summary || route.description || `Expedición de montaña en Santiago de Chile: ${route.title}. Dificultad: ${route.difficulty_level || 'Media'}, Altitud: ${route.max_altitude || 'Andes'}. Liderazgo de cordada, grupos reducidos y aventura de montaña.`;
+    const image = route.cover_image_url || route.image_url || '/images/andes_cordillera_hero.jpg';
+
+    return {
+        title,
+        description,
+        keywords: [
+            route.title,
+            `${route.title} santiago`,
+            `${route.title} trekking`,
+            'trekking santiago chile',
+            'hiking santiago',
+            'subir cerro santiago',
+            'aventura cordillera santiago'
+        ],
+        alternates: {
+            canonical: `https://www.santiagohiking.com/rutas/${id}`,
+        },
+        openGraph: {
+            title,
+            description,
+            images: [{ url: image }],
+            type: 'website',
+            siteName: 'Santiago Hiking',
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title,
+            description,
+            images: [image],
+        },
+    };
 }
 
 export default async function RouteDetailPage({ params }: { params: Promise<{ id: string }> }) {

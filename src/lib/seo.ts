@@ -7,10 +7,10 @@ export const SantiagoHikingSchema = {
       'name': 'Santiago Hiking by Gaz',
       'url': 'https://www.santiagohiking.com',
       'logo': 'https://www.santiagohiking.com/logotipo%20blanco.png',
-      'image': 'https://www.santiagohiking.com/logotipo%20blanco.png',
+      'image': 'https://www.santiagohiking.com/images/andes_cordillera_hero.jpg',
       'telephone': '+56957958467',
       'priceRange': '$$',
-      'description': 'Operador outdoor y de montaña líder en Santiago de Chile. Especialistas en senderismo técnico, trekking guiado con certificación WFR, expediciones privadas 1 a 1 y comunidad outdoor en la Cordillera de los Andes.',
+      'description': 'Operador outdoor y de expediciones de montaña líder en Santiago de Chile. Especialistas en senderismo técnico, expediciones Hike & Fly en parapente biplaza, ascensos formativos y comunidad solo-friendly en la Cordillera de los Andes.',
       'address': {
         '@type': 'PostalAddress',
         'addressLocality': 'Lo Barnechea',
@@ -43,8 +43,16 @@ export const SantiagoHikingSchema = {
             '@type': 'Offer',
             'itemOffered': {
               '@type': 'TouristTrip',
-              'name': 'Trekking Guiado Grupal con Protocolos WFR',
-              'description': 'Ascensos grupales seguros con liderazgo de cordada WFR, radios VHF, botiquín de trauma y bajada gastronómica en Lo Barnechea.',
+              'name': 'Sunset Treks y Ascensos Formativos',
+              'description': 'Ascensos grupales seguros con liderazgo de cordada, grupos reducidos solo-friendly, fotografía profesional y celebración de cumbre.',
+            },
+          },
+          {
+            '@type': 'Offer',
+            'itemOffered': {
+              '@type': 'TouristTrip',
+              'name': 'Línea Hike & Fly Andes (Trekking + Vuelo Libre)',
+              'description': 'Ascenso a pie a cumbres andinas y retorno en parapente biplaza tándem con piloto experto.',
             },
           },
           {
@@ -52,7 +60,7 @@ export const SantiagoHikingSchema = {
             'itemOffered': {
               '@type': 'TouristTrip',
               'name': 'Expediciones Privadas 1 a 1 y Alta Montaña',
-              'description': 'Guiado exclusivo y personalizado para ejecutivos, turistas y atletas en cumbres de más de 3.000m en los Andes.',
+              'description': 'Acompañamiento exclusivo y personalizado en cumbres de más de 3.000m en los Andes (Cerro Pintor, Glaciar El Morado).',
             },
           },
         ],
@@ -66,8 +74,8 @@ export const SantiagoHikingSchema = {
       'worksFor': {
         '@id': 'https://www.santiagohiking.com/#organization',
       },
-      'description': 'Líder de expediciones en la Cordillera de los Andes, con entrenamiento en primeros auxilios en áreas silvestres (WFR), comprometido con la conexión mental y la seguridad en la montaña.',
-      'knowsAbout': ['Montañismo', 'Trekking Técnico', 'Primeros Auxilios WFR', 'Cordillera de los Andes', 'Seguridad en Montaña'],
+      'description': 'Líder de expediciones en la Cordillera de los Andes, montañista y facilitador de experiencias outdoor comprometido con la superación personal y la seguridad en montaña.',
+      'knowsAbout': ['Montañismo', 'Trekking Técnico', 'Hike and Fly', 'Cordillera de los Andes', 'Seguridad en Áreas Remotas'],
     },
   ],
 };

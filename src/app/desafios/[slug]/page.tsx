@@ -551,7 +551,7 @@ export default async function ChallengeDetailPage({ params }: PageProps) {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 font-mono text-xs text-white/40" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
             {[
               { icon: <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />, text: 'Garantía climática 100% reprogramable' },
-              { icon: <HeartPulse className="w-4 h-4 text-amber-400 shrink-0" />, text: 'Guía WFR con botiquín & inReach satelital' },
+              { icon: <HeartPulse className="w-4 h-4 text-amber-400 shrink-0" />, text: 'Liderazgo de cordada & inReach satelital' },
               { icon: <Users className="w-4 h-4 text-amber-400 shrink-0" />, text: `Grupos boutique de máx. ${challenge.metrics.cupoMax}` },
             ].map((g, i) => (
               <div key={i} className="flex items-center gap-3">{g.icon}<span>{g.text}</span></div>
@@ -592,7 +592,7 @@ export default async function ChallengeDetailPage({ params }: PageProps) {
       {/* ── Footer ──────────────────────────────────────────────────── */}
       <footer className="py-10 text-white/25 font-mono text-xs text-center" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
         <p className="mb-1">SANTIAGO HIKING · EXPEDICIONES BOUTIQUE EN LA CORDILLERA DE LOS ANDES</p>
-        <p className="text-white/15 text-[11px]">Lo Barnechea · Santiago de Chile · Liderazgo de Cordada · Protocolos WFR</p>
+        <p className="text-white/15 text-[11px]">Lo Barnechea · Santiago de Chile · Liderazgo de Cordada · Seguridad de Montaña</p>
       </footer>
 
     </div>

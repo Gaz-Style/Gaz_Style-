@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 
 export const metadata = {
   title: 'Desafíos Cordillera Santiago | Santiago Hiking by Gaz_Style',
-  description: 'Programas y retos de alta montaña, travesías extremas y circuitos exclusivos en la Región Metropolitana. Certificación WFR y expediciones boutique.',
+  description: 'Retos de alta exigencia física, travesías andinas de resistencia y cumbres extremas en la Región Metropolitana. Liderazgo de cordada y expediciones de alto impacto.',
 };
 
 export default function DesafiosHubPage() {

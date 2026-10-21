@@ -6,7 +6,7 @@ import { ChevronRight, HelpCircle, Compass, Mountain, ShieldCheck, HeartPulse, C
 
 export const metadata: Metadata = {
   title: 'Preguntas Frecuentes y Guía de Montaña | Santiago Hiking by Gaz',
-  description: 'Todo lo que necesitas saber para subir a los cerros de Santiago: equipamiento requerido, niveles de dificultad, seguridad WFR, logística en Lo Barnechea y expediciones privadas.',
+  description: 'Todo lo que necesitas saber para subir a las cumbres andinas de Santiago: equipamiento obligatorio, niveles de dificultad, liderazgo de cordada, Hike & Fly y salidas solo-friendly.',
   alternates: {
     canonical: 'https://www.santiagohiking.com/faq',
   },
@@ -14,24 +14,32 @@ export const metadata: Metadata = {
 
 const faqs = [
   {
+    q: '¿Puedo inscribirme si voy solo o sola?',
+    a: 'Por supuesto. Más del 60% de nuestra comunidad asiste sin acompañante. Nuestras expediciones son grupos reducidos (8 a 10 personas) diseñadas bajo el concepto Solo-Friendly para que te integres desde el primer minuto con una cordada que comparte tu misma energía.',
+  },
+  {
     q: '¿Qué condición física o experiencia previa necesito para participar?',
-    a: 'Nuestras salidas están catalogadas en 4 niveles claros: Básico, Intermedio, Avanzado y Alta Montaña. En cada ficha de ruta detallamos el desnivel positivo, la distancia en kilómetros y el tiempo estimado. Si estás comenzando a entrenar, recomendamos rutas formativas como Manquehue o Pochoco antes de abordar cumbres de más de 3.000m como El Plomo o Provincia. Al reservar realizas un check-in físico y médico preventivo para asegurar que el grupo sea homogéneo.',
+    a: 'Nuestras salidas están catalogadas en 4 niveles claros: Básico, Intermedio, Avanzado y Alta Montaña. En cada ficha de ruta detallamos el desnivel positivo, la distancia en kilómetros y el tiempo estimado. Si estás comenzando a entrenar, recomendamos rutas formativas como Manquehuito o Carbón antes de abordar cumbres de más de 3.000m como Provincia o Pintor. Al reservar realizas un check-in físico preventivo para asegurar que el grupo sea homogéneo.',
+  },
+  {
+    q: '¿Cómo funciona la experiencia de Hike & Fly y quién puede realizarla?',
+    a: 'Hike & Fly une el ascenso a pie por senderos andinos con un descenso planeando en parapente biplaza tándem junto a un piloto profesional. No necesitas experiencia previa en vuelo; el piloto gestiona el despegue, las térmicas y el aterrizaje suave en césped. Es ideal para personas activas que buscan la máxima perspectiva aérea de 360° sobre Santiago.',
   },
   {
     q: '¿Qué equipamiento básico es obligatorio para ir a la cordillera?',
-    a: 'Por seguridad estricta, cada participante debe contar con: zapatos de trekking con buen agarre (suela tipo Vibram o similar, caña media o alta), vestimenta en capas (primera capa transpirable, polar o abrigo intermedio, y cortaviento/chaqueta impermeable), 2 a 3 litros de agua o electrolitos, protección solar (bloqueador FPS 50+, gorro y gafas con filtro UV categoría 3 o 4), y bastones de trekking recomendados. Para salidas de alta montaña se especifican crampones o equipo técnico.',
+    a: 'Por seguridad estricta, cada participante debe contar con: calzado de trekking con buen agarre (suela tipo Vibram o similar con tracción profunda), vestimenta en capas (primera capa transpirable, abrigo intermedio y cortaviento/impermeable), 2 a 3 litros de agua o electrolitos, protección solar (bloqueador FPS 50+, gorro y gafas con filtro UV categoría 3 o 4), y linterna frontal para salidas al atardecer.',
   },
   {
     q: '¿Dónde es el punto de encuentro y cómo funciona la logística?',
-    a: 'El punto de encuentro se coordina directamente por WhatsApp según la ruta elegida, con base principal en Lo Barnechea / sector oriente de Santiago. Desde allí salimos en caravana o coordinamos traslados conjuntos hacia el inicio del sendero. Al descender del cerro cerramos la jornada con una parada gastronómica en locales aliados para recargar energías.',
+    a: 'El punto de encuentro se coordina directamente por WhatsApp según la ruta elegida, con base principal en Lo Barnechea / sector oriente de Santiago. Desde allí salimos en caravana o coordinamos traslados conjuntos hacia el inicio del sendero. Al descender del cerro celebramos la cumbre con el tradicional "Tercer Tiempo" de cordada.',
   },
   {
-    q: '¿Qué protocolos de primeros auxilios y seguridad tienen los guías?',
-    a: 'Todas nuestras expediciones están dirigidas por guías con certificación internacional WFR (Wilderness First Responder) y experiencia comprobada en la Cordillera de los Andes. Contamos con botiquín de trauma de montaña, sistemas de comunicación radial VHF y balizas satelitales (Garmin inReach) para evacuaciones o contingencias.',
+    q: '¿Qué estándares de seguridad y primeros auxilios operan en las expediciones?',
+    a: 'Todas nuestras expediciones cuentan con liderazgo de cordada experto y protocolos de primeros auxilios en áreas remotas. Contamos con botiquín completo de trauma de montaña, sistemas de comunicación radial VHF y balizas satelitales Garmin InReach SOS para contingencias fuera de cobertura móvil.',
   },
   {
     q: '¿Qué sucede si hay mal tiempo o alerta meteorológica?',
-    a: 'Monitoreamos modelos meteorológicos de montaña (Windy, NOAA, MeteoBlue) con 72 y 24 horas de anticipación. Si las condiciones de viento blanco, lluvia intensa o tormenta eléctrica ponen en riesgo la seguridad, la expedición se reprograma a una nueva fecha sin costo adicional o se ofrece una alternativa equivalente.',
+    a: 'Monitoreamos modelos meteorológicos de montaña (Windy, NOAA, MeteoBlue) con 72 y 24 horas de anticipación. Si las condiciones de viento, lluvia o tormenta eléctrica ponen en riesgo la seguridad, la expedición se reprograma a una nueva fecha sin costo adicional o se ofrece una alternativa equivalente.',
   },
   {
     q: '¿Cómo funcionan las expediciones privadas 1 a 1 o para empresas?',

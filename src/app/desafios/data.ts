@@ -151,7 +151,7 @@ export const challengesData: Record<string, ChallengeDetail> = {
       }
     ],
     incluye: [
-      'Guía profesional certificado Wilderness First Responder (WFR)',
+      'Liderazgo profesional de cordada y acompañamiento experto',
       'Ración de marcha energética premium',
       'Equipamiento técnico de apoyo para la marcha',
       'Linterna frontal de alta potencia disponible para quien la requiera',
@@ -295,7 +295,7 @@ export const challengesData: Record<string, ChallengeDetail> = {
       }
     ],
     incluye: [
-      'Guía líder certificado WFR con amplia experiencia en rutas de alta exigencia',
+      'Liderazgo de cordada con amplia experiencia en rutas de alta exigencia',
       'Monitoreo constante de hidratación, pulsaciones y bienestar en ruta',
       'Ración de marcha técnica especializada (electrolitos, frutos secos, barritas bio)',
       'Apoyo logístico y de enlace entre cumbres',
@@ -347,7 +347,7 @@ export const challengesData: Record<string, ChallengeDetail> = {
     badge: 'ALTA EXIGENCIA · COTA 3.250M',
     number: '03',
     title: 'Travesía Sierra de Ramón',
-    subtitle: 'La travesía alpina reina de la cuenca central. Aristas de roca pura sobre los 3.000 metros de altitud, vistas panorámicas de 360° y autosuficiencia con seguridad WFR.',
+    subtitle: 'La travesía alpina reina de la cuenca central. Aristas de roca pura sobre los 3.000 metros de altitud, vistas panorámicas de 360° y autosuficiencia en alta cordillera.',
     tagline: 'Caminar sobre el filo de la cordillera. 3.250 metros de pura montaña andina.',
     coverImage: 'https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?auto=format&fit=crop&w=1600&q=85',
     gallery: [
@@ -436,7 +436,7 @@ export const challengesData: Record<string, ChallengeDetail> = {
       }
     ],
     incluye: [
-      'Guía profesional de montaña certificado Wilderness First Responder (WFR)',
+      'Liderazgo de montaña y acompañamiento experto de cordada',
       'Dispositivo satelital Garmin inReach con SOS activo y rastreo en tiempo real',
       'Box lunch de alta energía adaptado a requerimientos (vegano/vegetariano disponible)',
       'Tickets y permisos de acceso a parques cordillera',
@@ -578,7 +578,7 @@ export const challengesData: Record<string, ChallengeDetail> = {
       }
     ],
     incluye: [
-      '6 salidas guiadas por Gaz (Guía profesional certificado WFR)',
+      '6 salidas con liderazgo de cordada guiadas por Gaz',
       'Pasaporte físico oficial "Desbloqueando Santiago" para timbrar cada cumbre',
       'Plan semanal de preparación física complementaria para hacer en casa',
       'Equipamiento de montaña para las salidas',

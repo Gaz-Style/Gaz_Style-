@@ -17,17 +17,27 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Santiago Hiking | Premium Mountain Experiences & Trekkings en Santiago de Chile",
-  description: "La experiencia outdoor con más estilo, seguridad y tecnología de Chile. Trekkings al atardecer en Manquehuito, networking en la cordillera, ascensos guiados y gastronomía en Lo Barnechea.",
+  title: "Santiago Hiking | Expediciones de Montaña, Hike & Fly y Trekkings en Santiago",
+  description: "Aventuras salvajes y expediciones guiadas en la Cordillera de los Andes. Atardeceres en Manquehuito, Hike & Fly en parapente biplaza, desafíos de resistencia y comunidad solo-friendly en Santiago de Chile.",
   keywords: [
     "Trekking Santiago",
-    "Cerro Manquehuito atardecer",
-    "Salidas al cerro Santiago",
-    "Cerro Manquehue guiado",
     "Hiking Santiago Chile",
-    "Networking outdoor Santiago",
+    "Hike and Fly Santiago",
+    "Parapente biplaza Santiago",
+    "Cerro Manquehuito atardecer",
+    "Cerro Manquehue trekking",
+    "Cerro El Carbón ruta",
+    "Cerro Pochoco trekking",
+    "Cerro Provincia travesía",
     "Cerro Pintor La Parva",
-    "Cajon del Maipo Glaciar El Morado"
+    "Glaciar El Morado Cajón del Maipo",
+    "Salidas al cerro Santiago",
+    "Grupos de trekking Santiago",
+    "Trekking solo friendly Santiago",
+    "Aventuras cordillera de los Andes",
+    "Qué cerro subir en Santiago",
+    "Tours de montaña Santiago Chile",
+    "Vuelo libre Santiago parapente biplaza"
   ],
   authors: [{ name: "Gaz_Style", url: "https://www.santiagohiking.com" }],
   creator: "Santiago Hiking by Gaz_Style",
@@ -43,26 +53,26 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Santiago Hiking ⚡ Experiencias de Montaña & Lifestyle en Santiago",
-    description: "Experiencias de montaña premium en la Cordillera de los Andes. Trekkings guiados con certificación WFR, fotografía profesional, salidas al atardecer en Manquehuito y gastronomía local en Santiago de Chile.",
+    title: "Santiago Hiking ⚡ Expediciones Andinas, Hike & Fly y Lifestyle",
+    description: "Expediciones de montaña y vuelo libre en los Andes Centrales. Liderazgo de cordada, ascensos al atardecer en Manquehuito, Hike & Fly biplaza y comunidad solo-friendly en Santiago de Chile.",
     url: "https://www.santiagohiking.com",
     siteName: "Santiago Hiking",
     locale: "es_CL",
     type: "website",
     images: [
       {
-        url: "/logotipo%20blanco.png",
+        url: "/images/andes_cordillera_hero.jpg",
         width: 1200,
         height: 630,
-        alt: "Santiago Hiking - Premium Mountain Experiences",
+        alt: "Santiago Hiking - Expediciones y Aventuras en la Cordillera de los Andes",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Santiago Hiking ⚡ Trekkings VIP & Montañismo en Santiago",
-    description: "Seguridad WFR, guías bilingües, fotografía profesional y conexión en los Andes de Chile.",
-    images: ["/logotipo%20blanco.png"],
+    title: "Santiago Hiking ⚡ Expediciones Andinas & Hike & Fly",
+    description: "Liderazgo de cordada, fotografía profesional y conexión salvaje en los Andes de Santiago de Chile.",
+    images: ["/images/andes_cordillera_hero.jpg"],
   },
   verification: {
     google: "google42ee4234a9dc3e43",
@@ -78,7 +88,7 @@ export default function RootLayout({
   const ga4Id = process.env.NEXT_PUBLIC_GA4_ID;
   const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 
-  // Schema.org estructurado para Google y LLMs (ChatGPT / Perplexity)
+  // Schema.org estructurado para Google y LLMs (ChatGPT, Perplexity, Claude, Google AI Overviews)
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -89,11 +99,12 @@ export default function RootLayout({
         "alternateName": "Gaz Style Expeditions",
         "url": "https://www.santiagohiking.com",
         "logo": "https://www.santiagohiking.com/logotipo%20blanco.png",
-        "description": "Experiencias de trekking, salidas al cerro, networking outdoor y montañismo boutique en Santiago de Chile.",
+        "image": "https://www.santiagohiking.com/images/andes_cordillera_hero.jpg",
+        "description": "Expediciones de montaña, senderismo guiado, expediciones Hike & Fly y comunidad outdoor solo-friendly en Santiago de Chile.",
         "founder": {
           "@type": "Person",
           "name": "Gaz",
-          "jobTitle": "Head Mountain Guide & Creator"
+          "jobTitle": "Líder de Expedición & Fundador"
         },
         "address": {
           "@type": "PostalAddress",
@@ -102,23 +113,79 @@ export default function RootLayout({
           "addressCountry": "Chile"
         },
         "priceRange": "$$",
+        "currenciesAccepted": "CLP, USD",
+        "paymentAccepted": "MercadoPago, Webpay, Transferencia Bancaria, Tarjeta de Crédito",
         "areaServed": [
           "Santiago",
           "Lo Barnechea",
           "Las Condes",
           "Vitacura",
           "Cajón del Maipo",
-          "Cordillera de los Andes"
+          "Cordillera de los Andes Centrales"
         ],
         "knowsAbout": [
-          "Trekking en Santiago",
-          "Cerro Manquehuito",
+          "Trekking en Santiago de Chile",
+          "Hike and Fly Andes",
+          "Parapente biplaza tándem",
+          "Cerro Manquehuito al atardecer",
           "Cerro Manquehue",
+          "Cerro El Carbón",
+          "Cerro Pochoco",
+          "Cerro Provincia",
           "Cerro Pintor",
-          "Primeros Auxilios WFR",
-          "Networking en Montaña",
+          "Glaciar El Morado",
+          "Liderazgo de cordada y seguridad en montaña",
           "Turismo Aventura Chile"
         ],
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.96",
+          "reviewCount": "194",
+          "bestRating": "5",
+          "worstRating": "1"
+        },
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "Catálogo de Experiencias y Expediciones",
+          "itemListElement": [
+            {
+              "@type": "OfferCatalog",
+              "name": "Sunset Treks & Cumbres Formativas",
+              "itemListElement": [
+                {
+                  "@type": "TouristTrip",
+                  "name": "Sunset Trek Manquehuito",
+                  "description": "Atardecer dorado sobre el valle de Santiago y descenso nocturno bajo las estrellas con linternas frontales.",
+                  "touristType": ["Beginner", "Solo Hikers"]
+                }
+              ]
+            },
+            {
+              "@type": "OfferCatalog",
+              "name": "Hike & Fly Andes",
+              "itemListElement": [
+                {
+                  "@type": "TouristTrip",
+                  "name": "Hike & Fly Las Vizcachas / Manquehue",
+                  "description": "Ascenso a pie por aristas andinas y retorno en planeo biplaza tándem en parapente con piloto profesional.",
+                  "touristType": ["Adventure Seekers", "Solo Hikers"]
+                }
+              ]
+            },
+            {
+              "@type": "OfferCatalog",
+              "name": "Desafíos de Resistencia & Alta Montaña",
+              "itemListElement": [
+                {
+                  "@type": "TouristTrip",
+                  "name": "Travesía Sierra de Ramón & Cerro Pintor 4.180m",
+                  "description": "Retos de resistencia física, aclimatación guiada y grandes panorámicas sobre los Andes Centrales.",
+                  "touristType": ["Advanced Hikers", "Athletes"]
+                }
+              ]
+            }
+          ]
+        },
         "sameAs": [
           "https://instagram.com/santiagohiking"
         ]
@@ -128,7 +195,46 @@ export default function RootLayout({
         "@id": "https://www.santiagohiking.com/#website",
         "url": "https://www.santiagohiking.com",
         "name": "Santiago Hiking",
+        "description": "Expediciones de Montaña, Hike & Fly y Trekkings en la Cordillera de los Andes de Santiago",
         "publisher": { "@id": "https://www.santiagohiking.com/#organization" }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://www.santiagohiking.com/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "¿Qué es Santiago Hiking y qué experiencias ofrece?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Santiago Hiking es un operador de expediciones de montaña y experiencias outdoor en Santiago de Chile. Ofrece salidas de trekking formativo, atardeceres en cumbres como Cerro Manquehuito, expediciones pioneras de Hike & Fly (ascenso a pie y descenso en parapente biplaza tándem), travesías de resistencia física y salidas de alta montaña."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Puedo participar si voy solo o sola?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Absolutamente. Más del 60% de los aventureros asisten solos. Todas las salidas están diseñadas bajo el concepto Solo-Friendly con grupos reducidos (8 a 10 personas) y liderazgo de cordada cercano para integrarte desde el primer minuto."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Qué es el Hike & Fly en Santiago?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Hike & Fly combina el montañismo tradicional con el vuelo libre: subes la cumbre a pie por senderos andinos y desciendes planeando en silencio térmico en parapente biplaza tándem junto a un piloto profesional. Se opera en sectores como Las Vizcachas, Cerro Manquehue y Farellones."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Cómo se reserva un cupo para una salida?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "La reserva es 100% digital en santiagohiking.com/reservar. Puedes pagar con tarjetas de débito/crédito mediante MercadoPago o transferencia bancaria directa."
+            }
+          }
+        ]
       }
     ]
   };
