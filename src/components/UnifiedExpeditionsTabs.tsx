@@ -97,7 +97,7 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
 
         {/* ── SELECTOR DE PESTAÑAS EN LÍNEA ESTILO MUCH BETTER ADVENTURES (Centrado y distribuido) ── */}
         <div className="w-full border-b border-white/10 mb-6 sm:mb-8">
-          <div className="flex items-center justify-center gap-6 sm:gap-12 md:gap-16 overflow-x-auto no-scrollbar whitespace-nowrap px-2 sm:px-6 pb-2.5">
+          <div className="flex items-center justify-start sm:justify-center gap-6 sm:gap-12 md:gap-16 overflow-x-auto no-scrollbar whitespace-nowrap px-4 sm:px-6 pb-2.5">
             <button
               type="button"
               onClick={() => setActiveTab('trekking')}
@@ -164,7 +164,7 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
         <div className="relative -mr-4 sm:mr-0">
           <div 
             id="expeditions-scroll-track"
-            className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory gap-4 sm:gap-6 pb-4 scroll-smooth pl-0.5 pr-4 sm:pr-0"
+            className="flex items-start overflow-x-auto no-scrollbar snap-x snap-mandatory gap-4 sm:gap-6 pb-4 scroll-smooth pl-0.5 pr-4 sm:pr-0"
           >
             {currentRoutes.map((route, idx) => {
               const lvl = getLevelIndicator(route);
@@ -181,7 +181,7 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
                   key={route.id || idx}
                   href={routeUrl}
                   className="group relative rounded-2xl sm:rounded-3xl overflow-hidden shrink-0 snap-start
-                             w-[160px] sm:w-[220px] md:w-[240px] aspect-[9/14] sm:aspect-[3/4.5] shadow-2xl transition-all duration-300 hover:scale-[1.02] border border-white/10"
+                             w-[165px] h-[260px] min-h-[260px] sm:w-[220px] sm:h-[330px] md:w-[240px] md:h-[360px] aspect-[9/14] sm:aspect-[2/3] shadow-2xl transition-all duration-300 hover:scale-[1.02] border border-white/10"
                 >
                   {/* Foto de Fondo Completa (Full Bleed) */}
                   <Image
