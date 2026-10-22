@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
@@ -27,31 +27,39 @@ export default function GuideRadioWidget() {
     '¡Hola Gaz! Te escribo desde la web de Santiago Hiking, me gustaría consultar por las próximas salidas y rutas.'
   );
 
+  const isHoveredRef = useRef(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const resetTimer = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      if (!isHoveredRef.current && !isChatOpen) {
+        setIsVisible(false);
+      }
+    }, 3000);
+  };
+
   useEffect(() => {
     setMounted(true);
-    let lastScrollY = window.scrollY;
+
+    // Al montar en la página, mostrar e iniciar temporizador de 3 segundos
+    setIsVisible(true);
+    resetTimer();
 
     const handleScroll = () => {
-      // Si el chat está abierto, no ocultar la pestaña para que no parpadee
-      if (isChatOpen) return;
+      // Si el chat está abierto o el mouse está encima, mantener siempre visible
+      if (isChatOpen || isHoveredRef.current) return;
 
-      const currentScrollY = window.scrollY;
-
-      if (currentScrollY < 40) {
-        setIsVisible(true);
-      } else {
-        if (currentScrollY > lastScrollY && currentScrollY - lastScrollY > 8) {
-          setIsVisible(false);
-        } else if (currentScrollY < lastScrollY && lastScrollY - currentScrollY > 6) {
-          setIsVisible(true);
-        }
-      }
-
-      lastScrollY = currentScrollY > 0 ? currentScrollY : 0;
+      // Al escrolear, emerge la pestaña
+      setIsVisible(true);
+      resetTimer();
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
   }, [isChatOpen]);
 
   if (!mounted) return null;
@@ -186,22 +194,31 @@ export default function GuideRadioWidget() {
 
       {/* Pestaña lateral derecha: "S.O.S" */}
       <aside 
-        className={`fixed right-0 top-1/2 -translate-y-1/2 z-40 transition-all duration-300 ease-out transform flex ${
+        className={`fixed right-0 top-1/2 -translate-y-1/2 z-40 transform transition-all ${
           isVisible 
-            ? 'translate-x-0 opacity-100 pointer-events-auto' 
-            : 'translate-x-full opacity-0 pointer-events-none'
+            ? 'duration-350 ease-out translate-x-0 opacity-100 pointer-events-auto' 
+            : 'duration-1000 ease-in-out translate-x-full opacity-0 pointer-events-none'
         }`}
         aria-label="S.O.S / Contactar Guía"
       >
         <button
           type="button"
           onClick={() => setIsChatOpen(!isChatOpen)}
+          onMouseEnter={() => {
+            isHoveredRef.current = true;
+            setIsVisible(true);
+            if (timerRef.current) clearTimeout(timerRef.current);
+          }}
+          onMouseLeave={() => {
+            isHoveredRef.current = false;
+            resetTimer();
+          }}
           title="S.O.S - Contactar a Gaz por WhatsApp"
-          className={`group flex flex-col items-center justify-center gap-3 sm:gap-3.5 py-7 px-1.5 sm:py-9 sm:px-2 min-h-[140px] sm:min-h-[160px] rounded-l-xl shadow-[-2px_0_15px_rgba(0,0,0,0.20)] transition-all duration-300 hover:-translate-x-0.5 active:scale-95 cursor-pointer select-none border-t border-l border-b border-white/15 ${
+          className={`group flex flex-col items-center justify-center gap-3 sm:gap-3.5 py-7 px-1.5 sm:py-9 sm:px-2 min-h-[140px] sm:min-h-[160px] rounded-l-xl shadow-[-2px_0_15px_rgba(0,0,0,0.15)] transition-all duration-300 hover:-translate-x-0.5 active:scale-95 cursor-pointer select-none border-t border-l border-b border-white/10 ${
             isChatOpen ? 'ring-1 ring-[#25D366]/60' : ''
           }`}
           style={{
-            backgroundColor: isChatOpen ? 'rgba(0, 0, 0, 0.40)' : 'rgba(0, 0, 0, 0.20)',
+            backgroundColor: isChatOpen ? 'rgba(0, 0, 0, 0.40)' : 'rgba(0, 0, 0, 0.15)',
             backdropFilter: 'blur(12px)',
             WebkitBackdropFilter: 'blur(12px)',
             borderRight: 'none',
