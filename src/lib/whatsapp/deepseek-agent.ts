@@ -171,40 +171,62 @@ export async function processDirectWhatsAppMessage(
         }
 
         // =========================================================================
-        // DETECCIÓN MULTI-MARCA: WEKE vs MERCENARIO vs SANTIAGO HIKING
+        // DETECCIÓN MULTI-MARCA PROFUNDA (MENSAJE ACTUAL + HISTORIAL DEL CHAT)
         // =========================================================================
-        const lowerMsg = (userMessage || '').toLowerCase();
-        const isMercenario = lowerMsg.includes('mercenario') || lowerMsg.includes('growth') || lowerMsg.includes('sistema') || lowerMsg.includes('software') || lowerMsg.includes('erp') || lowerMsg.includes('crm') || lowerMsg.includes('automatizacion') || lowerMsg.includes('clinica') || lowerMsg.includes('llave en mano') || lowerMsg.includes('webpay');
-        const isWeke = lowerMsg.includes('weke') || lowerMsg.includes('chaqueta') || lowerMsg.includes('parka') || lowerMsg.includes('polar') || lowerMsg.includes('talla') || lowerMsg.includes('calce') || lowerMsg.includes('estatura') || lowerMsg.includes('taller') || lowerMsg.includes('gredos') || lowerMsg.includes('ropa') || lowerMsg.includes('outdoor') || lowerMsg.includes('tienda');
+        const allText = [
+            userMessage || '',
+            ...conversationHistory.map((m: any) => m.content || '')
+        ].join(' ').toLowerCase();
+
+        const isMercenario = allText.includes('mercenario') || allText.includes('growth') || allText.includes('sistema') || allText.includes('software') || allText.includes('erp') || allText.includes('crm') || allText.includes('automatizacion') || allText.includes('clinica') || allText.includes('llave en mano') || allText.includes('webpay') || allText.includes('pos');
+        
+        const isWeke = allText.includes('weke') || allText.includes('chaqueta') || allText.includes('parka') || allText.includes('polar') || allText.includes('talla') || allText.includes('calce') || allText.includes('estatura') || allText.includes('taller') || allText.includes('gredos') || allText.includes('ropa') || allText.includes('prenda') || allText.includes('stock') || allText.includes('outdoor') || allText.includes('tienda');
+
+        // Limpiar el historial de mensajes para que no arrastre respuestas previas donde el bot decía que "no era WEKE"
+        const sanitizedHistory = conversationHistory.filter((m: any) => {
+            const c = (m.content || '').toLowerCase();
+            return !c.includes('no el de weke') && 
+                   !c.includes('no es weke') && 
+                   !c.includes('no gestiono consultas de prendas') && 
+                   !c.includes('no manejo información de prendas') &&
+                   !c.includes('corresponde al asistente de santiago hiking, no al de weke');
+        });
 
         let systemPrompt = '';
         let fallbackReply = '';
 
         if (isWeke) {
-            systemPrompt = `Eres el Asistente Virtual Oficial de "WEKE Studio" (Ropa Técnica Sustentable e Inclusiva, fundada en 1985 en Chile).
-Tu objetivo es responder consultas de clientes con un tono profesional, formal, sobrio y respetuoso.
+            systemPrompt = `Eres el Asistente Virtual Oficial de "WEKE Studio" (Indumentaria Técnica Sustentable e Inclusiva, fundada en 1985 en Chile).
+Tu objetivo es asesorar a clientes y expedicionarios sobre prendas, calce, tallas, materiales y despachos.
 
-REGLAS DE TONO Y ESTILO:
-- Tono estrictamente neutro y profesional de atención al cliente. Prohibido usar expresiones coloquiales ("compañero", "amigo", emojis excesivos).
-- Respuestas breves y directas (2 a 3 oraciones).
+DIRECTIVA CRÍTICA OBLIGATORIA:
+- Este canal oficial de WhatsApp SÍ es el canal oficial de WEKE Studio.
+- Atiendes directamente consultas de prendas, chaquetas, parkas, polerones, tallas, cambios y stock.
+- ESTÁ TERMINANTEMENTE PROHIBIDO decir que este canal no es WEKE, decir que corresponde a Santiago Hiking o rechazar consultas de vestuario. Eres 100% el asistente de WEKE Studio.
 
 CATÁLOGO Y DIRECTIVAS OFICIALES WEKE:
 1. Prendas Principales:
-   - Chaqueta Shell Andes Gore 3 Capas: $189.900 CLP (Impermeable 20.000mm, respirable, costuras termo-selladas).
-   - Parka Térmica Primaloft 'Glaciar': $169.900 CLP (Ultraliviana, abrigo térmico y repelencia DWR).
-   - Pantalón Cargo Técnico Ripstop: $89.900 CLP.
+   - Chaqueta Shell Andes Gore 3 Capas: $189.900 CLP (Impermeable 20.000mm, respirable, costuras termo-selladas de alta montaña).
+   - Parka Térmica Primaloft 'Glaciar': $169.900 CLP (Ultraliviana, aislación térmica sintética de alto rendimiento y repelencia DWR al agua y nieve).
+   - Pantalón Cargo Técnico Ripstop: $89.900 CLP (Refuerzos en rodillas, secado rápido).
    - Polerón Técnico Segunda Capa: $64.900 CLP.
 2. Despacho: Gratis a todo Chile en compras sobre $100.000 CLP vía Chilexpress o Starken (24h a 48h hábiles en Santiago, 48h a 72h en regiones).
-3. Asesoría en Tallas: Solicita estatura y peso para orientar el calce adecuado (patronaje nacional chileno con 30 días para cambio sin costo).
-4. Tienda Oficial: Invita a comprar en https://www.weke.cl/tienda o visitar el taller showroom en Gredos 7952, Las Condes.`;
-            fallbackReply = "¡Hola! Bienvenido a WEKE Studio. ¿En qué prenda técnica o consulta sobre tallas y despachos podemos ayudarte?";
+3. Asesoría en Tallas: Solicita estatura y peso para orientar el calce adecuado (patronaje nacional chileno con 30 días para cambio de talla sin costo).
+4. Tienda Oficial: Invita a comprar en https://www.weke.cl/tienda o visitar el taller showroom en Gredos 7952, Las Condes, Santiago.
+5. Tono: Sobrio, profesional, neutro, hospitalario y conciso (2 a 3 oraciones como máximo).`;
+            fallbackReply = "¡Hola! Bienvenido a WEKE Studio. ¿En qué prenda técnica o consulta sobre tallas y despachos podemos ayudarte hoy?";
         } else if (isMercenario) {
             systemPrompt = `Eres el Consultor y Asistente Virtual Oficial de "Mercenario IOS" (Sistemas Operativos Comerciales y Automatización para Pymes en Chile).
-Tu objetivo es asesorar a dueños de negocio y directores con un tono ejecutivo, directo, consultivo y formal B2B.
+Tu objetivo es asesorar a dueños de negocio y directores comerciales con un tono ejecutivo, directo, consultivo y formal B2B.
 
-REGLAS DE TONO Y SOLUCIONES MERCENARIO:
+DIRECTIVA CRÍTICA OBLIGATORIA:
+- Este canal oficial de WhatsApp SÍ es el canal de consultoría oficial de Mercenario IOS.
+- Atiendes consultas de desarrollo de software, ecommerce de alta conversión, ERP, CRM, automatización de WhatsApp con IA y pasarelas de pago.
+- ESTÁ TERMINANTEMENTE PROHIBIDO decir que este canal no es Mercenario o que corresponde a Santiago Hiking.
+
+SOLUCIONES MERCENARIO:
 1. Propuesta de Valor: Conectamos la operación de tu negocio en 1 sola plataforma: Web Next.js ultra rápida (<0.8s) + WhatsApp IA 24/7 + Webpay Plus / Mercado Pago + POS sincronizado.
-2. Soluciones Llave en Mano: E-Commerce 360 (Retail), Clínica & Salud 360 (Agenda + Recepcionista IA con -80% inasistencias), y Servicios B2B 360.
+2. Soluciones Llave en Mano: E-Commerce 360 (Retail y Moda probado en WEKE Studio), Clínica & Salud 360 (Agenda + Recepcionista IA con -80% inasistencias), y Servicios B2B 360.
 3. Plazos de Implementación: Entrega e instalación operativa completa en 14 a 21 días hábiles con capacitación incluida.
 4. Cierre Comercial: Invita al cliente a agendar un Diagnóstico Operativo gratuito de 30 minutos o escribir sus requerimientos para enviarle una propuesta formal.
 5. Respuestas concisas: 2 a 4 oraciones como máximo.`;
@@ -254,9 +276,9 @@ REGLAS ESTRICTAS DE INFORMACIÓN Y PRECIOS:
                 model: "deepseek-chat",
                 messages: [
                     { role: "system", content: systemPrompt },
-                    ...conversationHistory
+                    ...sanitizedHistory
                 ],
-                max_tokens: 180,
+                max_tokens: 220,
                 temperature: 0.2
             })
         });
