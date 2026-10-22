@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { MessageCircle } from 'lucide-react';
 
 export default function GuideRadioWidget() {
+  const pathname = usePathname();
   const [isVisible, setIsVisible] = useState(true);
   const [mounted, setMounted] = useState(false);
 
@@ -18,7 +20,7 @@ export default function GuideRadioWidget() {
       if (currentScrollY < 40) {
         setIsVisible(true);
       } else {
-        // Si el usuario hace scroll hacia ABAJO, ocultar
+        // Si el usuario hace scroll hacia ABAJO, ocultar para no estorbar la lectura
         if (currentScrollY > lastScrollY && currentScrollY - lastScrollY > 8) {
           setIsVisible(false);
         } 
@@ -37,13 +39,22 @@ export default function GuideRadioWidget() {
 
   if (!mounted) return null;
 
+  // No mostrar en rutas administrativas o de control interno
+  if (
+    pathname?.startsWith('/admin') || 
+    pathname?.startsWith('/portal-aventureros') || 
+    pathname?.startsWith('/check-in')
+  ) {
+    return null;
+  }
+
   const whatsappMessage = encodeURIComponent(
     '¡Hola Gaz! Te escribo desde la web de Santiago Hiking, me gustaría conversar contigo sobre las rutas y salidas.'
   );
 
   return (
     <aside 
-      className={`fixed right-0 top-1/2 -translate-y-1/2 z-40 transition-all duration-350 ease-out transform hidden md:flex ${
+      className={`fixed right-0 top-1/2 -translate-y-1/2 z-40 transition-all duration-300 ease-out transform flex ${
         isVisible 
           ? 'translate-x-0 opacity-100 pointer-events-auto' 
           : 'translate-x-full opacity-0 pointer-events-none'
@@ -55,24 +66,18 @@ export default function GuideRadioWidget() {
         target="_blank"
         rel="noopener noreferrer"
         title="Hablar con el Guía Gaz por WhatsApp"
-        className="group flex flex-col items-center justify-center gap-2.5 py-4 px-2 sm:px-2.5 rounded-l-xl shadow-[-4px_0_25px_rgba(0,0,0,0.2)] transition-all duration-300 hover:-translate-x-1 hover:bg-white/10 cursor-pointer select-none"
+        className="group flex flex-col items-center justify-center gap-2 py-3 px-1.5 sm:py-4 sm:px-2.5 rounded-l-xl shadow-[-4px_0_25px_rgba(0,0,0,0.35)] transition-all duration-300 hover:-translate-x-1 hover:bg-stone-900/90 active:scale-95 cursor-pointer select-none border-t border-l border-b border-white/20 bg-stone-950/85 sm:bg-white/10 backdrop-blur-xl"
         style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.06)',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          borderTop: '1px solid rgba(255, 255, 255, 0.12)',
-          borderLeft: '1px solid rgba(255, 255, 255, 0.12)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
           borderRight: 'none',
         }}
       >
-        {/* Texto Vertical en blanco */}
-        <span className="[writing-mode:vertical-rl] rotate-180 text-[10px] sm:text-[11px] font-mono tracking-[0.18em] font-bold text-white/80 group-hover:text-amber-300 transition-colors uppercase py-1">
+        {/* Texto Vertical */}
+        <span className="[writing-mode:vertical-rl] rotate-180 text-[9px] sm:text-[11px] font-mono tracking-[0.16em] sm:tracking-[0.18em] font-bold text-white/90 group-hover:text-amber-300 transition-colors uppercase py-1">
           HABLAR CON GUÍA
         </span>
 
-        {/* Ícono de WhatsApp idéntico al botón */}
-        <MessageCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+        {/* Ícono de WhatsApp */}
+        <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400 shrink-0" />
       </a>
     </aside>
   );

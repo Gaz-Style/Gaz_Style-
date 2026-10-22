@@ -8,7 +8,6 @@ import {
   Calendar, Users, ShieldCheck
 } from 'lucide-react';
 import { challengesData } from '../data';
-import GuideRadioWidget from '../../GuideRadioWidget';
 import ScrollToTopButton from '../../ScrollToTopButton';
 import SwipeBackHandler from '@/app/rutas/[id]/SwipeBackHandler';
 import MountainWeatherWidget from '@/components/MountainWeatherWidget';
@@ -155,7 +154,6 @@ export default async function ChallengeDetailPage({ params }: PageProps) {
     <div className="min-h-screen bg-stone-950 text-white font-sans selection:bg-amber-500/30">
       <SwipeBackHandler fallbackUrl="/#desafios" />
       <ScrollToTopButton />
-      <GuideRadioWidget />
 
       {/* ── Navbar Flotante ──────────────────────────────────────────── */}
       <header className="fixed top-3 sm:top-5 left-0 right-0 z-50 px-4 sm:px-8 pointer-events-none">

@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import TestimonialsCarousel from "./TestimonialsCarousel";
 import FloatingNavbar from "./FloatingNavbar";
-import GuideRadioWidget from "./GuideRadioWidget";
 import LeadMagnetForm from "./LeadMagnetForm";
 import HeroActionButtons from "./HeroActionButtons";
 import ScrollToTopButton from "./ScrollToTopButton";
@@ -48,9 +47,6 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
       
       {/* MENÚ SUPERIOR FLOTANTE GLASSMORPHISM */}
       <FloatingNavbar currentLang={lang} />
-
-      {/* PESTAÑA LATERAL VIDRIO AHUMADO: CANAL DE RADIO GUÍA / SOS */}
-      <GuideRadioWidget />
 
       {/* BOTÓN FLOTANTE INFERIOR: VOLVER AL INICIO */}
       <ScrollToTopButton />

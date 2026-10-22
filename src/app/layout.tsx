@@ -5,6 +5,7 @@ import "./globals.css";
 import MicrosoftClarity from "@/components/MicrosoftClarity";
 import TikTokPixel from "@/components/TikTokPixel";
 import LinkedInInsight from "@/components/LinkedInInsight";
+import GuideRadioWidget from "./GuideRadioWidget";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -280,6 +281,7 @@ export default function RootLayout({
         )}
 
         {children}
+        <GuideRadioWidget />
 
         {/* Analytics & Tracking Tags */}
         <MicrosoftClarity />
