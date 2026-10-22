@@ -62,7 +62,7 @@ export async function sendHumanHandoffAlertToAdmin({
         return { success: false, simulated: true };
     }
 
-    const templateName = process.env.WHATSAPP_HANDOFF_TEMPLATE_NAME || 'alerta_asistencia_humana';
+    const templateName = process.env.WHATSAPP_HANDOFF_TEMPLATE_NAME || 'alerta_asistencia_requerida';
 
     try {
         const response = await fetch(`https://graph.facebook.com/v21.0/${phoneNumberId}/messages`, {
@@ -83,7 +83,7 @@ export async function sendHumanHandoffAlertToAdmin({
                         {
                             type: 'body',
                             parameters: [
-                                { type: 'text', text: customerName || 'Aventurero' },
+                                { type: 'text', text: customerName || 'Cliente' },
                                 { type: 'text', text: customerPhone || 'Sin número' },
                                 { type: 'text', text: reason.substring(0, 100) }
                             ]
@@ -99,12 +99,11 @@ export async function sendHumanHandoffAlertToAdmin({
         if (!response.ok && data?.error?.code === 132001) {
             console.warn('[Handoff Template] Plantilla no encontrada o en revisión en Meta. Enviando fallback en texto directo...');
             const fallbackText = 
-                `🏔️ *Santiago Hiking — Asistencia Humana Requerida*\n\n` +
-                `👤 *Cliente:* ${customerName}\n` +
+                `🔔 *Asistencia Requerida — Mensajería Central*\n\n` +
+                `👤 *Cliente:* ${customerName || 'Cliente'}\n` +
                 `📱 *Teléfono:* ${customerPhone}\n` +
                 `💬 *Motivo:* ${reason}\n\n` +
-                `👉 *Responder en el LiveChat:*\n` +
-                `https://www.santiagohiking.com/admin/livechat`;
+                `👉 *Ingresar al panel de atención para responder.*`;
             return sendWhatsAppMessage(cleanAdmin, fallbackText);
         }
 
@@ -132,7 +131,7 @@ export async function sendHumanHandoffNoticeToCustomer({
     if (!token || !phoneNumberId) return { success: false, simulated: true };
 
     const cleanPhone = customerPhone.replace(/\D/g, '');
-    const templateName = process.env.WHATSAPP_CUSTOMER_HANDOFF_TEMPLATE || 'transferencia_guia_humano';
+    const templateName = process.env.WHATSAPP_CUSTOMER_HANDOFF_TEMPLATE || 'atencion_equipo_humano';
 
     try {
         const response = await fetch(`https://graph.facebook.com/v21.0/${phoneNumberId}/messages`, {
@@ -153,7 +152,7 @@ export async function sendHumanHandoffNoticeToCustomer({
                         {
                             type: 'body',
                             parameters: [
-                                { type: 'text', text: customerName || 'Aventurero' }
+                                { type: 'text', text: customerName || 'Estimado/a' }
                             ]
                         }
                     ]
