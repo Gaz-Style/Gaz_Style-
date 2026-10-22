@@ -184,40 +184,37 @@ export default function GuideRadioWidget() {
         )}
       </AnimatePresence>
 
-      {/* Pestaña lateral derecha: "HABLAR CON GUÍA" */}
+      {/* Pestaña lateral derecha: "S.O.S" */}
       <aside 
         className={`fixed right-0 top-1/2 -translate-y-1/2 z-40 transition-all duration-300 ease-out transform flex ${
           isVisible 
             ? 'translate-x-0 opacity-100 pointer-events-auto' 
             : 'translate-x-full opacity-0 pointer-events-none'
         }`}
-        aria-label="Hablar con Guía"
+        aria-label="S.O.S / Contactar Guía"
       >
         <button
           type="button"
           onClick={() => setIsChatOpen(!isChatOpen)}
-          title="Hablar con el Guía Gaz por WhatsApp"
-          className={`group flex flex-col items-center justify-center gap-2 py-3 px-1.5 sm:py-4 sm:px-2.5 rounded-l-xl shadow-[-4px_0_25px_rgba(0,0,0,0.35)] transition-all duration-300 hover:-translate-x-1 hover:bg-stone-900/90 active:scale-95 cursor-pointer select-none border-t border-l border-b border-white/20 bg-stone-950/85 sm:bg-white/10 backdrop-blur-xl ${
-            isChatOpen ? 'bg-stone-900 ring-2 ring-[#25D366]/70' : ''
+          title="S.O.S - Contactar a Gaz por WhatsApp"
+          className={`group flex flex-col items-center justify-center gap-2 py-3 px-1.5 sm:py-3.5 sm:px-2 rounded-l-xl shadow-[-2px_0_15px_rgba(0,0,0,0.25)] transition-all duration-300 hover:-translate-x-1 active:scale-95 cursor-pointer select-none border-t border-l border-b border-white/20 ${
+            isChatOpen ? 'ring-1 ring-[#25D366]/60' : ''
           }`}
           style={{
+            backgroundColor: isChatOpen ? 'rgba(0, 0, 0, 0.55)' : 'rgba(0, 0, 0, 0.35)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
             borderRight: 'none',
           }}
         >
-          {/* Texto Vertical */}
-          <span className="[writing-mode:vertical-rl] rotate-180 text-[9px] sm:text-[11px] font-mono tracking-[0.16em] sm:tracking-[0.18em] font-bold text-white/90 group-hover:text-amber-300 transition-colors uppercase py-1">
-            HABLAR CON GUÍA
+          {/* Texto Vertical S.O.S */}
+          <span className="[writing-mode:vertical-rl] rotate-180 text-[10px] sm:text-[11px] font-mono tracking-[0.22em] font-extrabold text-white/95 group-hover:text-amber-300 transition-colors uppercase py-1">
+            S.O.S
           </span>
 
-          {/* Ícono Oficial de WhatsApp con pulso sutil */}
+          {/* Ícono Oficial de WhatsApp sin brillo ni luz */}
           <div className="relative flex items-center justify-center">
-            {!isChatOpen && (
-              <span 
-                className="absolute inset-0 rounded-full bg-[#25D366] opacity-60 animate-ping pointer-events-none" 
-                style={{ animationDuration: '3s' }} 
-              />
-            )}
-            <WhatsAppIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#25D366] shrink-0 drop-shadow-[0_2px_8px_rgba(37,211,102,0.6)]" />
+            <WhatsAppIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#25D366] shrink-0" />
           </div>
         </button>
       </aside>
