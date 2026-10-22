@@ -153,86 +153,68 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
                 return (
                   <div
                     key={dep.id}
-                    className="group relative p-4 sm:p-5 flex flex-col justify-between rounded-2xl sm:rounded-3xl border border-white/10 hover:border-amber-400/40 transition-all duration-300 shadow-xl hover:shadow-black/50"
+                    className="p-3.5 sm:p-5 flex items-center justify-between gap-3 sm:gap-4 hover:bg-white/10 transition-all rounded-2xl sm:rounded-3xl font-mono border border-white/10 shadow-lg"
                     style={{
-                      backgroundColor: 'rgba(15, 18, 24, 0.75)',
+                      backgroundColor: 'rgba(12, 14, 18, 0.75)',
                       backdropFilter: 'blur(16px)',
                       WebkitBackdropFilter: 'blur(16px)',
                     }}
                   >
-                    {/* PARTE SUPERIOR: FECHA + TÍTULO + BADGES DE ESTADO */}
-                    <div className="flex items-start gap-3.5 sm:gap-4">
-                      {/* Bloque Fecha tipo Boarding Pass */}
-                      <div className="flex flex-col items-center justify-center min-w-[56px] w-[56px] sm:min-w-[62px] sm:w-[62px] h-[58px] sm:h-[64px] rounded-xl sm:rounded-2xl bg-white/[0.04] border border-white/10 shrink-0 text-center">
-                        <span className="text-xl sm:text-2xl font-black text-white leading-none font-mono">
-                          {new Date(dep.start_date).toLocaleDateString('es-CL', { timeZone: 'UTC', day: 'numeric' })}
-                        </span>
-                        <span className="text-[10px] sm:text-xs font-bold text-amber-400 uppercase tracking-widest mt-1 font-mono">
-                          {new Date(dep.start_date).toLocaleDateString('es-CL', { timeZone: 'UTC', month: 'short' })}
-                        </span>
-                      </div>
-
-                      {/* Info de la Expedición */}
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-black text-white text-sm sm:text-base uppercase tracking-tight leading-snug group-hover:text-amber-300 transition-colors">
-                          {adv?.title || 'Expedición'}
-                        </h4>
-
-                        {/* Badges de Confirmación y Cupos */}
-                        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-2">
-                          {isConfirmed ? (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-mono">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                              SALIDA CONFIRMADA
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30 font-mono">
-                              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                              BUSCANDO CORDADA (Faltan {neededPax})
-                            </span>
-                          )}
-
-                          {spots <= 4 && spots > 0 && (
-                            <span className="text-[10px] font-bold text-rose-300 bg-rose-500/15 border border-rose-500/30 px-2.5 py-0.5 rounded-full font-mono">
-                              Últimos {spots} cupos
-                            </span>
-                          )}
-                        </div>
-                      </div>
+                    {/* FECHA */}
+                    <div className="text-center min-w-[48px] sm:min-w-[56px] border-r border-white/10 pr-3 sm:pr-4 shrink-0">
+                      <p className="text-xl sm:text-2xl font-black text-white leading-none">
+                        {new Date(dep.start_date).toLocaleDateString('es-CL', { timeZone: 'UTC', day: 'numeric' })}
+                      </p>
+                      <p className="text-[10px] sm:text-xs font-bold text-amber-400 uppercase tracking-widest mt-1">
+                        {new Date(dep.start_date).toLocaleDateString('es-CL', { timeZone: 'UTC', month: 'short' })}
+                      </p>
                     </div>
 
-                    {/* PARTE INFERIOR: PRECIO & BOTÓN RESERVAR */}
-                    <div className="pt-3.5 mt-3.5 border-t border-white/10 flex items-center justify-between gap-3">
-                      {/* Precios (con soporte de descuento/promoción ordenado) */}
-                      <div className="flex flex-col">
-                        {isPromoActive ? (
-                          <>
-                            <div className="flex items-center gap-2 mb-0.5">
-                              <span className="text-[11px] sm:text-xs line-through text-white/40 font-mono">
-                                ${Number(originalPriceNumber).toLocaleString('es-CL')}
-                              </span>
-                              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider font-mono ${badgeColorClass}`}>
-                                {discountBadgeText}
-                              </span>
-                            </div>
-                            <span className={`font-black text-base sm:text-lg font-mono tracking-tight ${priceColorClass}`}>
-                              ${Number(effectivePriceNumber).toLocaleString('es-CL')}
-                            </span>
-                          </>
+                    {/* TÍTULO Y BADGES (SOLO TEXTO LIMPIO, SIN CÁPSULA) */}
+                    <div className="flex-grow min-w-0 pr-1 sm:pr-2">
+                      <p className="font-bold text-white text-xs sm:text-sm uppercase tracking-tight leading-snug">
+                        {adv?.title || 'Expedición'}
+                      </p>
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-1">
+                        {isConfirmed ? (
+                          <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold text-emerald-400 tracking-wide">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                            SALIDA CONFIRMADA
+                          </span>
                         ) : (
-                          <span className="font-black text-base sm:text-lg text-white font-mono tracking-tight">
-                            ${Number(effectivePriceNumber).toLocaleString('es-CL')}
+                          <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold text-amber-400 tracking-wide">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                            BUSCANDO CORDADA (Faltan {neededPax})
+                          </span>
+                        )}
+                        {spots <= 4 && spots > 0 && (
+                          <span className="text-[10px] sm:text-[11px] font-bold text-rose-400">
+                            · Últimos {spots} cupos
                           </span>
                         )}
                       </div>
+                    </div>
 
-                      {/* Botón CTA Cápsula MBA */}
-                      <Link
-                        href={`/reservar?route=${adv?.id || ''}&fecha=${dep.id}`}
-                        className="inline-flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-bold uppercase tracking-wider font-mono text-stone-950 bg-amber-400 hover:bg-amber-300 active:scale-95 transition-all shadow-md shrink-0"
+                    {/* PRECIOS Y RESERVAR (SOLO TEXTO LIMPIO, SIN CÁPSULA) */}
+                    <div className="text-right shrink-0">
+                      {isPromoActive && (
+                        <div className="flex items-center justify-end gap-1.5 leading-none mb-0.5">
+                          <span className="text-[10px] sm:text-[11px] line-through text-white/40">
+                            ${Number(originalPriceNumber).toLocaleString('es-CL')}
+                          </span>
+                          <span className={`text-[9px] sm:text-[10px] font-black uppercase tracking-wider ${priceColorClass}`}>
+                            {discountBadgeText}
+                          </span>
+                        </div>
+                      )}
+                      <p className={`font-bold text-xs sm:text-sm tracking-tight ${isPromoActive ? priceColorClass : 'text-white'}`}>
+                        ${Number(effectivePriceNumber).toLocaleString('es-CL')}
+                      </p>
+                      <Link 
+                        href={`/reservar?route=${adv?.id || ''}&fecha=${dep.id}`} 
+                        className="text-[10px] sm:text-[11px] text-amber-400 hover:text-white hover:underline uppercase tracking-wider block mt-1 font-bold"
                       >
-                        <span>RESERVAR</span>
-                        <span className="text-sm font-black">&rarr;</span>
+                        Reservar &rarr;
                       </Link>
                     </div>
                   </div>
