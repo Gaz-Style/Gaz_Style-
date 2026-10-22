@@ -197,11 +197,11 @@ export default function GuideRadioWidget() {
           type="button"
           onClick={() => setIsChatOpen(!isChatOpen)}
           title="S.O.S - Contactar a Gaz por WhatsApp"
-          className={`group flex flex-col items-center justify-center gap-2 py-3 px-1.5 sm:py-3.5 sm:px-2 rounded-l-xl shadow-[-2px_0_15px_rgba(0,0,0,0.25)] transition-all duration-300 hover:-translate-x-1 active:scale-95 cursor-pointer select-none border-t border-l border-b border-white/20 ${
+          className={`group flex flex-col items-center justify-center gap-2 py-3 px-3.5 sm:py-3.5 sm:px-4.5 min-w-[42px] sm:min-w-[48px] rounded-l-xl shadow-[-2px_0_15px_rgba(0,0,0,0.20)] transition-all duration-300 hover:-translate-x-1 active:scale-95 cursor-pointer select-none border-t border-l border-b border-white/15 ${
             isChatOpen ? 'ring-1 ring-[#25D366]/60' : ''
           }`}
           style={{
-            backgroundColor: isChatOpen ? 'rgba(0, 0, 0, 0.55)' : 'rgba(0, 0, 0, 0.35)',
+            backgroundColor: isChatOpen ? 'rgba(0, 0, 0, 0.40)' : 'rgba(0, 0, 0, 0.20)',
             backdropFilter: 'blur(12px)',
             WebkitBackdropFilter: 'blur(12px)',
             borderRight: 'none',
