@@ -59,7 +59,10 @@ export async function sendHumanHandoffAlertToAdmin({
     const adminPhone = process.env.ADMIN_NOTIFICATION_PHONE || '56984021940';
     const cleanAdmin = adminPhone.replace(/\D/g, '');
     const company = companyName || process.env.COMPANY_NAME || 'Santiago Hiking';
-    const clientDisplay = customerName?.trim() || 'Por identificar';
+    
+    // LÓGICA ELENA: Si está registrado tiene el nombre; si no está registrado, solo tiene el número.
+    const isRegistered = Boolean(customerName && customerName.trim() && customerName !== 'Cliente' && customerName !== 'Por identificar');
+    const clientDisplay = isRegistered ? customerName!.trim() : 'No registrado';
 
     if (!token || !phoneNumberId) {
         console.warn("[Handoff Template] Faltan credenciales de WhatsApp en variables de entorno.");
@@ -105,7 +108,7 @@ export async function sendHumanHandoffAlertToAdmin({
             console.warn('[Handoff Template] Plantilla no encontrada o en revisión en Meta. Enviando fallback en texto directo...');
             const fallbackText = 
                 `🔔 *Asistencia Requerida — ${company}*\n\n` +
-                `👤 *Contacto:* ${clientDisplay}\n` +
+                `👤 *Contacto:* ${isRegistered ? `${clientDisplay} ✅ (Registrado)` : 'No registrado ⚠️ (Solo número)'}\n` +
                 `📱 *Teléfono:* ${customerPhone || 'Sin número'}\n` +
                 `💬 *Motivo:* ${reason}\n\n` +
                 `👉 *Ingresar al panel de atención para responder.*`;

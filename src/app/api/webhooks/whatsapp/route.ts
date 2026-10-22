@@ -17,7 +17,7 @@ async function notifyOwnerOfIncomingWhatsApp({
     chatId
 }: {
     customerPhone: string;
-    customerName: string;
+    customerName?: string | null;
     messageContent: string;
     chatId: string;
 }) {
@@ -42,9 +42,15 @@ async function notifyOwnerOfIncomingWhatsApp({
         ? (messageContent.length > 180 ? `${messageContent.substring(0, 177)}...` : messageContent) 
         : '[Archivo adjunto / multimedia]';
 
+    // LÓGICA ELENA: Si está registrado tiene el nombre; si no está registrado, solo tiene el número.
+    const isRegistered = Boolean(customerName && customerName.trim() && customerName !== 'Cliente');
+    const customerLabel = isRegistered 
+        ? `${customerName!.trim()} ✅ (Registrado)` 
+        : `No registrado ⚠️ (Solo número)`;
+
     const textBody = 
         `🏔️ *Santiago Hiking — Mensaje Entrante*\n\n` +
-        `👤 *Cliente:* ${customerName}\n` +
+        `👤 *Cliente:* ${customerLabel}\n` +
         `📱 *WhatsApp:* +${cleanCustomer}\n` +
         `💬 *Mensaje:* "${preview}"\n\n` +
         `👉 *Responder en el Panel LiveChat:*\n` +
@@ -206,19 +212,26 @@ export async function POST(req: Request) {
                         console.warn('[Webhook] Could not update chat interaction:', updateErr);
                     }
 
-                    // 4. Buscar nombre registrado en CRM de Aventureros si existe
-                    let resolvedName = contactName;
+                    // 4. LÓGICA ELENA: Verificar si el cliente está registrado en el CRM de Aventureros
+                    let registeredName: string | null = null;
                     try {
                         const cleanDigits = phoneNumber.replace(/\D/g, '');
                         const { data: adventurer } = await supabase
                             .from('crm_adventurers')
-                            .select('full_name')
+                            .select('id, full_name, first_name, last_name')
                             .or(`phone.eq.${cleanDigits},phone.ilike.%${cleanDigits.slice(-8)}%`)
                             .limit(1)
                             .maybeSingle();
 
-                        if (adventurer?.full_name) {
-                            resolvedName = adventurer.full_name;
+                        if (adventurer) {
+                            registeredName = adventurer.full_name || `${adventurer.first_name || ''} ${adventurer.last_name || ''}`.trim() || null;
+                            // Vincular el customer_id al chat si no estaba vinculado
+                            if (adventurer.id && !chatData.customer_id) {
+                                await supabase
+                                    .from('crm_whatsapp_chats')
+                                    .update({ customer_id: adventurer.id })
+                                    .eq('id', chatData.id);
+                            }
                         }
                     } catch (e) {
                         // ignore lookup error
@@ -227,7 +240,7 @@ export async function POST(req: Request) {
                     // 5. Notificar a Mario Cruz (dueño) de forma inmediata e independiente
                     notifyOwnerOfIncomingWhatsApp({
                         customerPhone: phoneNumber,
-                        customerName: resolvedName,
+                        customerName: registeredName,
                         messageContent: content || `[${messageType}]`,
                         chatId: chatData.id
                     }).catch(notifErr => console.error('[Webhook] Error en notificación a Mario Cruz:', notifErr));

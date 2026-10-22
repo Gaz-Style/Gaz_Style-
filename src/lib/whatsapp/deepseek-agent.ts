@@ -39,6 +39,87 @@ export async function processDirectWhatsAppMessage(
         }
 
         // =========================================================================
+        // LÓGICA ELENA: Registro y captura de cliente
+        // Si el cliente está registrado en el CRM, tenemos el nombre.
+        // Si NO está registrado, solo tenemos el número y el bot solicita los datos.
+        // =========================================================================
+        const cleanDigits = phoneNumber.replace(/\D/g, '');
+        let registeredAdventurer: { id: string; name: string; email?: string | null } | null = null;
+
+        try {
+            const { data: adv } = await supabase
+                .from('crm_adventurers')
+                .select('id, full_name, first_name, last_name, email')
+                .or(`phone.eq.${cleanDigits},phone.ilike.%${cleanDigits.slice(-8)}%`)
+                .limit(1)
+                .maybeSingle();
+
+            if (adv) {
+                const advName = adv.full_name || `${adv.first_name || ''} ${adv.last_name || ''}`.trim();
+                if (advName) {
+                    registeredAdventurer = {
+                        id: adv.id,
+                        name: advName,
+                        email: adv.email
+                    };
+                }
+            }
+        } catch (advLookupErr) {
+            console.warn('[DeepSeek Agent] Error lookup adventurer:', advLookupErr);
+        }
+
+        // Si NO está registrado, verificar si en el mensaje actual el usuario proporcionó su nombre / correo
+        if (!registeredAdventurer && userMessage) {
+            try {
+                // Detectar patrones comunes de presentación: "Me llamo Juan Pérez", "Mi nombre es ...", "Soy ..."
+                const namePattern = /(?:me llamo|mi nombre es|soy)\s+([A-Za-zÀ-ÿ]{2,}(?:\s+[A-Za-zÀ-ÿ]{2,}){1,3})/i;
+                const emailPattern = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/i;
+
+                const nameMatch = userMessage.match(namePattern);
+                const emailMatch = userMessage.match(emailPattern);
+
+                if (nameMatch) {
+                    const extractedName = nameMatch[1].trim();
+                    const extractedEmail = emailMatch ? emailMatch[0].trim().toLowerCase() : null;
+                    const parts = extractedName.split(' ');
+                    const firstName = parts[0];
+                    const lastName = parts.slice(1).join(' ') || '';
+
+                    const { data: newAdv } = await supabase
+                        .from('crm_adventurers')
+                        .insert({
+                            first_name: firstName,
+                            last_name: lastName,
+                            full_name: extractedName,
+                            phone: cleanDigits,
+                            email: extractedEmail,
+                            mountain_experience_level: 'principiante'
+                        })
+                        .select('id, full_name, email')
+                        .single();
+
+                    if (newAdv) {
+                        registeredAdventurer = {
+                            id: newAdv.id,
+                            name: newAdv.full_name || extractedName,
+                            email: newAdv.email
+                        };
+
+                        // Vincular sesión de chat
+                        await supabase
+                            .from('crm_whatsapp_chats')
+                            .update({ customer_id: newAdv.id })
+                            .eq('id', chatId);
+
+                        console.log(`[DeepSeek Agent] Cliente registrado exitosamente (Lógica Elena): ${extractedName}`);
+                    }
+                }
+            } catch (autoRegErr) {
+                console.warn('[DeepSeek Agent] Error al procesar auto-registro:', autoRegErr);
+            }
+        }
+
+        // =========================================================================
         // MOTOR RAG (Retrieval-Augmented Generation): Solo lectura en tiempo real
         // Consulta adventures_catalog y agenda_departures para inyectar tarifas y fechas reales
         // =========================================================================
@@ -99,6 +180,17 @@ PERSONALIDAD Y TONO:
   - Si solo saluda ("Hola"): saluda educadamente y pregunta en qué lo puedes orientar. No lances el catálogo de golpe.
   - Si confirma o dice "Todo ok / gracias": responde con sobriedad y amabilidad (ej: "Perfecto. Quedo atento si necesitas cualquier detalle antes de la salida."). No insistas con ventas si la duda ya fue resuelta.
 - Respuestas breves y directas (2 a 3 oraciones), claras y sin rodeos.
+
+GESTIÓN Y REGISTRO DEL CLIENTE (LÓGICA ELENA):
+${registeredAdventurer 
+    ? `• ESTADO: CLIENTE REGISTRADO ✅
+  - Nombre: ${registeredAdventurer.name}
+  ${registeredAdventurer.email ? `- Correo: ${registeredAdventurer.email}` : ''}
+  - Ya se encuentra registrado en el CRM. Puedes dirigirte a él/ella por su nombre con naturalidad y cortesía.`
+    : `• ESTADO: CLIENTE NO REGISTRADO ⚠️ (Solo disponemos del número: +${cleanDigits})
+  - No disponemos de su nombre en el sistema. NO inventes un nombre ni utilices palabras como "Estimado cliente".
+  - TOMA DE DATOS Y REGISTRO: Cuando el cliente consulte por una ruta, fecha, cupos o pida asistencia personalizada, pregúntale con amabilidad su Nombre Completo (y correo) para dejarlo registrado formalmente en la cordada y guardar sus datos.
+  - Si el usuario te indica su nombre, salúdalo cordialmente por su nombre y dile que sus datos quedan guardados.`}
 
 DETECCIÓN AUTOMÁTICA DE IDIOMA Y MULTILINGÜISMO:
 - Detecta automáticamente el idioma del usuario (Español, Inglés, Portugués, Francés, etc.).
