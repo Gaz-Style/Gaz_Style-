@@ -49,7 +49,7 @@ export async function sendHumanHandoffAlertToAdmin({
     reason = 'Solicitud directa del cliente / Duda compleja',
     companyName
 }: {
-    customerName: string;
+    customerName?: string;
     customerPhone: string;
     reason?: string;
     companyName?: string;
@@ -59,6 +59,7 @@ export async function sendHumanHandoffAlertToAdmin({
     const adminPhone = process.env.ADMIN_NOTIFICATION_PHONE || '56984021940';
     const cleanAdmin = adminPhone.replace(/\D/g, '');
     const company = companyName || process.env.COMPANY_NAME || 'Santiago Hiking';
+    const clientDisplay = customerName?.trim() || 'Por identificar';
 
     if (!token || !phoneNumberId) {
         console.warn("[Handoff Template] Faltan credenciales de WhatsApp en variables de entorno.");
@@ -87,7 +88,7 @@ export async function sendHumanHandoffAlertToAdmin({
                             type: 'body',
                             parameters: [
                                 { type: 'text', text: company },
-                                { type: 'text', text: customerName || 'Cliente' },
+                                { type: 'text', text: clientDisplay },
                                 { type: 'text', text: customerPhone || 'Sin número' },
                                 { type: 'text', text: reason.substring(0, 100) }
                             ]
@@ -104,8 +105,8 @@ export async function sendHumanHandoffAlertToAdmin({
             console.warn('[Handoff Template] Plantilla no encontrada o en revisión en Meta. Enviando fallback en texto directo...');
             const fallbackText = 
                 `🔔 *Asistencia Requerida — ${company}*\n\n` +
-                `👤 *Cliente:* ${customerName || 'Cliente'}\n` +
-                `📱 *Teléfono:* ${customerPhone}\n` +
+                `👤 *Contacto:* ${clientDisplay}\n` +
+                `📱 *Teléfono:* ${customerPhone || 'Sin número'}\n` +
                 `💬 *Motivo:* ${reason}\n\n` +
                 `👉 *Ingresar al panel de atención para responder.*`;
             return sendWhatsAppMessage(cleanAdmin, fallbackText);
@@ -128,7 +129,7 @@ export async function sendHumanHandoffNoticeToCustomer({
     companyName
 }: {
     customerPhone: string;
-    customerName: string;
+    customerName?: string;
     companyName?: string;
 }) {
     const token = process.env.WHATSAPP_TOKEN || process.env.WHATSAPP_API_TOKEN;
@@ -139,6 +140,9 @@ export async function sendHumanHandoffNoticeToCustomer({
 
     const cleanPhone = customerPhone.replace(/\D/g, '');
     const templateName = process.env.WHATSAPP_CUSTOMER_HANDOFF_TEMPLATE || 'atencion_equipo_empresa';
+
+    // Si no sabemos el nombre, pasamos un tratamiento neutro profesional
+    const displayName = customerName?.trim() || 'Estimado/a';
 
     try {
         const response = await fetch(`https://graph.facebook.com/v21.0/${phoneNumberId}/messages`, {
@@ -159,7 +163,7 @@ export async function sendHumanHandoffNoticeToCustomer({
                         {
                             type: 'body',
                             parameters: [
-                                { type: 'text', text: customerName || 'Estimado/a' },
+                                { type: 'text', text: displayName },
                                 { type: 'text', text: company }
                             ]
                         }
