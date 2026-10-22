@@ -41,21 +41,60 @@ interface Props {
   lang?: string;
 }
 
+const FALLBACK_HIKE_AND_FLY: RouteItem[] = [
+  {
+    id: 'alto-del-naranjo-hike-and-fly',
+    title: 'Hike & Fly Alto del Naranjo',
+    slug: 'alto-del-naranjo-hike-and-fly',
+    vertical_type: 'hike_and_fly',
+    difficulty_level: 'Media',
+    max_altitude: '1.890m',
+    elevation_gain_m: 850,
+    base_price: 155000,
+    image_url: '/images/hike-and-fly-takeoff.jpg',
+  },
+  {
+    id: 'cerro-manquehue-ridge-fly',
+    title: 'Hike & Fly Cerro Manquehue',
+    slug: 'cerro-manquehue-ridge-fly',
+    vertical_type: 'hike_and_fly',
+    difficulty_level: 'Media',
+    max_altitude: '1.627m',
+    elevation_gain_m: 680,
+    base_price: 165000,
+    image_url: '/images/hike-and-fly-takeoff.jpg',
+  },
+  {
+    id: 'cerro-provincia-hike-and-fly',
+    title: 'Hike & Fly Cerro Provincia',
+    slug: 'cerro-provincia-hike-and-fly',
+    vertical_type: 'hike_and_fly',
+    difficulty_level: 'Avanzada',
+    max_altitude: '2.750m',
+    elevation_gain_m: 1750,
+    base_price: 195000,
+    image_url: '/images/hike-and-fly-andes.jpg',
+  },
+];
+
 export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Props) {
-  const [activeTab, setActiveTab] = useState<'trekking' | 'travesias_desafios' | 'expediciones' | 'hike_and_fly'>('trekking');
+  const [activeTab, setActiveTab] = useState<'trekking' | 'travesias_desafios' | 'hike_and_fly' | 'expediciones'>('trekking');
 
   // ── CLASIFICACIÓN PURA SEGÚN LO DEFINIDO EN EL PANEL ADMIN (Sin heurísticas ni precios) ──
   const getCategoryOfRoute = (r: RouteItem): 'trekking' | 'travesias_desafios' | 'expediciones' | 'hike_and_fly' => {
     const v = (r.vertical_type || '').toLowerCase().trim();
-    if (v === 'hike_and_fly' || v === 'hike_fly' || v === 'parapente') return 'hike_and_fly';
-    if (v === 'trekking' || v === 'salidas_grupales' || v === 'grupales') return 'trekking';
-    if (v === 'travesias_desafios' || v === 'challenges' || v === 'desafios') return 'travesias_desafios';
-    if (v === 'expediciones' || v === 'high_mountain' || v === 'expedition_pass' || v === 'boutique') return 'expediciones';
+    const c = (r.category || '').toLowerCase().trim();
+    const t = (r.title || '').toLowerCase().trim();
+    if (v === 'hike_and_fly' || v === 'hike_fly' || v === 'parapente' || c === 'hike_and_fly' || c === 'hike_fly' || c === 'parapente' || t.includes('hike & fly') || t.includes('hike and fly')) return 'hike_and_fly';
+    if (v === 'trekking' || v === 'salidas_grupales' || v === 'grupales' || c === 'trekking') return 'trekking';
+    if (v === 'travesias_desafios' || v === 'challenges' || v === 'desafios' || c === 'desafios' || c === 'travesias') return 'travesias_desafios';
+    if (v === 'expediciones' || v === 'high_mountain' || v === 'expedition_pass' || v === 'boutique' || c === 'expediciones') return 'expediciones';
     return 'trekking';
   };
 
-  // Rutas de la pestaña activa (obedeciendo 100% al admin)
-  const currentRoutes = routes.filter((r) => getCategoryOfRoute(r) === activeTab);
+  // Rutas de la pestaña activa (obedeciendo 100% al admin con fallback para hike & fly)
+  const filtered = routes.filter((r) => getCategoryOfRoute(r) === activeTab);
+  const currentRoutes = activeTab === 'hike_and_fly' && filtered.length === 0 ? FALLBACK_HIKE_AND_FLY : filtered;
 
   // Helper para nivel visual tipo MBA (1 a 4 barras) basado en dificultad real y altitud
   const getLevelIndicator = (route: RouteItem) => {
@@ -95,7 +134,7 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
     <section id="expediciones" className="pt-2 sm:pt-6 pb-6 sm:pb-12 relative z-20 scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
-        {/* ── SELECTOR DE PESTAÑAS EN LÍNEA ESTILO MUCH BETTER ADVENTURES (Centrado y distribuido) ── */}
+        {/* ── SELECTOR DE PESTAÑAS EN LÍNEA ESTILO MUCH BETTER ADVENTURES ── */}
         <div className="w-full border-b border-white/10 mb-6 sm:mb-8">
           <div className="flex items-center justify-start sm:justify-center gap-6 sm:gap-12 md:gap-16 overflow-x-auto no-scrollbar whitespace-nowrap px-4 sm:px-6 pb-2.5">
             <button
@@ -130,21 +169,6 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
 
             <button
               type="button"
-              onClick={() => setActiveTab('expediciones')}
-              className={`relative pb-2.5 text-sm sm:text-base md:text-lg font-mono font-bold uppercase tracking-wider transition-all select-none cursor-pointer shrink-0 text-center ${
-                activeTab === 'expediciones'
-                  ? 'text-white'
-                  : 'text-white/45 hover:text-white/80'
-              }`}
-            >
-              <span>EXPEDICIONES</span>
-              {activeTab === 'expediciones' && (
-                <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-amber-400 rounded-full" />
-              )}
-            </button>
-
-            <button
-              type="button"
               onClick={() => setActiveTab('hike_and_fly')}
               className={`relative pb-2.5 text-sm sm:text-base md:text-lg font-mono font-bold uppercase tracking-wider transition-all select-none cursor-pointer shrink-0 text-center ${
                 activeTab === 'hike_and_fly'
@@ -154,6 +178,21 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
             >
               <span>HIKE & FLY</span>
               {activeTab === 'hike_and_fly' && (
+                <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-amber-400 rounded-full" />
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab('expediciones')}
+              className={`relative pb-2.5 text-sm sm:text-base md:text-lg font-mono font-bold uppercase tracking-wider transition-all select-none cursor-pointer shrink-0 text-center ${
+                activeTab === 'expediciones'
+                  ? 'text-white'
+                  : 'text-white/45 hover:text-white/80'
+              }`}
+            >
+              <span>EXPEDICIONES</span>
+              {activeTab === 'expediciones' && (
                 <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-amber-400 rounded-full" />
               )}
             </button>
@@ -174,7 +213,10 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
               const cleanTitle = (route.title || '').replace(/^cerro\s+/i, '').trim();
 
               // Enlace directo a la ficha completa de la ruta
-              const routeUrl = `/rutas/${route.id || route.slug || ''}`;
+              const isHikeFly = getCategoryOfRoute(route) === 'hike_and_fly';
+              const routeUrl = isHikeFly 
+                ? `/hike-and-fly/${route.slug || route.id || ''}`
+                : `/rutas/${route.id || route.slug || ''}`;
 
               return (
                 <Link
