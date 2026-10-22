@@ -20,7 +20,7 @@ export async function createPaymentPreference(items: any[], externalReference?: 
             currency_id: 'CLP'
         }));
 
-        const base = backUrlBase || 'https://elenalaguía.com';
+        const base = backUrlBase || process.env.NEXT_PUBLIC_SITE_URL || 'https://www.santiagohiking.com';
         const successPath = customSuccessPath || '/presupuesto/pago-exitoso';
         const successUrl = `${base}${successPath}`;
         const failureUrl = `${base}${successPath}?error=true`;

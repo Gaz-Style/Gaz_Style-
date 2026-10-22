@@ -114,8 +114,8 @@ export async function enviar_correo_confirmacion(nombre: string, apellido: strin
     const horaLegible = dateObj.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Santiago' });
     const fechaLegible = dateObj.toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Santiago' });
 
-    const smtpUser = process.env.SMTP_USER || '';
-    const fromAddress = smtpUser.includes('gmail.com') ? 'contacto@elenalaguía.cl' : smtpUser;
+    const smtpUser = process.env.SMTP_USER || process.env.GMAIL_SMTP_USER || 'gazstylechile@gmail.com';
+    const fromAddress = smtpUser;
 
     const attachments = [];
     let cardBgUrl = '';
@@ -137,9 +137,9 @@ export async function enviar_correo_confirmacion(nombre: string, apellido: strin
     // 1. Correo al cliente
     promises.push(
         transporter.sendMail({
-            from: `"ELENA La Guía" <${fromAddress}>`,
+            from: `"Santiago Hiking" <${fromAddress}>`,
             to: correo,
-            subject: 'Confirmación de Cita — ELENA La Guía',
+            subject: 'Confirmación de Expedición — Santiago Hiking',
             attachments: attachments,
             html: `<!DOCTYPE html>
 <html lang="es">
@@ -226,7 +226,7 @@ export async function enviar_correo_confirmacion(nombre: string, apellido: strin
           <span style="font-size: 8px; text-transform: uppercase; color: #8A857D; letter-spacing: 1px;">Horario Exclusivo</span><br>
           <strong style="font-size: 12px; color: #C17F5F; font-family: 'Inter', sans-serif; display: inline-block; margin-top: 4px;">${horaLegible} hrs</strong>
           <p style="font-size: 8px; color: #8A857D; font-style: italic; margin-top: 12px; line-height: 1.4; margin-bottom: 0;">
-            *Si asistes por Upcycling Fit & Repair, recuerda traer tus prendas. Te esperamos en Av. Tabancura 1091, Of. 319, Vitacura.
+            *Punto de encuentro y detalles técnicos serán coordinados directamente vía WhatsApp con el equipo de Santiago Hiking.
           </p>
         </div>
       </div>
@@ -243,10 +243,10 @@ export async function enviar_correo_confirmacion(nombre: string, apellido: strin
         <span style="display: inline-block; width: 4px; height: 24px; background-color: #F5F5F0; margin: 0 1px;"></span>
         <span style="display: inline-block; width: 1.5px; height: 24px; background-color: #F5F5F0; margin: 0 1px;"></span>
         <span style="display: inline-block; width: 1px; height: 24px; background-color: #F5F5F0; margin: 0 1px;"></span>
-        <div style="font-size: 7.5px; color: #8A857D; letter-spacing: 4px; margin-top: 6px; text-transform: uppercase; font-family: 'Inter', sans-serif;">ELENA*CITA*LA*COSTURERA</div>
+        <div style="font-size: 7.5px; color: #8A857D; letter-spacing: 4px; margin-top: 6px; text-transform: uppercase; font-family: 'Inter', sans-serif;">SANTIAGO*HIKING*EXPEDITION</div>
       </div>
       
-      <p style="font-size: 8px; color: #8A857D; letter-spacing: 2.5px; margin-top: 28px; font-weight: 400; font-family: 'Inter', sans-serif;">Av. Tabancura 1091, Of. 319 · Vitacura</p>
+      <p style="font-size: 8px; color: #8A857D; letter-spacing: 2.5px; margin-top: 28px; font-weight: 400; font-family: 'Inter', sans-serif;">Santiago de Chile · Cordillera de los Andes</p>
     </div>
   </div>
 </body>
@@ -261,7 +261,7 @@ export async function enviar_correo_confirmacion(nombre: string, apellido: strin
     // 2. Notificación interna a Gaz
     promises.push(
         transporter.sendMail({
-            from: `"Atelier Bot" <${process.env.SMTP_USER}>`,
+            from: `"Santiago Hiking" <${process.env.SMTP_USER}>`,
             to: process.env.SMTP_USER,
             subject: `NUEVA CITA: ${nombre} ${apellido} - ${fechaLegible} ${horaLegible}`,
             text: `Se ha agendado una nueva cita:\nNombre: ${nombre} ${apellido}\nCelular: ${celular}\nCorreo: ${correo}\nFecha: ${fechaLegible} a las ${horaLegible}`

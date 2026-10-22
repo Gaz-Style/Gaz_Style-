@@ -6,8 +6,8 @@ const ADMIN_PHONE = '56984021940';
 export async function POST(req: Request) {
     try {
         const { searchParams } = new URL(req.url);
-        const secretToken = searchParams.get('secret') || req.headers.get('x-elena-secret');
-        const expectedToken = process.env.WHATSAPP_VERIFY_TOKEN || 'elena_atelier_secret';
+        const secretToken = searchParams.get('secret') || req.headers.get('x-webhook-secret') || req.headers.get('x-elena-secret');
+        const expectedToken = process.env.WHATSAPP_VERIFY_TOKEN || 'gazstyle_wa_verify_2026';
 
         if (secretToken && secretToken !== expectedToken) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
             subject: cleanSubject,
             direction: 'inbound',
             sender: fromEmail,
-            recipient: 'contacto@elenalaguía.cl',
+            recipient: 'contacto@santiagohiking.com',
             body_text: bodyText || null,
             body_html: bodyHtml || null,
             message_id: messageId || null,
