@@ -45,12 +45,12 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
     languages: {
-      "es": "/?lang=es",
-      "en": "/?lang=en",
-      "pt": "/?lang=pt",
-      "de": "/?lang=de",
-      "fr": "/?lang=fr",
-      "x-default": "/",
+      "es": "https://www.santiagohiking.com",
+      "en": "https://www.santiagohiking.com/en",
+      "pt": "https://www.santiagohiking.com/pt",
+      "de": "https://www.santiagohiking.com/de",
+      "fr": "https://www.santiagohiking.com/fr",
+      "x-default": "https://www.santiagohiking.com",
     },
   },
   openGraph: {
@@ -236,6 +236,16 @@ export default function RootLayout({
             }
           }
         ]
+      },
+      {
+        "@type": "VideoObject",
+        "@id": "https://www.santiagohiking.com/#hero-video",
+        "name": "Hike & Fly Andes: Expedición y Vuelo Libre en Santiago de Chile",
+        "description": "Ascenso a cumbres andinas de Santiago y retorno planeando en parapente biplaza tándem con piloto experto.",
+        "thumbnailUrl": "https://www.santiagohiking.com/images/andes_cordillera_hero.jpg",
+        "uploadDate": "2026-10-21T18:00:00-03:00",
+        "contentUrl": "https://www.santiagohiking.com/contenido/hike-and-fly.mp4",
+        "embedUrl": "https://www.santiagohiking.com/hike-and-fly"
       }
     ]
   };

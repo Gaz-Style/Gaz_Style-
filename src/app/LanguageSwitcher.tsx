@@ -2,11 +2,13 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { ChevronDown } from 'lucide-react';
 
 export default function LanguageSwitcher({ currentLang }: { currentLang: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const pathname = usePathname() || '/';
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -21,10 +23,19 @@ export default function LanguageSwitcher({ currentLang }: { currentLang: string 
   const languages = [
     { code: 'es', label: 'Español' },
     { code: 'en', label: 'English' },
-    { code: 'fr', label: 'Français' },
     { code: 'pt', label: 'Português' },
+    { code: 'fr', label: 'Français' },
     { code: 'de', label: 'Deutsch' }
   ];
+
+  // Genera URL limpia con subcarpeta (/en, /pt, etc. o / para español)
+  const getLanguageUrl = (langCode: string) => {
+    const cleanPath = pathname.replace(/^\/(en|pt|de|fr)(\/|$)/, '/');
+    if (langCode === 'es') {
+      return cleanPath === '' ? '/' : cleanPath;
+    }
+    return cleanPath === '/' ? `/${langCode}` : `/${langCode}${cleanPath}`;
+  };
 
   return (
     <div className="relative" ref={ref}>
@@ -43,7 +54,7 @@ export default function LanguageSwitcher({ currentLang }: { currentLang: string 
           {languages.map((l) => (
             <Link 
               key={l.code} 
-              href={`?lang=${l.code}`}
+              href={getLanguageUrl(l.code)}
               onClick={() => setIsOpen(false)}
               className={`px-4 py-2.5 text-xs font-medium text-left hover:bg-white/10 transition-colors ${currentLang === l.code ? 'text-amber-400 bg-white/10 font-bold' : 'text-stone-300'}`}
             >

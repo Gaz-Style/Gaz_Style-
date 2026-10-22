@@ -151,6 +151,9 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
                   discountColor === 'emerald' ? 'text-[#34d399]' :
                   'text-[#f43f5e]';
 
+                const isConfirmed = dep.status === 'confirmed' || (dep.current_pax || 0) >= 3;
+                const neededPax = Math.max(1, 3 - (dep.current_pax || 0));
+
                 return (
                   <div key={dep.id} className="p-5 sm:p-6 flex items-center gap-5 hover:bg-white/10 transition-all rounded-3xl font-mono border border-white/10 shadow-lg" style={{backgroundColor:'rgba(12, 14, 18, 0.70)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)'}}>
                     <div className="text-center min-w-[56px] border-r border-white/10 pr-4">
@@ -161,13 +164,24 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
                     </div>
                     <div className="flex-grow">
                       <p className="font-bold text-white text-sm uppercase">{adv?.title || 'Expedición'}</p>
-                      <p className="text-xs text-white/50 mt-0.5">
-                        {spots <= 4 ? (
-                          <span className="text-amber-400 font-bold">● Últimos {spots} cupos</span>
+                      <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                        {isConfirmed ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                            SALIDA CONFIRMADA
+                          </span>
                         ) : (
-                          <span className="text-emerald-400 font-medium">● Cupos disponibles</span>
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                            BUSCANDO CORDADA (Faltan {neededPax})
+                          </span>
                         )}
-                      </p>
+                        {spots <= 4 && spots > 0 && (
+                          <span className="text-[10px] font-bold text-rose-300 bg-rose-500/20 border border-rose-500/30 px-2 py-0.5 rounded-full">
+                            Últimos {spots} cupos
+                          </span>
+                        )}
+                      </div>
                     </div>
                     <div className="text-right shrink-0">
                       {isPromoActive && (

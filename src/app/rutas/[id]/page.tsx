@@ -230,16 +230,62 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
 
     const schemaOrgMarkup = {
         "@context": "https://schema.org",
-        "@type": "Event",
-        "name": route.title,
-        "description": route.description,
-        "image": route.image_url || "/images/young-woman-running-on-mountain-royalty-free-image-1656406038.avif",
-        "offers": {
-            "@type": "Offer",
-            "price": route.base_price,
-            "priceCurrency": "CLP",
-            "availability": "https://schema.org/InStock",
-        }
+        "@graph": [
+            {
+                "@type": "TouristTrip",
+                "@id": `https://www.santiagohiking.com/rutas/${id}#trip`,
+                "name": route.title,
+                "description": route.summary || route.description,
+                "image": route.image_url || "/images/andes_cordillera_hero.jpg",
+                "touristType": ["Adventure Seekers", "Solo Travelers", "Hikers"],
+                "offers": {
+                    "@type": "Offer",
+                    "price": effectivePriceNumber,
+                    "priceCurrency": "CLP",
+                    "availability": "https://schema.org/InStock",
+                    "url": `https://www.santiagohiking.com/rutas/${id}`
+                },
+                "provider": {
+                    "@type": "TravelAgency",
+                    "name": "Santiago Hiking",
+                    "url": "https://www.santiagohiking.com"
+                },
+                "itinerary": {
+                    "@type": "ItemList",
+                    "name": `Itinerario Oficial: ${route.title}`,
+                    "itemListElement": itinerary.map((item: any, idx: number) => ({
+                        "@type": "ListItem",
+                        "position": idx + 1,
+                        "name": `${item.time} · ${item.title}`,
+                        "description": item.desc
+                    }))
+                }
+            },
+            {
+                "@type": "BreadcrumbList",
+                "@id": `https://www.santiagohiking.com/rutas/${id}#breadcrumbs`,
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Inicio",
+                        "item": "https://www.santiagohiking.com"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Expediciones",
+                        "item": "https://www.santiagohiking.com/#expediciones"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": route.title,
+                        "item": `https://www.santiagohiking.com/rutas/${id}`
+                    }
+                ]
+            }
+        ]
     };
 
     return (

@@ -78,6 +78,19 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
     return { level: 1, name: 'Nivel 1 · Iniciación', bars: '■□□□' };
   };
 
+  // Helper para ritmo de cordada estándar MBA
+  const getPaceIndicator = (route: RouteItem) => {
+    const diff = (route.difficulty_level || '').toLowerCase();
+    const title = (route.title || '').toLowerCase();
+    if (diff.includes('experto') || diff.includes('muy alta') || title.includes('5am') || title.includes('triple') || title.includes('sierra')) {
+      return { pace: 'Ritmo Atleta', color: 'text-rose-400' };
+    }
+    if (diff.includes('alta') || diff.includes('avanzad') || diff.includes('exigente')) {
+      return { pace: 'Ritmo Constante', color: 'text-amber-300' };
+    }
+    return { pace: 'Ritmo Pausado', color: 'text-emerald-400' };
+  };
+
   return (
     <section id="expediciones" className="pt-2 sm:pt-6 pb-6 sm:pb-12 relative z-20 scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -155,6 +168,7 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
           >
             {currentRoutes.map((route, idx) => {
               const lvl = getLevelIndicator(route);
+              const pace = getPaceIndicator(route);
               const formattedClp = Number(route.base_price || 25000).toLocaleString('es-CL');
               const imgSrc = route.image_url || 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80';
               const cleanTitle = (route.title || '').replace(/^cerro\s+/i, '').trim();
@@ -216,11 +230,16 @@ export default function UnifiedExpeditionsTabs({ routes = [], lang = 'es' }: Pro
                     </span>
                   </div>
 
-                  {/* Contenido Inferior: Nivel, Título, Altura y Desnivel */}
+                  {/* Contenido Inferior: Nivel, Ritmo de Cordada, Título, Altura y Desnivel */}
                   <div className="absolute bottom-3 left-3 right-3 flex flex-col gap-1 text-white">
-                    <span className="text-[9px] sm:text-[10px] font-mono text-amber-400 font-bold uppercase tracking-wider line-clamp-1">
-                      {lvl.name.split('·')[1]?.trim() || lvl.name}
-                    </span>
+                    <div className="flex items-center justify-between text-[9px] sm:text-[10px] font-mono">
+                      <span className="text-amber-400 font-bold uppercase tracking-wider line-clamp-1">
+                        {lvl.name.split('·')[1]?.trim() || lvl.name}
+                      </span>
+                      <span className={`text-[8px] sm:text-[9px] font-semibold tracking-tight ${pace.color}`}>
+                        {pace.pace}
+                      </span>
+                    </div>
                     <h3 className="text-sm sm:text-base md:text-lg font-black uppercase tracking-tight leading-tight group-hover:text-amber-300 transition-colors drop-shadow-md">
                       {cleanTitle}
                     </h3>
