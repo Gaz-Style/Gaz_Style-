@@ -46,23 +46,26 @@ export async function sendExpeditionReminder(phone: string, name: string, date: 
 export async function sendHumanHandoffAlertToAdmin({
     customerName,
     customerPhone,
-    reason = 'Solicitud directa del cliente / Duda compleja'
+    reason = 'Solicitud directa del cliente / Duda compleja',
+    companyName
 }: {
     customerName: string;
     customerPhone: string;
     reason?: string;
+    companyName?: string;
 }) {
     const token = process.env.WHATSAPP_TOKEN || process.env.WHATSAPP_API_TOKEN;
     const phoneNumberId = process.env.WHATSAPP_PHONE_ID || process.env.WHATSAPP_PHONE_NUMBER_ID;
     const adminPhone = process.env.ADMIN_NOTIFICATION_PHONE || '56984021940';
     const cleanAdmin = adminPhone.replace(/\D/g, '');
+    const company = companyName || process.env.COMPANY_NAME || 'Santiago Hiking';
 
     if (!token || !phoneNumberId) {
         console.warn("[Handoff Template] Faltan credenciales de WhatsApp en variables de entorno.");
         return { success: false, simulated: true };
     }
 
-    const templateName = process.env.WHATSAPP_HANDOFF_TEMPLATE_NAME || 'alerta_asistencia_requerida';
+    const templateName = process.env.WHATSAPP_HANDOFF_TEMPLATE_NAME || 'alerta_asistencia_empresa';
 
     try {
         const response = await fetch(`https://graph.facebook.com/v21.0/${phoneNumberId}/messages`, {
@@ -83,6 +86,7 @@ export async function sendHumanHandoffAlertToAdmin({
                         {
                             type: 'body',
                             parameters: [
+                                { type: 'text', text: company },
                                 { type: 'text', text: customerName || 'Cliente' },
                                 { type: 'text', text: customerPhone || 'Sin número' },
                                 { type: 'text', text: reason.substring(0, 100) }
@@ -99,7 +103,7 @@ export async function sendHumanHandoffAlertToAdmin({
         if (!response.ok && data?.error?.code === 132001) {
             console.warn('[Handoff Template] Plantilla no encontrada o en revisión en Meta. Enviando fallback en texto directo...');
             const fallbackText = 
-                `🔔 *Asistencia Requerida — Mensajería Central*\n\n` +
+                `🔔 *Asistencia Requerida — ${company}*\n\n` +
                 `👤 *Cliente:* ${customerName || 'Cliente'}\n` +
                 `📱 *Teléfono:* ${customerPhone}\n` +
                 `💬 *Motivo:* ${reason}\n\n` +
@@ -115,23 +119,26 @@ export async function sendHumanHandoffAlertToAdmin({
 }
 
 /**
- * Dispara la plantilla oficial de Meta al Cliente (Aventurero)
- * notificándole que su consulta fue transferida a un guía humano.
+ * Dispara la plantilla oficial de Meta al Cliente
+ * notificándole que su consulta fue transferida a un asesor humano de la empresa correspondiente.
  */
 export async function sendHumanHandoffNoticeToCustomer({
     customerPhone,
-    customerName
+    customerName,
+    companyName
 }: {
     customerPhone: string;
     customerName: string;
+    companyName?: string;
 }) {
     const token = process.env.WHATSAPP_TOKEN || process.env.WHATSAPP_API_TOKEN;
     const phoneNumberId = process.env.WHATSAPP_PHONE_ID || process.env.WHATSAPP_PHONE_NUMBER_ID;
+    const company = companyName || process.env.COMPANY_NAME || 'Santiago Hiking';
 
     if (!token || !phoneNumberId) return { success: false, simulated: true };
 
     const cleanPhone = customerPhone.replace(/\D/g, '');
-    const templateName = process.env.WHATSAPP_CUSTOMER_HANDOFF_TEMPLATE || 'atencion_equipo_humano';
+    const templateName = process.env.WHATSAPP_CUSTOMER_HANDOFF_TEMPLATE || 'atencion_equipo_empresa';
 
     try {
         const response = await fetch(`https://graph.facebook.com/v21.0/${phoneNumberId}/messages`, {
@@ -152,7 +159,8 @@ export async function sendHumanHandoffNoticeToCustomer({
                         {
                             type: 'body',
                             parameters: [
-                                { type: 'text', text: customerName || 'Estimado/a' }
+                                { type: 'text', text: customerName || 'Estimado/a' },
+                                { type: 'text', text: company }
                             ]
                         }
                     ]
