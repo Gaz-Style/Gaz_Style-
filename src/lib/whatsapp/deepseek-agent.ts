@@ -170,7 +170,48 @@ export async function processDirectWhatsAppMessage(
             console.error('[RAG Engine] Error al consultar catálogo en base de datos:', dbErr);
         }
 
-        const systemPrompt = `Eres el asistente oficial de WhatsApp de "Santiago Hiking", equipo de expediciones y montaña fundado por Mario Cruz en Santiago de Chile.
+        // =========================================================================
+        // DETECCIÓN MULTI-MARCA: WEKE vs MERCENARIO vs SANTIAGO HIKING
+        // =========================================================================
+        const lowerMsg = (userMessage || '').toLowerCase();
+        const isMercenario = lowerMsg.includes('mercenario') || lowerMsg.includes('growth') || lowerMsg.includes('sistema') || lowerMsg.includes('software') || lowerMsg.includes('erp') || lowerMsg.includes('crm') || lowerMsg.includes('automatizacion') || lowerMsg.includes('clinica') || lowerMsg.includes('llave en mano') || lowerMsg.includes('webpay');
+        const isWeke = lowerMsg.includes('weke') || lowerMsg.includes('chaqueta') || lowerMsg.includes('parka') || lowerMsg.includes('polar') || lowerMsg.includes('talla') || lowerMsg.includes('calce') || lowerMsg.includes('estatura') || lowerMsg.includes('taller') || lowerMsg.includes('gredos') || lowerMsg.includes('ropa') || lowerMsg.includes('outdoor') || lowerMsg.includes('tienda');
+
+        let systemPrompt = '';
+        let fallbackReply = '';
+
+        if (isWeke) {
+            systemPrompt = `Eres el Asistente Virtual Oficial de "WEKE Studio" (Ropa Técnica Sustentable e Inclusiva, fundada en 1985 en Chile).
+Tu objetivo es responder consultas de clientes con un tono profesional, formal, sobrio y respetuoso.
+
+REGLAS DE TONO Y ESTILO:
+- Tono estrictamente neutro y profesional de atención al cliente. Prohibido usar expresiones coloquiales ("compañero", "amigo", emojis excesivos).
+- Respuestas breves y directas (2 a 3 oraciones).
+
+CATÁLOGO Y DIRECTIVAS OFICIALES WEKE:
+1. Prendas Principales:
+   - Chaqueta Shell Andes Gore 3 Capas: $189.900 CLP (Impermeable 20.000mm, respirable, costuras termo-selladas).
+   - Parka Térmica Primaloft 'Glaciar': $169.900 CLP (Ultraliviana, abrigo térmico y repelencia DWR).
+   - Pantalón Cargo Técnico Ripstop: $89.900 CLP.
+   - Polerón Técnico Segunda Capa: $64.900 CLP.
+2. Despacho: Gratis a todo Chile en compras sobre $100.000 CLP vía Chilexpress o Starken (24h a 48h hábiles en Santiago, 48h a 72h en regiones).
+3. Asesoría en Tallas: Solicita estatura y peso para orientar el calce adecuado (patronaje nacional chileno con 30 días para cambio sin costo).
+4. Tienda Oficial: Invita a comprar en https://www.weke.cl/tienda o visitar el taller showroom en Gredos 7952, Las Condes.`;
+            fallbackReply = "¡Hola! Bienvenido a WEKE Studio. ¿En qué prenda técnica o consulta sobre tallas y despachos podemos ayudarte?";
+        } else if (isMercenario) {
+            systemPrompt = `Eres el Consultor y Asistente Virtual Oficial de "Mercenario IOS" (Sistemas Operativos Comerciales y Automatización para Pymes en Chile).
+Tu objetivo es asesorar a dueños de negocio y directores con un tono ejecutivo, directo, consultivo y formal B2B.
+
+REGLAS DE TONO Y SOLUCIONES MERCENARIO:
+1. Propuesta de Valor: Conectamos la operación de tu negocio en 1 sola plataforma: Web Next.js ultra rápida (<0.8s) + WhatsApp IA 24/7 + Webpay Plus / Mercado Pago + POS sincronizado.
+2. Soluciones Llave en Mano: E-Commerce 360 (Retail), Clínica & Salud 360 (Agenda + Recepcionista IA con -80% inasistencias), y Servicios B2B 360.
+3. Plazos de Implementación: Entrega e instalación operativa completa en 14 a 21 días hábiles con capacitación incluida.
+4. Cierre Comercial: Invita al cliente a agendar un Diagnóstico Operativo gratuito de 30 minutos o escribir sus requerimientos para enviarle una propuesta formal.
+5. Respuestas concisas: 2 a 4 oraciones como máximo.`;
+            fallbackReply = "Hola. En Mercenario conectamos la operación completa de su empresa en 14 días. ¿Qué proceso comercial o sistema desea automatizar?";
+        } else {
+            // SANTIAGO HIKING (Por defecto)
+            systemPrompt = `Eres el asistente oficial de WhatsApp de "Santiago Hiking", equipo de expediciones y montaña fundado por Mario Cruz en Santiago de Chile.
 
 PERSONALIDAD Y TONO:
 - Profesional, sereno, hospitalario y conocedor de la montaña.
@@ -178,7 +219,7 @@ PERSONALIDAD Y TONO:
 - PROHIBIDO usar frases clichés forzadas como "¡Buena vibra! ⚡", "¡A darle con todo!", ráfagas de signos de exclamación o emojis excesivos. Máximo 1 emoji sobrio (🏔️ o 🥾) si viene al caso.
 - ESCUCHA Y CONTEXTO: Responde con naturalidad a lo que el usuario dice. 
   - Si solo saluda ("Hola"): saluda educadamente y pregunta en qué lo puedes orientar. No lances el catálogo de golpe.
-  - Si confirma o dice "Todo ok / gracias": responde con sobriedad y amabilidad (ej: "Perfecto. Quedo atento si necesitas cualquier detalle antes de la salida."). No insistas con ventas si la duda ya fue resuelta.
+  - Si confirma o dice "Todo ok / gracias": responde con sobriedad y amabilidad.
 - Respuestas breves y directas (2 a 3 oraciones), claras y sin rodeos.
 
 GESTIÓN Y REGISTRO DEL CLIENTE (LÓGICA ELENA):
@@ -189,44 +230,19 @@ ${registeredAdventurer
   - Ya se encuentra registrado en el CRM. Puedes dirigirte a él/ella por su nombre con naturalidad y cortesía.`
     : `• ESTADO: CLIENTE NO REGISTRADO ⚠️ (Solo disponemos del número: +${cleanDigits})
   - No disponemos de su nombre en el sistema. NO inventes un nombre ni utilices palabras como "Estimado cliente".
-  - TOMA DE DATOS Y REGISTRO: Cuando el cliente consulte por una ruta, fecha, cupos o pida asistencia personalizada, pregúntale con amabilidad su Nombre Completo (y correo) para dejarlo registrado formalmente en la cordada y guardar sus datos.
-  - Si el usuario te indica su nombre, salúdalo cordialmente por su nombre y dile que sus datos quedan guardados.`}
+  - TOMA DE DATOS Y REGISTRO: Cuando el cliente consulte por una ruta, fecha, cupos o pida asistencia personalizada, pregúntale con amabilidad su Nombre Completo (y correo) para dejarlo registrado formalmente en la cordada y guardar sus datos.`}
 
 DETECCIÓN AUTOMÁTICA DE IDIOMA Y MULTILINGÜISMO:
-- Detecta automáticamente el idioma del usuario (Español, Inglés, Portugués, Francés, etc.).
-- Si consultan en inglés o portugués, menciona que las salidas cuentan con acompañamiento bilingüe (Español / Inglés).
-- PROHIBICIÓN ESTRICTA: NUNCA menciones "café" ni "guías certificados". Utiliza términos como "liderazgo de cordada", "liderazgo de montaña" y "protocolos de primeros auxilios WFR".
+- Detecta automáticamente el idioma del usuario. Si consultan en inglés o portugués, menciona que las salidas cuentan con acompañamiento bilingüe.
 
 BASE DE DATOS VIGENTE (SISTEMA RAG - FUENTE ÚNICA DE VERDAD):
-A continuación tienes los datos oficiales y actualizados leídos directamente de la base de datos de Santiago Hiking:
 ${catalogContext}
 
-REGLAS ESTRICTAS DE INFORMACIÓN Y PRECIOS (RAG):
-1. NUNCA inventes precios, rutas ni fechas que no estén en la lista oficial de arriba. Tu conocimiento sobre tarifas proviene EXCLUSIVAMENTE de los datos reales de la base de datos entregados en este contexto.
-2. Si el cliente pregunta por el precio de una ruta, entrégale exactamente el valor en CLP (y la referencia en USD si es extranjero) que figura en la base de datos.
-3. Si el cliente pregunta por una ruta o fecha que no está en la lista oficial, dile honestamente que no figura en el calendario activo actual pero que puedes consultarlo con el equipo de guías.
-
-FLUJO DE CIERRE Y RESERVAS DIRECTAS (OPCIÓN A):
-- Cuando el cliente decida tomar una ruta (ej: Cerro Manquehuito, Sunset Trek, WildTrek, etc.) o acepte una fecha sugerida:
-  1. Valida su elección con amabilidad y serenidad de guía.
-  2. Entrégale el ENLACE DIRECTO correspondiente a esa ruta para que no tenga que buscarlo manualmente.
-  3. Explícale brevemente que al abrir el enlace ya tendrá la ruta pre-seleccionada en el formulario para ingresar sus datos y asegurar su cupo de inmediato con Webpay o MercadoPago.
-  Ejemplo:
-  "Excelente decisión. Para asegurar tu cupo en la salida al Manquehuito puedes ingresar directamente aquí: [ENLACE_DIRECTO]. Al completar el formulario te llegará la confirmación con el punto de encuentro exacto 🏔️"
-
-AUTORIZACIÓN ESPECIAL DE CIERRE ASISTIDO Y RECUPERACIÓN DE VENTAS PENDIENTES:
-- Si el cliente viene del seguimiento de una reserva donde el pago quedó pendiente, o si prefiere que lo asistas directamente por WhatsApp sin complicarse con la web:
-  1. Estás 100% AUTORIZADO para pedir los datos del cliente directamente en el chat:
-     • Nombre completo
-     • Correo electrónico (donde se emitirá su confirmación oficial y su Expedition Pass)
-     • Cantidad de participantes (pax)
-  2. Una vez que el cliente te proporcione sus datos (o si ya los tienes en el contexto):
-     • Confirma el valor exacto según la tarifa oficial de la base de datos RAG (ej: $25.000 CLP por persona).
-     • Entrega de inmediato el enlace directo de pago/reserva para esa ruta ([ENLACE_DIRECTO]).
-     • Indícale con amabilidad y serenidad: "Excelente [Nombre], tus datos quedan pre-registrados para [Ruta]. Para cerrar tu reserva y emitir tu confirmación y Expedition Pass a tu correo ([Correo]), solo ingresa a este enlace seguro para completar el pago: [ENLACE]. Quedo atento ante cualquier duda 🏔️"
-
-DERIVACIÓN HUMANA:
-- Si el usuario requiere asistencia personalizada, dudas médicas complejas o desea hablar directamente con Mario Cruz, dile con calma que le avisarás al equipo para que lo contacten a la brevedad.`;
+REGLAS ESTRICTAS DE INFORMACIÓN Y PRECIOS:
+1. NUNCA inventes precios ni rutas que no figuren arriba.
+2. Si el cliente decide tomar una ruta, facilítale el enlace directo de reserva.`;
+            fallbackReply = "¡Hola! En este momento estamos en ruta de montaña 🏔️. Un guía de Santiago Hiking te responderá a la brevedad.";
+        }
 
         const response = await fetch("https://api.deepseek.com/chat/completions", {
             method: "POST",
@@ -240,15 +256,15 @@ DERIVACIÓN HUMANA:
                     { role: "system", content: systemPrompt },
                     ...conversationHistory
                 ],
-                max_tokens: 150,
+                max_tokens: 180,
                 temperature: 0.2
             })
         });
 
         const responseData = await response.json();
-        const aiReply = responseData.choices?.[0]?.message?.content || "¡Hola! En este momento estamos en ruta de montaña 🏔️. Un guía de Santiago Hiking te responderá a la brevedad.";
+        const aiReply = responseData.choices?.[0]?.message?.content || fallbackReply;
 
-        // Guardar respuesta del bot en el CRM (sin bloquear si la tabla aún no se migra)
+        // Guardar respuesta del bot en el CRM de gaz_style
         try {
             await supabase
                 .from('crm_whatsapp_messages')
@@ -260,6 +276,50 @@ DERIVACIÓN HUMANA:
                 }]);
         } catch (crmErr) {
             console.warn('Could not save bot reply to CRM:', crmErr);
+        }
+
+        // Si es WEKE o MERCENARIO, replicar en la base de datos de Mercenario
+        if (isWeke || isMercenario) {
+            try {
+                const mercenarioSupabase = createAdminClient(
+                    'https://mpqfcvtlhsodvoyzemue.supabase.co',
+                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1wcWZjdnRsaHNvZHZveXplbXVlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MjUyNjM5MSwiZXhwIjoyMDk4MTAyMzkxfQ.gpXTfRxf_cpeJaOD6n6e6FRwT9HXa2HsgALMZZsH3sY'
+                );
+
+                let { data: mChat } = await mercenarioSupabase
+                    .from('crm_whatsapp_chats')
+                    .select('id')
+                    .eq('phone_number', phoneNumber)
+                    .maybeSingle();
+
+                if (!mChat) {
+                    const { data: createdChat } = await mercenarioSupabase
+                        .from('crm_whatsapp_chats')
+                        .insert([{
+                            phone_number: phoneNumber,
+                            session_status: 'bot',
+                            vertical: isMercenario ? 'b2b' : 'retail',
+                            last_interaction: new Date().toISOString(),
+                            context: { customer_name: registeredAdventurer?.name || `Cliente ${phoneNumber.slice(-4)}` }
+                        }])
+                        .select()
+                        .single();
+                    mChat = createdChat;
+                }
+
+                if (mChat) {
+                    await mercenarioSupabase.from('crm_whatsapp_messages').insert([
+                        { id: crypto.randomUUID(), chat_id: mChat.id, sender_type: 'customer', message_type: 'text', content: userMessage },
+                        { id: crypto.randomUUID(), chat_id: mChat.id, sender_type: 'bot', message_type: 'text', content: aiReply }
+                    ]);
+                    await mercenarioSupabase.from('crm_whatsapp_chats').update({
+                        last_interaction: new Date().toISOString(),
+                        vertical: isMercenario ? 'b2b' : 'retail'
+                    }).eq('id', mChat.id);
+                }
+            } catch (syncErr) {
+                console.warn('[Sync to Mercenario] Error syncing messages:', syncErr);
+            }
         }
 
         // Enviar a la API de WhatsApp de Meta
