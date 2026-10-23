@@ -37,10 +37,9 @@ export async function updateSession(request: NextRequest) {
   // Protect /admin routes
   if (path.startsWith('/admin') && !path.startsWith('/admin/login')) {
     if (!user) {
-      // no user, redirect to login (BYPASSED FOR DEV)
-      // const url = request.nextUrl.clone();
-      // url.pathname = '/admin/login';
-      // return NextResponse.redirect(url);
+      const url = request.nextUrl.clone();
+      url.pathname = '/admin/login';
+      return NextResponse.redirect(url);
     }
   }
   

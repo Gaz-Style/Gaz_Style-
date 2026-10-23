@@ -31,6 +31,7 @@ export default function ImageRotator({ images, interval = 4000 }: ImageRotatorPr
           src={src}
           alt={`Gallery image ${idx + 1}`}
           fill
+          sizes="100vw"
           className={`absolute inset-0 w-full h-full object-cover object-top transition-opacity duration-[1500ms] ${
             idx === currentIndex ? "opacity-100" : "opacity-0"
           }`}

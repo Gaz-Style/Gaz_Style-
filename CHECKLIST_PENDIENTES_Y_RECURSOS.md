@@ -49,11 +49,21 @@
 ## 🎨 2. Experiencia de Usuario (UI/UX) y Diseño Web
 - [ ] **Revisión de Alineación en Resto de Vistas:**
   - Auditar vistas complementarias (`/rutas/[id]`, `/desafios/[slug]`, `/atlas/[slug]`) asegurando que los contenedores respeten el estándar uniforme establecido (`max-w-4xl` en ficha técnica o columnas consistentes).
-- [ ] **Optimización de Assets & Imágenes:**
-  - Agregar atributo `sizes` a todas las imágenes con propiedad `fill` para eliminar advertencias en consola de Turbopack.
-  - Asegurar compresión `.webp` o `.avif` en fotos de gran formato para carga ultrarrápida.
+- [x] **Optimización de Assets & Imágenes:**
+  - Agregado atributo `sizes` a todas las imágenes con propiedad `fill` (incluyendo `ImageRotator`, `HikeAndFlySection`, `UnifiedExpeditionsTabs`, `AtlasShowcaseSection`, `DesafiosSection` y `GlobalSearchModal`).
+  - Asegurada compresión `.webp` y `.avif` en fotos de gran formato.
+- [x] **Manifest PWA & Marca Unificada:**
+  - Actualizado `src/app/manifest.ts` con el nombre oficial "Santiago Hiking", paleta `stone-950` e icono responsive.
 - [ ] **PWA & Modo Offline:**
   - Mejorar el Service Worker (`public/sw.js`) para permitir caching de tracks GPX y fichas de cerros sin cobertura móvil en la montaña.
+
+---
+
+## 🔒 2.5 Seguridad y Arquitectura
+- [x] **Protección de Consola Administrativa (`/admin`):**
+  - Descomentado el control de acceso en `src/lib/supabase/middleware.ts` exigiendo sesión válida a través de Supabase Auth.
+- [x] **Middleware Oficial de Next.js (`src/middleware.ts`):**
+  - Creado el interceptor oficial para garantizar el enrutamiento internacional (`/en`, `/pt`, `/de`, `/fr`) y refresco de tokens de autenticación.
 
 ---
 

@@ -44,6 +44,13 @@ export default function LiveChatClient({ initialChats }: { initialChats: any[] }
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const autoRevertRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  
+  // Ref para rastrear siempre el chat activo y evitar cierres obsoletos (stale closures) en intervalos
+  const selectedChatRef = useRef<any>(initialChats[0] || null);
+
+  useEffect(() => {
+    selectedChatRef.current = selectedChat;
+  }, [selectedChat]);
 
   const AUTO_REVERT_SECS = 180; // 3 minutos
 
@@ -70,11 +77,22 @@ export default function LiveChatClient({ initialChats }: { initialChats: any[] }
   };
 
   const refreshChats = async () => {
-    const data = await getWhatsAppChatsAction();
-    setChats(data);
-    if (selectedChat) {
-      const match = data.find((c: any) => c.id === selectedChat.id);
-      if (match) setSelectedChat(match);
+    try {
+      const data = await getWhatsAppChatsAction();
+      setChats(data);
+      const current = selectedChatRef.current;
+      if (current?.id) {
+        const match = data.find((c: any) => c.id === current.id);
+        if (match) {
+          setSelectedChat((prev: any) => {
+            // Si el usuario cambió de chat mientras se hacía el fetch, no sobreescribir
+            if (!prev || prev.id !== match.id) return prev;
+            return { ...prev, ...match };
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Error refreshing chats:', err);
     }
   };
 
@@ -85,18 +103,30 @@ export default function LiveChatClient({ initialChats }: { initialChats: any[] }
     return () => clearInterval(interval);
   }, []);
 
-  // Poll messages for selected chat
+  // Poll messages for selected chat (con protección contra condiciones de carrera)
   useEffect(() => {
     if (!selectedChat?.id) return;
     
+    const activeId = selectedChat.id;
+    let isCancelled = false;
+
     const loadMessages = async () => {
-      const msgs = await getWhatsAppMessagesAction(selectedChat.id);
-      setMessages(msgs);
+      try {
+        const msgs = await getWhatsAppMessagesAction(activeId);
+        if (!isCancelled) {
+          setMessages(msgs);
+        }
+      } catch (err) {
+        console.error('Error loading messages:', err);
+      }
     };
 
     loadMessages();
     const interval = setInterval(loadMessages, 5000);
-    return () => clearInterval(interval);
+    return () => {
+      isCancelled = true;
+      clearInterval(interval);
+    };
   }, [selectedChat?.id]);
 
   // Manage auto-revert timer
@@ -123,11 +153,13 @@ export default function LiveChatClient({ initialChats }: { initialChats: any[] }
   }, [messages.length, selectedChat?.id]);
 
   const handleSelectChat = (chat: any) => {
+    selectedChatRef.current = chat;
     setSelectedChat(chat);
     setShowMobileList(false);
   };
 
   const handleBackToList = () => {
+    selectedChatRef.current = null;
     setShowMobileList(true);
     setSelectedChat(null);
   };
