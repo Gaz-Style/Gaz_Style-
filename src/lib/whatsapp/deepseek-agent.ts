@@ -120,64 +120,95 @@ export async function processDirectWhatsAppMessage(
         }
 
         // =========================================================================
-        // MOTOR RAG (Retrieval-Augmented Generation): Solo lectura en tiempo real
-        // Consulta adventures_catalog y agenda_departures para inyectar tarifas y fechas reales
+        // MOTOR RAG MERCENARIO (Base de Conocimiento y Arquitectura de Sistemas)
         // =========================================================================
-        let catalogContext = 'No hay rutas cargadas en este momento.';
-        try {
-            const today = new Date().toISOString().split('T')[0];
-            const [catalogRes, departuresRes] = await Promise.all([
-                supabase
-                    .from('adventures_catalog')
-                    .select('id, title, category, base_price, price_usd, difficulty_level, duration_text, tagline, description')
-                    .eq('is_active', true)
-                    .order('base_price', { ascending: true }),
-                supabase
-                    .from('agenda_departures')
-                    .select('start_date, status, current_pax, adventures_catalog(id, title, max_pax)')
-                    .gte('start_date', today)
-                    .in('status', ['scheduled', 'confirmed'])
-                    .order('start_date', { ascending: true })
-                    .limit(10)
-            ]);
-
-            const activeRoutes = catalogRes.data || [];
-            const upcomingDepartures = departuresRes.data || [];
-
-            if (activeRoutes.length > 0) {
-                catalogContext = activeRoutes.map(route => {
-                    const priceClp = Number(route.base_price).toLocaleString('es-CL');
-                    const priceUsd = route.price_usd ? ` / ${route.price_usd}` : ` / ~$${Math.round(route.base_price / 930)} USD`;
-                    const duration = route.duration_text ? ` | Duración: ${route.duration_text}` : '';
-                    const diff = route.difficulty_level ? ` | Nivel: ${route.difficulty_level}` : '';
-                    const tagline = route.tagline ? ` | Resumen: ${route.tagline}` : '';
-                    
-                    // Buscar próximas fechas programadas para esta ruta
-                    const routeDeps = upcomingDepartures
-                        .filter((d: any) => d.adventures_catalog?.id === route.id || d.adventures_catalog?.title === route.title)
-                        .map((d: any) => {
-                            const spotsLeft = (d.adventures_catalog?.max_pax || 12) - (d.current_pax || 0);
-                            return `${d.start_date} (${spotsLeft > 0 ? spotsLeft + ' cupos' : 'Agotado'})`;
-                        });
-
-                    const nextDates = routeDeps.length > 0 ? ` | Próximas salidas: ${routeDeps.join(', ')}` : '';
-                    const directLink = `https://www.santiagohiking.com/reservar?route=${route.id}`;
-
-                    return `• ${route.title} [${route.category}]: $${priceClp} CLP${priceUsd}${diff}${duration}${tagline}${nextDates} | Enlace directo: ${directLink}`;
-                }).join('\n');
+        const MERCENARIO_KNOWLEDGE = [
+            {
+                id: 'filosofia-operativa',
+                title: 'Arquitectura Mercenario y Filosofía Operativa',
+                keywords: ['mercenario', 'que es', 'quienes somos', 'software', 'sistema', 'automatizacion', 'operacion', 'empresa', 'pyme'],
+                content: `Mercenario (https://mercenario.cl) es una firma de arquitectura de software y automatización comercial para Pymes en Chile. No entregamos páginas web estáticas ni aplicaciones aisladas; conectamos la operación completa en 1 sola plataforma:
+1. Web Next.js ultra rápida con carga inferior a 0.8s en servidores Edge.
+2. Asistente con Inteligencia Artificial en WhatsApp Oficial (Meta Cloud API) conectado a la base de datos en tiempo real 24/7.
+3. Pasarelas de pago chilenas nativas (Webpay Plus Transbank y Mercado Pago).
+4. Punto de Venta (POS) y ERP sincronizado en tiempo real.
+5. CRM comercial que registra cada lead, venta o cita médica sin intervención manual.`
+            },
+            {
+                id: 'clinica-salud-360',
+                title: 'Sistema Clínica & Salud 360 // Clinicafy (Centros Médicos, Estética, Odontología)',
+                keywords: ['clinica', 'clinicafy', 'salud', 'medico', 'estetica', 'dental', 'odontologia', 'agenda', 'horas', 'citas', 'no-show', 'inasistencias', 'recordatorio', 'box', 'pacientes'],
+                content: `Clínica & Salud 360 se materializa en nuestra plataforma Clinicafy (demo en vivo: https://clinicafy-beige.vercel.app/).
+Resuelve el mayor dolor de los centros de salud: la pérdida de ingresos por inasistencias de pacientes (no-shows) y la saturación de las recepciones.
+CÓMO FUNCIONA EL PROCESO PASO A PASO:
+1. Agendamiento Inteligente: El paciente agenda desde la web o directamente conversando por WhatsApp las 24 horas del día.
+2. Gestión de Box y Profesionales: El sistema valida en tiempo real la disponibilidad por médico/terapeuta, especialidad y box físico, evitando sobreagendamientos.
+3. Cobro de Abono o Consulta: Permite exigir un abono previo con Webpay Plus o Mercado Pago para confirmar el box.
+4. Protocolo Activo Anti-Inasistencia: WhatsApp envía recordatorios automáticos 24 horas y 2 horas antes de la cita con botones interactivos de "Confirmar" o "Reagendar". Esto reduce las inasistencias en más del 80%.
+5. Liberación Inmediata de Cupos: Si un paciente avisa que no asistirá, el sistema libera la hora al instante y notifica a la lista de espera, manteniendo la ocupación de la clínica al máximo.`
+            },
+            {
+                id: 'ecommerce-360',
+                title: 'Sistema E-Commerce 360 (Retail, Marcas de Moda y Venta Física/Online)',
+                keywords: ['ecommerce', 'e-commerce', 'tienda', 'tienda online', 'retail', 'moda', 'ropa', 'pos', 'inventario', 'stock', 'mostrador', 'carrito'],
+                content: `El Sistema E-Commerce 360 sincroniza el canal digital con el punto de venta físico:
+CÓMO FUNCIONA EL PROCESO PASO A PASO:
+1. Plataforma de Venta Ultra Rápida: Tienda online desarrollada en Next.js con catálogo dinámico, filtros instantáneos y checkout en 1 solo paso.
+2. Venta Asistida en WhatsApp: El cliente puede consultar por tallas, calce, stock disponible o pedir asesoría directamente en WhatsApp. La IA responde al segundo con fotos del producto y genera un link de pago directo.
+3. Sincronización POS en Tiempo Real: Cuenta con un Punto de Venta (POS) táctil para el mostrador de la tienda física. Cuando se vende un producto en caja física, se descuenta de inmediato del stock web, eliminando errores de inventario.
+4. Recuperación de Carritos: Si un usuario abandona su compra, WhatsApp le envía un mensaje personalizado para resolver dudas y cerrar la venta.
+5. Logística Integrada: Conexión con Shipit (Starken, Chilexpress, Blue Express) y retiro en tienda física configurado.`
+            },
+            {
+                id: 'servicios-b2b-360',
+                title: 'Sistema Servicios & B2B 360 (Consultoría, Ingeniería, Servicios Profesionales)',
+                keywords: ['b2b', 'servicios', 'consultoria', 'ingenieria', 'cotizacion', 'cotizador', 'leads', 'prospectos', 'crm', 'reuniones', 'ventas'],
+                content: `Diseñado para empresas que venden servicios de alto valor o proyectos llave en mano:
+CÓMO FUNCIONA EL PROCESO PASO A PASO:
+1. Calificación de Prospectos en WhatsApp: La IA conversa con el lead, detecta su presupuesto estimado, necesidad técnica y nivel de urgencia.
+2. Filtrado Automático: Evita que el equipo directivo pierda horas con prospectos no calificados; solo agenda reuniones con prospectos viables.
+3. Agendamiento Directo de Reuniones: Sincroniza directamente con la agenda de Google Meet o Microsoft Outlook de los directores comerciales.
+4. Pipeline CRM en Tiempo Real: Tablero visual que rastrea el estado de cada cotización y envía recordatorios de seguimiento comercial.`
+            },
+            {
+                id: 'tiempos-precios-garantia',
+                title: 'Plazos de Implementación, Costos y Garantía Llave en Mano',
+                keywords: ['plazo', 'tiempo', 'dias', 'cuanto tarda', 'cuanto vale', 'precio', 'costo', 'inversion', 'garantia', 'implementacion'],
+                content: `CÓMO TRABAJAMOS Y PLAZOS:
+- Entrega Llave en Mano: Implementamos e instalamos el sistema completo y operativo en 14 a 21 días hábiles.
+- Capacitación Incluida: Capacitamos a tu equipo administrativo, médico o de ventas en el uso del panel.
+- Garantía de Estabilidad: Arquitectura moderna sobre infraestructura cloud con 99.9% de disponibilidad garantizada.
+- Inversión: Setup de instalación inicial llave en mano (desde $1.200.000 CLP según módulos) y membresía operativa mensual desde 2,5 UF que cubre servidores Edge, mantenimiento, API oficial de WhatsApp de Meta y soporte técnico continuo.`
+            },
+            {
+                id: 'diagnostico-gratuito',
+                title: 'Diagnóstico Operativo Gratuito de 30 Minutos (Paso Inicial)',
+                keywords: ['diagnostico', 'reunion', 'agendar', 'como empezar', 'contacto', 'paso inicial'],
+                content: `CÓMO INICIAR:
+Ofrecemos un Diagnóstico Operativo gratuito de 30 minutos vía videollamada con un consultor senior de Mercenario.
+En esa sesión:
+1. Analizamos el flujo actual de tu empresa (dónde se pierden ventas, cómo se gestiona la agenda o el stock).
+2. Te mostramos una demostración en vivo del sistema funcionando en una empresa similar.
+3. Te entregamos una propuesta de arquitectura a medida con el cronograma exacto de 14 días.
+Para coordinarlo, el cliente solo debe indicar su disponibilidad horaria o escribir sus requerimientos por este chat.`
             }
-        } catch (dbErr) {
-            console.error('[RAG Engine] Error al consultar catálogo en base de datos:', dbErr);
-        }
+        ];
 
-        // =========================================================================
-        // CANAL 100% DEDICADO A MERCENARIO (SOFTWARE, CLÍNICAS Y AUTOMATIZACIÓN)
-        // =========================================================================
-        // Sanitizar historial de mensajes previos para eliminar residuos de pruebas anteriores
+        // Normalizar y recuperar fragmentos relevantes mediante RAG
         const currentLower = (userMessage || '').toLowerCase();
+        const scoredKnowledge = MERCENARIO_KNOWLEDGE.map(k => {
+            const matches = k.keywords.filter(kw => currentLower.includes(kw)).length;
+            return { item: k, score: matches };
+        }).sort((a, b) => b.score - a.score);
+
+        const matchedChunks = scoredKnowledge[0].score > 0
+            ? scoredKnowledge.slice(0, 2).map(s => `[${s.item.title}]\n${s.item.content}`).join('\n\n')
+            : MERCENARIO_KNOWLEDGE.slice(0, 3).map(k => `[${k.title}]\n${k.content}`).join('\n\n');
+
+        // Sanitizar historial de mensajes previos para eliminar residuos de pruebas anteriores
         const isGreeting = currentLower === 'hola' || currentLower === 'buenas' || currentLower === 'buenos dias' || currentLower === 'buenas tardes' || currentLower === 'buenas noches' || currentLower === 'hola!' || currentLower.startsWith('hola ');
 
-        // Si es un saludo, no enviar historial antiguo para garantizar que se presente como Mercenario
+        // Si es un saludo, no enviar historial antiguo para garantizar que se presente con la nueva personalidad
         const sanitizedHistory = isGreeting
             ? [{ role: 'user', content: userMessage }]
             : conversationHistory.filter((m: any) => {
@@ -208,33 +239,49 @@ export async function processDirectWhatsAppMessage(
         let fallbackReply = '';
 
         if (isHikingQuery) {
-            systemPrompt = `Eres el Asistente Virtual Oficial de "Mercenario" (https://mercenario.cl).
-El usuario está consultando por turismo, trekking o salidas de montaña de Santiago Hiking.
+            systemPrompt = `Eres un consultor del equipo de "Mercenario" (https://mercenario.cl).
+El usuario está consultando por turismo, trekking o expediciones de Santiago Hiking.
 DIRECTIVA:
-- Aclara de forma muy cortés y concisa que esta línea de WhatsApp oficial está dedicada exclusivamente a "Mercenario" (Sistemas Comerciales, Software y Automatización con IA).
-- Oriéntalo a revisar las expediciones y salidas en la web oficial de Santiago Hiking: https://www.santiagohiking.com o contactar su canal directo de montaña.
-- Mantén la respuesta breve (máximo 2 a 3 oraciones).`;
-            fallbackReply = "Hola. Este canal oficial de WhatsApp está dedicado exclusivamente a Mercenario (software y automatización para empresas). Para expediciones y trekking en la cordillera, puedes visitar https://www.santiagohiking.com o contactar a su equipo directamente.";
+- Aclara con cordialidad que esta línea de WhatsApp está dedicada a las soluciones de software y automatización comercial de Mercenario.
+- Oriéntalo con amabilidad a revisar el calendario y rutas en la web oficial de Santiago Hiking: https://www.santiagohiking.com o contactar su canal directo de montaña.
+- Mantén la respuesta breve y hospitalaria.`;
+            fallbackReply = "Hola, un gusto saludarte. Te comento que este canal de atención está dedicado exclusivamente al área de software y automatización comercial de Mercenario. Para revisar salidas a la montaña, rutas y expediciones de Santiago Hiking, puedes ingresar directamente a https://www.santiagohiking.com o contactar a su equipo de guías. ¡Que tengas un excelente día!";
         } else {
-            systemPrompt = `Eres el Consultor y Asistente Virtual Oficial de "Mercenario" (Sistemas Operativos Comerciales y Automatización para Pymes en Chile - https://mercenario.cl).
-Tu objetivo es asesorar a dueños de negocio, clínicas y directores comerciales con un tono ejecutivo, directo, consultivo y formal B2B.
+            systemPrompt = `Eres un Consultor Senior de Operaciones y Tecnología en "Mercenario" (https://mercenario.cl).
+Tu propósito es asesorar a dueños de negocios, gerentes y directores de centros médicos en Chile con una visión ejecutiva, empática y de alto valor comercial.
 
-DIRECTIVAS OBLIGATORIAS:
-- Este canal oficial de WhatsApp es EXCLUSIVAMENTE de Mercenario.
-- Si el usuario solo saluda ("Hola", "Buenas tardes", etc.), saluda cordialmente presentándote como el Asistente Oficial de Mercenario y pregunta qué desafío u operación busca automatizar en su empresa (ventas, citas médicas, e-commerce o cobranza).
-- Atiendes consultas de desarrollo de software a medida, e-commerce de alta conversión, ERP, CRM, automatización de WhatsApp con IA y pasarelas de pago (Webpay Plus, Mercado Pago).
-- NUNCA menciones WEKE ni Santiago Hiking por defecto. Eres 100% Mercenario.
+DIRECTIVAS CRÍTICAS DE IDENTIDAD Y TONO:
+- NO digas en ningún caso "Soy el asistente virtual", "Soy un bot" ni "Soy el asistente oficial". Hablas en primera persona con la cordialidad y propiedad de un consultor experto del equipo de Mercenario ("¡Hola! Un gusto saludarte. En Mercenario ayudamos a...", "Con gusto te explico cómo estructuramos este proceso...").
+- Personalidad: Cordial, pedagógica, clara, profesional y consultiva. Te gusta explicar a fondo cómo funciona cada engranaje operativo.
 
-SOLUCIONES MERCENARIO:
-1. Propuesta de Valor: Conectamos la operación de tu negocio en 1 sola plataforma: Web Next.js ultra rápida (<0.8s) + WhatsApp IA 24/7 + Webpay Plus / Mercado Pago + POS / ERP sincronizado.
-2. Soluciones Llave en Mano:
-   - Clínica & Salud 360 (Clinicafy): Agenda médica online + Recepcionista IA en WhatsApp con -80% inasistencias y confirmación de horas automática.
-   - E-Commerce 360: Tiendas de alto rendimiento, catálogo inteligente, sincronización de stock y checkout optimizado.
-   - Servicios & B2B 360: Web corporativa, calificador de prospectos IA y pipeline CRM.
-3. Plazos de Implementación: Entrega e instalación operativa completa en 14 a 21 días hábiles con capacitación incluida.
-4. Cierre Comercial: Invita al cliente a agendar un Diagnóstico Operativo gratuito de 30 minutos o escribir sus requerimientos para enviarle una propuesta formal.
-5. Respuestas concisas: 2 a 4 oraciones como máximo.`;
-            fallbackReply = "Hola. En Mercenario conectamos la operación completa de su empresa con software y automatización IA en 14 días. ¿Qué proceso comercial o sistema desea optimizar?";
+REQUISITO OBLIGATORIO DE PROFUNDIDAD Y CONTEXTO (MÍNIMO 15 LÍNEAS):
+Debes guardar al menos 15 líneas de respuesta para contextualizar a fondo el problema y explicar con claridad el proceso operativo antes de cerrar:
+1. Saludo cordial y cercano dando la bienvenida a Mercenario.
+2. Contextualización del dolor operativo que viven las Pymes en Chile (ej: citas médicas perdidas por falta de confirmación, inventarios desfasados entre tienda y web, o ventas que se enfrían por responder tarde en WhatsApp).
+3. Explicación paso a paso de la solución técnica:
+   - Cómo interactúa el cliente (web o WhatsApp 24/7).
+   - Cómo la IA consulta y sincroniza la base de datos en tiempo real.
+   - Cómo se integran los pagos (Webpay Plus / Mercado Pago) y el POS / agenda.
+4. Impacto medible concreto: Menciona resultados reales (ej: reducción superior al 80% en inasistencias en clínicas con Clinicafy, o inventario sincronizado al segundo sin sobreventas en e-commerce).
+5. Plazo de instalación: Destaca que entregamos el sistema 100% operativo llave en mano en 14 a 21 días hábiles con capacitación presencial/virtual incluida.
+6. Cierre comercial consultivo: Invita amablemente a coordinar un Diagnóstico Operativo gratuito de 30 minutos (vía videollamada) para analizar su operación y entregarle una propuesta formal.
+
+BASE DE CONOCIMIENTO (RAG EN TIEMPO REAL):
+${matchedChunks}`;
+
+            fallbackReply = `¡Hola! Un gusto saludarte. Te escribe el equipo de consultoría de Mercenario (https://mercenario.cl).
+
+En Mercenario ayudamos a pequeñas y medianas empresas en Chile a modernizar y conectar toda su operación comercial, integrando software a medida con Inteligencia Artificial.
+
+A diferencia del desarrollo tradicional que entrega plataformas aisladas, nosotros implementamos Sistemas Operativos Completos que resuelven los cuellos de botella reales de tu negocio:
+
+• Clínica & Salud 360 (Clinicafy): Agenda médica online con recepcionista IA en WhatsApp 24/7 y protocolo de confirmación interactiva que reduce el 80% de las inasistencias (no-shows) de pacientes.
+• E-Commerce 360: Tiendas web de alta velocidad (<0.8s en Next.js) con vendedor IA en WhatsApp, Webpay Plus y Punto de Venta (POS) sincronizado con el inventario físico en tiempo real.
+• Servicios & B2B 360: Web de alta conversión con cotizador dinámico, calificación automática de prospectos por WhatsApp y sincronización con calendarios directivos.
+
+Nuestros sistemas se entregan 100% operativos llave en mano en un plazo de 14 a 21 días hábiles, incluyendo capacitación completa para tu equipo y soporte continuo.
+
+Cuéntame: ¿qué proceso comercial o desafío operativo te gustaría automatizar en tu empresa hoy? Si gustas, podemos coordinar un Diagnóstico Operativo gratuito de 30 minutos para evaluar tu caso en detalle.`;
         }
 
         const response = await fetch("https://api.deepseek.com/chat/completions", {
@@ -249,8 +296,8 @@ SOLUCIONES MERCENARIO:
                     { role: "system", content: systemPrompt },
                     ...sanitizedHistory
                 ],
-                max_tokens: 220,
-                temperature: 0.2
+                max_tokens: 750,
+                temperature: 0.25
             })
         });
 
