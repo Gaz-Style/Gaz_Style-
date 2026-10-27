@@ -48,7 +48,7 @@ export default function QualificationModal({ isOpen, onClose }: QualificationMod
     }
 
     const text = `Hola Gaz, me interesa cotizar una expedición de *${service}*. Soy de *${commune}*.`;
-    const url = `https://wa.me/56957958467?text=${encodeURIComponent(text)}`;
+    const url = `https://wa.me/56984021940?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
     onClose();
     // Reset state after closing

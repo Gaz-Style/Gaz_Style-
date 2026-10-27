@@ -423,7 +423,7 @@ export default function AtlasClientView({
                           RESERVAR CUPO →
                         </Link>
                         <a 
-                          href={`https://wa.me/56957958467?text=${waMessage}`} 
+                          href={`https://wa.me/56984021940?text=${waMessage}`} 
                           target="_blank" 
                           rel="noopener noreferrer" 
                           className="w-full block text-center py-1.5 text-[11px] font-mono text-white/40 hover:text-white transition-colors"
@@ -456,7 +456,7 @@ export default function AtlasClientView({
                   </p>
                 </div>
                 <a
-                  href={`https://wa.me/56957958467?text=${encodeURIComponent(`Hola Gaz, me interesa cotizar una salida privada para ${entity.name} (${currentVariant.name}).`)}`}
+                  href={`https://wa.me/56984021940?text=${encodeURIComponent(`Hola Gaz, me interesa cotizar una salida privada para ${entity.name} (${currentVariant.name}).`)}`}
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="btn-arcteryx whitespace-nowrap text-xs !py-3.5 !px-8 shrink-0"

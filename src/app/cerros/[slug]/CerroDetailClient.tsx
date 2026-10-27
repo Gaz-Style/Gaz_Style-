@@ -361,7 +361,7 @@ export default function CerroDetailClient({ peak, weather, currentLang }: Props)
                         </span>
                       </div>
                       <a
-                        href={`https://wa.me/56994157813?text=${encodeURIComponent(`¡Hola! Quiero reservar mi cupo para la salida al ${peak.name} el ${ed.departure_date} (${ed.title_theme}).`)}`}
+                        href={`https://wa.me/56984021940?text=${encodeURIComponent(`¡Hola! Quiero reservar mi cupo para la salida al ${peak.name} el ${ed.departure_date} (${ed.title_theme}).`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-mono font-bold text-xs uppercase tracking-wider transition-all shadow-md hover:scale-105"

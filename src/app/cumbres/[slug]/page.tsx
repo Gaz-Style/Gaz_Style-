@@ -194,7 +194,7 @@ export default async function PeakDetailPage({ params }: Props) {
                   Ver Próximas Salidas al {peak.name}
                 </Link>
                 <a
-                  href={`https://wa.me/56957958467?text=${encodeURIComponent(`Hola Santiago Hiking! Quisiera consultar por salidas guiadas privadas o grupales al ${peak.name}.`)}`}
+                  href={`https://wa.me/56984021940?text=${encodeURIComponent(`Hola Santiago Hiking! Quisiera consultar por salidas guiadas privadas o grupales al ${peak.name}.`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-6 py-3.5 rounded-full bg-stone-900/90 hover:bg-stone-800 text-white font-mono text-xs font-semibold uppercase tracking-wider border border-white/15 transition-all"

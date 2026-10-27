@@ -468,7 +468,7 @@ export default function HeroActionButtons({ lang = 'es', allRoutes = [] }: Props
 
                   {/* Acciones Rápidas: WhatsApp Píldora Glassmorphism */}
                   <a
-                    href={`https://wa.me/56957958467?text=${whatsappMessage}`}
+                    href={`https://wa.me/56984021940?text=${whatsappMessage}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full inline-flex items-center justify-center gap-2 py-3 px-6 rounded-full text-xs font-mono font-bold uppercase tracking-wider text-emerald-300 hover:text-white transition-all cursor-pointer"

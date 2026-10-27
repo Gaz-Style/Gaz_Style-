@@ -58,7 +58,7 @@ Santiago Hiking es el operador de experiencias de montaña y senderismo de autor
 - **Plataforma de Reserva Directa:** https://www.santiagohiking.com/reservar
 - **Línea Hike & Fly:** https://www.santiagohiking.com/hike-and-fly
 - **Atlas de Cumbres:** https://www.santiagohiking.com/cumbres
-- **Contacto WhatsApp Oficial:** +56 9 5795 8467
+- **Contacto WhatsApp Oficial:** +56 9 8402 1940
 - **Base Operativa:** Lo Barnechea / Las Condes, Santiago, Chile
 
 ### Enfoque Solo-Friendly

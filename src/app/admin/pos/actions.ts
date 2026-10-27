@@ -396,7 +396,7 @@ export async function createPOSSale(payload: POSSalePayload): Promise<{
         meetingTime: payload.meeting_time,
         totalPaid: `$${payload.paid_amount.toLocaleString('es-CL')} CLP`,
         ticketId: internalId,
-        whatsappLink: `https://wa.me/56957958467?text=${encodeURIComponent(whatsappMessage)}`
+        whatsappLink: `https://wa.me/56984021940?text=${encodeURIComponent(whatsappMessage)}`
       });
       emailSent = emailRes.success;
     } catch (e) {
@@ -445,6 +445,6 @@ export async function resendTicketEmailAction(payload: {
     meetingTime: payload.meetingTime || '08:00 hrs',
     totalPaid: payload.totalPaid,
     ticketId: payload.ticketId,
-    whatsappLink: 'https://wa.me/56957958467'
+    whatsappLink: 'https://wa.me/56984021940'
   });
 }

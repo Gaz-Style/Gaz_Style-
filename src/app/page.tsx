@@ -302,7 +302,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
               </p>
             </div>
             <a
-              href={`https://wa.me/56957958467?text=${encodeURIComponent('Hola Gaz! Me gustaría cotizar un plan privado o paquete a medida con Santiago Hiking.')}`}
+              href={`https://wa.me/56984021940?text=${encodeURIComponent('Hola Gaz! Me gustaría cotizar un plan privado o paquete a medida con Santiago Hiking.')}`}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-arcteryx-primary whitespace-nowrap shadow-sm text-xs font-mono font-bold tracking-wider !py-3.5 !px-7 shrink-0"
@@ -329,7 +329,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Promis
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <a
-                href={`https://wa.me/56957958467?text=${encodeURIComponent('Hola Gaz! Quiero unirme a la comunidad y salidas grupales de Santiago Hiking.')}`}
+                href={`https://wa.me/56984021940?text=${encodeURIComponent('Hola Gaz! Quiero unirme a la comunidad y salidas grupales de Santiago Hiking.')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-arcteryx-primary shadow-sm !py-3 !px-6 text-xs font-mono font-bold"

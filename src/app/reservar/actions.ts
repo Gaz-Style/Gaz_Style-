@@ -160,7 +160,7 @@ export async function createBookingWithMercadoPago(formData: {
                 meetingTime: '08:00 hrs',
                 totalPaid: '$0 CLP (Ganador Sorteo / Premio)',
                 ticketId: bookingId,
-                whatsappLink: 'https://wa.me/56957958467'
+                whatsappLink: 'https://wa.me/56984021940'
             });
 
             revalidatePath('/admin/calendario');

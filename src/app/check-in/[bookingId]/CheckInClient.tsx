@@ -112,7 +112,7 @@ export default function CheckInClient({ booking }: { booking: any }) {
 
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <a
-                        href={`https://wa.me/56957958467?text=${encodeURIComponent(`¡Hola Gaz! Acabo de completar mi Ficha Médica y Check-in para ${title}. Quedo atento a las instrucciones.`)}`}
+                        href={`https://wa.me/56984021940?text=${encodeURIComponent(`¡Hola Gaz! Acabo de completar mi Ficha Médica y Check-in para ${title}. Quedo atento a las instrucciones.`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn-arcteryx-primary inline-flex items-center justify-center gap-2 !py-3.5 !px-6 text-xs font-mono font-bold tracking-widest"

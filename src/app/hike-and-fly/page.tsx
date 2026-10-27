@@ -111,7 +111,7 @@ export default async function HikeAndFlyHubPage() {
               <ArrowRight className="w-4 h-4" />
             </a>
             <a
-              href="https://wa.me/56957958467?text=Hola%20Santiago%20Hiking%2C%20quisiera%20consultar%20por%20las%20salidas%20de%20Hike%20%26%20Fly%20(Trekking%20%2B%20Parapente%20Biplaza)."
+              href="https://wa.me/56984021940?text=Hola%20Santiago%20Hiking%2C%20quisiera%20consultar%20por%20las%20salidas%20de%20Hike%20%26%20Fly%20(Trekking%20%2B%20Parapente%20Biplaza)."
               target="_blank"
               rel="noopener noreferrer"
               className="px-6 py-3.5 rounded-full bg-stone-900/90 hover:bg-stone-800 text-white border border-white/20 font-mono text-xs uppercase tracking-wider font-semibold transition-all flex items-center gap-2"

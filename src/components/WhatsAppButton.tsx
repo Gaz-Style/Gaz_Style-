@@ -9,7 +9,7 @@ import { trackGAEvent } from '@/components/GoogleAnalytics';
 
 export default function WhatsAppButton() {
     const pathname = usePathname();
-    const phoneNumber = '56957958467';
+    const phoneNumber = '56984021940';
     const message = 'Hola Gaz! Me gustaría consultar por las próximas salidas o rutas de Santiago Hiking.';
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     

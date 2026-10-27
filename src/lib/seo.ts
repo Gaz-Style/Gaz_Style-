@@ -8,7 +8,7 @@ export const SantiagoHikingSchema = {
       'url': 'https://www.santiagohiking.com',
       'logo': 'https://www.santiagohiking.com/logotipo%20blanco.png',
       'image': 'https://www.santiagohiking.com/images/andes_cordillera_hero.jpg',
-      'telephone': '+56957958467',
+      'telephone': '+56984021940',
       'priceRange': '$$',
       'description': 'Operador outdoor y de expediciones de montaña líder en Santiago de Chile. Especialistas en senderismo técnico, expediciones Hike & Fly en parapente biplaza, ascensos formativos y comunidad solo-friendly en la Cordillera de los Andes.',
       'address': {

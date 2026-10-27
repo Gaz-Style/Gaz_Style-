@@ -67,7 +67,7 @@ export default function FAQPage() {
     name: 'Santiago Hiking by Gaz',
     description: 'Expediciones de montaña, senderismo técnico y trekking guiado en la Cordillera de los Andes de Santiago de Chile.',
     url: 'https://www.santiagohiking.com',
-    telephone: '+56957958467',
+    telephone: '+56984021940',
     address: {
       '@type': 'PostalAddress',
       addressLocality: 'Lo Barnechea',
@@ -186,7 +186,7 @@ export default function FAQPage() {
                 Ver Rutas Disponibles
               </Link>
               <a
-                href={`https://wa.me/56957958467?text=${encodeURIComponent('Hola Gaz! Tengo una consulta sobre las rutas y expediciones de Santiago Hiking.')}`}
+                href={`https://wa.me/56984021940?text=${encodeURIComponent('Hola Gaz! Tengo una consulta sobre las rutas y expediciones de Santiago Hiking.')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto bg-[#25D366] hover:bg-[#1ebd5a] text-white px-8 py-4 text-xs font-bold uppercase tracking-widest rounded-full transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#25D366]/20"

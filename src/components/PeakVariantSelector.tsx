@@ -334,7 +334,7 @@ export default function PeakVariantSelector({ peak }: PeakVariantSelectorProps) 
               </Link>
 
               <a
-                href={`https://wa.me/56957958467?text=${waMessage}`}
+                href={`https://wa.me/56984021940?text=${waMessage}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="py-3 px-4 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold border border-emerald-500/30 transition-all flex items-center justify-center gap-2"

@@ -403,7 +403,7 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                 </Link>
 
                                 <a
-                                    href={`https://wa.me/56957958467?text=${whatsappMessage}`}
+                                    href={`https://wa.me/56984021940?text=${whatsappMessage}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="btn-arcteryx flex items-center justify-center !py-3.5 !px-8 text-xs font-mono font-bold tracking-widest"
@@ -621,7 +621,7 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
 
                                         <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 w-full md:w-auto shrink-0">
                                             <a
-                                                href={`https://wa.me/56957958467?text=${encodeURIComponent(`¡Hola! Me gustaría cotizar la ruta "${route.title}" en formato privado Expedition Boutique (con pick-up en Santiago y Reel 4K). ¿Qué disponibilidad tienen?`)}`}
+                                                href={`https://wa.me/56984021940?text=${encodeURIComponent(`¡Hola! Me gustaría cotizar la ruta "${route.title}" en formato privado Expedition Boutique (con pick-up en Santiago y Reel 4K). ¿Qué disponibilidad tienen?`)}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="btn-arcteryx-primary !py-3.5 !px-6 text-xs font-mono font-bold tracking-wider text-center flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(245,158,11,0.25)]"
@@ -832,7 +832,7 @@ export default async function RouteDetailPage({ params }: { params: Promise<{ id
                                     </Link>
 
                                     <a
-                                        href={`https://wa.me/56957958467?text=${whatsappMessage}`}
+                                        href={`https://wa.me/56984021940?text=${whatsappMessage}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="btn-arcteryx w-full flex items-center justify-center !py-3.5 text-xs font-mono font-bold tracking-widest"

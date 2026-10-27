@@ -717,7 +717,7 @@ export default function MasterUnifiedSandboxPage() {
 
                     <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 w-full md:w-auto shrink-0">
                       <a
-                        href={`https://wa.me/56957958467?text=${encodeURIComponent('¡Hola! Me gustaría cotizar la cumbre al Cerro Carbón en formato privado Expedition Boutique (con pick-up en Santiago y Reel 4K). ¿Qué disponibilidad tienen?')}`}
+                        href={`https://wa.me/56984021940?text=${encodeURIComponent('¡Hola! Me gustaría cotizar la cumbre al Cerro Carbón en formato privado Expedition Boutique (con pick-up en Santiago y Reel 4K). ¿Qué disponibilidad tienen?')}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn-arcteryx-primary !py-3.5 !px-6 text-xs font-mono font-bold tracking-wider text-center flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(245,158,11,0.25)]"

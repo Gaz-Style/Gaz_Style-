@@ -140,7 +140,7 @@ export default async function HikeAndFlyDetailPage({ params }: Props) {
           '@type': 'TouristInformationCenter',
           name: 'Santiago Hiking (Gaz_Style Expeditions)',
           url: 'https://santiagohiking.com',
-          telephone: '+56957958467',
+          telephone: '+56984021940',
           address: {
             '@type': 'PostalAddress',
             addressLocality: 'Santiago',
@@ -531,7 +531,7 @@ export default async function HikeAndFlyDetailPage({ params }: Props) {
 
             {/* CTA WhatsApp directo con mensaje contextualizado */}
             <a
-              href={`https://wa.me/56957958467?text=${encodeURIComponent(`Hola Santiago Hiking, quisiera coordinar cupo para la expedición Hike & Fly: "${exp.title}". ¿Cuáles son las próximas fechas con ventana de viento favorable?`)}`}
+              href={`https://wa.me/56984021940?text=${encodeURIComponent(`Hola Santiago Hiking, quisiera coordinar cupo para la expedición Hike & Fly: "${exp.title}". ¿Cuáles son las próximas fechas con ventana de viento favorable?`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full py-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-mono text-xs uppercase tracking-wider font-bold transition-all shadow-xl shadow-amber-500/20 active:scale-95 flex items-center justify-center gap-2.5 text-center"

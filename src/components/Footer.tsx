@@ -103,7 +103,7 @@ export default function Footer() {
           <div>
             <p className="text-white text-xs font-bold uppercase tracking-widest mb-4">Contacto Directo</p>
             <ul className="space-y-2 text-xs text-white/70">
-              <li>WhatsApp Oficial: <a href="https://wa.me/56957958467" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:underline font-semibold">+56 9 5795 8467</a></li>
+              <li>WhatsApp Oficial: <a href="https://wa.me/56984021940" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:underline font-semibold">+56 9 8402 1940</a></li>
               <li>Instagram: <a href="https://instagram.com/santiagohiking" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:underline font-semibold">@santiagohiking</a></li>
               <li>Email: <a href="mailto:gazstylechile@gmail.com" className="text-amber-400 hover:underline font-semibold">gazstylechile@gmail.com</a></li>
               <li>Asistente IA: Activo 24/7 en WhatsApp</li>

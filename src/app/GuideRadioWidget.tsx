@@ -73,7 +73,7 @@ export default function GuideRadioWidget() {
     return null;
   }
 
-  const whatsappUrl = `https://wa.me/56957958467?text=${encodeURIComponent(customMessage)}`;
+  const whatsappUrl = `https://wa.me/56984021940?text=${encodeURIComponent(customMessage)}`;
 
   return (
     <>

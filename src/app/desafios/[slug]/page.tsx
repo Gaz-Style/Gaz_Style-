@@ -219,7 +219,7 @@ export default async function ChallengeDetailPage({ params }: PageProps) {
               <Calendar className="w-4 h-4 mr-2" /> REVISAR FECHAS Y RESERVAR
             </a>
             <a
-              href={`https://wa.me/56957958467?text=${encodeURIComponent(challenge.whatsappMessage)}`}
+              href={`https://wa.me/56984021940?text=${encodeURIComponent(challenge.whatsappMessage)}`}
               target="_blank" rel="noopener noreferrer"
               className="btn-arcteryx text-center justify-center !py-3.5 !px-6 text-xs font-mono font-bold tracking-wider"
             >
@@ -313,7 +313,7 @@ export default async function ChallengeDetailPage({ params }: PageProps) {
                 ))}
               </div>
               <a
-                href={`https://wa.me/56957958467?text=${encodeURIComponent(`Hola Gaz! Consulto sobre cómo llegar al ${challenge.title}.`)}`}
+                href={`https://wa.me/56984021940?text=${encodeURIComponent(`Hola Gaz! Consulto sobre cómo llegar al ${challenge.title}.`)}`}
                 target="_blank" rel="noopener noreferrer"
                 className="btn-arcteryx w-full text-center block text-xs !py-2.5"
               >
@@ -496,7 +496,7 @@ export default async function ChallengeDetailPage({ params }: PageProps) {
             {finalFechas.map((salida: any) => {
               const esUltimos = salida.cuposDisponibles <= 2;
               const bookingUrl = `/reservar?route=${challenge.slug}&fecha=${salida.id}`;
-              const waUrl = `https://wa.me/56957958467?text=${encodeURIComponent(`Hola Gaz, quiero el ${challenge.title} — ${salida.fecha} (${salida.hora}). ¿Disponibilidad?`)}`;
+              const waUrl = `https://wa.me/56984021940?text=${encodeURIComponent(`Hola Gaz, quiero el ${challenge.title} — ${salida.fecha} (${salida.hora}). ¿Disponibilidad?`)}`;
               return (
                 <div key={salida.id} className="rounded-2xl p-6 flex flex-col justify-between" style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: `1px solid ${esUltimos ? 'rgba(245,158,11,0.4)' : 'rgba(255,255,255,0.09)'}` }}>
                   <div>
@@ -537,7 +537,7 @@ export default async function ChallengeDetailPage({ params }: PageProps) {
               <p className="text-white/45 text-sm max-w-xl font-light leading-relaxed mt-1">Lunes a Domingo. Grupos, parejas, empresas. Horarios a tu conveniencia.</p>
             </div>
             <a
-              href={`https://wa.me/56957958467?text=${encodeURIComponent(`Hola Gaz, me interesa una salida privada para ${challenge.title}.`)}`}
+              href={`https://wa.me/56984021940?text=${encodeURIComponent(`Hola Gaz, me interesa una salida privada para ${challenge.title}.`)}`}
               target="_blank" rel="noopener noreferrer"
               className="btn-arcteryx whitespace-nowrap text-xs !py-3.5 !px-6 shrink-0"
             >

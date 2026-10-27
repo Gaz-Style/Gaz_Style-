@@ -322,7 +322,7 @@ export const sendLeadGuideEmail = async (payload: {
               </a>
             </div>
             <p style="font-size: 12px; color: #78716c; text-align: center; margin-top: 28px; line-height: 1.5;">
-              ¿Dudas con tu equipo o el nivel físico? Escríbenos directamente a WhatsApp: <a href="https://wa.me/56957958467" style="color: #fbbf24; text-decoration: none;">+56 9 5795 8467</a>.
+              ¿Dudas con tu equipo o el nivel físico? Escríbenos directamente a WhatsApp: <a href="https://wa.me/56984021940" style="color: #fbbf24; text-decoration: none;">+56 9 8402 1940</a>.
             </p>
           </div>
           <div style="background-color: #141210; padding: 18px 30px; text-align: center; border-top: 1px solid #292524; font-size: 11px; color: #57534e;">
@@ -516,7 +516,7 @@ export const sendExpeditionTicketEmail = async (payload: {
     TOTAL_PAID: payload.totalPaid || '$0 CLP',
     TICKET_ID: payload.ticketId || `SH-${Date.now()}`,
     TICKET_SHORT_ID: shortTicketId,
-    WHATSAPP_LINK: payload.whatsappLink || 'https://wa.me/56957958467'
+    WHATSAPP_LINK: payload.whatsappLink || 'https://wa.me/56984021940'
   });
 
   if (!html) throw new Error('Plantilla expedition_ticket.html no encontrada');

@@ -365,7 +365,7 @@ export default function POSClient() {
                     type="text"
                     value={searchQuery}
                     onChange={e => handleSearch(e.target.value)}
-                    placeholder="Escribe celular (ej: 957958467), RUT o nombre..."
+                    placeholder="Escribe celular (ej: 984021940), RUT o nombre..."
                     className="w-full pl-10 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
                     autoFocus
                   />
