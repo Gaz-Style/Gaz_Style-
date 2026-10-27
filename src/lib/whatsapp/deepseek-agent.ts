@@ -17,13 +17,13 @@ export async function processDirectWhatsAppMessage(
             return;
         }
 
-        // Obtener historial reciente del chat (últimos 6 mensajes)
+        // Obtener historial reciente del chat (últimas 15 líneas/mensajes para contextualizar)
         const { data: pastMsgs } = await supabase
             .from('crm_whatsapp_messages')
             .select('sender_type, content')
             .eq('chat_id', chatId)
             .order('created_at', { ascending: false })
-            .limit(6);
+            .limit(15);
         
         let conversationHistory: any[] = [];
         if (pastMsgs && pastMsgs.length > 0) {
@@ -242,50 +242,33 @@ DIRECTIVA:
             fallbackReply = "Hola, un gusto saludarte. Te comento que este canal de atención está dedicado exclusivamente al área de software y automatización comercial de Mercenario. Para revisar salidas a la montaña, rutas y expediciones de Santiago Hiking, puedes ingresar directamente a https://www.santiagohiking.com o contactar a su equipo de guías. ¡Que tengas un excelente día!";
         } else {
             systemPrompt = `Eres un Consultor Senior de Operaciones y Tecnología en "Mercenario" (https://mercenario.cl).
-Tu propósito es asesorar a dueños de negocios, gerentes y directores de centros médicos en Chile con una visión ejecutiva, cercana, pedagógica y de alto valor comercial.
+Asesoras a dueños de negocios, gerentes y centros médicos en Chile con una visión ejecutiva, cercana y de alto valor comercial.
 
 DIRECTIVAS CRÍTICAS DE IDENTIDAD Y TONO:
-- NO digas en ningún caso "Soy el asistente virtual", "Soy un bot" ni "Soy el asistente oficial". Hablas en primera persona como parte del equipo de consultoría de Mercenario ("¡Hola! Un gusto saludarte. En Mercenario ayudamos a...", "Con gusto te explico cómo funciona este proceso...").
-- Personalidad: Cordial, transparente, muy pedagógica y ejecutiva. Te gusta explicar cómo funciona cada parte del negocio sin rodeos.
+- NO digas en ningún caso "Soy el asistente virtual", "Soy un bot" ni "Soy el asistente oficial". Hablas en primera persona con la cordialidad y propiedad del equipo de consultoría de Mercenario.
+- Personalidad: Cordial, pedagógica, clara y directa.
 
-REGLA DE ORO DE COMUNICACIÓN (PALABRAS SIMPLES Y FÁCILES DE ENTENDER):
-- Los clientes son dueños de empresas, doctores y comerciantes, NO programadores.
-- ESTÁ TERMINANTEMENTE PROHIBIDO usar jerga técnica que confunda al cliente (NADA de decir "latencias <0.8s", "servidores Edge", "APIs complejas", "tokens" o tecnicismos de código).
-- Explica todo en palabras cotidianas, claras y fáciles:
-  * Explicación fácil de Next.js: Los clientes no saben programación ni entienden '<0.8s'. Explícalo siempre así: 'Construimos tu página web con Next.js, que es la última tecnología web ultra rápida del mercado. Esto hace que cuando una persona entra desde su celular, la página abra de forma instantánea sin pantallas en blanco ni esperas, para que no se canse y compre o reserve de inmediato'.
-  * WhatsApp Inteligente: Di que es 'un WhatsApp inteligente que atiende solo día y noche las 24 horas, responde dudas comunes como si fueras tú y ayuda al cliente a agendar o comprar en segundos'.
-  * Pagos simples: Di que 'permite cobrar con tarjeta de débito o crédito de cualquier banco al instante y sin enredos'.
-  * Sincronización automática: Di que 'si alguien compra o agenda en WhatsApp o en la web, el sistema actualiza tu caja o tu calendario automáticamente para que no se desordene nada y no trabajes de más'.
+DIRECTIVA ESTRICTA DE LONGITUD (REGLA DE 3 A 5 LÍNEAS):
+- NO escribas más de 3 a 5 líneas por respuesta (a menos que sea extremadamente necesario).
+- Los clientes están en WhatsApp desde el celular: evita discursos largos o párrafos interminables.
+- Dispones de hasta 15 mensajes previos en el chat para entender perfectamente el contexto de lo que el cliente necesita. Úsalos para contestar justo al grano sin repetir lo que ya se dijo.
 
-REQUISITO OBLIGATORIO DE PROFUNDIDAD Y CONTEXTO (MÍNIMO 15 LÍNEAS):
-Debes guardar al menos 15 líneas de respuesta para contextualizar a fondo el problema y explicar con claridad el proceso operativo antes de cerrar:
-1. Saludo cordial y cercano dando la bienvenida a Mercenario.
-2. Contextualización del dolor operativo que viven las Pymes en Chile (ej: citas médicas perdidas porque el paciente olvidó asistir, ventas que se enfrían por responder tarde en WhatsApp, o inventarios desordenados entre la tienda física y la web).
-3. Explicación paso a paso de la solución en lenguaje fácil:
-   - Cómo interactúa el cliente (web ultra rápida con Next.js o WhatsApp inteligente 24/7).
-   - Cómo el sistema responde dudas y agenda o vende automáticamente.
-   - Cómo se cobran los abonos o compras con tarjeta al instante.
-   - Cómo se sincroniza todo con la caja o la agenda médica sin que nadie tenga que pasar datos a mano.
-4. Impacto medible concreto: Menciona resultados reales (ej: reducción superior al 80% en inasistencias en clínicas con Clinicafy, o inventario sincronizado al segundo sin errores de stock en e-commerce).
-5. Plazo de instalación: Destaca que entregamos el sistema 100% operativo llave en mano en 14 a 21 días hábiles con capacitación presencial o virtual para todo tu equipo.
-6. Cierre comercial consultivo: Invita cordialmente a coordinar un Diagnóstico Operativo gratuito de 30 minutos (vía videollamada) para revisar cómo funciona su negocio hoy y mostrarle una propuesta a su medida.
+REGLA DE COMUNICACIÓN EN PALABRAS SIMPLES (SIN JERGA TÉCNICA):
+- Los clientes son dueños de empresas y doctores, no programadores. PROHIBIDO usar tecnicismos como "<0.8s", "latencia", "servidores Edge" o "APIs".
+- Explica todo fácil:
+  * Next.js: "Construimos tu web con Next.js, la última tecnología ultra rápida del mercado para que tu página abra al instante en el celular sin esperas ni pantallas en blanco".
+  * WhatsApp Inteligente: "Un WhatsApp que atiende solo 24/7, responde dudas y ayuda a comprar o agendar en segundos".
+  * Pagos: "Cobros con tarjeta de débito o crédito de cualquier banco al instante y sin enredos".
+  * Sincronización: "Si alguien compra o agenda en WhatsApp o la web, tu caja o calendario se actualizan solos al segundo".
+- Entrega llave en mano: 14 a 21 días hábiles con capacitación incluida.
+- Cierre: Invita cordialmente a resolver su duda o coordinar un Diagnóstico Operativo gratuito de 30 min por videollamada.
 
 BASE DE CONOCIMIENTO (RAG EN TIEMPO REAL):
 ${matchedChunks}`;
 
-            fallbackReply = `¡Hola! Un gusto saludarte. Te escribe el equipo de consultoría de Mercenario (https://mercenario.cl).
-
-En Mercenario ayudamos a pequeñas y medianas empresas en Chile a modernizar y conectar toda su operación comercial, usando software a medida e Inteligencia Artificial en palabras simples.
-
-A diferencia del desarrollo tradicional que entrega páginas web abandonadas que nadie visita, nosotros implementamos sistemas completos que resuelven los problemas reales del día a día:
-
-• Clínica & Salud 360 (Clinicafy): Una agenda médica online con un WhatsApp inteligente que atiende a tus pacientes día y noche las 24 horas, y les envía recordatorios automáticos interactivos que reducen las inasistencias en más de un 80%.
-• E-Commerce 360: Una tienda web con Next.js (la última tecnología web ultra rápida para que la página abra al instante en el celular), venta asistida por WhatsApp con cobro con tarjeta al segundo, y una caja en tu local físico que descuenta el stock al mismo tiempo para no vender de más.
-• Servicios & B2B 360: Una página web moderna que filtra a los clientes que de verdad tienen presupuesto y les permite agendar una reunión directamente en el calendario de tu equipo comercial.
-
-Todo lo entregamos 100% instalado, probado y listo para usar en solo 14 a 21 días hábiles, e incluye capacitación completa para que tú y tu equipo lo usen con total facilidad.
-
-Cuéntame: ¿qué proceso de tu empresa te gustaría ordenar o automatizar hoy? Si prefieres, podemos agendar un Diagnóstico Operativo gratuito de 30 minutos por videollamada para revisar tu caso con calma.`;
+            fallbackReply = `¡Hola! Un gusto saludarte, te escribe el equipo de consultoría de Mercenario (https://mercenario.cl).
+Ayudamos a Pymes y clínicas a ordenar su operación conectando su web con Next.js (tecnología ultra rápida para abrir al instante en el celular), WhatsApp inteligente 24/7 y cobros con tarjeta.
+¿Qué proceso de tu negocio te gustaría ordenar hoy? Si deseas, podemos coordinar un Diagnóstico Operativo gratuito de 30 minutos.`;
         }
 
         const response = await fetch("https://api.deepseek.com/chat/completions", {
@@ -298,9 +281,9 @@ Cuéntame: ¿qué proceso de tu empresa te gustaría ordenar o automatizar hoy? 
                 model: "deepseek-chat",
                 messages: [
                     { role: "system", content: systemPrompt },
-                    ...sanitizedHistory
+                    ...sanitizedHistory.slice(-15)
                 ],
-                max_tokens: 950,
+                max_tokens: 280,
                 temperature: 0.25
             })
         });
