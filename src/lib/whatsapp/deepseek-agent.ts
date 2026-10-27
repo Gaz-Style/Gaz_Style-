@@ -174,18 +174,26 @@ export async function processDirectWhatsAppMessage(
         // CANAL 100% DEDICADO A MERCENARIO (SOFTWARE, CLÍNICAS Y AUTOMATIZACIÓN)
         // =========================================================================
         // Sanitizar historial de mensajes previos para eliminar residuos de pruebas anteriores
-        const sanitizedHistory = conversationHistory.filter((m: any) => {
-            const c = (m.content || '').toLowerCase();
-            return !c.includes('weke') &&
-                   !c.includes('gredos') &&
-                   !c.includes('chaqueta') &&
-                   !c.includes('prenda') &&
-                   !c.includes('parka') &&
-                   !c.includes('no el de weke') &&
-                   !c.includes('no es weke');
-        });
-
         const currentLower = (userMessage || '').toLowerCase();
+        const isGreeting = currentLower === 'hola' || currentLower === 'buenas' || currentLower === 'buenos dias' || currentLower === 'buenas tardes' || currentLower === 'buenas noches' || currentLower === 'hola!' || currentLower.startsWith('hola ');
+
+        // Si es un saludo, no enviar historial antiguo para garantizar que se presente como Mercenario
+        const sanitizedHistory = isGreeting
+            ? [{ role: 'user', content: userMessage }]
+            : conversationHistory.filter((m: any) => {
+                const c = (m.content || '').toLowerCase();
+                return !c.includes('weke') &&
+                       !c.includes('gredos') &&
+                       !c.includes('chaqueta') &&
+                       !c.includes('prenda') &&
+                       !c.includes('parka') &&
+                       !c.includes('santiago hiking') &&
+                       !c.includes('hiking') &&
+                       !c.includes('trekking') &&
+                       !c.includes('cordada') &&
+                       !c.includes('ruta') &&
+                       !c.includes('salida');
+            });
 
         // Si el usuario pregunta expresamente por turismo/montaña/Santiago Hiking, orientarlo a su canal respectivo
         const isHikingQuery = currentLower.includes('santiago hiking') ||
