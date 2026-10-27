@@ -262,10 +262,11 @@ EQUILIBRIO TÉCNICO Y CLARIDAD (NI INGENUO NI CRÍPTICO):
 
 REGLA CRÍTICA DE PROGRESIÓN (IR PASO A PASO, NUNCA ABRUMAR AL CLIENTE):
 - Si el usuario solo saluda (ej: "Hola", "Buenas tardes", "¿Cómo estás?"):
-  Responde ÚNICAMENTE con un saludo breve de 1 o 2 líneas ("¡Hola! Un gusto saludarte, bienvenido a Mercenario. ¿Cómo estás? ¿En qué te podemos ayudar hoy?").
-  ESTÁ ESTRICTAMENTE PROHIBIDO enviar párrafos largos, soltar todo el pitch comercial, listar problemas de empresas ni pedir visitas presenciales en el primer saludo. Eso abruma y ahuyenta al cliente de inmediato.
+  Responde DIRECTO y breve: "¡Hola! ¿Cómo estás? ¿En qué podemos ayudarte?".
+  NUNCA digas "bienvenido a Mercenario" (no es un restaurante).
+  ESTÁ ESTRICTAMENTE PROHIBIDO enviar párrafos largos, soltar todo el pitch comercial, listar problemas de empresas ni pedir visitas presenciales en el primer saludo.
 - La conversación debe avanzar de a poco, como una persona real:
-  * Paso 1: Saludo corto y cordial (1-2 líneas).
+  * Paso 1: Saludo directo y cordial: "¡Hola! ¿Cómo estás? ¿En qué podemos ayudarte?".
   * Paso 2: Cuando el cliente cuente qué necesita o qué problema tiene, responder brevemente a esa duda puntual (2-3 líneas).
   * Paso 3: Solo cuando la conversación esté madura y el cliente exprese interés en resolverlo, proponer la visita presencial de un ejecutivo y recopilar datos.
 
@@ -277,15 +278,12 @@ DIRECTIVA DE LONGITUD:
 BASE DE CONOCIMIENTO (RAG EN TIEMPO REAL):
 ${matchedChunks}`;
 
-            fallbackReply = `¡Hola! Un gusto saludarte, te escribe el equipo de consultoría de Mercenario (https://mercenario.cl).
-Desarrollamos arquitectura de software y automatización comercial (Next.js de alta velocidad, WhatsApp IA sobre API Oficial de Meta y sincronización de caja y agenda en tiempo real).
-Cuéntame sobre tu negocio: ¿qué proceso te gustaría ordenar o resolver hoy? Así te oriento y coordinamos una visita presencial de uno de nuestros consultores.`;
+            fallbackReply = `¡Hola! ¿Cómo estás? ¿En qué podemos ayudarte?`;
         }
 
         let aiReply = '';
 
-        // Si el cliente solo está saludando ("Hola", "Buenas tardes", etc.), responder con calidez humana en 1 a 2 líneas
-        // NUNCA abrumarlo con pitches, dolores ni reuniones en el primer saludo
+        // Si el cliente solo está saludando ("Hola", "Buenas tardes", etc.), responder directo y conciso
         const cleanGreeting = currentLower.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()¡!¿?]/g, "").trim();
         const isPureGreeting = cleanGreeting === 'hola' || 
                                cleanGreeting === 'buenas' || 
@@ -300,7 +298,7 @@ Cuéntame sobre tu negocio: ¿qué proceso te gustaría ordenar o resolver hoy? 
                                cleanGreeting === 'hola como estas';
 
         if (isPureGreeting && (!conversationHistory || conversationHistory.length <= 1)) {
-            aiReply = "¡Hola! Un gusto saludarte, bienvenido a Mercenario. ¿Cómo estás? ¿En qué te podemos ayudar hoy?";
+            aiReply = "¡Hola! ¿Cómo estás? ¿En qué podemos ayudarte?";
         } else {
             const response = await fetch("https://api.deepseek.com/chat/completions", {
                 method: "POST",
