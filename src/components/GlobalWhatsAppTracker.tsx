@@ -29,12 +29,15 @@ export default function GlobalWhatsAppTracker() {
           const originPath = window.location.pathname;
           
           let leadSource = 'General Web';
-          if (originPath.includes('/graduacion')) leadSource = 'Graduación';
-          else if (originPath.includes('/aventureros')) leadSource = 'Aventureros';
-          else if (originPath.includes('/portafolio')) leadSource = 'Portafolio Alta Costura';
-          else if (originPath.includes('/vip')) leadSource = 'Programa VIP';
-          else if (originPath.includes('/costuras')) leadSource = 'Arreglos de Ropa';
-          else if (originPath === '/') leadSource = 'Página Principal';
+          if (originPath.includes('/hike-and-fly')) leadSource = 'Hike & Fly · Parapente Biplaza';
+          else if (originPath.includes('/desafios')) leadSource = 'Desafíos de Resistencia';
+          else if (originPath.includes('/cumbres') || originPath.includes('/cerros')) leadSource = 'Cumbres y Cerros';
+          else if (originPath.includes('/rutas')) leadSource = 'Ficha de Expedición';
+          else if (originPath.includes('/atlas')) leadSource = 'Atlas de Montaña';
+          else if (originPath.includes('/reservar') || originPath.includes('/reserva')) leadSource = 'Proceso de Reserva';
+          else if (originPath.includes('/check-in')) leadSource = 'Check-In Expedición';
+          else if (originPath.includes('/faq')) leadSource = 'Preguntas Frecuentes';
+          else if (originPath === '/' || originPath === '') leadSource = 'Página Principal';
 
           const eventName = 'Contact';
           const eventLabel = `WhatsApp Click: ${leadSource}`;

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { sendLeadGuideEmail } from '@/lib/email';
 
 export async function POST(req: Request) {
   try {
@@ -21,7 +22,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // Si Supabase está configurado, registrar el lead
+    const cleanEmail = email.trim().toLowerCase();
+
+    // 1. Si Supabase está configurado, registrar el lead
     if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
       try {
         const supabase = createClient(
@@ -31,7 +34,7 @@ export async function POST(req: Request) {
 
         await supabase.from('leads_guides').insert([
           {
-            email: email.trim().toLowerCase(),
+            email: cleanEmail,
             guide_type: 'quiz_cumbre_ideal',
             language: lang,
             metadata: {
@@ -47,6 +50,19 @@ export async function POST(req: Request) {
       } catch (dbErr) {
         console.warn('Advertencia al registrar lead en BD:', dbErr);
       }
+    }
+
+    // 2. Disparar correo oficial con la guía y el cupón de bienvenida
+    try {
+      await sendLeadGuideEmail({
+        to: cleanEmail,
+        recommendedRoute: recommended_route,
+        experienceLevel: experience_level,
+        discountCode: discount_code,
+        lang,
+      });
+    } catch (emailErr) {
+      console.error('Error al enviar correo del lead magnet:', emailErr);
     }
 
     // Mensaje localizado según idioma

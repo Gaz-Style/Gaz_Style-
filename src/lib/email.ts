@@ -88,9 +88,9 @@ export const sendAppointmentConfirmation = async (to: string, name: string, date
 
   try {
     const info = await transporter.sendMail({
-      from: `"Citas - Gaz La Guía" <${fromAddress}>`,
+      from: EMAIL_SENDERS.contacto,
       to,
-      subject: `Tu cita para ${service} está confirmada`,
+      subject: `Tu reserva para ${service} está confirmada`,
       html,
     });
     return { success: true, messageId: info.messageId };
@@ -113,9 +113,9 @@ export const sendBudgetReminder = async (to: string, name: string, link: string)
 
   try {
     const info = await transporter.sendMail({
-      from: `"Gaz La Guía" <${fromAddress}>`,
+      from: EMAIL_SENDERS.contacto,
       to,
-      subject: 'Tu diseño a medida te está esperando',
+      subject: 'Tu expedición en los Andes te está esperando',
       html,
     });
     return { success: true, messageId: info.messageId };
@@ -140,9 +140,9 @@ export const sendPaymentReceivedEmail = async (to: string, name: string, amount:
 
   try {
     const info = await transporter.sendMail({
-      from: `"Pagos - Gaz La Guía" <${fromAddress}>`,
+      from: EMAIL_SENDERS.pagos,
       to,
-      subject: 'Confirmación de Pago - Gaz Style',
+      subject: 'Confirmación de Pago - Santiago Hiking',
       html,
     });
     return { success: true, messageId: info.messageId };
@@ -166,9 +166,9 @@ export const sendOrderReadyEmail = async (to: string, name: string, item: string
 
   try {
     const info = await transporter.sendMail({
-      from: `"Campamento Base - Gaz La Guía" <${fromAddress}>`,
+      from: EMAIL_SENDERS.booking,
       to,
-      subject: 'Tu prenda está lista para retiro ✨ - Gaz Style',
+      subject: 'Tu pase de expedición está listo 🏔️ - Santiago Hiking',
       html,
     });
     return { success: true, messageId: info.messageId };
@@ -190,21 +190,7 @@ export const sendGeneralContactEmail = async (
 ) => {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.santiagohiking.com';
   const attachments: any[] = [];
-  let cardBgUrl = '';
-  
-  const fs = require('fs');
-  const path = require('path');
-  const filePath = path.join(process.cwd(), 'public', 'trabajos', 'model_desnuda_bw.png');
-  if (fs.existsSync(filePath)) {
-    attachments.push({
-      filename: 'model_desnuda_bw.png',
-      path: filePath,
-      cid: 'luxuryPassBg'
-    });
-    cardBgUrl = 'cid:luxuryPassBg';
-  } else {
-    cardBgUrl = `${siteUrl}/trabajos/model_desnuda_bw.png`;
-  }
+  let cardBgUrl = `${siteUrl}/images/andes_cordillera_hero.jpg`;
 
   const html = loadTemplate('general_contact.html', {
     NAME: name,
@@ -217,9 +203,9 @@ export const sendGeneralContactEmail = async (
 
   try {
     const info = await transporter.sendMail({
-      from: `"Gaz La Guía" <${fromAddress}>`,
+      from: EMAIL_SENDERS.contacto,
       to,
-      subject: subject || 'Mensaje de Gaz Style',
+      subject: subject || 'Mensaje de Santiago Hiking',
       html,
       attachments,
       headers
@@ -242,9 +228,9 @@ export const sendRawCustomEmail = async (
 ) => {
   try {
     const info = await transporter.sendMail({
-      from: `"Gaz La Guía" <${fromAddress}>`,
+      from: EMAIL_SENDERS.info,
       to,
-      subject: subject || 'Notificación - Gaz Style',
+      subject: subject || 'Notificación - Santiago Hiking',
       html: htmlContent,
       headers
     });
@@ -267,7 +253,7 @@ export const sendBulkEmail = async (
     recipients.map(async (to) => {
       try {
         const info = await transporter.sendMail({
-          from: `"Gaz La Guía" <${fromAddress}>`,
+          from: EMAIL_SENDERS.info,
           to,
           subject,
           html: htmlContent,
@@ -280,6 +266,87 @@ export const sendBulkEmail = async (
     })
   );
   return results;
+};
+
+/**
+ * Sends the personalized lead guide + discount coupon email after completing the quiz.
+ */
+export const sendLeadGuideEmail = async (payload: {
+  to: string;
+  recommendedRoute?: string;
+  experienceLevel?: string;
+  discountCode?: string;
+  lang?: string;
+}) => {
+  const code = payload.discountCode || 'CUMBRE10K';
+  const routeName = payload.recommendedRoute || 'Cerro Manquehuito Sunset';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.santiagohiking.com';
+  
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <body style="background-color: #0c0a09; color: #f5f5f4; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 40px 20px; margin: 0;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #1c1917; border: 1px solid #292524; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.6);">
+          <div style="background: linear-gradient(135deg, #1c1917 0%, #292524 100%); padding: 32px 30px; border-bottom: 1px solid #44403c; text-align: center;">
+            <div style="display: inline-block; padding: 4px 12px; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 9999px; color: #fbbf24; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px;">
+              SANTIAGO HIKING · CORDADA OFICIAL
+            </div>
+            <h1 style="color: #ffffff; font-size: 24px; font-weight: 800; text-transform: uppercase; margin: 0; letter-spacing: 1px;">
+              Tu Cumbre Ideal & Guía Andina
+            </h1>
+          </div>
+          <div style="padding: 32px 30px;">
+            <p style="font-size: 16px; line-height: 1.6; color: #d6d3d1; margin-top: 0;">
+              Hola aventurero/a. De acuerdo a tus respuestas en el test de montaña, tu ruta recomendada para conquistar la cordillera es:
+            </p>
+            <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 20px; margin: 24px 0; text-align: center;">
+              <span style="color: #fbbf24; font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; display: block; margin-bottom: 6px;">
+                Ruta Sugerida
+              </span>
+              <strong style="font-size: 20px; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px;">
+                ${routeName}
+              </strong>
+            </div>
+            <h3 style="color: #ffffff; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; margin-top: 28px; margin-bottom: 12px;">
+              ⚡ Tu Bono de Bienvenida a la Cordada
+            </h3>
+            <p style="font-size: 14px; color: #a8a29e; line-height: 1.6; margin-bottom: 16px;">
+              Usa este cupón al reservar cualquier expedición abierta para aplicar <strong>$10.000 CLP de descuento inmediato</strong>:
+            </p>
+            <div style="background: #292524; border: 1px dashed #f59e0b; border-radius: 8px; padding: 14px; text-align: center; margin-bottom: 24px;">
+              <code style="font-size: 20px; font-weight: 900; color: #fbbf24; letter-spacing: 3px;">${code}</code>
+            </div>
+            <div style="text-align: center; margin-top: 32px; margin-bottom: 24px;">
+              <a href="${siteUrl}/reservar" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #000000; padding: 14px 32px; border-radius: 9999px; font-weight: 800; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; display: inline-block;">
+                Ver Próximas Salidas & Reservar
+              </a>
+            </div>
+            <p style="font-size: 12px; color: #78716c; text-align: center; margin-top: 28px; line-height: 1.5;">
+              ¿Dudas con tu equipo o el nivel físico? Escríbenos directamente a WhatsApp: <a href="https://wa.me/56957958467" style="color: #fbbf24; text-decoration: none;">+56 9 5795 8467</a>.
+            </p>
+          </div>
+          <div style="background-color: #141210; padding: 18px 30px; text-align: center; border-top: 1px solid #292524; font-size: 11px; color: #57534e;">
+            Santiago Hiking by Gaz_Style · Cordillera de los Andes, Santiago de Chile.
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  try {
+    const info = await transporter.sendMail({
+      from: EMAIL_SENDERS.info,
+      replyTo: 'info@santiagohiking.com',
+      to: payload.to,
+      subject: `🏔️ Tu Guía de Montaña & Cupón ${code} - Santiago Hiking`,
+      html,
+    });
+    console.log(`[EMAIL] Guía y cupón enviado a ${payload.to} (ID: ${info.messageId})`);
+    return { success: true, messageId: info.messageId };
+  } catch (error: any) {
+    console.error('[EMAIL ERROR] Error enviando guía:', error);
+    return { success: false, error: error.message };
+  }
 };
 
 /**
@@ -333,21 +400,7 @@ export const sendLuxuryPassEmail = async (
 export const sendReviewEmail = async (to: string, name: string) => {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.santiagohiking.com';
   const attachments: any[] = [];
-  let cardBgUrl = '';
-  
-  const fs = require('fs');
-  const path = require('path');
-  const filePath = path.join(process.cwd(), 'public', 'elena-torso.webp');
-  if (fs.existsSync(filePath)) {
-    attachments.push({
-      filename: 'elena-torso.webp',
-      path: filePath,
-      cid: 'reviewBg'
-    });
-    cardBgUrl = 'cid:reviewBg';
-  } else {
-    cardBgUrl = `${siteUrl}/elena-torso.webp`;
-  }
+  const cardBgUrl = `${siteUrl}/images/andes_cordillera_hero.jpg`;
 
   const html = loadTemplate('review.html', {
     NAME: name,
@@ -359,9 +412,9 @@ export const sendReviewEmail = async (to: string, name: string) => {
 
   try {
     const info = await transporter.sendMail({
-      from: `"Gaz La Guía" <${fromAddress}>`,
+      from: EMAIL_SENDERS.contacto,
       to,
-      subject: '¡Tu opinión es importante! - Gaz Style',
+      subject: '¿Cómo estuvo tu experiencia en la cordada? 🏔️ - Santiago Hiking',
       html,
       attachments
     });
