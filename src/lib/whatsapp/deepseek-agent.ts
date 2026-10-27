@@ -300,7 +300,7 @@ Cuéntame: ¿qué proceso de tu empresa te gustaría ordenar o automatizar hoy? 
                     { role: "system", content: systemPrompt },
                     ...sanitizedHistory
                 ],
-                max_tokens: 750,
+                max_tokens: 950,
                 temperature: 0.25
             })
         });
