@@ -127,70 +127,64 @@ export async function processDirectWhatsAppMessage(
                 id: 'filosofia-operativa',
                 title: 'Arquitectura Mercenario y Filosofía Operativa',
                 keywords: ['mercenario', 'que es', 'quienes somos', 'software', 'sistema', 'automatizacion', 'operacion', 'empresa', 'pyme'],
-                content: `Mercenario (https://mercenario.cl) es una firma de arquitectura de software y automatización comercial para Pymes en Chile. No entregamos páginas web estáticas ni aplicaciones aisladas; conectamos la operación completa en 1 sola plataforma:
-1. Web Next.js ultra rápida con carga inferior a 0.8s en servidores Edge.
-2. Asistente con Inteligencia Artificial en WhatsApp Oficial (Meta Cloud API) conectado a la base de datos en tiempo real 24/7.
-3. Pasarelas de pago chilenas nativas (Webpay Plus Transbank y Mercado Pago).
-4. Punto de Venta (POS) y ERP sincronizado en tiempo real.
-5. CRM comercial que registra cada lead, venta o cita médica sin intervención manual.`
+                content: `Mercenario (https://mercenario.cl) es una firma de arquitectura de software y automatización comercial para Pymes en Chile. No entregamos páginas web lentas ni aplicaciones aisladas que nadie usa; conectamos la operación completa en 1 sola plataforma fácil de usar:
+1. Página web moderna con Next.js: la última tecnología web del mercado, ultra rápida, que abre de inmediato en el celular de tu cliente sin hacerlo esperar.
+2. WhatsApp Inteligente oficial: atiende solo día y noche 24/7, responde preguntas comunes como si fueras tú y ayuda al cliente a comprar o agendar en segundos.
+3. Pagos con tarjeta al instante: integración lista para recibir pagos con débito y crédito de cualquier banco vía Webpay Plus y Mercado Pago.
+4. Punto de Venta (POS) en caja y agenda sincronizada: si alguien compra o agenda en WhatsApp o en la web, el sistema lo descuenta o anota automáticamente para que no haya desorden ni sobreventas.
+5. Panel de Control simple: un solo lugar donde ves todos tus clientes, citas y ventas sin planillas desordenadas.`
             },
             {
                 id: 'clinica-salud-360',
                 title: 'Sistema Clínica & Salud 360 // Clinicafy (Centros Médicos, Estética, Odontología)',
                 keywords: ['clinica', 'clinicafy', 'salud', 'medico', 'estetica', 'dental', 'odontologia', 'agenda', 'horas', 'citas', 'no-show', 'inasistencias', 'recordatorio', 'box', 'pacientes'],
                 content: `Clínica & Salud 360 se materializa en nuestra plataforma Clinicafy (demo en vivo: https://clinicafy-beige.vercel.app/).
-Resuelve el mayor dolor de los centros de salud: la pérdida de ingresos por inasistencias de pacientes (no-shows) y la saturación de las recepciones.
-CÓMO FUNCIONA EL PROCESO PASO A PASO:
-1. Agendamiento Inteligente: El paciente agenda desde la web o directamente conversando por WhatsApp las 24 horas del día.
-2. Gestión de Box y Profesionales: El sistema valida en tiempo real la disponibilidad por médico/terapeuta, especialidad y box físico, evitando sobreagendamientos.
-3. Cobro de Abono o Consulta: Permite exigir un abono previo con Webpay Plus o Mercado Pago para confirmar el box.
-4. Protocolo Activo Anti-Inasistencia: WhatsApp envía recordatorios automáticos 24 horas y 2 horas antes de la cita con botones interactivos de "Confirmar" o "Reagendar". Esto reduce las inasistencias en más del 80%.
-5. Liberación Inmediata de Cupos: Si un paciente avisa que no asistirá, el sistema libera la hora al instante y notifica a la lista de espera, manteniendo la ocupación de la clínica al máximo.`
+Resuelve el mayor dolor de los centros médicos y estéticos: los pacientes que faltan sin avisar (horas perdidas) y las recepcionistas colapsadas contestando teléfonos.
+CÓMO FUNCIONA EL PROCESO EN PALABRAS SIMPLES:
+1. Agendamiento fácil: El paciente puede reservar su hora desde una web ultra rápida o directamente conversando por WhatsApp a cualquier hora del día.
+2. Control de doctores y salas (box): El sistema sabe en tiempo real qué especialista y qué sala están libres, evitando que se topen dos citas a la misma hora.
+3. Abono previo para asegurar el cupo: Si lo deseas, el sistema cobra un abono con tarjeta antes de confirmar la cita.
+4. Recordatorios activos automáticos: WhatsApp le recuerda al paciente su cita 24 horas y 2 horas antes con botones simples de "Confirmar" o "Reagendar". Esto reduce las inasistencias en más del 80%.
+5. Recuperación de horas canceladas: Si alguien cancela, el sistema avisa de inmediato a los pacientes en lista de espera para no perder ese ingreso.`
             },
             {
                 id: 'ecommerce-360',
                 title: 'Sistema E-Commerce 360 (Retail, Marcas de Moda y Venta Física/Online)',
                 keywords: ['ecommerce', 'e-commerce', 'tienda', 'tienda online', 'retail', 'moda', 'ropa', 'pos', 'inventario', 'stock', 'mostrador', 'carrito'],
-                content: `El Sistema E-Commerce 360 sincroniza el canal digital con el punto de venta físico:
-CÓMO FUNCIONA EL PROCESO PASO A PASO:
-1. Plataforma de Venta Ultra Rápida: Tienda online desarrollada en Next.js con catálogo dinámico, filtros instantáneos y checkout en 1 solo paso.
-2. Venta Asistida en WhatsApp: El cliente puede consultar por tallas, calce, stock disponible o pedir asesoría directamente en WhatsApp. La IA responde al segundo con fotos del producto y genera un link de pago directo.
-3. Sincronización POS en Tiempo Real: Cuenta con un Punto de Venta (POS) táctil para el mostrador de la tienda física. Cuando se vende un producto en caja física, se descuenta de inmediato del stock web, eliminando errores de inventario.
-4. Recuperación de Carritos: Si un usuario abandona su compra, WhatsApp le envía un mensaje personalizado para resolver dudas y cerrar la venta.
-5. Logística Integrada: Conexión con Shipit (Starken, Chilexpress, Blue Express) y retiro en tienda física configurado.`
+                content: `El Sistema E-Commerce 360 une tu tienda física con tus ventas por internet para que nunca se desajuste el stock:
+CÓMO FUNCIONA EL PROCESO EN PALABRAS SIMPLES:
+1. Tienda online con Next.js: la última tecnología web ultra rápida para que la página abra al instante en el celular del cliente, vea el catálogo y compre sin trabas.
+2. Venta asistida por WhatsApp: El cliente puede preguntar por tallas, disponibilidad o fotos por WhatsApp y el sistema le responde al segundo con el producto y el link para pagar con tarjeta.
+3. Caja física y web sincronizadas: Si vendes una prenda o producto en el mesón de tu tienda física, el sistema lo descuenta de inmediato de la web. Nunca más venderás algo que ya no tienes en stock.
+4. Recuperación de ventas abandonadas: Si un cliente deja un producto en el carrito sin pagar, el sistema le envía un WhatsApp cordial para ayudarlo a terminar la compra.
+5. Despachos listos: Conexión directa con Starken, Chilexpress y Blue Express con cálculo de envío automático.`
             },
             {
                 id: 'servicios-b2b-360',
                 title: 'Sistema Servicios & B2B 360 (Consultoría, Ingeniería, Servicios Profesionales)',
                 keywords: ['b2b', 'servicios', 'consultoria', 'ingenieria', 'cotizacion', 'cotizador', 'leads', 'prospectos', 'crm', 'reuniones', 'ventas'],
-                content: `Diseñado para empresas que venden servicios de alto valor o proyectos llave en mano:
-CÓMO FUNCIONA EL PROCESO PASO A PASO:
-1. Calificación de Prospectos en WhatsApp: La IA conversa con el lead, detecta su presupuesto estimado, necesidad técnica y nivel de urgencia.
-2. Filtrado Automático: Evita que el equipo directivo pierda horas con prospectos no calificados; solo agenda reuniones con prospectos viables.
-3. Agendamiento Directo de Reuniones: Sincroniza directamente con la agenda de Google Meet o Microsoft Outlook de los directores comerciales.
-4. Pipeline CRM en Tiempo Real: Tablero visual que rastrea el estado de cada cotización y envía recordatorios de seguimiento comercial.`
+                content: `Para empresas que ofrecen servicios profesionales y proyectos:
+CÓMO FUNCIONA EL PROCESO EN PALABRAS SIMPLES:
+1. Filtro automático de prospectos en WhatsApp: El sistema hace las preguntas clave (qué necesitan, cuándo lo necesitan y su presupuesto aproximado) para filtrar a los clientes serios.
+2. Agendamiento directo de reuniones: Conecta con el calendario de Google o Outlook de tus ejecutivos para que el cliente elija el día y la hora de la videollamada.
+3. Seguimiento ordenado: Un panel donde ves en qué estado va cada cotización para no perder ningún negocio por olvido.`
             },
             {
                 id: 'tiempos-precios-garantia',
                 title: 'Plazos de Implementación, Costos y Garantía Llave en Mano',
                 keywords: ['plazo', 'tiempo', 'dias', 'cuanto tarda', 'cuanto vale', 'precio', 'costo', 'inversion', 'garantia', 'implementacion'],
                 content: `CÓMO TRABAJAMOS Y PLAZOS:
-- Entrega Llave en Mano: Implementamos e instalamos el sistema completo y operativo en 14 a 21 días hábiles.
-- Capacitación Incluida: Capacitamos a tu equipo administrativo, médico o de ventas en el uso del panel.
-- Garantía de Estabilidad: Arquitectura moderna sobre infraestructura cloud con 99.9% de disponibilidad garantizada.
-- Inversión: Setup de instalación inicial llave en mano (desde $1.200.000 CLP según módulos) y membresía operativa mensual desde 2,5 UF que cubre servidores Edge, mantenimiento, API oficial de WhatsApp de Meta y soporte técnico continuo.`
+- Entrega Llave en Mano: Te entregamos todo instalado, funcionando y probado en solo 14 a 21 días hábiles.
+- Capacitación completa: Te enseñamos a ti y a tu equipo a usar el sistema paso a paso para que se sientan 100% cómodos.
+- Inversión transparente: Un valor de instalación inicial llave en mano (desde $1.200.000 CLP según lo que tu empresa necesite) y un plan mensual desde 2,5 UF que cubre servidores veloces, el WhatsApp oficial de Meta y soporte técnico continuo.`
             },
             {
                 id: 'diagnostico-gratuito',
                 title: 'Diagnóstico Operativo Gratuito de 30 Minutos (Paso Inicial)',
                 keywords: ['diagnostico', 'reunion', 'agendar', 'como empezar', 'contacto', 'paso inicial'],
                 content: `CÓMO INICIAR:
-Ofrecemos un Diagnóstico Operativo gratuito de 30 minutos vía videollamada con un consultor senior de Mercenario.
-En esa sesión:
-1. Analizamos el flujo actual de tu empresa (dónde se pierden ventas, cómo se gestiona la agenda o el stock).
-2. Te mostramos una demostración en vivo del sistema funcionando en una empresa similar.
-3. Te entregamos una propuesta de arquitectura a medida con el cronograma exacto de 14 días.
-Para coordinarlo, el cliente solo debe indicar su disponibilidad horaria o escribir sus requerimientos por este chat.`
+El primer paso es coordinar un Diagnóstico Operativo gratuito de 30 minutos por videollamada.
+Revisamos cómo funciona tu negocio hoy, dónde estás perdiendo tiempo o ventas, te mostramos el sistema funcionando en vivo y te dejamos una propuesta clara con tiempos y valores exactos.`
             }
         ];
 
@@ -248,40 +242,50 @@ DIRECTIVA:
             fallbackReply = "Hola, un gusto saludarte. Te comento que este canal de atención está dedicado exclusivamente al área de software y automatización comercial de Mercenario. Para revisar salidas a la montaña, rutas y expediciones de Santiago Hiking, puedes ingresar directamente a https://www.santiagohiking.com o contactar a su equipo de guías. ¡Que tengas un excelente día!";
         } else {
             systemPrompt = `Eres un Consultor Senior de Operaciones y Tecnología en "Mercenario" (https://mercenario.cl).
-Tu propósito es asesorar a dueños de negocios, gerentes y directores de centros médicos en Chile con una visión ejecutiva, empática y de alto valor comercial.
+Tu propósito es asesorar a dueños de negocios, gerentes y directores de centros médicos en Chile con una visión ejecutiva, cercana, pedagógica y de alto valor comercial.
 
 DIRECTIVAS CRÍTICAS DE IDENTIDAD Y TONO:
-- NO digas en ningún caso "Soy el asistente virtual", "Soy un bot" ni "Soy el asistente oficial". Hablas en primera persona con la cordialidad y propiedad de un consultor experto del equipo de Mercenario ("¡Hola! Un gusto saludarte. En Mercenario ayudamos a...", "Con gusto te explico cómo estructuramos este proceso...").
-- Personalidad: Cordial, pedagógica, clara, profesional y consultiva. Te gusta explicar a fondo cómo funciona cada engranaje operativo.
+- NO digas en ningún caso "Soy el asistente virtual", "Soy un bot" ni "Soy el asistente oficial". Hablas en primera persona como parte del equipo de consultoría de Mercenario ("¡Hola! Un gusto saludarte. En Mercenario ayudamos a...", "Con gusto te explico cómo funciona este proceso...").
+- Personalidad: Cordial, transparente, muy pedagógica y ejecutiva. Te gusta explicar cómo funciona cada parte del negocio sin rodeos.
+
+REGLA DE ORO DE COMUNICACIÓN (PALABRAS SIMPLES Y FÁCILES DE ENTENDER):
+- Los clientes son dueños de empresas, doctores y comerciantes, NO programadores.
+- ESTÁ TERMINANTEMENTE PROHIBIDO usar jerga técnica que confunda al cliente (NADA de decir "latencias <0.8s", "servidores Edge", "APIs complejas", "tokens" o tecnicismos de código).
+- Explica todo en palabras cotidianas, claras y fáciles:
+  * Cuando menciones la web: Di que usamos "Next.js, que es la última tecnología web ultra rápida del mercado para que tu página abra de forma instantánea en el celular de tu cliente sin esperas".
+  * Cuando menciones WhatsApp: Di que es "un WhatsApp inteligente que atiende solo día y noche, responde dudas como si fueras tú y agenda o vende en segundos".
+  * Cuando menciones pagos: Di que "permite cobrar con tarjeta de débito o crédito de cualquier banco al instante".
+  * Cuando menciones sincronización: Di que "si alguien compra o agenda en WhatsApp o en la web, el sistema actualiza tu caja o tu calendario automáticamente para que no se desordene nada".
 
 REQUISITO OBLIGATORIO DE PROFUNDIDAD Y CONTEXTO (MÍNIMO 15 LÍNEAS):
 Debes guardar al menos 15 líneas de respuesta para contextualizar a fondo el problema y explicar con claridad el proceso operativo antes de cerrar:
 1. Saludo cordial y cercano dando la bienvenida a Mercenario.
-2. Contextualización del dolor operativo que viven las Pymes en Chile (ej: citas médicas perdidas por falta de confirmación, inventarios desfasados entre tienda y web, o ventas que se enfrían por responder tarde en WhatsApp).
-3. Explicación paso a paso de la solución técnica:
-   - Cómo interactúa el cliente (web o WhatsApp 24/7).
-   - Cómo la IA consulta y sincroniza la base de datos en tiempo real.
-   - Cómo se integran los pagos (Webpay Plus / Mercado Pago) y el POS / agenda.
-4. Impacto medible concreto: Menciona resultados reales (ej: reducción superior al 80% en inasistencias en clínicas con Clinicafy, o inventario sincronizado al segundo sin sobreventas en e-commerce).
-5. Plazo de instalación: Destaca que entregamos el sistema 100% operativo llave en mano en 14 a 21 días hábiles con capacitación presencial/virtual incluida.
-6. Cierre comercial consultivo: Invita amablemente a coordinar un Diagnóstico Operativo gratuito de 30 minutos (vía videollamada) para analizar su operación y entregarle una propuesta formal.
+2. Contextualización del dolor operativo que viven las Pymes en Chile (ej: citas médicas perdidas porque el paciente olvidó asistir, ventas que se enfrían por responder tarde en WhatsApp, o inventarios desordenados entre la tienda física y la web).
+3. Explicación paso a paso de la solución en lenguaje fácil:
+   - Cómo interactúa el cliente (web ultra rápida con Next.js o WhatsApp inteligente 24/7).
+   - Cómo el sistema responde dudas y agenda o vende automáticamente.
+   - Cómo se cobran los abonos o compras con tarjeta al instante.
+   - Cómo se sincroniza todo con la caja o la agenda médica sin que nadie tenga que pasar datos a mano.
+4. Impacto medible concreto: Menciona resultados reales (ej: reducción superior al 80% en inasistencias en clínicas con Clinicafy, o inventario sincronizado al segundo sin errores de stock en e-commerce).
+5. Plazo de instalación: Destaca que entregamos el sistema 100% operativo llave en mano en 14 a 21 días hábiles con capacitación presencial o virtual para todo tu equipo.
+6. Cierre comercial consultivo: Invita cordialmente a coordinar un Diagnóstico Operativo gratuito de 30 minutos (vía videollamada) para revisar cómo funciona su negocio hoy y mostrarle una propuesta a su medida.
 
 BASE DE CONOCIMIENTO (RAG EN TIEMPO REAL):
 ${matchedChunks}`;
 
             fallbackReply = `¡Hola! Un gusto saludarte. Te escribe el equipo de consultoría de Mercenario (https://mercenario.cl).
 
-En Mercenario ayudamos a pequeñas y medianas empresas en Chile a modernizar y conectar toda su operación comercial, integrando software a medida con Inteligencia Artificial.
+En Mercenario ayudamos a pequeñas y medianas empresas en Chile a modernizar y conectar toda su operación comercial, usando software a medida e Inteligencia Artificial en palabras simples.
 
-A diferencia del desarrollo tradicional que entrega plataformas aisladas, nosotros implementamos Sistemas Operativos Completos que resuelven los cuellos de botella reales de tu negocio:
+A diferencia del desarrollo tradicional que entrega páginas web abandonadas que nadie visita, nosotros implementamos sistemas completos que resuelven los problemas reales del día a día:
 
-• Clínica & Salud 360 (Clinicafy): Agenda médica online con recepcionista IA en WhatsApp 24/7 y protocolo de confirmación interactiva que reduce el 80% de las inasistencias (no-shows) de pacientes.
-• E-Commerce 360: Tiendas web de alta velocidad (<0.8s en Next.js) con vendedor IA en WhatsApp, Webpay Plus y Punto de Venta (POS) sincronizado con el inventario físico en tiempo real.
-• Servicios & B2B 360: Web de alta conversión con cotizador dinámico, calificación automática de prospectos por WhatsApp y sincronización con calendarios directivos.
+• Clínica & Salud 360 (Clinicafy): Una agenda médica online con un WhatsApp inteligente que atiende a tus pacientes día y noche las 24 horas, y les envía recordatorios automáticos interactivos que reducen las inasistencias en más de un 80%.
+• E-Commerce 360: Una tienda web con Next.js (la última tecnología web ultra rápida para que la página abra al instante en el celular), venta asistida por WhatsApp con cobro con tarjeta al segundo, y una caja en tu local físico que descuenta el stock al mismo tiempo para no vender de más.
+• Servicios & B2B 360: Una página web moderna que filtra a los clientes que de verdad tienen presupuesto y les permite agendar una reunión directamente en el calendario de tu equipo comercial.
 
-Nuestros sistemas se entregan 100% operativos llave en mano en un plazo de 14 a 21 días hábiles, incluyendo capacitación completa para tu equipo y soporte continuo.
+Todo lo entregamos 100% instalado, probado y listo para usar en solo 14 a 21 días hábiles, e incluye capacitación completa para que tú y tu equipo lo usen con total facilidad.
 
-Cuéntame: ¿qué proceso comercial o desafío operativo te gustaría automatizar en tu empresa hoy? Si gustas, podemos coordinar un Diagnóstico Operativo gratuito de 30 minutos para evaluar tu caso en detalle.`;
+Cuéntame: ¿qué proceso de tu empresa te gustaría ordenar o automatizar hoy? Si prefieres, podemos agendar un Diagnóstico Operativo gratuito de 30 minutos por videollamada para revisar tu caso con calma.`;
         }
 
         const response = await fetch("https://api.deepseek.com/chat/completions", {
