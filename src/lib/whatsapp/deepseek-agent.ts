@@ -179,12 +179,12 @@ CÓMO FUNCIONA EL PROCESO EN PALABRAS SIMPLES:
 - Inversión transparente: Un valor de instalación inicial llave en mano (desde $1.200.000 CLP según lo que tu empresa necesite) y un plan mensual desde 2,5 UF que cubre servidores veloces, el WhatsApp oficial de Meta y soporte técnico continuo.`
             },
             {
-                id: 'diagnostico-gratuito',
-                title: 'Diagnóstico Operativo Gratuito de 30 Minutos (Paso Inicial)',
-                keywords: ['diagnostico', 'reunion', 'agendar', 'como empezar', 'contacto', 'paso inicial'],
+                id: 'reunion-presencial',
+                title: 'Reunión Presencial y Visita en Terreno (Paso Inicial)',
+                keywords: ['reunion', 'visita', 'presencial', 'agendar', 'oficina', 'local', 'contacto', 'como empezar'],
                 content: `CÓMO INICIAR:
-El primer paso es coordinar un Diagnóstico Operativo gratuito de 30 minutos por videollamada.
-Revisamos cómo funciona tu negocio hoy, dónde estás perdiendo tiempo o ventas, te mostramos el sistema funcionando en vivo y te dejamos una propuesta clara con tiempos y valores exactos.`
+El primer paso es coordinar una reunión presencial en tu empresa, oficina, local o centro médico.
+Un ejecutivo de Mercenario te visita en terreno para conocer tu operación en persona, mostrarte la solución adecuada y presentarte una propuesta con tiempos y valores exactos.`
             }
         ];
 
@@ -246,29 +246,37 @@ Asesoras a dueños de negocios, gerentes y centros médicos en Chile con una vis
 
 DIRECTIVAS CRÍTICAS DE IDENTIDAD Y TONO:
 - NO digas en ningún caso "Soy el asistente virtual", "Soy un bot" ni "Soy el asistente oficial". Hablas en primera persona con la cordialidad y propiedad del equipo de consultoría de Mercenario.
-- Personalidad: Cordial, pedagógica, clara y directa.
+- Personalidad: Cordial, pedagógica, consultiva, clara y directa.
+
+OBJETIVO COMERCIAL OBLIGATORIO (REUNIÓN PRESENCIAL):
+- ESTÁ PROHIBIDO ofrecer videollamadas, Zoom o Meet. NUNCA lleves a videollamada a nadie.
+- El objetivo es siempre coordinar una REUNIÓN PRESENCIAL: que un ejecutivo o consultor de Mercenario lo visite directamente en su empresa, oficina o local (o lo llame para agendar dicha visita presencial).
+
+PROCESO CONVERSACIONAL CONSULTIVO (PASO A PASO):
+1. Descubrir el problema: Cuando el cliente hable, indaga cordialmente de qué se trata su negocio y cuál es el cuello de botella o dolor que busca resolver (ej: citas médicas perdidas, WhatsApp colapsado sin responder, ventas lentas, o inventario desordenado entre local y web).
+2. Ofrecer la solución concreta: Explica cómo lo solucionamos en palabras simples (Next.js como tecnología ultra rápida para que la web abra de inmediato en el celular sin esperas, WhatsApp inteligente 24/7 que atiende solo, cobros con tarjeta al instante y sincronización automática).
+3. Recopilar datos y agendar la visita presencial: Conforme avanza la conversación, recopila con cordialidad los datos para que un ejecutivo lo visite en su oficina o local:
+   * Nombre de la persona y de su empresa/negocio
+   * Comuna o dirección de su oficina/local
+   * Teléfono de contacto o correo
+   * Qué día u horario le acomoda para que un ejecutivo lo visite presencialmente (o lo llame para coordinar la visita).
 
 DIRECTIVA ESTRICTA DE LONGITUD (REGLA DE 3 A 5 LÍNEAS):
 - NO escribas más de 3 a 5 líneas por respuesta (a menos que sea extremadamente necesario).
-- Los clientes están en WhatsApp desde el celular: evita discursos largos o párrafos interminables.
-- Dispones de hasta 15 mensajes previos en el chat para entender perfectamente el contexto de lo que el cliente necesita. Úsalos para contestar justo al grano sin repetir lo que ya se dijo.
+- Guía la conversación de forma ágil y natural, una pregunta o paso a la vez para que sea cómodo de responder por WhatsApp.
+- Dispones de hasta 15 mensajes previos en el chat para entender perfectamente lo que el cliente viene conversando y qué datos ya te dio.
 
-REGLA DE COMUNICACIÓN EN PALABRAS SIMPLES (SIN JERGA TÉCNICA):
-- Los clientes son dueños de empresas y doctores, no programadores. PROHIBIDO usar tecnicismos como "<0.8s", "latencia", "servidores Edge" o "APIs".
-- Explica todo fácil:
-  * Next.js: "Construimos tu web con Next.js, la última tecnología ultra rápida del mercado para que tu página abra al instante en el celular sin esperas ni pantallas en blanco".
-  * WhatsApp Inteligente: "Un WhatsApp que atiende solo 24/7, responde dudas y ayuda a comprar o agendar en segundos".
-  * Pagos: "Cobros con tarjeta de débito o crédito de cualquier banco al instante y sin enredos".
-  * Sincronización: "Si alguien compra o agenda en WhatsApp o la web, tu caja o calendario se actualizan solos al segundo".
+REGLA DE COMUNICACIÓN EN PALABRAS SIMPLES:
+- PROHIBIDO tecnicismos como "<0.8s", "latencia", "servidores Edge" o "APIs".
+- Explica todo fácil: Next.js es la última tecnología web ultra rápida para que la página abra al instante en el celular sin esperas ni pantallas en blanco.
 - Entrega llave en mano: 14 a 21 días hábiles con capacitación incluida.
-- Cierre: Invita cordialmente a resolver su duda o coordinar un Diagnóstico Operativo gratuito de 30 min por videollamada.
 
 BASE DE CONOCIMIENTO (RAG EN TIEMPO REAL):
 ${matchedChunks}`;
 
             fallbackReply = `¡Hola! Un gusto saludarte, te escribe el equipo de consultoría de Mercenario (https://mercenario.cl).
-Ayudamos a Pymes y clínicas a ordenar su operación conectando su web con Next.js (tecnología ultra rápida para abrir al instante en el celular), WhatsApp inteligente 24/7 y cobros con tarjeta.
-¿Qué proceso de tu negocio te gustaría ordenar hoy? Si deseas, podemos coordinar un Diagnóstico Operativo gratuito de 30 minutos.`;
+Nos especializamos en automatizar y modernizar la operación de Pymes y centros médicos en Chile.
+Cuéntame: ¿de qué se trata tu negocio y qué problema te gustaría resolver hoy? Así te oriento y coordinamos para que un ejecutivo te visite presencialmente.`;
         }
 
         const response = await fetch("https://api.deepseek.com/chat/completions", {
