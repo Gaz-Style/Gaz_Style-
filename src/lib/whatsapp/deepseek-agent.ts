@@ -171,80 +171,101 @@ export async function processDirectWhatsAppMessage(
         }
 
         // =========================================================================
-        // DETECCIÓN MULTI-MARCA PROFUNDA (MENSAJE ACTUAL + HISTORIAL DEL CHAT)
+        // DETECCIÓN MULTI-EMPRESA (SANTIAGO HIKING & MERCENARIO)
         // =========================================================================
-        const allText = [
-            userMessage || '',
-            ...conversationHistory.map((m: any) => m.content || '')
-        ].join(' ').toLowerCase();
-
-        const isMercenario = allText.includes('mercenario') || allText.includes('growth') || allText.includes('sistema') || allText.includes('software') || allText.includes('erp') || allText.includes('crm') || allText.includes('automatizacion') || allText.includes('clinica') || allText.includes('llave en mano') || allText.includes('webpay') || allText.includes('pos');
-        
-        const isWeke = allText.includes('weke') || allText.includes('chaqueta') || allText.includes('parka') || allText.includes('polar') || allText.includes('talla') || allText.includes('calce') || allText.includes('estatura') || allText.includes('taller') || allText.includes('gredos') || allText.includes('ropa') || allText.includes('prenda') || allText.includes('stock') || allText.includes('outdoor') || allText.includes('tienda');
-
-        // Limpiar el historial de mensajes para que no arrastre respuestas previas donde el bot decía que "no era WEKE"
+        // Sanitizar historial eliminando referencias residuales a WEKE o frases viejas de prueba
         const sanitizedHistory = conversationHistory.filter((m: any) => {
             const c = (m.content || '').toLowerCase();
-            return !c.includes('no el de weke') && 
-                   !c.includes('no es weke') && 
-                   !c.includes('no gestiono consultas de prendas') && 
-                   !c.includes('no manejo información de prendas') &&
-                   !c.includes('corresponde al asistente de santiago hiking, no al de weke');
+            return !c.includes('weke') &&
+                   !c.includes('gredos') &&
+                   !c.includes('chaqueta') &&
+                   !c.includes('prenda') &&
+                   !c.includes('parka') &&
+                   !c.includes('no el de weke') &&
+                   !c.includes('no es weke');
         });
+
+        const currentLower = (userMessage || '').toLowerCase();
+
+        // 1. Palabras clave de Mercenario (Software, Automatización, B2B, Clínicas, Ecommerce)
+        const mercenarioKeywords = [
+            'mercenario', 'software', 'sistema', 'sistemas', 'automatizacion', 'automatización',
+            'erp', 'crm', 'clinica', 'clínica', 'clinicafy', 'ecommerce', 'e-commerce',
+            'tienda online', 'tienda digital', 'llave en mano', 'webpay', 'pos', 'b2b',
+            'desarrollo web', 'programacion', 'programación', 'landing', 'nextjs', 'pyme',
+            'facturacion', 'boleta electronica', 'proceso comercial', 'citas', 'agendamiento'
+        ];
+
+        // 2. Palabras clave de Santiago Hiking (Montaña, Trekking, Cumbres, Rutas, Aventuras)
+        const hikingKeywords = [
+            'santiago hiking', 'hiking', 'trekking', 'montaña', 'montana', 'cumbre', 'cumbres',
+            'cerro', 'cerros', 'ruta', 'rutas', 'salida', 'salidas', 'expedicion', 'expedición',
+            'hike and fly', 'hike & fly', 'parapente', 'morado', 'pintor', 'plomo', 'san ramon',
+            'manquehue', 'provincia', 'pochoco', 'andes', 'cordillera', 'adventurer', 'aventura',
+            'guia', 'guías', 'subir', 'cordada', 'reserva'
+        ];
+
+        // Contexto conversacional reciente (últimos 3 mensajes sanitizados)
+        const recentContext = sanitizedHistory.slice(-3).map((m: any) => m.content || '').join(' ').toLowerCase();
+
+        const currentHasMercenario = mercenarioKeywords.some(k => currentLower.includes(k));
+        const currentHasHiking = hikingKeywords.some(k => currentLower.includes(k));
+
+        let selectedVertical: 'mercenario' | 'santiagohiking' | 'general' = 'general';
+
+        if (currentHasMercenario && !currentHasHiking) {
+            selectedVertical = 'mercenario';
+        } else if (currentHasHiking && !currentHasMercenario) {
+            selectedVertical = 'santiagohiking';
+        } else {
+            const historyHasMercenario = mercenarioKeywords.some(k => recentContext.includes(k));
+            const historyHasHiking = hikingKeywords.some(k => recentContext.includes(k));
+
+            if (historyHasMercenario && !historyHasHiking) {
+                selectedVertical = 'mercenario';
+            } else if (historyHasHiking && !historyHasMercenario) {
+                selectedVertical = 'santiagohiking';
+            } else {
+                selectedVertical = 'general';
+            }
+        }
 
         let systemPrompt = '';
         let fallbackReply = '';
 
-        if (isWeke) {
-            systemPrompt = `Eres el Asistente Virtual Oficial de "WEKE Studio" (Indumentaria Técnica Sustentable e Inclusiva, fundada en 1985 en Chile).
-Tu objetivo es asesorar a clientes y expedicionarios sobre prendas, calce, tallas, materiales y despachos.
-
-DIRECTIVA CRÍTICA OBLIGATORIA:
-- Este canal oficial de WhatsApp SÍ es el canal oficial de WEKE Studio.
-- Atiendes directamente consultas de prendas, chaquetas, parkas, polerones, tallas, cambios y stock.
-- ESTÁ TERMINANTEMENTE PROHIBIDO decir que este canal no es WEKE, decir que corresponde a Santiago Hiking o rechazar consultas de vestuario. Eres 100% el asistente de WEKE Studio.
-
-CATÁLOGO Y DIRECTIVAS OFICIALES WEKE:
-1. Prendas Principales:
-   - Chaqueta Shell Andes Gore 3 Capas: $189.900 CLP (Impermeable 20.000mm, respirable, costuras termo-selladas de alta montaña).
-   - Parka Térmica Primaloft 'Glaciar': $169.900 CLP (Ultraliviana, aislación térmica sintética de alto rendimiento y repelencia DWR al agua y nieve).
-   - Pantalón Cargo Técnico Ripstop: $89.900 CLP (Refuerzos en rodillas, secado rápido).
-   - Polerón Técnico Segunda Capa: $64.900 CLP.
-2. Despacho: Gratis a todo Chile en compras sobre $100.000 CLP vía Chilexpress o Starken (24h a 48h hábiles en Santiago, 48h a 72h en regiones).
-3. Asesoría en Tallas: Solicita estatura y peso para orientar el calce adecuado (patronaje nacional chileno con 30 días para cambio de talla sin costo).
-4. Tienda Oficial: Invita a comprar en https://www.weke.cl/tienda o visitar el taller showroom en Gredos 7952, Las Condes, Santiago.
-5. Tono: Sobrio, profesional, neutro, hospitalario y conciso (2 a 3 oraciones como máximo).`;
-            fallbackReply = "¡Hola! Bienvenido a WEKE Studio. ¿En qué prenda técnica o consulta sobre tallas y despachos podemos ayudarte hoy?";
-        } else if (isMercenario) {
-            systemPrompt = `Eres el Consultor y Asistente Virtual Oficial de "Mercenario IOS" (Sistemas Operativos Comerciales y Automatización para Pymes en Chile).
+        if (selectedVertical === 'mercenario') {
+            systemPrompt = `Eres el Consultor y Asistente Virtual Oficial de "Mercenario" (Sistemas Operativos Comerciales y Automatización para Pymes en Chile - https://mercenario.cl).
 Tu objetivo es asesorar a dueños de negocio y directores comerciales con un tono ejecutivo, directo, consultivo y formal B2B.
 
 DIRECTIVA CRÍTICA OBLIGATORIA:
-- Este canal oficial de WhatsApp SÍ es el canal de consultoría oficial de Mercenario IOS.
-- Atiendes consultas de desarrollo de software, ecommerce de alta conversión, ERP, CRM, automatización de WhatsApp con IA y pasarelas de pago.
-- ESTÁ TERMINANTEMENTE PROHIBIDO decir que este canal no es Mercenario o que corresponde a Santiago Hiking.
+- Este canal oficial de WhatsApp SÍ es el canal de consultoría oficial de Mercenario.
+- Atiendes consultas de desarrollo de software a medida, e-commerce de alta conversión, ERP, CRM, automatización de WhatsApp con IA y pasarelas de pago (Webpay Plus, Mercado Pago).
+- NUNCA menciones marcas no relacionadas. Eres 100% Mercenario.
 
 SOLUCIONES MERCENARIO:
 1. Propuesta de Valor: Conectamos la operación de tu negocio en 1 sola plataforma: Web Next.js ultra rápida (<0.8s) + WhatsApp IA 24/7 + Webpay Plus / Mercado Pago + POS sincronizado.
-2. Soluciones Llave en Mano: E-Commerce 360 (Retail y Moda probado en WEKE Studio), Clínica & Salud 360 (Agenda + Recepcionista IA con -80% inasistencias), y Servicios B2B 360.
+2. Soluciones Llave en Mano:
+   - E-Commerce 360: Tiendas de alto rendimiento, catálogo inteligente, sincronización de stock y checkout optimizado.
+   - Clínica & Salud 360 (Clinicafy): Agenda médica online + Recepcionista IA con -80% inasistencias y confirmación automática.
+   - Servicios & B2B 360: Web corporativa, calificador de prospectos IA y pipeline CRM.
 3. Plazos de Implementación: Entrega e instalación operativa completa en 14 a 21 días hábiles con capacitación incluida.
 4. Cierre Comercial: Invita al cliente a agendar un Diagnóstico Operativo gratuito de 30 minutos o escribir sus requerimientos para enviarle una propuesta formal.
 5. Respuestas concisas: 2 a 4 oraciones como máximo.`;
-            fallbackReply = "Hola. En Mercenario conectamos la operación completa de su empresa en 14 días. ¿Qué proceso comercial o sistema desea automatizar?";
-        } else {
-            // SANTIAGO HIKING (Por defecto)
-            systemPrompt = `Eres el asistente oficial de WhatsApp de "Santiago Hiking", equipo de expediciones y montaña fundado por Mario Cruz en Santiago de Chile.
+            fallbackReply = "Hola. En Mercenario conectamos la operación completa de su empresa con software y automatización IA en 14 días. ¿Qué proceso comercial o sistema desea optimizar?";
+        } else if (selectedVertical === 'santiagohiking') {
+            // SANTIAGO HIKING (Montañismo & Trekking)
+            systemPrompt = `Eres el asistente oficial de WhatsApp de "Santiago Hiking", equipo de expediciones y montaña fundado por Mario Cruz en Santiago de Chile (https://www.santiagohiking.com).
 
 PERSONALIDAD Y TONO:
 - Profesional, sereno, hospitalario y conocedor de la montaña.
 - Hablas con la calma y seguridad de un guía experimentado, jamás como un vendedor insistente ni un animador.
 - PROHIBIDO usar frases clichés forzadas como "¡Buena vibra! ⚡", "¡A darle con todo!", ráfagas de signos de exclamación o emojis excesivos. Máximo 1 emoji sobrio (🏔️ o 🥾) si viene al caso.
 - ESCUCHA Y CONTEXTO: Responde con naturalidad a lo que el usuario dice. 
-  - Si solo saluda ("Hola"): saluda educadamente y pregunta en qué lo puedes orientar. No lances el catálogo de golpe.
+  - Si solo saluda ("Hola"): saluda educadamente y pregunta en qué ruta o cerro lo puedes orientar. No lances el catálogo de golpe.
   - Si confirma o dice "Todo ok / gracias": responde con sobriedad y amabilidad.
 - Respuestas breves y directas (2 a 3 oraciones), claras y sin rodeos.
 
-GESTIÓN Y REGISTRO DEL CLIENTE (LÓGICA ELENA):
+GESTIÓN Y REGISTRO DEL CLIENTE:
 ${registeredAdventurer 
     ? `• ESTADO: CLIENTE REGISTRADO ✅
   - Nombre: ${registeredAdventurer.name}
@@ -264,6 +285,19 @@ REGLAS ESTRICTAS DE INFORMACIÓN Y PRECIOS:
 1. NUNCA inventes precios ni rutas que no figuren arriba.
 2. Si el cliente decide tomar una ruta, facilítale el enlace directo de reserva.`;
             fallbackReply = "¡Hola! En este momento estamos en ruta de montaña 🏔️. Un guía de Santiago Hiking te responderá a la brevedad.";
+        } else {
+            // GENERAL (Canal Oficial Unificado de Mario Cruz: Santiago Hiking + Mercenario)
+            systemPrompt = `Eres el Asistente Oficial y Concierge del canal unificado de atención de Mario Cruz en Chile. En este canal atendemos dos empresas especializadas:
+
+1. 🏔️ "Santiago Hiking": Expediciones guiadas, trekking, cumbres en los Andes y salidas de montaña (https://www.santiagohiking.com).
+2. ⚡ "Mercenario": Sistemas operativos comerciales, desarrollo de software, e-commerce y automatización con IA para empresas y clínicas (https://mercenario.cl).
+
+DIRECTIVA DE ATENCIÓN:
+- Saluda con cordialidad, sobriedad y profesionalismo ejecutivo.
+- Explica de forma concisa que en este canal oficial gestionamos ambas divisiones: Turismo & Expediciones de Montaña (Santiago Hiking) y Software & Automatización Comercial (Mercenario).
+- Pregunta amablemente al usuario en cuál de las dos áreas o empresas le gustaría recibir orientación hoy.
+- Mantén la respuesta breve (máximo 3 oraciones), clara y directa.`;
+            fallbackReply = "¡Hola! Bienvenido a nuestro canal oficial. Te podemos orientar en dos áreas:\n\n🏔️ 1. *Santiago Hiking*: Expediciones, trekking y cumbres en la Cordillera de los Andes.\n⚡ 2. *Mercenario*: Software a medida, e-commerce y automatización con IA para empresas.\n\n¿En cuál de ellas te podemos orientar hoy?";
         }
 
         const response = await fetch("https://api.deepseek.com/chat/completions", {
@@ -300,8 +334,8 @@ REGLAS ESTRICTAS DE INFORMACIÓN Y PRECIOS:
             console.warn('Could not save bot reply to CRM:', crmErr);
         }
 
-        // Si es WEKE o MERCENARIO, replicar en la base de datos de Mercenario
-        if (isWeke || isMercenario) {
+        // Sincronizar en la base de datos de Mercenario
+        if (selectedVertical === 'mercenario' || selectedVertical === 'general') {
             try {
                 const mercenarioSupabase = createAdminClient(
                     'https://mpqfcvtlhsodvoyzemue.supabase.co',
@@ -320,7 +354,7 @@ REGLAS ESTRICTAS DE INFORMACIÓN Y PRECIOS:
                         .insert([{
                             phone_number: phoneNumber,
                             session_status: 'bot',
-                            vertical: isMercenario ? 'b2b' : 'retail',
+                            vertical: 'general',
                             last_interaction: new Date().toISOString(),
                             context: { customer_name: registeredAdventurer?.name || `Cliente ${phoneNumber.slice(-4)}` }
                         }])
@@ -336,7 +370,7 @@ REGLAS ESTRICTAS DE INFORMACIÓN Y PRECIOS:
                     ]);
                     await mercenarioSupabase.from('crm_whatsapp_chats').update({
                         last_interaction: new Date().toISOString(),
-                        vertical: isMercenario ? 'b2b' : 'retail'
+                        vertical: 'general'
                     }).eq('id', mChat.id);
                 }
             } catch (syncErr) {

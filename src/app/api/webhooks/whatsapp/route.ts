@@ -48,13 +48,18 @@ async function notifyOwnerOfIncomingWhatsApp({
         ? `${customerName!.trim()} ✅ (Registrado)` 
         : `No registrado ⚠️ (Solo número)`;
 
+    const lower = (messageContent || '').toLowerCase();
+    const isMercenario = lower.includes('mercenario') || lower.includes('software') || lower.includes('sistema') || lower.includes('clinica') || lower.includes('ecommerce') || lower.includes('automatiz');
+    const brandHeader = isMercenario ? `⚡ *Mercenario — Mensaje Entrante*` : `🏔️ *Santiago Hiking — Mensaje Entrante*`;
+    const adminLink = isMercenario ? `https://mercenario.cl/admin` : `https://www.santiagohiking.com/admin/livechat`;
+
     const textBody = 
-        `🏔️ *Santiago Hiking — Mensaje Entrante*\n\n` +
+        `${brandHeader}\n\n` +
         `👤 *Cliente:* ${customerLabel}\n` +
         `📱 *WhatsApp:* +${cleanCustomer}\n` +
         `💬 *Mensaje:* "${preview}"\n\n` +
         `👉 *Responder en el Panel LiveChat:*\n` +
-        `https://www.santiagohiking.com/admin/livechat`;
+        `${adminLink}`;
 
     try {
         const res = await fetch(`https://graph.facebook.com/v21.0/${phoneId}/messages`, {
