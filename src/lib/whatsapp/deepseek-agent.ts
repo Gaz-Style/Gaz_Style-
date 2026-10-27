@@ -171,9 +171,9 @@ export async function processDirectWhatsAppMessage(
         }
 
         // =========================================================================
-        // DETECCIÓN MULTI-EMPRESA (SANTIAGO HIKING & MERCENARIO)
+        // CANAL 100% DEDICADO A MERCENARIO (SOFTWARE, CLÍNICAS Y AUTOMATIZACIÓN)
         // =========================================================================
-        // Sanitizar historial eliminando referencias residuales a WEKE o frases viejas de prueba
+        // Sanitizar historial de mensajes previos para eliminar residuos de pruebas anteriores
         const sanitizedHistory = conversationHistory.filter((m: any) => {
             const c = (m.content || '').toLowerCase();
             return !c.includes('weke') &&
@@ -187,117 +187,46 @@ export async function processDirectWhatsAppMessage(
 
         const currentLower = (userMessage || '').toLowerCase();
 
-        // 1. Palabras clave de Mercenario (Software, Automatización, B2B, Clínicas, Ecommerce)
-        const mercenarioKeywords = [
-            'mercenario', 'software', 'sistema', 'sistemas', 'automatizacion', 'automatización',
-            'erp', 'crm', 'clinica', 'clínica', 'clinicafy', 'ecommerce', 'e-commerce',
-            'tienda online', 'tienda digital', 'llave en mano', 'webpay', 'pos', 'b2b',
-            'desarrollo web', 'programacion', 'programación', 'landing', 'nextjs', 'pyme',
-            'facturacion', 'boleta electronica', 'proceso comercial', 'citas', 'agendamiento'
-        ];
-
-        // 2. Palabras clave de Santiago Hiking (Montaña, Trekking, Cumbres, Rutas, Aventuras)
-        const hikingKeywords = [
-            'santiago hiking', 'hiking', 'trekking', 'montaña', 'montana', 'cumbre', 'cumbres',
-            'cerro', 'cerros', 'ruta', 'rutas', 'salida', 'salidas', 'expedicion', 'expedición',
-            'hike and fly', 'hike & fly', 'parapente', 'morado', 'pintor', 'plomo', 'san ramon',
-            'manquehue', 'provincia', 'pochoco', 'andes', 'cordillera', 'adventurer', 'aventura',
-            'guia', 'guías', 'subir', 'cordada', 'reserva'
-        ];
-
-        // Contexto conversacional reciente (últimos 3 mensajes sanitizados)
-        const recentContext = sanitizedHistory.slice(-3).map((m: any) => m.content || '').join(' ').toLowerCase();
-
-        const currentHasMercenario = mercenarioKeywords.some(k => currentLower.includes(k));
-        const currentHasHiking = hikingKeywords.some(k => currentLower.includes(k));
-
-        let selectedVertical: 'mercenario' | 'santiagohiking' | 'general' = 'general';
-
-        if (currentHasMercenario && !currentHasHiking) {
-            selectedVertical = 'mercenario';
-        } else if (currentHasHiking && !currentHasMercenario) {
-            selectedVertical = 'santiagohiking';
-        } else {
-            const historyHasMercenario = mercenarioKeywords.some(k => recentContext.includes(k));
-            const historyHasHiking = hikingKeywords.some(k => recentContext.includes(k));
-
-            if (historyHasMercenario && !historyHasHiking) {
-                selectedVertical = 'mercenario';
-            } else if (historyHasHiking && !historyHasMercenario) {
-                selectedVertical = 'santiagohiking';
-            } else {
-                selectedVertical = 'general';
-            }
-        }
+        // Si el usuario pregunta expresamente por turismo/montaña/Santiago Hiking, orientarlo a su canal respectivo
+        const isHikingQuery = currentLower.includes('santiago hiking') ||
+            currentLower.includes('trekking') ||
+            currentLower.includes('cumbre') ||
+            currentLower.includes('hike and fly') ||
+            currentLower.includes('expedicion') ||
+            currentLower.includes('expedición') ||
+            (currentLower.includes('cerro') && (currentLower.includes('subir') || currentLower.includes('salida') || currentLower.includes('plomo') || currentLower.includes('pintor') || currentLower.includes('manquehue')));
 
         let systemPrompt = '';
         let fallbackReply = '';
 
-        if (selectedVertical === 'mercenario') {
+        if (isHikingQuery) {
+            systemPrompt = `Eres el Asistente Virtual Oficial de "Mercenario" (https://mercenario.cl).
+El usuario está consultando por turismo, trekking o salidas de montaña de Santiago Hiking.
+DIRECTIVA:
+- Aclara de forma muy cortés y concisa que esta línea de WhatsApp oficial está dedicada exclusivamente a "Mercenario" (Sistemas Comerciales, Software y Automatización con IA).
+- Oriéntalo a revisar las expediciones y salidas en la web oficial de Santiago Hiking: https://www.santiagohiking.com o contactar su canal directo de montaña.
+- Mantén la respuesta breve (máximo 2 a 3 oraciones).`;
+            fallbackReply = "Hola. Este canal oficial de WhatsApp está dedicado exclusivamente a Mercenario (software y automatización para empresas). Para expediciones y trekking en la cordillera, puedes visitar https://www.santiagohiking.com o contactar a su equipo directamente.";
+        } else {
             systemPrompt = `Eres el Consultor y Asistente Virtual Oficial de "Mercenario" (Sistemas Operativos Comerciales y Automatización para Pymes en Chile - https://mercenario.cl).
-Tu objetivo es asesorar a dueños de negocio y directores comerciales con un tono ejecutivo, directo, consultivo y formal B2B.
+Tu objetivo es asesorar a dueños de negocio, clínicas y directores comerciales con un tono ejecutivo, directo, consultivo y formal B2B.
 
-DIRECTIVA CRÍTICA OBLIGATORIA:
-- Este canal oficial de WhatsApp SÍ es el canal de consultoría oficial de Mercenario.
+DIRECTIVAS OBLIGATORIAS:
+- Este canal oficial de WhatsApp es EXCLUSIVAMENTE de Mercenario.
+- Si el usuario solo saluda ("Hola", "Buenas tardes", etc.), saluda cordialmente presentándote como el Asistente Oficial de Mercenario y pregunta qué desafío u operación busca automatizar en su empresa (ventas, citas médicas, e-commerce o cobranza).
 - Atiendes consultas de desarrollo de software a medida, e-commerce de alta conversión, ERP, CRM, automatización de WhatsApp con IA y pasarelas de pago (Webpay Plus, Mercado Pago).
-- NUNCA menciones marcas no relacionadas. Eres 100% Mercenario.
+- NUNCA menciones WEKE ni Santiago Hiking por defecto. Eres 100% Mercenario.
 
 SOLUCIONES MERCENARIO:
-1. Propuesta de Valor: Conectamos la operación de tu negocio en 1 sola plataforma: Web Next.js ultra rápida (<0.8s) + WhatsApp IA 24/7 + Webpay Plus / Mercado Pago + POS sincronizado.
+1. Propuesta de Valor: Conectamos la operación de tu negocio en 1 sola plataforma: Web Next.js ultra rápida (<0.8s) + WhatsApp IA 24/7 + Webpay Plus / Mercado Pago + POS / ERP sincronizado.
 2. Soluciones Llave en Mano:
+   - Clínica & Salud 360 (Clinicafy): Agenda médica online + Recepcionista IA en WhatsApp con -80% inasistencias y confirmación de horas automática.
    - E-Commerce 360: Tiendas de alto rendimiento, catálogo inteligente, sincronización de stock y checkout optimizado.
-   - Clínica & Salud 360 (Clinicafy): Agenda médica online + Recepcionista IA con -80% inasistencias y confirmación automática.
    - Servicios & B2B 360: Web corporativa, calificador de prospectos IA y pipeline CRM.
 3. Plazos de Implementación: Entrega e instalación operativa completa en 14 a 21 días hábiles con capacitación incluida.
 4. Cierre Comercial: Invita al cliente a agendar un Diagnóstico Operativo gratuito de 30 minutos o escribir sus requerimientos para enviarle una propuesta formal.
 5. Respuestas concisas: 2 a 4 oraciones como máximo.`;
             fallbackReply = "Hola. En Mercenario conectamos la operación completa de su empresa con software y automatización IA en 14 días. ¿Qué proceso comercial o sistema desea optimizar?";
-        } else if (selectedVertical === 'santiagohiking') {
-            // SANTIAGO HIKING (Montañismo & Trekking)
-            systemPrompt = `Eres el asistente oficial de WhatsApp de "Santiago Hiking", equipo de expediciones y montaña fundado por Mario Cruz en Santiago de Chile (https://www.santiagohiking.com).
-
-PERSONALIDAD Y TONO:
-- Profesional, sereno, hospitalario y conocedor de la montaña.
-- Hablas con la calma y seguridad de un guía experimentado, jamás como un vendedor insistente ni un animador.
-- PROHIBIDO usar frases clichés forzadas como "¡Buena vibra! ⚡", "¡A darle con todo!", ráfagas de signos de exclamación o emojis excesivos. Máximo 1 emoji sobrio (🏔️ o 🥾) si viene al caso.
-- ESCUCHA Y CONTEXTO: Responde con naturalidad a lo que el usuario dice. 
-  - Si solo saluda ("Hola"): saluda educadamente y pregunta en qué ruta o cerro lo puedes orientar. No lances el catálogo de golpe.
-  - Si confirma o dice "Todo ok / gracias": responde con sobriedad y amabilidad.
-- Respuestas breves y directas (2 a 3 oraciones), claras y sin rodeos.
-
-GESTIÓN Y REGISTRO DEL CLIENTE:
-${registeredAdventurer 
-    ? `• ESTADO: CLIENTE REGISTRADO ✅
-  - Nombre: ${registeredAdventurer.name}
-  ${registeredAdventurer.email ? `- Correo: ${registeredAdventurer.email}` : ''}
-  - Ya se encuentra registrado en el CRM. Puedes dirigirte a él/ella por su nombre con naturalidad y cortesía.`
-    : `• ESTADO: CLIENTE NO REGISTRADO ⚠️ (Solo disponemos del número: +${cleanDigits})
-  - No disponemos de su nombre en el sistema. NO inventes un nombre ni utilices palabras como "Estimado cliente".
-  - TOMA DE DATOS Y REGISTRO: Cuando el cliente consulte por una ruta, fecha, cupos o pida asistencia personalizada, pregúntale con amabilidad su Nombre Completo (y correo) para dejarlo registrado formalmente en la cordada y guardar sus datos.`}
-
-DETECCIÓN AUTOMÁTICA DE IDIOMA Y MULTILINGÜISMO:
-- Detecta automáticamente el idioma del usuario. Si consultan en inglés o portugués, menciona que las salidas cuentan con acompañamiento bilingüe.
-
-BASE DE DATOS VIGENTE (SISTEMA RAG - FUENTE ÚNICA DE VERDAD):
-${catalogContext}
-
-REGLAS ESTRICTAS DE INFORMACIÓN Y PRECIOS:
-1. NUNCA inventes precios ni rutas que no figuren arriba.
-2. Si el cliente decide tomar una ruta, facilítale el enlace directo de reserva.`;
-            fallbackReply = "¡Hola! En este momento estamos en ruta de montaña 🏔️. Un guía de Santiago Hiking te responderá a la brevedad.";
-        } else {
-            // GENERAL (Canal Oficial Unificado de Mario Cruz: Santiago Hiking + Mercenario)
-            systemPrompt = `Eres el Asistente Oficial y Concierge del canal unificado de atención de Mario Cruz en Chile. En este canal atendemos dos empresas especializadas:
-
-1. 🏔️ "Santiago Hiking": Expediciones guiadas, trekking, cumbres en los Andes y salidas de montaña (https://www.santiagohiking.com).
-2. ⚡ "Mercenario": Sistemas operativos comerciales, desarrollo de software, e-commerce y automatización con IA para empresas y clínicas (https://mercenario.cl).
-
-DIRECTIVA DE ATENCIÓN:
-- Saluda con cordialidad, sobriedad y profesionalismo ejecutivo.
-- Explica de forma concisa que en este canal oficial gestionamos ambas divisiones: Turismo & Expediciones de Montaña (Santiago Hiking) y Software & Automatización Comercial (Mercenario).
-- Pregunta amablemente al usuario en cuál de las dos áreas o empresas le gustaría recibir orientación hoy.
-- Mantén la respuesta breve (máximo 3 oraciones), clara y directa.`;
-            fallbackReply = "¡Hola! Bienvenido a nuestro canal oficial. Te podemos orientar en dos áreas:\n\n🏔️ 1. *Santiago Hiking*: Expediciones, trekking y cumbres en la Cordillera de los Andes.\n⚡ 2. *Mercenario*: Software a medida, e-commerce y automatización con IA para empresas.\n\n¿En cuál de ellas te podemos orientar hoy?";
         }
 
         const response = await fetch("https://api.deepseek.com/chat/completions", {
@@ -335,47 +264,45 @@ DIRECTIVA DE ATENCIÓN:
         }
 
         // Sincronizar en la base de datos de Mercenario
-        if (selectedVertical === 'mercenario' || selectedVertical === 'general') {
-            try {
-                const mercenarioSupabase = createAdminClient(
-                    'https://mpqfcvtlhsodvoyzemue.supabase.co',
-                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1wcWZjdnRsaHNvZHZveXplbXVlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MjUyNjM5MSwiZXhwIjoyMDk4MTAyMzkxfQ.gpXTfRxf_cpeJaOD6n6e6FRwT9HXa2HsgALMZZsH3sY'
-                );
+        try {
+            const mercenarioSupabase = createAdminClient(
+                'https://mpqfcvtlhsodvoyzemue.supabase.co',
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1wcWZjdnRsaHNvZHZveXplbXVlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MjUyNjM5MSwiZXhwIjoyMDk4MTAyMzkxfQ.gpXTfRxf_cpeJaOD6n6e6FRwT9HXa2HsgALMZZsH3sY'
+            );
 
-                let { data: mChat } = await mercenarioSupabase
+            let { data: mChat } = await mercenarioSupabase
+                .from('crm_whatsapp_chats')
+                .select('id')
+                .eq('phone_number', phoneNumber)
+                .maybeSingle();
+
+            if (!mChat) {
+                const { data: createdChat } = await mercenarioSupabase
                     .from('crm_whatsapp_chats')
-                    .select('id')
-                    .eq('phone_number', phoneNumber)
-                    .maybeSingle();
-
-                if (!mChat) {
-                    const { data: createdChat } = await mercenarioSupabase
-                        .from('crm_whatsapp_chats')
-                        .insert([{
-                            phone_number: phoneNumber,
-                            session_status: 'bot',
-                            vertical: 'general',
-                            last_interaction: new Date().toISOString(),
-                            context: { customer_name: registeredAdventurer?.name || `Cliente ${phoneNumber.slice(-4)}` }
-                        }])
-                        .select()
-                        .single();
-                    mChat = createdChat;
-                }
-
-                if (mChat) {
-                    await mercenarioSupabase.from('crm_whatsapp_messages').insert([
-                        { id: crypto.randomUUID(), chat_id: mChat.id, sender_type: 'customer', message_type: 'text', content: userMessage },
-                        { id: crypto.randomUUID(), chat_id: mChat.id, sender_type: 'bot', message_type: 'text', content: aiReply }
-                    ]);
-                    await mercenarioSupabase.from('crm_whatsapp_chats').update({
+                    .insert([{
+                        phone_number: phoneNumber,
+                        session_status: 'bot',
+                        vertical: 'general',
                         last_interaction: new Date().toISOString(),
-                        vertical: 'general'
-                    }).eq('id', mChat.id);
-                }
-            } catch (syncErr) {
-                console.warn('[Sync to Mercenario] Error syncing messages:', syncErr);
+                        context: { customer_name: registeredAdventurer?.name || `Cliente ${phoneNumber.slice(-4)}` }
+                    }])
+                    .select()
+                    .single();
+                mChat = createdChat;
             }
+
+            if (mChat) {
+                await mercenarioSupabase.from('crm_whatsapp_messages').insert([
+                    { id: crypto.randomUUID(), chat_id: mChat.id, sender_type: 'customer', message_type: 'text', content: userMessage },
+                    { id: crypto.randomUUID(), chat_id: mChat.id, sender_type: 'bot', message_type: 'text', content: aiReply }
+                ]);
+                await mercenarioSupabase.from('crm_whatsapp_chats').update({
+                    last_interaction: new Date().toISOString(),
+                    vertical: 'general'
+                }).eq('id', mChat.id);
+            }
+        } catch (syncErr) {
+            console.warn('[Sync to Mercenario] Error syncing messages:', syncErr);
         }
 
         // Enviar a la API de WhatsApp de Meta
